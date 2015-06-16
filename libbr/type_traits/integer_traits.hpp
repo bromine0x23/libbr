@@ -1,0 +1,73 @@
+#pragma once
+
+#include <climits>
+
+#include <libbr/config.hpp>
+#include <libbr/type_operate/is_signed.hpp>
+#include <libbr/type_operate/is_unsigned.hpp>
+
+namespace BR {
+namespace TypeTraits {
+
+namespace Detail {
+
+using TypeOperate::IsSigned;
+using TypeOperate::IsUnsigned;
+
+template< typename TInteger, TInteger min_val, TInteger max_val >
+struct IntegerTraits {
+	constexpr static TInteger min() noexcept { return min_val; }
+	constexpr static TInteger max() noexcept { return max_val; }
+	constexpr static auto is_integer  = true;
+	constexpr static auto is_signed   = IsSigned< TInteger >::value;
+	constexpr static auto is_unsigned = IsUnsigned< TInteger >::value;
+};
+
+} // namespace Detail
+
+template< typename T >
+struct IntegerTraits {
+	constexpr static T min() noexcept { return T(); }
+	constexpr static T max() noexcept { return T(); }
+	constexpr static auto is_integer  = false;
+	constexpr static auto is_signed   = false;
+	constexpr static auto is_unsigned = false;
+};
+
+template<>
+struct IntegerTraits< char > : Detail::IntegerTraits< char, CHAR_MIN, CHAR_MAX > {};
+
+template<>
+struct IntegerTraits< signed char > : Detail::IntegerTraits< signed char, SCHAR_MIN, SCHAR_MAX > {};
+
+template<>
+struct IntegerTraits< unsigned char > : Detail::IntegerTraits< unsigned char, 0, UCHAR_MAX > {};
+
+template<>
+struct IntegerTraits< signed short > : Detail::IntegerTraits< signed short, SHRT_MIN, SHRT_MAX > {};
+
+template<>
+struct IntegerTraits< unsigned short > : Detail::IntegerTraits< unsigned short, 0, USHRT_MAX > {};
+
+template<>
+struct IntegerTraits< signed int > : Detail::IntegerTraits< signed int,INT_MIN, INT_MAX > {};
+
+template<>
+struct IntegerTraits< unsigned int > : Detail::IntegerTraits< unsigned int, 0, UINT_MAX > {};
+
+template<>
+struct IntegerTraits< signed long > : Detail::IntegerTraits< signed long, LONG_MIN, LONG_MAX > {};
+
+template<>
+struct IntegerTraits< unsigned long > : Detail::IntegerTraits< unsigned long, 0, ULONG_MAX > {};
+
+template<>
+struct IntegerTraits< signed long long > : Detail::IntegerTraits< signed long long, LLONG_MIN, LLONG_MAX > {};
+
+template<>
+struct IntegerTraits< unsigned long long > : Detail::IntegerTraits< unsigned long long, 0, ULLONG_MAX > {};
+
+} // namespace TypeTraits
+} // namespace BR
+
+
