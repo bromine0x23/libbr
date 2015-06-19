@@ -7,14 +7,14 @@
 namespace BR {
 
 template< typename T >
-constexpr T && forward(TypeOperate::RemoveReference< T > & t) noexcept {
-	return static_cast< T && >(t);
+BR_CONSTEXPR_AFTER_CPP11 T && forward(RemoveReference<T> & t) noexcept {
+	return static_cast<T &&>(t);
 }
 
 template< typename T >
-constexpr T && forward(TypeOperate::RemoveReference< T > && t) noexcept {
-	static_assert(TypeOperate::NotLValueReference< T >::value, "Template argument substituting type is an lvalue reference type.");
-	return static_cast< T && >(t);
+BR_CONSTEXPR_AFTER_CPP11 T && forward(RemoveReference<T> && t) noexcept {
+	static_assert(NotLValueReference<T>::value, "Template argument substituting type is an lvalue reference type.");
+	return static_cast<T &&>(t);
 }
 
 } // namespace BR

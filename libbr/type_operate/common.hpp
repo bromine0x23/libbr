@@ -6,7 +6,6 @@
 #include <libbr/utility/make_value.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 template< typename ... Tn >
 struct TypeCommon;
@@ -30,6 +29,5 @@ struct TypeCommon< T0, T1 > : TypeWrapper<
 template < typename T0, typename T1, typename ... Tn >
 struct TypeCommon< T0, T1, Tn ... > : TypeWrapper< Common< Common< T0, T1 >, Tn ... > > {};
 
-} // namespace TypeOperate
 } // namespace BR
 

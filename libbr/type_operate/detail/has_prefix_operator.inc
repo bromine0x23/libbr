@@ -22,7 +22,6 @@
 #define BR_TYPE_OPERATE_NAMESPACE BR_JOIN(PrefixOperator, BR_TYPE_OPERATE_OP_NAME)
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
 namespace BR_TYPE_OPERATE_NAMESPACE {
@@ -94,7 +93,6 @@ struct BR_JOIN(NoOperator, BR_TYPE_OPERATE_OP_NAME) : BooleanNot<
 	Detail::BR_TYPE_OPERATE_NAMESPACE::HasOperator< TRhs, TRet >
 > {};
 
-} // namespace TypeOperate
 } // namespace BR
 
 #undef BR_TYPE_OPERATE_NAMESPACE

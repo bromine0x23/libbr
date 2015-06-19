@@ -22,7 +22,6 @@
 #define BR_TYPE_OPERATE_NAMESPACE BR_JOIN(SuffixOperator, BR_TYPE_OPERATE_OP_NAME)
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
 namespace BR_TYPE_OPERATE_NAMESPACE {
@@ -38,7 +37,7 @@ struct IsOperatorReturnTest {
 
 template< typename TLhs, typename TRet >
 struct IsOperatorReturnBasic : decltype(
-	IsOperatorReturnTest::test< TRet >(make_reference< TLhs >() BR_TYPE_OPERATE_OP >())
+	IsOperatorReturnTest::test< TRet >(make_reference< TLhs >() BR_TYPE_OPERATE_OP)
 ) {};
 
 template< typename TLhs, typename TRet >
@@ -94,7 +93,6 @@ struct BR_JOIN(NoOperator, BR_TYPE_OPERATE_OP_NAME) : BooleanNot<
 	Detail::BR_TYPE_OPERATE_NAMESPACE::HasOperator< TLhs, TRet >
 > {};
 
-} // namespace TypeOperate
 } // namespace BR
 
 #undef BR_TYPE_OPERATE_NAMESPACE

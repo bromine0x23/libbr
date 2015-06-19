@@ -17,8 +17,6 @@ namespace BR {
 namespace Detail {
 namespace CompressedPair {
 
-using namespace TypeOperate;
-
 template< typename TFirst, typename TSecond >
 class CommonPair {
 public:
@@ -59,7 +57,7 @@ public:
 			IsNothrowSwappable<Second>
 		>::value
 	) {
-		using BR::swap;
+		using ::BR::swap;
 		swap(m_first, pair.m_first);
 		swap(m_second, pair.m_second);
 	}
@@ -107,7 +105,7 @@ private:
 	SecondConstReference second() const noexcept { return m_second; }
 
 	void swap(FirstBasePair & pair) noexcept(IsNothrowSwappable<Second>::value) {
-		using BR::swap;
+		using ::BR::swap;
 		swap(m_second, pair.m_second);
 	}
 }; // class FirstBasePair< TFirst, TSecond >
@@ -150,7 +148,7 @@ private:
 	SecondConstReference second() const noexcept { return *this; }
 
 	void swap(SecondBasePair & pair) noexcept(IsNothrowSwappable<First>::value) {
-		using BR::swap;
+		using ::BR::swap;
 		swap(m_first, pair.m_first);
 	}
 }; // class FirstBasePair< TFirst, TSecond >
@@ -189,7 +187,7 @@ public:
 	SecondReference      second()       noexcept { return *this; }
 	SecondConstReference second() const noexcept { return *this; }
 
-	void swap(SecondBasePair & pair) noexcept {}
+	void swap(AllBasePair & pair) noexcept {}
 };
 
 template< typename TFirst, typename TSecond >
@@ -198,7 +196,7 @@ using SelectBase = Conditional<
 	Conditional<
 		BooleanAnd< IsEmpty<TSecond>, NotFinal<TSecond>, NotSame< TFirst, TSecond > >,
 		AllBasePair< TFirst, TSecond >,
-		FirstBasePair< TFirst, TSecond >,
+		FirstBasePair< TFirst, TSecond >
 	>,
 	Conditional<
 		BooleanAnd< IsEmpty<TSecond>, NotFinal<TSecond> >,
@@ -248,10 +246,7 @@ public:
 	SecondConstReference second() const noexcept { return Base::second; }
 
 	void swap(CompressedPair & pair) noexcept(
-		TypeOperate::BooleanAnd<
-			TypeOperate::IsNothrowSwappable<First>,
-			TypeOperate::IsNothrowSwappable<Second>
-		>::value
+		BooleanAnd< IsNothrowSwappable<First>, IsNothrowSwappable<Second> >::value
 	) {
 		Base::swap(pair);
 	}

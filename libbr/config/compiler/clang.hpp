@@ -1,3 +1,5 @@
+#pragma once
+
 #define BR_COMPILER "Clang version " __clang_version__
 
 #define BR_CLANG

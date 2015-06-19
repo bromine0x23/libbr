@@ -5,9 +5,9 @@
 #include <libbr/type_traits/iterator_traits.hpp>
 
 namespace BR {
-namespace Iterator {
 
 namespace Detail {
+namespace Iterator {
 
 template< typename TIterator >
 inline IteratorDifference< TIterator > distance(TIterator & head, TIterator & tail, RandomAccessIteratorTag) {
@@ -23,12 +23,12 @@ inline IteratorDifference< TIterator > distance(TIterator & head, TIterator & ta
 	return result;
 }
 
+} // namespace Iterator
 } // namespace Detail
 
 template< typename TIterator >
 inline IteratorDifference< TIterator > distance(TIterator & head, TIterator & tail) {
-	Detail::distance(head, tail, IteratorCategory< TIterator >());
+	Detail::Iterator::distance(head, tail, IteratorCategory< TIterator >());
 }
 
-} // namespace Iterator
 } // namespace BR

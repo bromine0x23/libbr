@@ -1,12 +1,10 @@
 #pragma once
 
 #include <libbr/config.hpp>
-
 #include <libbr/type_operate/integer.hpp>
 #include <libbr/type_operate/remove_const_volatile.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 template< typename T, Size I = 0 >
 struct Extent : IntegerConstant< Size, 0 > {};
@@ -23,5 +21,4 @@ struct Extent< T [S], I > : IntegerConstant< Size, Extent< RemoveConstVolatile< 
 template< typename T, Size S >
 struct Extent< T [S], 0 > : IntegerConstant< Size, S > {};
 
-} // namespace TypeOperate
 } // namespace BR

@@ -5,9 +5,9 @@
 #include <libbr/type_operate/type.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< Size I, typename ... T >
 struct TypeVariadicGet;
@@ -23,14 +23,14 @@ struct TypeVariadicGet< 0, THead, TTail ... > : TypeWrapper< THead > {};
 template< Size I, typename THead, typename ... TTail >
 struct TypeVariadicGet< I, THead, TTail ... > : TypeVariadicGet< I - 1, TTail ... > {};
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< Size I, typename ... T >
-struct TypeVariadicGet : TypeRewrap< Detail::TypeVariadicGet< I, T ... > > {};
+struct TypeVariadicGet : TypeRewrap< Detail::TypeOperate::TypeVariadicGet< I, T ... > > {};
 
 template< Size I, typename ... T >
 using VariadicGet = TypeUnwrap< TypeVariadicGet< I, T ... > >;
 
-} // namespace TypeOperate
 } // namespace BR
 

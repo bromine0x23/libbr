@@ -1,9 +1,9 @@
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/type_operate/type.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 template< bool condition, typename T = void >
 struct TypeEnableIfByValue {};
@@ -35,5 +35,4 @@ using EnableIf = TypeUnwrap< TypeEnableIf< TCondition, T > >;
 template< typename TCondition, typename T = void >
 using DisableIf = TypeUnwrap< TypeDisableIf< TCondition, T > >;
 
-} // namespace TypeOperate
 } // namespace BR

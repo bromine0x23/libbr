@@ -1,7 +1,6 @@
 #include <libbr/exception/exception.hpp>
 
 namespace BR {
-namespace Exception {
 
 Exception::Exception() noexcept : m_message("BR::Exception::Exception") {};
 
@@ -20,6 +19,4 @@ char const * Exception::what() const noexcept {
 	return m_message;
 }
 
-
-} // namespace Exception
 } // namespace BR

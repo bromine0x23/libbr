@@ -3,25 +3,24 @@
 #include <libbr/config.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/intrinsics.hpp>
-#if !defined(BR_TYPE_OPERATE_IS_CONVERTIBLE)
+#if !defined(BR_IS_CONVERTIBLE)
 #  include <libbr/type_operate/is_array.hpp>
 #  include <libbr/type_operate/is_function.hpp>
 #  include <libbr/type_operate/is_void.hpp>
 #  include <libbr/utility/make_value.hpp>
-#  include <libbr/utility/yes_no.hpp>
-#endif // !BR_TYPE_OPERATE_IS_CONVERTIBLE
+#endif // !BR_IS_CONVERTIBLE
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
-#if defined(BR_TYPE_OPERATE_IS_CONVERTIBLE)
+#if defined(BR_IS_CONVERTIBLE)
 
 template< typename TFrom, typename TTo >
-using IsConvertible = BoolConstant< BR_TYPE_OPERATE_IS_CONVERTIBLE(TFrom, TTo) >;
+using IsConvertible = BoolConstant< BR_IS_CONVERTIBLE(TFrom, TTo) >;
 
-#else // !defined(BR_TT_IS_CONVERTIBLE)
+#else
 
 struct IsConvertibleTest {
 	template< typename T >
@@ -50,15 +49,15 @@ using IsConvertible = BooleanAnd<
 	>
 >;
 
-#endif // BR_TYPE_OPERATE_IS_CONVERTIBLE
+#endif // BR_IS_CONVERTIBLE
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename TFrom, typename TTo >
-struct IsConvertible : Boolean< Detail::IsConvertible< TFrom, TTo > > {};
+struct IsConvertible : Boolean< Detail::TypeOperate::IsConvertible< TFrom, TTo > > {};
 
 template< typename TFrom, typename TTo >
-struct NotConvertible : BooleanNot< Detail::IsConvertible< TFrom, TTo > > {};
+struct NotConvertible : BooleanNot< Detail::TypeOperate::IsConvertible< TFrom, TTo > > {};
 
-} // namespace TypeOperate
 } // namespace BR

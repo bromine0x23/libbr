@@ -3,7 +3,7 @@
 #include <libbr/config.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/intrinsics.hpp>
-#if !defined(BR_TYPE_OPERATE_IS_CONSTRUCTIBLE)
+#if !defined(BR_IS_CONSTRUCTIBLE)
 #  include <libbr/type_operate/is_base_of.hpp>
 #  include <libbr/type_operate/is_default_constructible.hpp>
 #  include <libbr/type_operate/is_destructible.hpp>
@@ -17,14 +17,14 @@
 #endif
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
-#if defined(BR_TYPE_OPERATE_IS_CONSTRUCTIBLE)
+#if defined(BR_IS_CONSTRUCTIBLE)
 
 template< typename T, typename ... TArguments >
-using IsConstructible = BooleanConstant< BR_TYPE_OPERATE_IS_CONSTRUCTIBLE(T, TArguments ...) >;
+using IsConstructible = BooleanConstant< BR_IS_CONSTRUCTIBLE(T, TArguments ...) >;
 
 #else
 
@@ -104,15 +104,15 @@ struct IsConstructible : IsConstructibleMany< T, TArguments ... > {
 	static_assert(sizeof...(TArguments) > 1, "Only useful for > 1 arguments");
 };
 
-#endif // BR_TYPE_OPERATE_IS_CONSTRUCTIBLE
+#endif // BR_IS_CONSTRUCTIBLE
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T, typename ... TArguments >
-struct IsConstructible : Boolean< Detail::IsConstructible< T, TArguments ... > > {};
+struct IsConstructible : Boolean< Detail::TypeOperate::IsConstructible< T, TArguments ... > > {};
 
 template< typename T, typename ... TArguments >
-struct NotConstructible : BooleanNot< Detail::IsConstructible< T, TArguments ... > > {};
+struct NotConstructible : BooleanNot< Detail::TypeOperate::IsConstructible< T, TArguments ... > > {};
 
-} // namespace TypeOperate
 } // namespace BR

@@ -2,24 +2,32 @@
 
 #include <libbr/config.hpp>
 #include <libbr/type_operate/bool.hpp>
+#include <libbr/type_operate/intrinsics.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
+
+#if defined(BR_IS_FINAL)
 
 template< typename T >
-struct IsFinal {
-	static_assert(Conditional< BooleanFalse, T, BooleanFalse >::value, "Not implement yet.");
-};
+using IsFinal = BooleanConstant< BR_IS_FINAL(T) >;
 
+#else
+
+template< typename T >
+using IsFinal = BooleanFalse;
+
+#endif // BR_IS_FINAL
+
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsFinal : Boolean< Detail::IsFinal< T > > {};
+struct IsFinal : Boolean< Detail::TypeOperate::IsFinal< T > > {};
 
 template< typename T >
-struct NotFinal : BooleanNot< Detail::IsFinal< T > > {};
+struct NotFinal : BooleanNot< Detail::TypeOperate::IsFinal< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

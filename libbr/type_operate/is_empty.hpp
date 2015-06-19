@@ -3,20 +3,20 @@
 #include <libbr/config.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/intrinsics.hpp>
-#if !defined(BR_TYPE_OPERATE_IS_EMPTY)
+#if !defined(BR_IS_EMPTY)
 #  include <libbr/type_operate/is_class.hpp>
 #  include <libbr/type_operate/remove_const_volatile.hpp>
-#endif // !BR_TYPE_OPERATE_IS_EMPTY
+#endif // !BR_IS_EMPTY
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
-#if defined(BR_TYPE_OPERATE_IS_EMPTY)
+#if defined(BR_IS_EMPTY)
 
 template< typename T >
-using IsEmpty = BooleanConstant< BR_TYPE_OPERATE_IS_EMPTY(T) >;
+using IsEmpty = BooleanConstant< BR_IS_EMPTY(T) >;
 
 #else
 
@@ -36,15 +36,15 @@ using IsEmptyBasic = BooleanConstant< sizeof(IsEmptyHelper0< T >) == sizeof(IsEm
 template< typename T >
 using IsEmpty = BooleanAnd< IsClass< T >, IsEmptyBasic< RemoveConstVolatile< T > > >;
 
-#endif // !BR_TYPE_OPERATE_IS_EMPTY
+#endif // !BR_IS_EMPTY
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsEmpty : Boolean< Detail::IsEmpty< T > > {};
+struct IsEmpty : Boolean< Detail::TypeOperate::IsEmpty< T > > {};
 
 template< typename T >
-struct NotEmpty : BooleanNot< Detail::IsEmpty< T > > {};
+struct NotEmpty : BooleanNot< Detail::TypeOperate::IsEmpty< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

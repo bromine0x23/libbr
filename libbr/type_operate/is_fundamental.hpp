@@ -6,21 +6,21 @@
 #include <libbr/type_operate/is_void.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< typename T >
 using IsFundamental = BooleanOr< IsArithmetic< T >, IsVoid< T > >;
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsFundamental : Boolean< Detail::IsFundamental< T > > {};
+struct IsFundamental : Boolean< Detail::TypeOperate::IsFundamental< T > > {};
 
 template< typename T >
-struct NotFundamental : BooleanNot< Detail::IsFundamental< T > > {};
+struct NotFundamental : BooleanNot< Detail::TypeOperate::IsFundamental< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR
 

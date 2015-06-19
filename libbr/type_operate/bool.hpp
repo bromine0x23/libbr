@@ -6,7 +6,6 @@
 #include <libbr/type_operate/conditional.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 template< bool value >
 using BooleanConstant = IntegerConstant< bool, value >;
@@ -71,5 +70,4 @@ struct BooleanOrByValue< false, Bn ... > : BooleanConstant< BooleanOrByValue< Bn
 template< bool ... Bn >
 struct BooleanOrByValue< true, Bn ... > : BooleanTrue{};
 
-} // namespace TypeOperate
 } // namespace BR

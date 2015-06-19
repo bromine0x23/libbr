@@ -2,11 +2,6 @@
 
 #include <libbr/config.hpp>
 
-namespace BR {
-namespace Iterator {
-} // namespace Iterator
-} // namespace BR
-
 #include <libbr/iterator/category.hpp>
 #include <libbr/iterator/iterator.hpp>
 

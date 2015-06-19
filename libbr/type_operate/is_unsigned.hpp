@@ -7,9 +7,9 @@
 #include <libbr/type_operate/remove_const_volatile.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< typename T >
 struct IsUnsignedBasic {
@@ -20,13 +20,13 @@ struct IsUnsignedBasic {
 template< typename T >
 using IsUnsigned = BooleanAnd< BooleanOr< IsInteger< T >, IsEnum< T > >, BooleanConstant< IsUnsignedBasic< T >::value > >;
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsUnsigned : Boolean< Detail::IsUnsigned< T > > {};
+struct IsUnsigned : Boolean< Detail::TypeOperate::IsUnsigned< T > > {};
 
 template< typename T >
-struct NotUnsigned : BooleanNot< Detail::IsUnsigned< T > > {};
+struct NotUnsigned : BooleanNot< Detail::TypeOperate::IsUnsigned< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

@@ -6,9 +6,9 @@
 #include <libbr/type_operate/is_referenceable.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< typename T >
 using IsMoveConstructible = BooleanAnd<
@@ -16,13 +16,13 @@ using IsMoveConstructible = BooleanAnd<
 	IsConstructible< T, AddRValueReference< T > >
 >;
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsMoveConstructible : Boolean< Detail::IsMoveConstructible< T > > {};
+struct IsMoveConstructible : Boolean< Detail::TypeOperate::IsMoveConstructible< T > > {};
 
 template< typename T >
-struct NotMoveConstructible : BooleanNot< Detail::IsMoveConstructible< T > > {};
+struct NotMoveConstructible : BooleanNot< Detail::TypeOperate::IsMoveConstructible< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

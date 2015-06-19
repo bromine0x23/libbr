@@ -4,9 +4,9 @@
 #include <libbr/type_operate/type.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< typename TFrom, typename TTo >
 struct TypeMapQualifier : TypeWrapper< TTo > {};
@@ -26,13 +26,13 @@ struct TypeMapQualifier< TFrom volatile , TTo > : TypeWrapper< TypeUnwrap< TypeM
 template< typename TFrom, typename TTo >
 struct TypeMapQualifier< TFrom const volatile , TTo > : TypeWrapper< TypeUnwrap< TypeMapQualifier< TFrom, TTo > > const volatile > {};
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename TFrom, typename TTo >
-struct TypeMapQualifier : TypeRewrap< Detail::TypeMapQualifier< TFrom, TTo > > {};
+struct TypeMapQualifier : TypeRewrap< Detail::TypeOperate::TypeMapQualifier< TFrom, TTo > > {};
 
 template< typename TFrom, typename TTo >
 using MapQualifier = TypeUnwrap< TypeMapQualifier< TFrom, TTo > >;
 
-} // namespace TypeOperate
 } // namespace BR

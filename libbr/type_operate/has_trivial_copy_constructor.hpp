@@ -3,35 +3,35 @@
 #include <libbr/config.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/intrinsics.hpp>
-#if !defined(BR_TYPE_OPERATE_HAS_TRIVIAL_COPY_CONSTRUCTOR)
+#if !defined(BR_HAS_TRIVIAL_COPY_CONSTRUCTOR)
 #  include <libbr/type_operate/is_pod.hpp>
 #  include <libbr/type_operate/is_volatile.hpp>
 #endif
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
-#if defined(BR_TYPE_OPERATE_HAS_TRIVIAL_COPY_CONSTRUCTOR)
+#if defined(BR_HAS_TRIVIAL_COPY_CONSTRUCTOR)
 
 template< typename T >
-using HasTrivialCopyConstructor = BooleanConstant< BR_TYPE_OPERATE_HAS_TRIVIAL_COPY_CONSTRUCTOR(T) >;
+using HasTrivialCopyConstructor = BooleanConstant< BR_HAS_TRIVIAL_COPY_CONSTRUCTOR(T) >;
 
 #else
 
 template< typename T >
-using HasTrivialCopyConstructor = BooleanAnd< IsPod< T >, NotVolatile< T > >;
+using HasTrivialCopyConstructor = BooleanAnd< IsPOD< T >, NotVolatile< T > >;
 
-#endif // BR_TYPE_OPERATE_HAS_TRIVIAL_COPY_CONSTRUCTOR
+#endif // BR_HAS_TRIVIAL_COPY_CONSTRUCTOR
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct HasTrivialCopyConstructor : Boolean< Detail::HasTrivialCopyConstructor< T > > {};
+struct HasTrivialCopyConstructor : Boolean< Detail::TypeOperate::HasTrivialCopyConstructor< T > > {};
 
 template< typename T >
-struct NoTrivialCopyConstructor : BooleanNot< Detail::HasTrivialCopyConstructor< T > > {};
+struct NoTrivialCopyConstructor : BooleanNot< Detail::TypeOperate::HasTrivialCopyConstructor< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

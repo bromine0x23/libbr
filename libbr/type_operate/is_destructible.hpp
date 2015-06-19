@@ -11,9 +11,9 @@
 #include <libbr/utility/make_value.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 struct IsDestructibleTester {
 	template< typename T, typename = decltype(make_reference< T >().~T()) >
@@ -38,13 +38,13 @@ using IsDestructible = BooleanAnd<
 	>
 >;
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsDestructible : Boolean< Detail::IsDestructible< T > > {};
+struct IsDestructible : Boolean< Detail::TypeOperate::IsDestructible< T > > {};
 
 template< typename T >
-struct NotDestructible : BooleanNot< Detail::IsDestructible< T > > {};
+struct NotDestructible : BooleanNot< Detail::TypeOperate::IsDestructible< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

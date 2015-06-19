@@ -3,7 +3,6 @@
 #include <libbr/config.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 struct TypeWrapperBase {};
 
@@ -21,5 +20,4 @@ using TypeRewrap = TypeWrapper< TypeUnwrap< T > >;
 template< typename ... T >
 struct Types {};
 
-} // namespace TypeOperate
 } // namespace BR

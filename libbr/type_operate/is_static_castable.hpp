@@ -5,9 +5,9 @@
 #include <libbr/utility/make_value.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 struct IsStaticCastableTest {
 	template< typename TFrom, typename TTo, typename = decltype(static_cast< TTo >(make_rvalue< TFrom >())) >
@@ -20,13 +20,13 @@ struct IsStaticCastableTest {
 template< typename TFrom, typename TTo >
 using IsStaticCastable = decltype(IsStaticCastableTest::test< TFrom, TTo >(0));
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename TFrom, typename TTo >
-struct IsStaticCastable : Boolean< Detail::IsStaticCastable< TFrom, TTo > > {};
+struct IsStaticCastable : Boolean< Detail::TypeOperate::IsStaticCastable< TFrom, TTo > > {};
 
 template< typename TFrom, typename TTo >
-struct NotStaticCastable : BooleanNot< Detail::IsStaticCastable< TFrom, TTo > > {};
+struct NotStaticCastable : BooleanNot< Detail::TypeOperate::IsStaticCastable< TFrom, TTo > > {};
 
-} // namespace TypeOperate
 } // namespace BR

@@ -4,7 +4,7 @@
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/intrinsics.hpp>
 #include <libbr/type_operate/remove_const_volatile.hpp>
-#if !defined(BR_TYPE_OPERATE_IS_ENUM)
+#if !defined(BR_IS_ENUM)
 #  include <libbr/type_operate/add_lvalue_reference.hpp>
 #  include <libbr/type_operate/is_arithmetic.hpp>
 #  include <libbr/type_operate/is_array.hpp>
@@ -12,17 +12,17 @@
 #  include <libbr/type_operate/is_convertible.hpp>
 #  include <libbr/type_operate/is_reference.hpp>
 #  include <libbr/type_operate/is_union.hpp>
-#endif // !BR_TYPE_OPERATE_IS_ENUM
+#endif
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
-#if defined(BR_TYPE_OPERATE_IS_ENUM)
+#if defined(BR_IS_ENUM)
 
 template< typename T >
-using IsEnum = BooleanConstant< BR_TYPE_OPERATE_IS_ENUM(T) >;
+using IsEnum = BooleanConstant< BR_IS_ENUM(T) >;
 
 #else
 
@@ -41,15 +41,15 @@ using IsEnum = BooleanAnd<
 	IsConvertible< AddLValueReference< T >, IntConvertible >
 >;
 
-#endif // !BR_TYPE_OPERATE_IS_ENUM
+#endif // !BR_IS_ENUM
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsEnum : Boolean< Detail::IsEnum< RemoveConstVolatile< T > > > {};
+struct IsEnum : Boolean< Detail::TypeOperate::IsEnum< RemoveConstVolatile< T > > > {};
 
 template< typename T >
-struct NotEnum : BooleanNot< Detail::IsEnum< RemoveConstVolatile< T > > > {};
+struct NotEnum : BooleanNot< Detail::TypeOperate::IsEnum< RemoveConstVolatile< T > > > {};
 
-} // namespace TypeOperate
 } // namespace BR

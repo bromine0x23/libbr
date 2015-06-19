@@ -4,12 +4,11 @@
 #include <libbr/iterator/category.hpp>
 
 namespace BR {
-namespace Iterator {
 
 template<
 	typename TCategory,
 	typename TValue,
-	typename TDifference = BR::PointerDifference,
+	typename TDifference = PointerDifference,
 	typename TPointer = TValue *,
 	typename TReference = TValue &
 >
@@ -21,5 +20,4 @@ struct Iterator {
 	using Category   = TCategory;
 };
 
-} // namespace Iterator
 } // namespace BR

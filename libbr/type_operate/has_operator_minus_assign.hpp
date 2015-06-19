@@ -52,4 +52,4 @@ BooleanOr< \
 #include <libbr/type_operate/is_integer.hpp>
 #include <libbr/type_operate/is_pointer.hpp>
 #include <libbr/type_operate/is_void.hpp>
-#include <libbr/type_operate/detail/has_binary_operator.hpp>
+#include <libbr/type_operate/detail/has_binary_operator.inc>

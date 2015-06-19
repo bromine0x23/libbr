@@ -4,17 +4,6 @@ namespace BR {
 	// empty
 } // namespace BR
 
-namespace BR {
-
-using NChar = char;
-
-using SNChar =   signed char;
-using UNChar = unsigned char;
-
-using WChar = wchar_t;
-
-} // namespace BR
-
 #if defined(BR_GCC)
 
 namespace BR {
@@ -36,6 +25,9 @@ using UInt128 = unsigned __int128;
 
 constexpr static auto BIT_PER_CHAR = __CHAR_BIT__;
 
+using Size              = __SIZE_TYPE__;
+using PointerDifference = __PTRDIFF_TYPE__;
+
 } // namespace BR
 
 #else
@@ -43,6 +35,8 @@ constexpr static auto BIT_PER_CHAR = __CHAR_BIT__;
 #include <climits>
 
 namespace BR {
+
+constexpr static auto IS_NCHAR_UNSIGNED = CHAR_MIN == UCHAR_MIN;
 
 #if UCHAR_MAX == 0xFF
 using SInt8 =   signed char;
@@ -91,9 +85,25 @@ typedef unsigned __int128 UInt128;
 
 constexpr static auto BIT_PER_CHAR = CHAR_BIT;
 
+using Size              = decltype(sizeof(char));
+using PointerDifference = decltype(static_cast<char *>(nullptr) - static_cast<char *>(nullptr));
+
 } // namespace BR
 
 #endif
+
+namespace BR {
+
+using NChar = char;
+
+using WChar = wchar_t;
+
+constexpr static auto IS_NCHAR_UNSIGNED = static_cast< NChar >(0) < static_cast< NChar >(-1);
+constexpr static auto IS_WCHAR_UNSIGNED = static_cast< WChar >(0) < static_cast< WChar >(-1);
+
+} // namespace BR
+
+// #include<cstddef>
 
 namespace BR {
 
@@ -106,8 +116,6 @@ using QWord = UInt64;
 	using OWord = UInt128;
 #endif // defined
 
-using Size = decltype(sizeof(char));
-using PointerDifference = decltype(static_cast<char *>(nullptr) - static_cast<char *>(nullptr));
 using NullPointer = decltype(nullptr);
 
 template< typename T, Size S >

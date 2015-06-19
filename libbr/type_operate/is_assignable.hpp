@@ -5,9 +5,9 @@
 #include <libbr/utility/make_value.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 struct IsAssignableTest {
 	template< typename T, typename TArgument, typename = decltype(make_rvalue< T >() = make_rvalue< TArgument >()) >
@@ -20,13 +20,13 @@ struct IsAssignableTest {
 template< typename T, typename TArgument >
 using IsAssignable = decltype(IsAssignableTest::test< T, TArgument >(0));
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T, typename TArgument >
-struct IsAssignable : Boolean< Detail::IsAssignable< T, TArgument > > {};
+struct IsAssignable : Boolean< Detail::TypeOperate::IsAssignable< T, TArgument > > {};
 
 template< typename T, typename TArgument >
-struct NotAssignable : BooleanNot< Detail::IsAssignable< T, TArgument > > {};
+struct NotAssignable : BooleanNot< Detail::TypeOperate::IsAssignable< T, TArgument > > {};
 
-} // namespace TypeOperate
 } // namespace BR

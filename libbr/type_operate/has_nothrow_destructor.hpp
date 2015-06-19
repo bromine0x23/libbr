@@ -3,7 +3,7 @@
 #include <libbr/config.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/intrinsics.hpp>
-#if !defined(BR_TYPE_OPERATE_HAS_NOTHROW_DESTRUCTOR)
+#if !defined(BR_HAS_NOTHROW_DESTRUCTOR)
 #  include <libbr/type_operate/is_const.hpp>
 #  include <libbr/type_operate/is_reference.hpp>
 #  include <libbr/type_operate/is_volatile.hpp>
@@ -11,14 +11,14 @@
 #endif
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
-#if defined(BR_TYPE_OPERATE_HAS_NOTHROW_DESTRUCTOR)
+#if defined(BR_HAS_NOTHROW_DESTRUCTOR)
 
 template< typename T >
-using HasNothrowDestructor = BooleanConstant< BR_TYPE_OPERATE_HAS_NOTHROW_DESTRUCTOR(T) >;
+using HasNothrowDestructor = BooleanConstant< BR_HAS_NOTHROW_DESTRUCTOR(T) >;
 
 #else
 
@@ -28,15 +28,15 @@ using HasNothrowDestructorBasic = BooleanConstant< noexcept(make_rvalue< T & >()
 template< typename T >
 using HasNothrowDestructor = BooleanAnd< NotConst< T >, NotVolatile< T >, NotReference< T >, HasNothrowDestructorBasic< T >  >;
 
-#endif // BR_TYPE_OPERATE_HAS_NOTHROW_DESTRUCTOR
+#endif // BR_HAS_NOTHROW_DESTRUCTOR
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct HasNothrowDestructor : Boolean< Detail::HasNothrowDestructor< T > > {};
+struct HasNothrowDestructor : Boolean< Detail::TypeOperate::HasNothrowDestructor< T > > {};
 
 template< typename T >
-struct NoNothrowDestructor : BooleanNot< Detail::HasNothrowDestructor< T > > {};
+struct NoNothrowDestructor : BooleanNot< Detail::TypeOperate::HasNothrowDestructor< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

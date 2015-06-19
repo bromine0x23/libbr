@@ -3,20 +3,20 @@
 #include <libbr/config.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/intrinsics.hpp>
-#if !defined(BR_TYPE_OPERATE_IS_POD)
+#if !defined(BR_IS_POD)
 #  include <libbr/type_operate/is_scalar.hpp>
 #  include <libbr/type_operate/is_void.hpp>
-#endif // !BR_TYPE_OPERATE_IS_POD
+#endif // !BR_IS_POD
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
-#if defined(BR_TYPE_OPERATE_IS_POD)
+#if defined(BR_IS_POD)
 
 template< typename T >
-using IsPOD = BooleanConstant< BR_TYPE_OPERATE_IS_POD(T) >;
+using IsPOD = BooleanConstant< BR_IS_POD(T) >;
 
 #else
 
@@ -29,15 +29,15 @@ struct IsPOD< T [] > : IsPOD< T > {};
 template< typename T, Size S >
 struct IsPOD< T [S] > : IsPOD< T > {};
 
-#endif // BR_TYPE_OPERATE_IS_POD
+#endif // BR_IS_POD
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsPOD : Boolean< Detail::IsPOD< T > > {};
+struct IsPOD : Boolean< Detail::TypeOperate::IsPOD< T > > {};
 
 template< typename T >
-struct NotPOD : BooleanNot< Detail::IsPOD< T > > {};
+struct NotPOD : BooleanNot< Detail::TypeOperate::IsPOD< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

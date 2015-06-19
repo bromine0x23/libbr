@@ -3,19 +3,19 @@
 #include <libbr/config.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/intrinsics.hpp>
-#if !defined(BR_TYPE_OPERATE_IS_ABSTRACT)
+#if !defined(BR_IS_ABSTRACT)
 #  include <libbr/type_operate/is_class.hpp>
-#endif // !BR_TYPE_OPERATE_IS_ABSTRACT
+#endif
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
-#if defined(BR_TYPE_OPERATE_IS_ABSTRACT)
+#if defined(BR_IS_ABSTRACT)
 
 template< typename T >
-using IsAbstract = BooleanConstant< BR_TYPE_OPERATE_IS_ABSTRACT(T) >;
+using IsAbstract = BooleanConstant< BR_IS_ABSTRACT(T) >;
 
 #else
 
@@ -35,15 +35,15 @@ struct IsAbstractBasic : decltype(IsAbstractTest::test< T >(nullptr)) {
 template< typename T >
 using IsAbstract = BooleanAnd< IsClass< T >, IsAbstractBasic< T > >;
 
-#endif // BR_TYPE_OPERATE_IS_ABSTRACT
+#endif // BR_IS_ABSTRACT
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsAbstract : Boolean< Detail::IsAbstract< T > > {};
+struct IsAbstract : Boolean< Detail::TypeOperate::IsAbstract< T > > {};
 
 template< typename T >
-struct NotAbstract : BooleanNot< Detail::IsAbstract< T > > {};
+struct NotAbstract : BooleanNot< Detail::TypeOperate::IsAbstract< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

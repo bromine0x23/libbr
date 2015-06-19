@@ -7,9 +7,9 @@
 #include <libbr/type_operate/is_referenceable.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< typename T >
 using IsCopyAssignable = BooleanAnd<
@@ -17,13 +17,13 @@ using IsCopyAssignable = BooleanAnd<
 	IsAssignable< AddLValueReference< T >, AddLValueReference< AddConst< T > > >
 >;
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsCopyAssignable : Boolean< Detail::IsCopyAssignable< T > > {};
+struct IsCopyAssignable : Boolean< Detail::TypeOperate::IsCopyAssignable< T > > {};
 
 template< typename T >
-struct NotCopyAssignable : BooleanNot< Detail::IsCopyAssignable< T > > {};
+struct NotCopyAssignable : BooleanNot< Detail::TypeOperate::IsCopyAssignable< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

@@ -1,4 +1,6 @@
-#define BR_PLATFORM "win32"
+#pragma once
+
+#define BR_PLATFORM "Win32"
 
 #define BR_WIN32
 

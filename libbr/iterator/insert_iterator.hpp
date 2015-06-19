@@ -6,7 +6,6 @@
 #include <libbr/utility/move.hpp>
 
 namespace BR {
-namespace Iterator {
 
 template< typename TContainer >
 class InsertIterator : public Iterator< OutputIteratorTag, void, void, void, InsertIterator< TContainer > & > {
@@ -15,7 +14,7 @@ public:
 
 	explicit InsertIterator(
 		Container & container, typename Container::Iterator iterator
-	) : m_container(Memory::address_of(container)), m_iterator(iterator) {}
+	) : m_container(address_of(container)), m_iterator(iterator) {}
 
 	InsertIterator & operator=(typename TContainer::Value const & value) {
 		m_container->insert(m_iterator, value);
@@ -39,9 +38,8 @@ private:
 }; // class InsertIterator< TContainer >
 
 template< typename TContainer >
-inline InsertIterator< TContainer > makeInsertIterator(TContainer & container, typename TContainer::Iterator iterator) {
+inline InsertIterator< TContainer > make_insert_iterator(TContainer & container, typename TContainer::Iterator iterator) {
 	return InsertIterator< TContainer >(container, iterator);
 }
 
-} // namespace Iterator
 } // namespace BR

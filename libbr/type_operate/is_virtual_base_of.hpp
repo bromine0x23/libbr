@@ -7,9 +7,9 @@
 #include <libbr/type_operate/is_same.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 #if defined(BR_MSVC)
 #pragma warning(push)
@@ -48,13 +48,13 @@ struct IsVirtualBaseOf : BooleanAnd<
 #pragma warning( pop )
 #endif
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename TBase, typename TDerived >
-struct IsVirtualBaseOf : Boolean< Detail::IsVirtualBaseOf< TBase, TDerived > > {};
+struct IsVirtualBaseOf : Boolean< Detail::TypeOperate::IsVirtualBaseOf< TBase, TDerived > > {};
 
 template< typename TBase, typename TDerived >
-struct NotVirtualBaseOf : BooleanNot< Detail::IsVirtualBaseOf< TBase, TDerived > > {};
+struct NotVirtualBaseOf : BooleanNot< Detail::TypeOperate::IsVirtualBaseOf< TBase, TDerived > > {};
 
-} // namespace TypeOperate
 } // namespace BR

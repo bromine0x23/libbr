@@ -12,9 +12,9 @@ namespace Detail {
 
 template< typename T >
 inline void swap(T & a, T & b) noexcept(
-	TypeOperate::BooleanAnd<
-		TypeOperate::HasNothrowMoveAssignment< T >,
-		TypeOperate::HasNothrowMoveConstructor< T >
+	BooleanAnd<
+		HasNothrowMoveAssignment< T >,
+		HasNothrowMoveConstructor< T >
 	>::value
 ) {
 	T t = move(a);

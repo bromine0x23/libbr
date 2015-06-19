@@ -1,7 +1,6 @@
 #include <libbr/exception/index_out_of_range_exception.hpp>
 
 namespace BR {
-namespace Exception {
 
 IndexOutOfRangeException::IndexOutOfRangeException() noexcept : BaseException("BR::Exception::IndexOutOfRangeException") {}
 
@@ -16,5 +15,4 @@ IndexOutOfRangeException & IndexOutOfRangeException::operator=(IndexOutOfRangeEx
 
 IndexOutOfRangeException::~IndexOutOfRangeException() noexcept {}
 
-} // namespace Exception
 } // namespace BR

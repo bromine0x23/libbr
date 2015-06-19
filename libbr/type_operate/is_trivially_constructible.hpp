@@ -4,23 +4,23 @@
 #include <libbr/type_operate/bool.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
-// TODO
+// TODO: IsTriviallyConstructible
 template< typename T >
 struct IsTriviallyConstructible {
 	static_assert(Conditional< BooleanFalse, T, BooleanFalse >::value, "Not implement yet.");
 };
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsTriviallyConstructible : Boolean< Detail::IsTriviallyConstructible< T > > {};
+struct IsTriviallyConstructible : Boolean< Detail::TypeOperate::IsTriviallyConstructible< T > > {};
 
 template< typename T >
-struct NotTriviallyConstructible : BooleanNot< Detail::IsTriviallyConstructible< T > > {};
+struct NotTriviallyConstructible : BooleanNot< Detail::TypeOperate::IsTriviallyConstructible< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

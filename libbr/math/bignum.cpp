@@ -1,6 +1,6 @@
 #include <libbr/math/bignum.hpp>
 
-#include <libbr/utility/bit_math.hpp>
+#include <libbr/type_operate/integer.hpp>
 #include <libbr/utility/swap.hpp>
 
 #include <stdexcept>
@@ -12,12 +12,9 @@
 #include <iostream>
 
 namespace BR {
-namespace Math {
 
 namespace {
 
-using Sign     = Bignum::Sign;
-// using Relation = Relation;
 using Digit    = Bignum::Digit;
 using UDigit   = Bignum::UDigit;
 using SDigit   = Bignum::SDigit;
@@ -76,7 +73,7 @@ static inline void duff_device(Size size, TFunctor functor) {
 		} while (count-- > 0);
 	}
 }
-
+/*
 template< Size bits_per_digit >
 struct BaseTraits {
 	// chars_per_digit[base] = the largest power of base that fits a Digit
@@ -139,7 +136,7 @@ struct BaseTraits< 32 > {
 		0x40000000, 0x4CFA3CC1, 0x5C13D840, 0x6D91B519, 0x81BF1000,
 	};
 };
-
+*/
 static inline void fill_digits_0(Digit * D, Size length) {
 	duff_device(length, [&](){ *D++ = 0; });
 }
@@ -183,13 +180,60 @@ struct BignumAlgorithm {
 		X.length = 1;
 	}
 
+	template< typename TInt >
+	static void set_int(TBignum & X, TInt v, IntegerConstant< Size, 1 >) {
+		reserve(X, 1);
+		X.digits[0] = Digit(v);
+		X.length = 1;
+	}
+
+	template< typename TInt >
+	static void set_int(TBignum & X, TInt v, IntegerConstant< Size, 2 >) {
+		reserve(X, 2);
+		X.digits[0] = mod_radix(v);
+		if ((v = div_radix(v)) != 0) {
+			X.digits[1] = Digit(v);
+			X.length = 2;
+		} else {
+			X.length = 1;
+		}
+	}
+
+	template< typename TInt, Size size >
+	static void set_int(TBignum & X, TInt v, IntegerConstant< Size, size >) {
+		reserve(X, size);
+		for (Size i = 0; v != 0; ++i, v = div_radix(v)) {
+			X.digits[i] = mod_radix(v);
+			X.length = i;
+		}
+	}
+
+	template< typename TUInt >
+	static void set_uint(TBignum & X, TUInt v) {
+		X.sign = Sign::POS;
+		set_int(X, v, IntegerConstant< Size, (sizeof(TUInt) + sizeof(Digit) - 1) / sizeof(Digit) >());
+	}
+
+	template< typename TSInt, Size size = sizeof(TSInt) >
+	static void set_sint(TBignum & X, TSInt v) {
+		if (v < 0) {
+			X.sign = Sign::NEG;
+			v = -v;
+		} else {
+			X.sign = Sign::POS;
+		}
+		set_int(X, v, IntegerConstant< Size, (sizeof(TSInt) + sizeof(Digit) - 1) / sizeof(Digit) >());
+	}
+/*
 	static void set_ud(TBignum & X, UDigit ud) {
 		reserve(X, 1);
 		X.sign = Sign::POS;
 		X.digits[0] = ud;
 		X.length = 1;
 	}
+ */
 
+/*
 	static void set_sd(TBignum & X, SDigit sd) {
 		reserve(X, 1);
 		if (sd < 0) {
@@ -201,6 +245,7 @@ struct BignumAlgorithm {
 		X.digits[0] = sd;
 		X.length = 1;
 	}
+ */
 
 	static void set_power2(TBignum & X, Size n) {
 		auto const bn = n % BITS_PER_DIGIT;
@@ -219,7 +264,7 @@ struct BignumAlgorithm {
 		copy_digits(Y.digits, X.capacity, X.digits);
 	}
 
-	static void copy_list(TBignum & X, std::initializer_list<Digit> L) {
+	static void copy_list(TBignum & X, InitializerList<Digit> L) {
 		reserve(X, L.size());
 		X.length = 0;
 		for (Digit d : L) {
@@ -234,10 +279,21 @@ struct BignumAlgorithm {
 		X.digits = ds;
 	}
 
-	static void fake_d(TBignum & X, Digit & d) {
+	static void fake_ud(TBignum & X, UDigit & d) {
 		X.sign = Sign::POS;
 		X.capacity = X.length = 1;
-		X.digits = &d;
+		X.digits = reinterpret_cast<Digit *>(&d);
+	}
+
+	static void fake_sd(TBignum & X, SDigit & d) {
+		if (d < 0) {
+			d = -d;
+			X.sign = Sign::NEG;
+		} else {
+			X.sign = Sign::POS;
+		}
+		X.capacity = X.length = 1;
+		X.digits = reinterpret_cast<Digit *>(&d);
 	}
 
 	static void clear(TBignum & X) {
@@ -261,13 +317,13 @@ struct BignumAlgorithm {
 
 	static Relation cmp(TBignum const & X, TBignum const & Y) {
 		if (X.sign == Y.sign) {
-			return X.sign == Sign::POS ? cmpu(X, Y) : cmpu(Y, X);
+			return X.sign == Sign::POS ? cmp_u(X, Y) : cmp_u(Y, X);
 		} else {
 			return X.sign == Sign::POS ? Relation::GT : Relation::LT;
 		}
 	}
 
-	static Relation cmpu(TBignum const & X, TBignum const & Y) {
+	static Relation cmp_u(TBignum const & X, TBignum const & Y) {
 		if (X.length < Y.length) { return Relation::LT; }
 		if (Y.length < X.length) { return Relation::GT; }
 
@@ -284,18 +340,6 @@ struct BignumAlgorithm {
 		return X.length == 1 && X.digits[0] == 0;
 	}
 
-	static void pos(TBignum & X) {
-		X.sign = +X.sign;
-	}
-
-	static void neg(TBignum & X) {
-		X.sign = -X.sign;
-	}
-
-	static void abs(TBignum & X) {
-		X.sign = Bignum::Sign::POS;
-	}
-
 	static void conj(TBignum & X) {
 		X.sign = ~X.sign;
 		auto xds = X.digits;
@@ -310,7 +354,7 @@ struct BignumAlgorithm {
 				Z.sign = X.sign; add_u(X, Y, Z);
 			}
 		} else {
-			if (cmpu(X, Y) == Relation::LT) {
+			if (cmp_u(X, Y) == Relation::LT) {
 				Z.sign = -X.sign; sub_u(Y, X, Z);
 			} else {
 				Z.sign = +X.sign; sub_u(X, Y, Z);
@@ -326,7 +370,7 @@ struct BignumAlgorithm {
 				Z.sign = X.sign; add_u(X, Y, Z);
 			}
 		} else {
-			if (cmpu(X, Y) == Relation::LT) {
+			if (cmp_u(X, Y) == Relation::LT) {
 				Z.sign = -X.sign; sub_u(Y, X, Z);
 			} else {
 				Z.sign = +X.sign; sub_u(X, Y, Z);
@@ -601,7 +645,7 @@ struct BignumAlgorithm {
 		if (is0(Y)) {
 			throw;
 		}
-		if (cmpu(X, Y) == Relation::LT) {
+		if (cmp_u(X, Y) == Relation::LT) {
 			if (Q != nullptr) {
 				set0(*Q);
 			}
@@ -620,8 +664,8 @@ struct BignumAlgorithm {
 
 		auto tqds = TQ.digits + tqlength;
 
-		TBignum TX; init(TX); copy(TX, X); abs(TX);
-		TBignum TY; init(TY); copy(TY, Y); abs(TY);
+		TBignum TX; init(TX); copy(TX, X); TX.sign = Sign::POS;
+		TBignum TY; init(TY); copy(TY, Y); TY.sign = Sign::POS;
 
 		auto const norm = count_leading_zeros(TY.digits[TY.length-1]);
 
@@ -665,7 +709,7 @@ struct BignumAlgorithm {
 					T2.digits[1] = TY.digits[ly];
 					T2.length = 2;
 					mul_d(T2, Digit(tqd), T2);
-				} while (cmpu(T1, T2) == Relation::LT);
+				} while (cmp_u(T1, T2) == Relation::LT);
 
 				mul_d(TY, Digit(tqd), T1);
 				lsh_d(T1, j, T1);
@@ -732,6 +776,7 @@ struct BignumAlgorithm {
 		} else {
 			imp(X, Y, Z);
 		}
+		Z.sign = X.sign | Y.sign;
 	}
 
 	static void band(TBignum const & X, TBignum const & Y, TBignum & Z) {
@@ -764,6 +809,7 @@ struct BignumAlgorithm {
 		} else {
 			imp(X, Y, Z);
 		}
+		Z.sign = X.sign & Y.sign;
 	}
 
 	static void bxor(TBignum const & X, TBignum const & Y, TBignum & Z) {
@@ -795,14 +841,38 @@ struct BignumAlgorithm {
 		} else {
 			imp(X, Y, Z);
 		}
+		Z.sign = X.sign ^ Y.sign;
 	}
 
-	static void add_d(TBignum const & X, Digit d, TBignum & Z) {
-		TBignum Y; fake_d(Y, d); add(X, Y, Z);
+	static void add_ud(TBignum const & X, UDigit d, TBignum & Z) {
+		TBignum Y; fake_ud(Y, d); add(X, Y, Z);
 	}
 
-	static void sub_d(TBignum const & X, Digit d, TBignum & Z) {
-		TBignum Y; fake_d(Y, d); sub(X, Y, Z);
+	static void add_sd(TBignum const & X, SDigit d, TBignum & Z) {
+		TBignum Y; fake_sd(Y, d); add(X, Y, Z);
+	}
+
+	static void sub_ud(TBignum const & X, UDigit d, TBignum & Z) {
+		TBignum Y; fake_ud(Y, d); sub(X, Y, Z);
+	}
+
+	static void sub_sd(TBignum const & X, SDigit d, TBignum & Z) {
+		TBignum Y; fake_sd(Y, d); sub(X, Y, Z);
+	}
+
+	static void mul_ud(TBignum const & X, UDigit d, TBignum & Z) {
+		Z.sign = X.sign;
+		mul_d(X, static_cast<Digit>(d), Z);
+	}
+
+	static void mul_sd(TBignum const & X, SDigit d, TBignum & Z) {
+		if (d < 0) {
+			d = -d;
+			Z.sign = -X.sign;
+		} else {
+			Z.sign = X.sign;
+		}
+		mul_d(X, static_cast<Digit>(d), Z);
 	}
 
 	static void mul_d(TBignum const & X, Digit d, TBignum & Z) {
@@ -822,9 +892,23 @@ struct BignumAlgorithm {
 		}
 		*zds++ = mod_radix(t);
 
-		Z.sign   = X.sign;
 		Z.length = zlength;
 		clamp(Z);
+	}
+
+	static void div_ud(TBignum const & X, UDigit d, TBignum & Z) {
+		Z.sign = X.sign;
+		div_d(X, static_cast<Digit>(d), Z);
+	}
+
+	static void div_sd(TBignum const & X, SDigit d, TBignum & Z) {
+		if (d < 0) {
+			d = -d;
+			Z.sign = -X.sign;
+		} else {
+			Z.sign = X.sign;
+		}
+		div_d(X, static_cast<Digit>(d), Z);
 	}
 
 	static void div_d(TBignum const & X, Digit d, TBignum & Z) {
@@ -843,35 +927,38 @@ struct BignumAlgorithm {
 			if (t < d) {
 				w = 0;
 			} else {
-				w = t / d;
+				w = Digit(t / d);
 				t %= d;
 			}
 			*--zds = w;
 		}
 
-		Z.sign   = X.sign;
 		Z.length = zlength;
 		clamp(Z);
 	}
 
-	static Digit mod_d(TBignum const & X, Digit d) {
+	static UDigit mod_ud(TBignum const & X, UDigit d) {
+		return UDigit(mod_d(X, Digit(d)));
+	}
+
+	static Digit mod_d(TBignum const & X, UDigit d) {
 		auto const xlength = X.length;
 
 		auto xds = X.digits + xlength;
 
 		UDDigit t = 0;
-		Digit w;
 		for (auto xi = xlength; xi-- > 0;) {
 			t = (t << BITS_PER_DIGIT) | *--xds;
-			if (t < d) {
-				w = 0;
-			} else {
-				w = Digit(t / d);
+			if (!(t < d)) {
 				t %= d;
 			}
 		}
 
 		return Digit(t);
+	}
+
+	static UDigit div_mod_ud(TBignum const & X, UDigit d, TBignum & Z) {
+		return UDigit(div_mod_d(X, Digit(d), Z));
 	}
 
 	static Digit div_mod_d(TBignum const & X, Digit d, TBignum & Z) {
@@ -903,16 +990,28 @@ struct BignumAlgorithm {
 		return Digit(t);
 	}
 
-	static void bor_d(TBignum const & X, Digit d, TBignum & Z) {
-		TBignum Y; fake_d(Y, d); bor(X, Y, Z);
+	static void bor_ud(TBignum const & X, UDigit d, TBignum & Z) {
+		TBignum Y; fake_ud(Y, d); bor(X, Y, Z);
 	}
 
-	static void band_d(TBignum const & X, Digit d, TBignum & Z) {
-		TBignum Y; fake_d(Y, d); band(X, Y, Z);
+	static void bor_sd(TBignum const & X, SDigit d, TBignum & Z) {
+		TBignum Y; fake_sd(Y, d); bor(X, Y, Z);
 	}
 
-	static void bxor_d(TBignum const & X, Digit d, TBignum & Z) {
-		TBignum Y; fake_d(Y, d); bxor(X, Y, Z);
+	static void band_ud(TBignum const & X, UDigit d, TBignum & Z) {
+		TBignum Y; fake_ud(Y, d); band(X, Y, Z);
+	}
+
+	static void band_sd(TBignum const & X, SDigit d, TBignum & Z) {
+		TBignum Y; fake_sd(Y, d); band(X, Y, Z);
+	}
+
+	static void bxor_ud(TBignum const & X, UDigit d, TBignum & Z) {
+		TBignum Y; fake_ud(Y, d); bxor(X, Y, Z);
+	}
+
+	static void bxor_sd(TBignum const & X, SDigit d, TBignum & Z) {
+		TBignum Y; fake_sd(Y, d); bxor(X, Y, Z);
 	}
 
 	static void sqr(TBignum const & X, TBignum & Z) {
@@ -974,9 +1073,9 @@ struct BignumAlgorithm {
 			TBignum & Z1 = TX; sqr(TX, Z1); sub(Z1, Z0, Z1); sub(Z1, Z2, Z1); // Z1 <- TX^2 - Z0 - Z2
 
 			// Z <- (Z2 * B + Z1) * B + Z0
-			BR_ASSERT(Z0.sign == Bignum::Sign::POS);
-			BR_ASSERT(Z1.sign == Bignum::Sign::POS);
-			BR_ASSERT(Z2.sign == Bignum::Sign::POS);
+			BR_ASSERT(Z0.sign == Sign::POS);
+			BR_ASSERT(Z1.sign == Sign::POS);
+			BR_ASSERT(Z2.sign == Sign::POS);
 
 			TBignum & T = Z2; reserve(Z, xlength + xlength);
 
@@ -1047,7 +1146,7 @@ struct BignumAlgorithm {
 			TBignum & Z3 = W3;
 			TBignum & Z4 = W4; // Z4 <- W4 = [ 0  0  0  0  1]
 
-			sub(W3, W1, Z3); div_d(Z3, 3, Z3); // Z3 <- (W3 - W1) / 3 = [ 0 -1  1 -3  5]
+			sub(W3, W1, Z3); div_ud(Z3, 3, Z3); // Z3 <- (W3 - W1) / 3 = [ 0 -1  1 -3  5]
 
 			sub(W1, W2, Z1); div2(Z1, Z1); // Z1 <- (W1 - W2) / 2 = [ 0  1  0  1  0]
 
@@ -1061,11 +1160,11 @@ struct BignumAlgorithm {
 
 			// {Step5} Recomposition
 			// Z <- (((Z4 * B + Z3) * B + Z2) * B + Z1) * B + Z0
-			BR_ASSERT(Z0.sign == Bignum::Sign::POS);
-			BR_ASSERT(Z1.sign == Bignum::Sign::POS);
-			BR_ASSERT(Z2.sign == Bignum::Sign::POS);
-			BR_ASSERT(Z3.sign == Bignum::Sign::POS);
-			BR_ASSERT(Z4.sign == Bignum::Sign::POS);
+			BR_ASSERT(Z0.sign == Sign::POS);
+			BR_ASSERT(Z1.sign == Sign::POS);
+			BR_ASSERT(Z2.sign == Sign::POS);
+			BR_ASSERT(Z3.sign == Sign::POS);
+			BR_ASSERT(Z4.sign == Sign::POS);
 
 			TBignum & T = Z4; reserve(Z, xlength + xlength);
 
@@ -1135,6 +1234,30 @@ struct BignumAlgorithm {
 		clamp(Z);
 	}
 
+	static void lsh_ud(TBignum const & X, UDigit n, TBignum & Z) {
+		lsh(X, static_cast<Digit>(n), Z);
+	}
+
+	static void lsh_sd(TBignum const & X, SDigit n, TBignum & Z) {
+		if (n < 0) {
+			rsh(X, static_cast<Digit>(-n), Z);
+		} else {
+			lsh(X, static_cast<Digit>(n), Z);
+		}
+	}
+
+	static void rsh_ud(TBignum const & X, UDigit n, TBignum & Z) {
+		rsh(X, static_cast<Digit>(n), Z);
+	}
+
+	static void rsh_sd(TBignum const & X, SDigit n, TBignum & Z) {
+		if (n < 0) {
+			lsh(X, static_cast<Digit>(-n), Z);
+		} else {
+			rsh(X, static_cast<Digit>(n), Z);
+		}
+	}
+
 	static void lsh(TBignum const & X, Digit n, TBignum & Z) {
 		auto const bn = n % BITS_PER_DIGIT;
 		auto const dn = n / BITS_PER_DIGIT;
@@ -1192,6 +1315,30 @@ struct BignumAlgorithm {
 		Z.sign   = X.sign;
 		Z.length = zlength;
 		clamp(Z);
+	}
+
+	static void lsh_b_ud(TBignum const & X, UDigit bn, TBignum & Z) {
+		lsh_b(X, static_cast<Digit>(bn), Z);
+	}
+
+	static void lsh_b_sd(TBignum const & X, SDigit bn, TBignum & Z) {
+		if (bn < 0) {
+			rsh_b(X, static_cast<Digit>(-bn), Z);
+		} else {
+			lsh_b(X, static_cast<Digit>(bn), Z);
+		}
+	}
+
+	static void rsh_b_ud(TBignum const & X, UDigit bn, TBignum & Z) {
+		rsh_b(X, static_cast<Digit>(bn), Z);
+	}
+
+	static void rsh_b_sd(TBignum const & X, SDigit bn, TBignum & Z) {
+		if (bn < 0) {
+			lsh_b(X, static_cast<Digit>(-bn), Z);
+		} else {
+			rsh_b(X, static_cast<Digit>(bn), Z);
+		}
 	}
 
 	static void lsh_b(TBignum const & X, Digit bn, TBignum & Z) {
@@ -1287,7 +1434,7 @@ struct BignumAlgorithm {
 	static std::string inspect(TBignum const & X) {
 		std::ostringstream oss;
 
-		oss << to_c(X.sign) << "0x";
+		oss << sign_to_nchar(X.sign) << "0x";
 
 		for (Size i = X.length; i-- > 0;) {
 			oss << std::setfill('0') << std::setw(BITS_PER_DIGIT / 4) << std::hex << X.digits[i];
@@ -1376,10 +1523,18 @@ Bignum::Bignum() : Bignum(not_allocate_tag) { algorithms(m_imp).set0(m_imp); }
 Bignum::Bignum(Bignum const &  Y) : Bignum(not_allocate_tag) { algorithms(m_imp).copy(m_imp, Y.m_imp); }
 Bignum::Bignum(Bignum       && Y) : Bignum(not_allocate_tag) { algorithms(m_imp).swap(m_imp, Y.m_imp); }
 
-Bignum::Bignum(UDigit ud) : Bignum(not_allocate_tag) { algorithms(m_imp).set_ud(m_imp, ud); }
-Bignum::Bignum(SDigit sd) : Bignum(not_allocate_tag) { algorithms(m_imp).set_sd(m_imp, sd); }
+Bignum::Bignum(  signed char      v) : Bignum(not_allocate_tag) { algorithms(m_imp).set_sint(m_imp, v); }
+Bignum::Bignum(unsigned char      v) : Bignum(not_allocate_tag) { algorithms(m_imp).set_uint(m_imp, v); }
+Bignum::Bignum(  signed short     v) : Bignum(not_allocate_tag) { algorithms(m_imp).set_sint(m_imp, v); }
+Bignum::Bignum(unsigned short     v) : Bignum(not_allocate_tag) { algorithms(m_imp).set_uint(m_imp, v); }
+Bignum::Bignum(  signed int       v) : Bignum(not_allocate_tag) { algorithms(m_imp).set_sint(m_imp, v); }
+Bignum::Bignum(unsigned int       v) : Bignum(not_allocate_tag) { algorithms(m_imp).set_uint(m_imp, v); }
+Bignum::Bignum(  signed long      v) : Bignum(not_allocate_tag) { algorithms(m_imp).set_sint(m_imp, v); }
+Bignum::Bignum(unsigned long      v) : Bignum(not_allocate_tag) { algorithms(m_imp).set_uint(m_imp, v); }
+Bignum::Bignum(  signed long long v) : Bignum(not_allocate_tag) { algorithms(m_imp).set_sint(m_imp, v); }
+Bignum::Bignum(unsigned long long v) : Bignum(not_allocate_tag) { algorithms(m_imp).set_uint(m_imp, v); }
 
-Bignum::Bignum(std::initializer_list<Digit> L) : Bignum(not_allocate_tag) { algorithms(m_imp).copy_list(m_imp, L); }
+Bignum::Bignum(InitializerList<Digit> L) : Bignum(not_allocate_tag) { algorithms(m_imp).copy_list(m_imp, L); }
 
 Bignum::Bignum(Power2Tag, Size n) : Bignum(not_allocate_tag) { algorithms(m_imp).set_power2(m_imp, n); }
 
@@ -1387,78 +1542,123 @@ Bignum::Bignum(NotAllocateTag) { algorithms(m_imp).init(m_imp); }
 
 Bignum::~Bignum() { algorithms(m_imp).clear(m_imp); }
 
-Size Bignum::bit_length() const { return algorithms(m_imp).count_bits(m_imp); }
+Bignum & Bignum::operator=(Bignum const  & Y) { algorithms(m_imp).copy(m_imp, Y.m_imp); return *this; }
+Bignum & Bignum::operator=(Bignum       && Y) { algorithms(m_imp).swap(m_imp, Y.m_imp); return *this; }
+
+Bignum & Bignum::operator=(  signed char      v) { algorithms(m_imp).set_sint(m_imp, v); return *this; }
+Bignum & Bignum::operator=(unsigned char      v) { algorithms(m_imp).set_uint(m_imp, v); return *this; }
+Bignum & Bignum::operator=(  signed short     v) { algorithms(m_imp).set_sint(m_imp, v); return *this; }
+Bignum & Bignum::operator=(unsigned short     v) { algorithms(m_imp).set_uint(m_imp, v); return *this; }
+Bignum & Bignum::operator=(  signed int       v) { algorithms(m_imp).set_sint(m_imp, v); return *this; }
+Bignum & Bignum::operator=(unsigned int       v) { algorithms(m_imp).set_uint(m_imp, v); return *this; }
+Bignum & Bignum::operator=(  signed long      v) { algorithms(m_imp).set_sint(m_imp, v); return *this; }
+Bignum & Bignum::operator=(unsigned long      v) { algorithms(m_imp).set_uint(m_imp, v); return *this; }
+Bignum & Bignum::operator=(  signed long long v) { algorithms(m_imp).set_sint(m_imp, v); return *this; }
+Bignum & Bignum::operator=(unsigned long long v) { algorithms(m_imp).set_uint(m_imp, v); return *this; }
+
+Bignum & Bignum::operator=(InitializerList<Digit> L) { algorithms(m_imp).copy_list(m_imp, L); return *this; }
+
+#if defined(BR_HAS_INT128)
+Bignum::Bignum(UInt128 v) : Bignum(not_allocate_tag) { algorithms(m_imp).set_uint(m_imp, v); }
+Bignum::Bignum(SInt128 v) : Bignum(not_allocate_tag) { algorithms(m_imp).set_sint(m_imp, v); }
+
+Bignum & Bignum::operator=(UInt128 v) { algorithms(m_imp).set_uint(m_imp, v); return *this; }
+Bignum & Bignum::operator=(SInt128 v) { algorithms(m_imp).set_sint(m_imp, v); return *this; }
+#endif
+
+Bignum & Bignum::set0() { algorithms(m_imp).set0(m_imp); return *this; }
 
 Bignum & Bignum::reserve(Size size) { algorithms(m_imp).reserve(m_imp, size); return *this; }
 
 Bignum & Bignum::swap(Bignum & Y) { algorithms(m_imp).swap(m_imp, Y.m_imp); return *this; }
 
-Bignum & Bignum::assign(Bignum const &  Y) { algorithms(m_imp).copy(m_imp, Y.m_imp); return *this; }
-Bignum & Bignum::assign(Bignum       && Y) { algorithms(m_imp).swap(m_imp, Y.m_imp); return *this; }
-
-Bignum & Bignum::assign(UDigit ud) { algorithms(m_imp).set_ud(m_imp, ud); return *this; }
-Bignum & Bignum::assign(SDigit sd) { algorithms(m_imp).set_sd(m_imp, sd); return *this; }
-
-Bignum & Bignum::assign(std::initializer_list<Digit> L) { algorithms(m_imp).copy_list(m_imp, L); return *this; }
-
-Bignum & Bignum::set0() { algorithms(m_imp).set0(m_imp); return *this; }
-
-bool Bignum::is0() const { return algorithms(m_imp).is0(m_imp); }
-
 Relation Bignum::cmp(Bignum const & Y) const { return algorithms(m_imp).cmp(m_imp, Y.m_imp); }
 
-Bignum & Bignum::set_pos () { algorithms(m_imp).pos (m_imp); return *this; }
-Bignum & Bignum::set_neg () { algorithms(m_imp).neg (m_imp); return *this; }
-Bignum & Bignum::set_abs () { algorithms(m_imp).abs (m_imp); return *this; }
 Bignum & Bignum::set_conj() { algorithms(m_imp).conj(m_imp); return *this; }
 
-Bignum Bignum::add (Bignum const & Y) const { Bignum Z(not_allocate_tag); algorithms(m_imp).add (m_imp, Y.m_imp, Z.m_imp); return Z; }
-Bignum Bignum::sub (Bignum const & Y) const { Bignum Z(not_allocate_tag); algorithms(m_imp).sub (m_imp, Y.m_imp, Z.m_imp); return Z; }
-Bignum Bignum::mul (Bignum const & Y) const { Bignum Z(not_allocate_tag); algorithms(m_imp).mul (m_imp, Y.m_imp, Z.m_imp); return Z; }
-Bignum Bignum::div (Bignum const & Y) const { Bignum Z(not_allocate_tag); algorithms(m_imp).div (m_imp, Y.m_imp, Z.m_imp); return Z; }
-Bignum Bignum::mod (Bignum const & Y) const { Bignum Z(not_allocate_tag); algorithms(m_imp).mod (m_imp, Y.m_imp, Z.m_imp); return Z; }
-Bignum Bignum::bor (Bignum const & Y) const { Bignum Z(not_allocate_tag); algorithms(m_imp).bor (m_imp, Y.m_imp, Z.m_imp); return Z; }
-Bignum Bignum::band(Bignum const & Y) const { Bignum Z(not_allocate_tag); algorithms(m_imp).band(m_imp, Y.m_imp, Z.m_imp); return Z; }
-Bignum Bignum::bxor(Bignum const & Y) const { Bignum Z(not_allocate_tag); algorithms(m_imp).bxor(m_imp, Y.m_imp, Z.m_imp); return Z; }
+Bignum Bignum::operator+(Bignum const & Y) const { Bignum Z(not_allocate_tag); algorithms(m_imp).add (m_imp, Y.m_imp, Z.m_imp); return Z; }
+Bignum Bignum::operator-(Bignum const & Y) const { Bignum Z(not_allocate_tag); algorithms(m_imp).sub (m_imp, Y.m_imp, Z.m_imp); return Z; }
+Bignum Bignum::operator*(Bignum const & Y) const { Bignum Z(not_allocate_tag); algorithms(m_imp).mul (m_imp, Y.m_imp, Z.m_imp); return Z; }
+Bignum Bignum::operator/(Bignum const & Y) const { Bignum Z(not_allocate_tag); algorithms(m_imp).div (m_imp, Y.m_imp, Z.m_imp); return Z; }
+Bignum Bignum::operator%(Bignum const & Y) const { Bignum Z(not_allocate_tag); algorithms(m_imp).mod (m_imp, Y.m_imp, Z.m_imp); return Z; }
+Bignum Bignum::operator|(Bignum const & Y) const { Bignum Z(not_allocate_tag); algorithms(m_imp).bor (m_imp, Y.m_imp, Z.m_imp); return Z; }
+Bignum Bignum::operator&(Bignum const & Y) const { Bignum Z(not_allocate_tag); algorithms(m_imp).band(m_imp, Y.m_imp, Z.m_imp); return Z; }
+Bignum Bignum::operator^(Bignum const & Y) const { Bignum Z(not_allocate_tag); algorithms(m_imp).bxor(m_imp, Y.m_imp, Z.m_imp); return Z; }
 
-Bignum & Bignum::add_by (Bignum const & Y) { algorithms(m_imp).add (m_imp, Y.m_imp, m_imp); return *this; }
-Bignum & Bignum::sub_by (Bignum const & Y) { algorithms(m_imp).sub (m_imp, Y.m_imp, m_imp); return *this; }
-Bignum & Bignum::mul_by (Bignum const & Y) { algorithms(m_imp).mul (m_imp, Y.m_imp, m_imp); return *this; }
-Bignum & Bignum::div_by (Bignum const & Y) { algorithms(m_imp).div (m_imp, Y.m_imp, m_imp); return *this; }
-Bignum & Bignum::mod_by (Bignum const & Y) { algorithms(m_imp).mod (m_imp, Y.m_imp, m_imp); return *this; }
-Bignum & Bignum::bor_by (Bignum const & Y) { algorithms(m_imp).bor (m_imp, Y.m_imp, m_imp); return *this; }
-Bignum & Bignum::band_by(Bignum const & Y) { algorithms(m_imp).band(m_imp, Y.m_imp, m_imp); return *this; }
-Bignum & Bignum::bxor_by(Bignum const & Y) { algorithms(m_imp).bxor(m_imp, Y.m_imp, m_imp); return *this; }
+Bignum & Bignum::operator+=(Bignum const & Y) { algorithms(m_imp).add (m_imp, Y.m_imp, m_imp); return *this; }
+Bignum & Bignum::operator-=(Bignum const & Y) { algorithms(m_imp).sub (m_imp, Y.m_imp, m_imp); return *this; }
+Bignum & Bignum::operator*=(Bignum const & Y) { algorithms(m_imp).mul (m_imp, Y.m_imp, m_imp); return *this; }
+Bignum & Bignum::operator/=(Bignum const & Y) { algorithms(m_imp).div (m_imp, Y.m_imp, m_imp); return *this; }
+Bignum & Bignum::operator%=(Bignum const & Y) { algorithms(m_imp).mod (m_imp, Y.m_imp, m_imp); return *this; }
+Bignum & Bignum::operator|=(Bignum const & Y) { algorithms(m_imp).bor (m_imp, Y.m_imp, m_imp); return *this; }
+Bignum & Bignum::operator&=(Bignum const & Y) { algorithms(m_imp).band(m_imp, Y.m_imp, m_imp); return *this; }
+Bignum & Bignum::operator^=(Bignum const & Y) { algorithms(m_imp).bxor(m_imp, Y.m_imp, m_imp); return *this; }
 
-Bignum Bignum::add (Digit  d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).add_d (m_imp,  d, Z.m_imp); return Z; }
-Bignum Bignum::sub (Digit  d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).sub_d (m_imp,  d, Z.m_imp); return Z; }
-Bignum Bignum::mul (Digit  d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).mul_d (m_imp,  d, Z.m_imp); return Z; }
-Bignum Bignum::div (Digit  d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).div_d (m_imp,  d, Z.m_imp); return Z; }
-Bignum Bignum::bor (Digit  d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).bor_d (m_imp,  d, Z.m_imp); return Z; }
-Bignum Bignum::band(Digit  d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).band_d(m_imp,  d, Z.m_imp); return Z; }
-Bignum Bignum::bxor(Digit  d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).bxor_d(m_imp,  d, Z.m_imp); return Z; }
-Bignum Bignum::lsh (Digit  n) const { Bignum Z(not_allocate_tag); algorithms(m_imp).lsh   (m_imp,  n, Z.m_imp); return Z; }
-Bignum Bignum::rsh (Digit  n) const { Bignum Z(not_allocate_tag); algorithms(m_imp).rsh   (m_imp,  n, Z.m_imp); return Z; }
+Bignum Bignum::operator+ (UDigit d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).add_ud (m_imp, d, Z.m_imp); return Z; }
+Bignum Bignum::operator- (UDigit d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).sub_ud (m_imp, d, Z.m_imp); return Z; }
+Bignum Bignum::operator* (UDigit d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).mul_ud (m_imp, d, Z.m_imp); return Z; }
+Bignum Bignum::operator/ (UDigit d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).div_ud (m_imp, d, Z.m_imp); return Z; }
+Bignum Bignum::operator| (UDigit d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).bor_ud (m_imp, d, Z.m_imp); return Z; }
+Bignum Bignum::operator& (UDigit d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).band_ud(m_imp, d, Z.m_imp); return Z; }
+Bignum Bignum::operator^ (UDigit d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).bxor_ud(m_imp, d, Z.m_imp); return Z; }
+Bignum Bignum::operator<<(UDigit n) const { Bignum Z(not_allocate_tag); algorithms(m_imp).lsh_ud (m_imp, n, Z.m_imp); return Z; }
+Bignum Bignum::operator>>(UDigit n) const { Bignum Z(not_allocate_tag); algorithms(m_imp).rsh_ud (m_imp, n, Z.m_imp); return Z; }
+
+Bignum Bignum::operator+ (SDigit d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).add_sd (m_imp, d, Z.m_imp); return Z; }
+Bignum Bignum::operator- (SDigit d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).sub_sd (m_imp, d, Z.m_imp); return Z; }
+Bignum Bignum::operator* (SDigit d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).mul_sd (m_imp, d, Z.m_imp); return Z; }
+Bignum Bignum::operator/ (SDigit d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).div_sd (m_imp, d, Z.m_imp); return Z; }
+Bignum Bignum::operator| (SDigit d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).bor_sd (m_imp, d, Z.m_imp); return Z; }
+Bignum Bignum::operator& (SDigit d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).band_sd(m_imp, d, Z.m_imp); return Z; }
+Bignum Bignum::operator^ (SDigit d) const { Bignum Z(not_allocate_tag); algorithms(m_imp).bxor_sd(m_imp, d, Z.m_imp); return Z; }
+Bignum Bignum::operator<<(SDigit n) const { Bignum Z(not_allocate_tag); algorithms(m_imp).lsh_sd (m_imp, n, Z.m_imp); return Z; }
+Bignum Bignum::operator>>(SDigit n) const { Bignum Z(not_allocate_tag); algorithms(m_imp).rsh_sd (m_imp, n, Z.m_imp); return Z; }
+
+Bignum & Bignum::operator+= (UDigit d) { algorithms(m_imp).add_ud (m_imp, d, m_imp); return *this; }
+Bignum & Bignum::operator-= (UDigit d) { algorithms(m_imp).sub_ud (m_imp, d, m_imp); return *this; }
+Bignum & Bignum::operator*= (UDigit d) { algorithms(m_imp).mul_ud (m_imp, d, m_imp); return *this; }
+Bignum & Bignum::operator/= (UDigit d) { algorithms(m_imp).div_ud (m_imp, d, m_imp); return *this; }
+Bignum & Bignum::operator|= (UDigit d) { algorithms(m_imp).bor_ud (m_imp, d, m_imp); return *this; }
+Bignum & Bignum::operator&= (UDigit d) { algorithms(m_imp).band_ud(m_imp, d, m_imp); return *this; }
+Bignum & Bignum::operator^= (UDigit d) { algorithms(m_imp).bxor_ud(m_imp, d, m_imp); return *this; }
+Bignum & Bignum::operator<<=(UDigit n) { algorithms(m_imp).lsh_ud (m_imp, n, m_imp); return *this; }
+Bignum & Bignum::operator>>=(UDigit n) { algorithms(m_imp).rsh_ud (m_imp, n, m_imp); return *this; }
+
+Bignum & Bignum::operator+= (SDigit d) { algorithms(m_imp).add_sd (m_imp, d, m_imp); return *this; }
+Bignum & Bignum::operator-= (SDigit d) { algorithms(m_imp).sub_sd (m_imp, d, m_imp); return *this; }
+Bignum & Bignum::operator*= (SDigit d) { algorithms(m_imp).mul_sd (m_imp, d, m_imp); return *this; }
+Bignum & Bignum::operator/= (SDigit d) { algorithms(m_imp).div_sd (m_imp, d, m_imp); return *this; }
+Bignum & Bignum::operator|= (SDigit d) { algorithms(m_imp).bor_sd (m_imp, d, m_imp); return *this; }
+Bignum & Bignum::operator&= (SDigit d) { algorithms(m_imp).band_sd(m_imp, d, m_imp); return *this; }
+Bignum & Bignum::operator^= (SDigit d) { algorithms(m_imp).bxor_sd(m_imp, d, m_imp); return *this; }
+Bignum & Bignum::operator<<=(SDigit n) { algorithms(m_imp).lsh_sd (m_imp, n, m_imp); return *this; }
+Bignum & Bignum::operator>>=(SDigit n) { algorithms(m_imp).rsh_sd (m_imp, n, m_imp); return *this; }
+
+UDigit Bignum::operator%(UDigit d) const { return BignumAlgorithm< decltype(m_imp) >::mod_ud(m_imp, d); }
+
+Bignum Bignum::operator<<(BitWidth<UDigit> bn) const { Bignum Z(not_allocate_tag); algorithms(m_imp).lsh_b_ud(m_imp, bn.v, Z.m_imp); return Z; }
+Bignum Bignum::operator>>(BitWidth<UDigit> bn) const { Bignum Z(not_allocate_tag); algorithms(m_imp).rsh_b_ud(m_imp, bn.v, Z.m_imp); return Z; }
+
+Bignum Bignum::operator<<(BitWidth<SDigit> bn) const { Bignum Z(not_allocate_tag); algorithms(m_imp).lsh_b_sd(m_imp, bn.v, Z.m_imp); return Z; }
+Bignum Bignum::operator>>(BitWidth<SDigit> bn) const { Bignum Z(not_allocate_tag); algorithms(m_imp).rsh_b_sd(m_imp, bn.v, Z.m_imp); return Z; }
+
+Bignum & Bignum::operator<<=(BitWidth<UDigit> bn) { algorithms(m_imp).lsh_b (m_imp, bn.v, m_imp); return *this; }
+Bignum & Bignum::operator>>=(BitWidth<UDigit> bn) { algorithms(m_imp).rsh_b (m_imp, bn.v, m_imp); return *this; }
+
+Bignum & Bignum::operator<<=(BitWidth<SDigit> bn) { algorithms(m_imp).lsh_b (m_imp, bn.v, m_imp); return *this; }
+Bignum & Bignum::operator>>=(BitWidth<SDigit> bn) { algorithms(m_imp).rsh_b (m_imp, bn.v, m_imp); return *this; }
+
+/*
 Bignum Bignum::lshb(Digit bn) const { Bignum Z(not_allocate_tag); algorithms(m_imp).lsh_b (m_imp, bn, Z.m_imp); return Z; }
 Bignum Bignum::rshb(Digit bn) const { Bignum Z(not_allocate_tag); algorithms(m_imp).rsh_b (m_imp, bn, Z.m_imp); return Z; }
 Bignum Bignum::lshd(Digit dn) const { Bignum Z(not_allocate_tag); algorithms(m_imp).lsh_d (m_imp, dn, Z.m_imp); return Z; }
 Bignum Bignum::rshd(Digit dn) const { Bignum Z(not_allocate_tag); algorithms(m_imp).rsh_d (m_imp, dn, Z.m_imp); return Z; }
 
-Bignum Bignum::mod(Digit d) const { return Bignum(BignumAlgorithm< decltype(m_imp) >::mod_d(m_imp, d)); }
-
-Bignum & Bignum::add_by (Digit  d) { algorithms(m_imp).add_d (m_imp,  d, m_imp); return *this; }
-Bignum & Bignum::sub_by (Digit  d) { algorithms(m_imp).sub_d (m_imp,  d, m_imp); return *this; }
-Bignum & Bignum::mul_by (Digit  d) { algorithms(m_imp).mul_d (m_imp,  d, m_imp); return *this; }
-Bignum & Bignum::div_by (Digit  d) { algorithms(m_imp).div_d (m_imp,  d, m_imp); return *this; }
-Bignum & Bignum::bor_by (Digit  d) { algorithms(m_imp).bor_d (m_imp,  d, m_imp); return *this; }
-Bignum & Bignum::band_by(Digit  d) { algorithms(m_imp).band_d(m_imp,  d, m_imp); return *this; }
-Bignum & Bignum::bxor_by(Digit  d) { algorithms(m_imp).bxor_d(m_imp,  d, m_imp); return *this; }
-Bignum & Bignum::lsh_by (Digit  n) { algorithms(m_imp).lsh   (m_imp,  n, m_imp); return *this; }
-Bignum & Bignum::rsh_by (Digit  n) { algorithms(m_imp).rsh   (m_imp,  n, m_imp); return *this; }
 Bignum & Bignum::lshb_by(Digit bn) { algorithms(m_imp).lsh_b (m_imp, bn, m_imp); return *this; }
 Bignum & Bignum::rshb_by(Digit bn) { algorithms(m_imp).rsh_b (m_imp, bn, m_imp); return *this; }
 Bignum & Bignum::lshd_by(Digit dn) { algorithms(m_imp).lsh_d (m_imp, dn, m_imp); return *this; }
 Bignum & Bignum::rshd_by(Digit dn) { algorithms(m_imp).rsh_d (m_imp, dn, m_imp); return *this; }
+ */
 
 Bignum Bignum::sqr() const { Bignum Z(not_allocate_tag); algorithms(m_imp).sqr(m_imp, Z.m_imp); return Z; }
 
@@ -1478,7 +1678,7 @@ Pair< Bignum, Bignum > Bignum::div_mod(Bignum const & Y) const {
 
 Pair< Bignum, Digit > Bignum::div_mod(Digit d) const {
 	Bignum Q(not_allocate_tag);
-	auto r = algorithms(m_imp).div_mod_d(m_imp, d, Q.m_imp);
+	auto r = algorithms(m_imp).div_mod_ud(m_imp, d, Q.m_imp);
 	return make_pair(move(Q), r);
 }
 
@@ -1490,5 +1690,4 @@ std::string Bignum::to_s(Digit base, bool show_plus) const {
 	return algorithms(m_imp).to_s(m_imp, base, show_plus);
 }
 
-} // namespace Math
 } // namespace BR

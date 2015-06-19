@@ -6,9 +6,9 @@
 #include <libbr/type_operate/remove_const_volatile.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< typename T >
 struct IsPointerBasic : BooleanFalse {};
@@ -19,13 +19,13 @@ struct IsPointerBasic< T * > : BooleanTrue {};
 template< typename T >
 using IsPointer = BooleanAnd< IsPointerBasic< RemoveConstVolatile< T > >, NotMemberPointer< T > >;
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsPointer : Boolean< Detail::IsPointer< T > > {};
+struct IsPointer : Boolean< Detail::TypeOperate::IsPointer< T > > {};
 
 template< typename T >
-struct NotPointer : BooleanNot< Detail::IsPointer< T > > {};
+struct NotPointer : BooleanNot< Detail::TypeOperate::IsPointer< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

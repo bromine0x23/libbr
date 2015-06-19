@@ -3,20 +3,20 @@
 #include <libbr/config.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/intrinsics.hpp>
-#if !defined(BR_TT_IS_POLYMORPHIC)
+#if !defined(BR_IS_POLYMORPHIC)
 #  include <libbr/type_operate/remove_const_volatile.hpp>
 #  include <libbr/type_operate/is_class.hpp>
-#endif // !BR_TT_IS_POLYMORPHIC
+#endif
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
-#if defined(BR_TYPE_OPERATE_IS_POLYMORPHIC)
+#if defined(BR_IS_POLYMORPHIC)
 
 template< typename T >
-using IsPolymorphic = BooleanConstant< BR_TYPE_OPERATE_IS_POLYMORPHIC(T) >;
+using IsPolymorphic = BooleanConstant< BR_IS_POLYMORPHIC(T) >;
 
 #else
 
@@ -52,15 +52,15 @@ struct IsPolymorphicBasic {
 template< typename T >
 using IsPolymorphic = BooleanAnd< IsClass< T >, BooleanConstant< IsPolymorphicBasic< T >::value > >;
 
-#endif // BR_TYPE_OPERATE_IS_POLYMORPHIC
+#endif // BR_IS_POLYMORPHIC
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsPolymorphic : Boolean< Detail::IsPolymorphic< T > > {};
+struct IsPolymorphic : Boolean< Detail::TypeOperate::IsPolymorphic< T > > {};
 
 template< typename T >
-struct NotPolymorphic : BooleanNot< Detail::IsPolymorphic< T > > {};
+struct NotPolymorphic : BooleanNot< Detail::TypeOperate::IsPolymorphic< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

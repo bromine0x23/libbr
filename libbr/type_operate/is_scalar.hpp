@@ -8,20 +8,20 @@
 #include <libbr/type_operate/is_member_pointer.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< typename T >
 using IsScalar = BooleanOr< IsArithmetic< T >, IsEnum< T >, IsPointer< T >, IsMemberPointer< T > >;
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsScalar : Boolean< Detail::IsScalar< T > > {};
+struct IsScalar : Boolean< Detail::TypeOperate::IsScalar< T > > {};
 
 template< typename T >
-struct NotScalar : BooleanNot< Detail::IsScalar< T > > {};
+struct NotScalar : BooleanNot< Detail::TypeOperate::IsScalar< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

@@ -1,3 +1,5 @@
+#pragma once
+
 #define BR_COMPILER "Microsoft Visual C++ version " _MSC_VER
 
 #define BR_MSVC

@@ -9,10 +9,9 @@
 #include <libbr/utility/move.hpp>
 
 namespace BR {
-namespace Iterator {
 
 template< typename TIterator >
-class MoveIterator : public BR::Iterator::Iterator<
+class MoveIterator : public BR::Iterator<
 	IteratorCategory  < TIterator >,
 	IteratorValue     < TIterator >,
 	IteratorDifference< TIterator >,
@@ -20,7 +19,7 @@ class MoveIterator : public BR::Iterator::Iterator<
 	IteratorReference < TIterator >
 > {
 private:
-	using Base = BR::Iterator::Iterator<
+	using Base = BR::Iterator<
 		IteratorCategory  < TIterator >,
 		IteratorValue     < TIterator >,
 		IteratorDifference< TIterator >,
@@ -32,10 +31,10 @@ public:
 	using Iterator   = TIterator;
 	using Difference = typename Base::Difference;
 	using Pointer    = typename Base::Pointer;
-	using Reference  = typename TypeOperate::Conditional<
+	using Reference  = Conditional<
+		IsReference< typename Base::Reference >,
 		typename Base::Reference,
-		TypeOperate::AddRValueReference< typename Base::Reference >,
-		typename Base::Reference
+		AddRValueReference< typename Base::Reference >
 	>;
 
 private:
@@ -135,9 +134,8 @@ inline IteratorDifference< TIterator0 > operator-(MoveIterator< TIterator0 > con
 }
 
 template< typename TIterator >
-inline MoveIterator< TIterator > makeMoveIterator(TIterator iterator)  {
+inline MoveIterator< TIterator > make_move_iterator(TIterator iterator)  {
 	return  MoveIterator< TIterator >(iterator);
 }
 
-} // namespace Iterator
 } // namespace BR

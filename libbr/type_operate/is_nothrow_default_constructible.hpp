@@ -9,9 +9,9 @@
 #include <libbr/type_operate/remove_all_extents.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< typename T >
 struct IsNothrowDefaultConstructibleBasic : BooleanConstant< noexcept(T()) > {};
@@ -29,13 +29,13 @@ using IsNothrowDefaultConstructible = BooleanAnd<
 	>
 >;
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsNothrowDefaultConstructible : Boolean< Detail::IsNothrowDefaultConstructible< T > > {};
+struct IsNothrowDefaultConstructible : Boolean< Detail::TypeOperate::IsNothrowDefaultConstructible< T > > {};
 
 template< typename T >
-struct NotNothrowDefaultConstructible : BooleanNot< Detail::IsNothrowDefaultConstructible< T > > {};
+struct NotNothrowDefaultConstructible : BooleanNot< Detail::TypeOperate::IsNothrowDefaultConstructible< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

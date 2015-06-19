@@ -10,19 +10,16 @@
 #include <libbr/type_operate/type.hpp>
 
 namespace BR {
-namespace TypeTraits {
 
 namespace Detail {
 namespace PointerTraits {
-
-using namespace TypeOperate;
 
 ////////////////////////////////
 //
 // PointerTraits::Element
 //
 #define BR_TYPE_OPERATE_TYPE_NAME Element
-#include <libbr/type_operate/has_member_type.hpp>
+#include <libbr/type_operate/has_member_type.inc>
 
 template< typename TPointer, bool = HasMemberTypeElement< TPointer >::value >
 struct TypeElement;
@@ -41,7 +38,7 @@ using Element = TypeUnwrap< TypeElement< TPointer > >;
 // PointerTraits::Difference
 //
 #define BR_TYPE_OPERATE_TYPE_NAME Difference
-#include <libbr/type_operate/has_member_type.hpp>
+#include <libbr/type_operate/has_member_type.inc>
 
 template< typename TPointer, bool = HasMemberTypeDifference< TPointer >::value >
 struct TypeDifference;
@@ -60,7 +57,7 @@ using Difference = TypeUnwrap< TypeDifference< TPointer > >;
 // PointerTraits::Rebind
 //
 #define BR_TYPE_OPERATE_TYPE_NAME Rebind
-#include <libbr/type_operate/has_member_type.hpp>
+#include <libbr/type_operate/has_member_type.inc>
 
 template< typename TPointer, typename TValue, bool = HasMemberTypeRebind< TPointer >::value >
 struct TypeRebind;
@@ -86,8 +83,8 @@ struct PointerTraits {
 	template< typename TValue >
 	using Rebind = Detail::PointerTraits::Rebind< Pointer, TValue >;
 
-	static Pointer make_pointer(TypeOperate::EnableIf< TypeOperate::NotVoid< Element >, Element > & reference) {
-		return Pointer::makePointer(reference);
+	static Pointer make_pointer(EnableIf< NotVoid< Element >, Element > & reference) {
+		return Pointer::make_pointer(reference);
 	}
 };
 
@@ -95,15 +92,14 @@ template< typename TElement >
 struct PointerTraits< TElement * > {
 	using Element    = TElement;
 	using Pointer    = Element *;
-	using Difference = BR::PointerDifference;
+	using Difference = PointerDifference;
 
 	template< typename TOtherValue >
 	using Rebind = TOtherValue *;
 
-	static Pointer make_pointer(TypeOperate::EnableIf< TypeOperate::NotVoid< Element >, Element > & reference) {
-		return Memory::address_of(reference);
+	static Pointer make_pointer(EnableIf< NotVoid< Element >, Element > & reference) {
+		return address_of(reference);
 	}
 };
 
-} // namespace TypeTraits
 } // namespace BR

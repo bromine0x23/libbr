@@ -11,8 +11,8 @@
 namespace BR_TYPE_OPERATE_NAMESPACE {
 
 using ::BR::make_rvalue;
-using ::BR::TypeOperate::BooleanTrue;
-using ::BR::TypeOperate::BooleanFalse;
+using ::BR::BooleanTrue;
+using ::BR::BooleanFalse;
 
 struct HasMemberFunctionTest {
 	template < typename T, typename ... TArguments >
@@ -28,12 +28,12 @@ using HasMemberFunction = decltype(HasMemberFunctionTest::test< T, TArguments ..
 } // namespace BR_TYPE_OPERATE_NAMESPACE
 
 template< typename T, typename ... TArguments >
-struct BR_JOIN(HasMemberFunction_, BR_TYPE_OPERATE_FUNCTION_NAME) : ::BR::TypeOperate::Boolean<
+struct BR_JOIN(HasMemberFunction_, BR_TYPE_OPERATE_FUNCTION_NAME) : ::BR::Boolean<
 	BR_TYPE_OPERATE_NAMESPACE::HasMemberFunction< T, TArguments ... >
 > {};
 
 template< typename T, typename ... TArguments >
-struct BR_JOIN(NoMemberFunction_, BR_TYPE_OPERATE_FUNCTION_NAME) : ::BR::TypeOperate::BooleanNot<
+struct BR_JOIN(NoMemberFunction_, BR_TYPE_OPERATE_FUNCTION_NAME) : ::BR::BooleanNot<
 	BR_TYPE_OPERATE_NAMESPACE::HasMemberFunction< T, TArguments ... >
 > {};
 

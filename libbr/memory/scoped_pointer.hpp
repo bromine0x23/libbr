@@ -7,7 +7,6 @@
 #include <libbr/utility/move.hpp>
 
 namespace BR {
-namespace Memory {
 
 template< typename TValue, typename TDeleter = CheckedDeleter<TValue> >
 class ScopedPointer : public Detail::PointerWrapper<TValue> {
@@ -41,7 +40,6 @@ private:
 
 }; // class ScopedPointer<TValue>
 
-} // namespace Memory
 } // namespace BR
 
 

@@ -5,9 +5,9 @@
 #include <libbr/type_operate/type.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< typename T >
 struct TypeRemovePointerBasic : TypeWrapper< T > {};
@@ -18,14 +18,14 @@ struct TypeRemovePointerBasic< T * > : TypeWrapper< T > {};
 template< typename T >
 using TypeRemovePointer = TypeRemovePointerBasic< RemoveConstVolatile< T > >;
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct TypeRemovePointer : TypeRewrap< Detail::TypeRemovePointer< T > > {};
+struct TypeRemovePointer : TypeRewrap< Detail::TypeOperate::TypeRemovePointer< T > > {};
 
 template< typename T >
 using RemovePointer = TypeUnwrap< TypeRemovePointer< T > >;
 
-} // namespace TypeOperate
 } // namespace BR
 

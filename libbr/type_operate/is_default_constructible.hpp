@@ -8,9 +8,9 @@
 #include <libbr/type_operate/remove_all_extents.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 struct IsDefaultConstructibleTester {
 	template< typename T, typename = decltype(T()) >
@@ -36,13 +36,13 @@ using IsDefaultConstructible = Conditional<
 	IsDefaultConstructibleBasic< T >
 >;
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsDefaultConstructible : Boolean< Detail::IsDefaultConstructible< T > > {};
+struct IsDefaultConstructible : Boolean< Detail::TypeOperate::IsDefaultConstructible< T > > {};
 
 template< typename T, typename ... TArguments >
-struct NotDefaultConstructible : BooleanNot< Detail::IsDefaultConstructible< T > > {};
+struct NotDefaultConstructible : BooleanNot< Detail::TypeOperate::IsDefaultConstructible< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

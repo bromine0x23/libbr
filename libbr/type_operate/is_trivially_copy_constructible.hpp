@@ -4,23 +4,23 @@
 #include <libbr/type_operate/bool.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
-// TODO
+// TODO: IsTriviallyCopyConstructible
 template< typename T >
 struct IsTriviallyCopyConstructible {
 	static_assert(Conditional< BooleanFalse, T, BooleanFalse >::value, "Not implement yet.");
 };
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsTriviallyCopyConstructible : Boolean< Detail::IsTriviallyCopyConstructible< T > > {};
+struct IsTriviallyCopyConstructible : Boolean< Detail::TypeOperate::IsTriviallyCopyConstructible< T > > {};
 
 template< typename T >
-struct NotTriviallyCopyConstructible : BooleanNot< Detail::IsTriviallyCopyConstructible< T > > {};
+struct NotTriviallyCopyConstructible : BooleanNot< Detail::TypeOperate::IsTriviallyCopyConstructible< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

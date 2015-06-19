@@ -13,11 +13,7 @@
 #include <libbr/utility/swap.hpp>
 
 namespace BR {
-namespace Memory {
 namespace Detail {
-
-using namespace TypeOperate;
-using namespace TypeTraits;
 
 template< typename TValue >
 class BasicPointerWrapper {
@@ -27,13 +23,13 @@ private:
 
 public:
 	using Value = TValue;
-	using Pointer = AddPointer<Value>;
+	using Pointer = AddPointer< Value >;
 
-	BasicPointerWrapper() : pointer_(nullptr) {}
+	BasicPointerWrapper() : pointer_(nullptr) { }
 
-	BasicPointerWrapper(NullPointer) : Self() {}
+	BasicPointerWrapper(NullPointer) : Self() { }
 
-	explicit BasicPointerWrapper(Pointer pointer) : pointer_(pointer) {}
+	explicit BasicPointerWrapper(Pointer pointer) : pointer_(pointer) { }
 
 	BasicPointerWrapper(Self && pointer) : pointer_(pointer) {
 		pointer.pointer_ = nullptr;
@@ -49,17 +45,17 @@ private:
 }; // class BasicPointerWrapper<TPointer>
 
 template< typename TValue >
-class ScalarPointerWrapper : public BasicPointerWrapper<TValue> {
+class ScalarPointerWrapper : public BasicPointerWrapper< TValue > {
 
 public:
 	using Element = TValue;
 
 private:
 	using Self = ScalarPointerWrapper;
-	using Base = BasicPointerWrapper<Element>;
+	using Base = BasicPointerWrapper< Element >;
 
 public:
-	AddLValueReference<Element> operator*() const noexcept {
+	AddLValueReference< Element > operator*() const noexcept {
 		BR_ASSERT(Base::get() != nullptr);
 		return *Base::get();
 	}
@@ -71,36 +67,36 @@ public:
 }; // ScalarPointerWrapper<TValue>
 
 template< typename TValue >
-class ArrayPointerWrapper : public BasicPointerWrapper< RemoveExtent<TValue> > {
+class ArrayPointerWrapper : public BasicPointerWrapper< RemoveExtent< TValue > > {
 
 public:
-	using Element = RemoveExtent<TValue>;
+	using Element = RemoveExtent< TValue >;
 
 private:
 	using Self = ArrayPointerWrapper;
-	using Base = BasicPointerWrapper<Element>;
+	using Base = BasicPointerWrapper< Element >;
 
 public:
 	using Value   = TValue;
 
 	Element operator[](Size index) const noexcept {
 		BR_ASSERT(Base::get() != nullptr);
-		BR_ASSERT(index >= 0 && (index < Extent<Value>::value || Extent<Value>::value == 0));
+		BR_ASSERT(index >= 0 && (index < Extent< Value >::value || Extent< Value >::value == 0));
 		return Base::get()[index];
 	}
 }; // class ArrayPointerWrapper<TValue>
 
 template< typename TValue >
 class PointerWrapper : public Conditional<
-	IsArray<TValue>,
-	ArrayPointerWrapper<TValue>,
-	ScalarPointerWrapper<TValue>
+	IsArray< TValue >,
+	ArrayPointerWrapper< TValue >,
+	ScalarPointerWrapper< TValue >
 > {
 private:
 	using Base = Conditional<
-		IsArray<TValue>,
-		ArrayPointerWrapper<TValue>,
-		ScalarPointerWrapper<TValue>
+		IsArray< TValue >,
+		ArrayPointerWrapper< TValue >,
+		ScalarPointerWrapper< TValue >
 	>;
 
 public:
@@ -109,7 +105,5 @@ public:
 	using Pointer = typename Base::Pointer;
 
 };
-
 } // namespace Detail
-} // namespace Memory
 } // namespace BR

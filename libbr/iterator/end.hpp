@@ -3,7 +3,6 @@
 #include <libbr/config.hpp>
 
 namespace BR {
-namespace Iterator {
 
 template< typename T, Size S >
 inline BR_CONSTEXPR_AFTER_CPP11 T * end(CArray< T, S > & array) {
@@ -20,5 +19,4 @@ inline auto end(TContainer const & container) -> decltype(container.end()) {
 	return container.end();
 }
 
-} // namespace Iterator
 } // namespace BR

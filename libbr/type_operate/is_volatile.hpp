@@ -4,9 +4,9 @@
 #include <libbr/type_operate/bool.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< typename T >
 struct IsVolatile : BooleanFalse {};
@@ -14,13 +14,13 @@ struct IsVolatile : BooleanFalse {};
 template< typename T >
 struct IsVolatile< T volatile > : BooleanTrue{};
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsVolatile : Boolean< Detail::IsVolatile< T > > {};
+struct IsVolatile : Boolean< Detail::TypeOperate::IsVolatile< T > > {};
 
 template< typename T >
-struct NotVolatile : BooleanNot< Detail::IsVolatile< T > > {};
+struct NotVolatile : BooleanNot< Detail::TypeOperate::IsVolatile< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

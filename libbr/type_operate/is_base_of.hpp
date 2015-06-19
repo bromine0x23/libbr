@@ -4,21 +4,21 @@
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/intrinsics.hpp>
 #include <libbr/type_operate/remove_const_volatile.hpp>
-#if !defined(BR_TYPE_OPERATE_IS_BASE_OF)
+#if !defined(BR_IS_BASE_OF)
 #  include <libbr/type_operate/is_class.hpp>
 #  include <libbr/type_operate/is_lvalue_reference.hpp>
 #  include <libbr/type_operate/is_same.hpp>
-#endif // !BR_TYPE_OPERATE_IS_BASE_OF
+#endif
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
-#if defined(BR_TYPE_OPERATE_IS_BASE_OF)
+#if defined(BR_IS_BASE_OF)
 
 template< typename TBase, typename TDerived >
-using IsBaseOf = BooleanConstant < BR_TYPE_OPERATE_IS_BASE_OF(RemoveConstVolatile< TBase >, RemoveConstVolatile< TDerived >) >;
+using IsBaseOf = BooleanConstant < BR_IS_BASE_OF(RemoveConstVolatile< TBase >, RemoveConstVolatile< TDerived >) >;
 
 #else
 
@@ -54,16 +54,16 @@ using IsBaseOf = BooleanAnd<
 	IsBaseOfBasic< RemoveConstVolatile< TBase >, RemoveConstVolatile< TDerived > >
  >;
 
-#endif // BR_TYPE_OPERATE_IS_BASE_OF
+#endif // BR_IS_BASE_OF
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename TBase, typename TDerived >
-struct IsBaseOf : Boolean< Detail::IsBaseOf< TBase, TDerived > > {};
+struct IsBaseOf : Boolean< Detail::TypeOperate::IsBaseOf< TBase, TDerived > > {};
 
 template< typename TBase, typename TDerived >
-struct NotBaseOf : BooleanNot< Detail::IsBaseOf< TBase, TDerived > > {};
+struct NotBaseOf : BooleanNot< Detail::TypeOperate::IsBaseOf< TBase, TDerived > > {};
 
-} // namespace TypeOperate
 } // namespace BR
 

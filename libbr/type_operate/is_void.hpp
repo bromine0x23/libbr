@@ -5,9 +5,9 @@
 #include <libbr/type_operate/remove_const_volatile.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< typename T >
 struct IsVoidBasic : BooleanFalse {};
@@ -18,13 +18,13 @@ struct IsVoidBasic< void > : BooleanTrue {};
 template< typename T >
 struct IsVoid : IsVoidBasic< RemoveConstVolatile< T > > {};
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsVoid : Boolean< Detail::IsVoid< T > > {};
+struct IsVoid : Boolean< Detail::TypeOperate::IsVoid< T > > {};
 
 template< typename T >
-struct NotVoid : BooleanNot< Detail::IsVoid< T > > {};
+struct NotVoid : BooleanNot< Detail::TypeOperate::IsVoid< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

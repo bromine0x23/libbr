@@ -4,7 +4,6 @@
 #include <libbr/iterator/reverse_iterator.hpp>
 
 namespace BR {
-namespace Iterator {
 
 template< typename T, Size S >
 inline BR_CONSTEXPR_AFTER_CPP11 T * rend(CArray< T, S > & array) {
@@ -21,5 +20,4 @@ inline auto rend(TContainer const & container) -> decltype(container.rend()) {
 	return container.rend();
 }
 
-} // namespace Iterator
 } // namespace BR

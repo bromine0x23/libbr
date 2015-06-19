@@ -4,7 +4,6 @@
 #include <libbr/config.hpp>
 
 namespace BR {
-namespace Memory {
 
 namespace Detail {
 
@@ -27,14 +26,13 @@ using NothrowTag = std::nothrow_t;
 extern NothrowTag nothrow_tag;
 
 /** TODO
-inline NewHandler getNewHandler() noexcept {
+inline NewHandler get_new_handler() noexcept {
 	return std::get_new_handler();
 }
 */
 
-inline NewHandler setNewHandler(NewHandler new_handler) noexcept {
+inline NewHandler set_new_handler(NewHandler new_handler) noexcept {
 	return std::set_new_handler(new_handler);
 }
 
-} // namespace Memory
 } // namespace BR

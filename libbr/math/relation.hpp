@@ -3,7 +3,6 @@
 #include <libbr/config.hpp>
 
 namespace BR {
-namespace Math {
 
 enum class Relation {
 	LT = -1,
@@ -14,5 +13,4 @@ enum class Relation {
 	GREATER_THAN = GT
 };
 
-} // namespace Math
 } // namespace BR

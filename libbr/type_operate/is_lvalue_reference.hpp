@@ -4,9 +4,9 @@
 #include <libbr/type_operate/bool.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< typename T >
 struct IsLValueReference : BooleanFalse {};
@@ -14,13 +14,13 @@ struct IsLValueReference : BooleanFalse {};
 template< typename T >
 struct IsLValueReference< T & > : BooleanTrue {};
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsLValueReference : Boolean< Detail::IsLValueReference< T > > {};
+struct IsLValueReference : Boolean< Detail::TypeOperate::IsLValueReference< T > > {};
 
 template< typename T >
-struct NotLValueReference : BooleanNot< Detail::IsLValueReference< T > > {};
+struct NotLValueReference : BooleanNot< Detail::TypeOperate::IsLValueReference< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

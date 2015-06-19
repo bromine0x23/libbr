@@ -22,9 +22,9 @@
 #define BR_TYPE_OPERATE_NAMESPACE BR_JOIN(BinaryOperator, BR_TYPE_OPERATE_OP_NAME)
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 namespace BR_TYPE_OPERATE_NAMESPACE {
 
 struct NotCareTag {};
@@ -87,19 +87,19 @@ template < typename TLhs, typename TRhs, typename TRet >
 using HasOperator = typename HasOperatorResult< TLhs, TRhs, TRet >::Type;
 
 } // namespace BR_TYPE_OPERATE_NAMESPACE
+} // namespace TypeOperate
 } // namespace Detail
 
-template< typename TLhs, typename TRhs = TLhs, typename TRet = Detail::BR_TYPE_OPERATE_NAMESPACE::NotCareTag >
+template< typename TLhs, typename TRhs = TLhs, typename TRet = Detail::TypeOperate::BR_TYPE_OPERATE_NAMESPACE::NotCareTag >
 struct BR_JOIN(HasOperator, BR_TYPE_OPERATE_OP_NAME) : Boolean<
-	Detail::BR_TYPE_OPERATE_NAMESPACE::HasOperator< TLhs, TRhs, TRet >
+	Detail::TypeOperate::BR_TYPE_OPERATE_NAMESPACE::HasOperator< TLhs, TRhs, TRet >
 > {};
 
-template< typename TLhs, typename TRhs = TLhs, typename TRet = Detail::BR_TYPE_OPERATE_NAMESPACE::NotCareTag >
+template< typename TLhs, typename TRhs = TLhs, typename TRet = Detail::TypeOperate::BR_TYPE_OPERATE_NAMESPACE::NotCareTag >
 struct BR_JOIN(NoOperator, BR_TYPE_OPERATE_OP_NAME) : BooleanNot<
-	Detail::BR_TYPE_OPERATE_NAMESPACE::HasOperator< TLhs, TRhs, TRet >
+	Detail::TypeOperate::BR_TYPE_OPERATE_NAMESPACE::HasOperator< TLhs, TRhs, TRet >
 > {};
 
-} // namespace TypeOperate
 } // namespace BR
 
 #undef BR_TYPE_OPERATE_NAMESPACE

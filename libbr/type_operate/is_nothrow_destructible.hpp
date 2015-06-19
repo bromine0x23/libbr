@@ -12,9 +12,9 @@
 #include <libbr/utility/make_value.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 struct IsNothrowDestructibleTest {
 	template< typename T >
@@ -39,13 +39,13 @@ using IsNothrowDestructible = BooleanAnd<
 	>
 >;
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsNothrowDestructible : Boolean< Detail::IsNothrowDestructible< T > > {};
+struct IsNothrowDestructible : Boolean< Detail::TypeOperate::IsNothrowDestructible< T > > {};
 
 template< typename T >
-struct NotNothrowDestructible : BooleanNot< Detail::IsNothrowDestructible< T > > {};
+struct NotNothrowDestructible : BooleanNot< Detail::TypeOperate::IsNothrowDestructible< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

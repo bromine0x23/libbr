@@ -4,7 +4,6 @@
 #include <libbr/type_operate/type.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 template< typename TValue >
 struct IntegerConstantBase {
@@ -14,13 +13,12 @@ struct IntegerConstantBase {
 template< typename TValue, TValue v >
 struct IntegerConstant : IntegerConstantBase< TValue >, TypeWrapper< IntegerConstant< TValue, v > > {
 	constexpr static auto value = v;
-	constexpr operator TValue() { return value; }
-	constexpr TValue operator()() { return value; }
+	constexpr operator TValue() const { return value; }
+	constexpr TValue operator()() const { return value; }
 };
 
 template< typename TValue, TValue ... values >
 struct Integers {};
 
-} // namespace TypeOperate
 } // namespace BR
 

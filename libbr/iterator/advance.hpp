@@ -5,9 +5,9 @@
 #include <libbr/type_traits/iterator_traits.hpp>
 
 namespace BR {
-namespace Iterator {
 
 namespace Detail {
+namespace Iterator {
 
 template< typename TIterator >
 inline void advance(TIterator & iterator, IteratorDifference< TIterator > step, InputIteratorTag) {
@@ -34,12 +34,12 @@ inline void advance(TIterator & iterator, IteratorDifference< TIterator > step, 
 	iterator += step;
 }
 
+} // namespace Iterator
 } // namespace Detail
 
 template< typename TIterator >
 inline void advance(TIterator & iterator, IteratorDifference< TIterator > step) {
-	Detail::advance(iterator, step, IteratorCategory< TIterator >());
+	Detail::Iterator::advance(iterator, step, IteratorCategory< TIterator >());
 }
 
-} // namespace Iterator
 } // namespace BR

@@ -7,20 +7,20 @@
 #include <libbr/type_operate/is_reference.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< typename T >
 using IsReferenceable = BooleanOr< IsObject< T >, IsReference< T >, IsFunction< T > >;
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsReferenceable : Boolean< Detail::IsReferenceable< T > > {};
+struct IsReferenceable : Boolean< Detail::TypeOperate::IsReferenceable< T > > {};
 
 template< typename T >
-struct NotReferenceable : BooleanNot< Detail::IsReferenceable< T > > {};
+struct NotReferenceable : BooleanNot< Detail::TypeOperate::IsReferenceable< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

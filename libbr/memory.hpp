@@ -1,12 +1,6 @@
 #pragma once
 
 #include <libbr/config.hpp>
-
-namespace BR {
-namespace Memory {
-} // namespace Memory
-} // namespace BR
-
 #include <libbr/memory/address_of.hpp>
 #include <libbr/memory/allocator.hpp>
 #include <libbr/memory/allocator_argument_tag.hpp>

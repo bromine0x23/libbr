@@ -17,4 +17,4 @@ BooleanOr< \
 #include <libbr/type_operate/is_fundamental.hpp>
 #include <libbr/type_operate/is_integer.hpp>
 #include <libbr/type_operate/is_pointer.hpp>
-#include <libbr/type_operate/detail/has_prefix_operator.hpp>
+#include <libbr/type_operate/detail/has_prefix_operator.inc>

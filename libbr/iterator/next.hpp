@@ -8,18 +8,14 @@
 #include <libbr/type_operate/is_base_of.hpp>
 
 namespace BR {
-namespace Iterator {
 
 template<
 	typename TIterator,
-	typename = TypeOperate::EnableIf<
-		TypeOperate::IsBaseOf< ForwardIteratorTag, IteratorCategory< TIterator > >
-	>
+	typename = EnableIf< IsBaseOf< ForwardIteratorTag, IteratorCategory< TIterator > > >
 >
 inline TIterator next(TIterator current, IteratorDifference< TIterator > step = 1)  {
 	advance(current, step);
 	return step;
 }
 
-} // namespace Iterator
 } // namespace BR

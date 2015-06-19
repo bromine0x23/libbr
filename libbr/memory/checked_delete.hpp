@@ -1,12 +1,11 @@
 #pragma once
 
-#include <libbr/assert/type_is_complete.hpp>
+#include <libbr/assert/assert_type_completeness.hpp>
 #include <libbr/type_operate/conditional.hpp>
 #include <libbr/type_operate/is_array.hpp>
 #include <libbr/type_operate/remove_extent.hpp>
 
 namespace BR {
-namespace Memory {
 
 template< typename T >
 struct CheckedScalarDeleter  {
@@ -14,7 +13,7 @@ struct CheckedScalarDeleter  {
 	using Argument = T *;
 
 	Result operator()(Argument argumrnt) const {
-		Assert::type_is_complete<T>();
+		assert_type_completeness<T>();
 		delete argumrnt;
 	}
 }; // struct CheckedScalarDeleter
@@ -25,7 +24,7 @@ struct CheckedArrayDeleter {
 	using Argument = T *;
 
 	Result operator()(Argument argumrnt) const {
-		Assert::type_is_complete<T>();
+		assert_type_completeness<T>();
 		delete [] argumrnt;
 	}
 }; // struct CheckedArrayDeleter
@@ -33,10 +32,10 @@ struct CheckedArrayDeleter {
 template< typename T >
 struct CheckedDeleter {
 	using Result = void;
-	using Argument = TypeOperate::RemoveExtent<T> *;
+	using Argument = RemoveExtent<T> *;
 
 	Result operator()(Argument argumrnt) const {
-		TypeOperate::Conditional< TypeOperate::IsArray<T>, CheckedArrayDeleter<T>, CheckedScalarDeleter<T> >()(argumrnt);
+		Conditional< IsArray<T>, CheckedArrayDeleter<T>, CheckedScalarDeleter<T> >()(argumrnt);
 	}
 }; // struct CheckedArrayDeleter
 
@@ -55,5 +54,4 @@ inline void checked_delete(T * x)  {
 	CheckedDeleter<T>()(x);
 }
 
-} // namespace Memory
 } // namespace BR

@@ -1,3 +1,5 @@
+#pragma once
+
 #define BR_COMPILER "GNU C++ version " __VERSION__
 
 #define BR_GCC

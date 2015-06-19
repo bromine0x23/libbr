@@ -10,9 +10,9 @@
 #include <libbr/type_operate/remove_reference.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< typename T >
 using TypeDecayBasic = Conditional<
@@ -28,13 +28,13 @@ using TypeDecayBasic = Conditional<
 template< typename T >
 using TypeDecay = TypeDecayBasic< RemoveReference< T > >;
 
-};
+} // namespace TypeOperate
+} // namespace Detail
 
 template< typename T >
-struct TypeDecay : TypeRewrap< Detail::TypeDecay< T > > {};
+struct TypeDecay : TypeRewrap< Detail::TypeOperate::TypeDecay< T > > {};
 
 template< typename T >
 using Decay = TypeUnwrap< TypeDecay< T > >;
 
-} // namespace TypeOperate
 } // namespace BR

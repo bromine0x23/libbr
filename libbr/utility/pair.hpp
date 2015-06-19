@@ -5,20 +5,21 @@
 #include <libbr/type_operate/decay.hpp>
 #include <libbr/type_operate/enable_if.hpp>
 #include <libbr/type_operate/is_convertible.hpp>
+#include <libbr/type_operate/is_nothrow_swappable.hpp>
+#include <libbr/type_operate/is_swappable.hpp>
 #include <libbr/type_operate/has_nothrow_move_assignment.hpp>
 #include <libbr/utility/forward.hpp>
+#include <libbr/utility/move.hpp>
+#include <libbr/utility/piecewise_construct_tag.hpp>
 #include <libbr/utility/swap.hpp>
-
-#if defined(BR_CPP14)
-#  define BR_PAIR_CONSTEXPR constexpr
-#else
-#  define BR_PAIR_CONSTEXPR
-#endif // defined
 
 namespace BR {
 
+template< typename ... Tn >
+class Tuple;
+
 template< typename T0, typename T1 >
-struct Pair {
+class Pair {
 public:
 	using First  = T0;
 	using Second = T1;
@@ -31,65 +32,55 @@ public:
 	constexpr Pair() : first(), second() { }
 
 	template< typename U0, typename U1,
-		typename = TypeOperate::EnableIf<
-			TypeOperate::BooleanAnd<
-				TypeOperate::IsConvertible< U0 const &, T0 >,
-				TypeOperate::IsConvertible< U1 const &, T1 >
+		typename = EnableIf<
+			BooleanAnd<
+				IsConvertible< U0 const &, T0 >,
+				IsConvertible< U1 const &, T1 >
 			>
 		>
 	>
-	constexpr Pair(Pair< U0, U1 > const &P)
-		: first(P.first), second(P.second) { }
+	BR_CONSTEXPR_AFTER_CPP11 Pair(Pair< U0, U1 > const & P) : first(P.first), second(P.second) {}
 
 	template< typename U0, typename U1,
-		typename = TypeOperate::EnableIf<
-			TypeOperate::BooleanAnd<
-				TypeOperate::IsConvertible< U0 const &, T0 >,
-				TypeOperate::IsConvertible< U1 const &, T1 >
+		typename = EnableIf<
+			BooleanAnd<
+				IsConvertible< U0 const &, T0 >,
+				IsConvertible< U1 const &, T1 >
 			>
 		>
 	>
-	constexpr Pair(Pair< U0, U1 > &&P)
-		: first(forward< U0 >(P.first)), second(forward< U1 >(P.second)) { }
+	BR_CONSTEXPR_AFTER_CPP11 Pair(Pair< U0, U1 > && P) : first(forward< U0 >(P.first)), second(forward< U1 >(P.second)) {}
 
-	constexpr Pair(Pair const &) = default;
+	Pair(Pair const &) = default;
 
-	constexpr Pair(Pair &&) = default;
+	Pair(Pair &&) = default;
 
-	constexpr Pair(First const &x, Second const &y)
-		: first(x), second(y) { }
+	BR_CONSTEXPR_AFTER_CPP11 Pair(First const & x, Second const & y) : first(x), second(y) {}
 
 	template< typename U0, typename U1,
-		typename = TypeOperate::EnableIf<
-			TypeOperate::BooleanAnd<
-				TypeOperate::IsConvertible< U0 const &, T0 >,
-				TypeOperate::IsConvertible< U1 const &, T1 >
-			>
+		typename = EnableIf<
+			BooleanAnd< IsConvertible< U0 const &, T0 >, IsConvertible< U1 const &, T1 > >
 		>
 	>
-	constexpr Pair(U0 const &x, U1 const &y)
-		: first(forward< U0 >(x)), second(forward< U1 >(y)) { }
+	BR_CONSTEXPR_AFTER_CPP11 Pair(U0 const & x, U1 const & y) : first(forward< U0 >(x)), second(forward< U1 >(y)) {}
 
-	Pair &operator=(Pair const &P) {
+	Pair & operator=(Pair const & P) {
 		first = P.first;
 		second = P.second;
 		return *this;
 	}
 
 	template< typename U0, typename U1 >
-	Pair &operator=(Pair< U0, U1 > const &P) {
+	Pair & operator=(Pair< U0, U1 > const & P) {
 		first = P.first;
 		second = P.second;
 		return *this;
 	}
 
-	Pair &operator=(
-		Pair &&P
+	Pair & operator=(
+		Pair && P
 	) noexcept(
-		TypeOperate::BooleanAnd<
-			TypeOperate::HasNothrowMoveAssignment< T0 >,
-			TypeOperate::HasNothrowMoveAssignment< T1 >
-		>::value
+		BooleanAnd< HasNothrowMoveAssignment< T0 >, HasNothrowMoveAssignment< T1 > >::value
 	) {
 		first = forward< T0 >(P.first);
 		second = forward< T1 >(P.second);
@@ -97,98 +88,182 @@ public:
 	}
 
 	template< typename U0, typename U1 >
-	Pair &operator=(Pair< U0, U1 > &&P) {
+	Pair & operator=(Pair< U0, U1 > && P) {
 		first = forward< U0 >(P.first);
 		second = forward< U1 >(P.second);
 		return *this;
 	}
 
-	Pair &swap(
-		Pair &P
+	Pair & swap(
+		Pair & P
 	) noexcept(
-	noexcept(swap(first, P.first)) && noexcept(swap(second, P.second))
+		BooleanAnd< IsNothrowSwappable< First >, IsNothrowSwappable< Second > >::value
 	) {
 		swap(first, P.first);
 		swap(second, P.second);
 		return *this;
 	}
-
-	bool operator==(Pair const &Y) const {
-		return first = Y.first && second = Y.second;
-	}
-
-	bool operator!=(Pair const &Y) const {
-		return !(*this == Y);
-	}
-
-	bool operator<(Pair const &Y) const {
-		return first < Y.first || (!(Y.first < first) && second < Y.second);
-	}
-
-	bool operator>(Pair const &Y) const {
-		return Y < *this;
-	}
-
-	bool operator<=(Pair const &Y) const {
-		return !(Y < *this);
-	}
-
-	bool operator>=(Pair const &Y) const {
-		return !(*this < Y);
-	}
 };
 
 template< typename T0, typename T1 >
+inline BR_CONSTEXPR_AFTER_CPP11 bool operator==(Pair< T0, T1 > const & X, Pair< T0, T1 > const & Y) {
+	return X.first = Y.first && Y.second = Y.second;
+}
+
+template< typename T0, typename T1 >
+inline BR_CONSTEXPR_AFTER_CPP11 bool operator!=(Pair< T0, T1 > const & X, Pair< T0, T1 > const & Y) {
+	return !(X == Y);
+}
+
+template< typename T0, typename T1 >
+inline BR_CONSTEXPR_AFTER_CPP11 bool operator<(Pair< T0, T1 > const & X, Pair< T0, T1 > const & Y) {
+	return X.first < Y.first || (!(Y.first < X.first) && X.second < Y.second);
+}
+
+template< typename T0, typename T1 >
+inline BR_CONSTEXPR_AFTER_CPP11 bool operator>(Pair< T0, T1 > const & X, Pair< T0, T1 > const & Y) {
+	return Y < X;
+}
+
+template< typename T0, typename T1 >
+inline BR_CONSTEXPR_AFTER_CPP11 bool operator<=(Pair< T0, T1 > const & X, Pair< T0, T1 > const & Y) {
+	return !(Y < X);
+}
+
+template< typename T0, typename T1 >
+inline BR_CONSTEXPR_AFTER_CPP11 bool operator>=(Pair< T0, T1 > const & X, Pair< T0, T1 > const & Y) {
+	return !(X < Y);
+}
+
+template< typename T0, typename T1, typename = EnableIf< BooleanAnd< IsSwappable<T0>, IsSwappable<T1> > > >
 inline void swap(
-	Pair< T0, T1 > &X,
-	Pair< T0, T1 > &Y
-) noexcept(
-noexcept(X.swap(Y))
-) {
+	Pair< T0, T1 > & X,
+	Pair< T0, T1 > & Y
+) noexcept(IsNothrowSwappable< Pair< T0, T1 > >::value) {
 	X.swap(Y);
 }
 
 template< typename T0, typename T1 >
-BR_PAIR_CONSTEXPR Pair<
-	TypeOperate::Decay< T0 >,
-	TypeOperate::Decay< T1 >
+BR_CONSTEXPR_AFTER_CPP11 Pair<
+	Decay< T0 >,
+	Decay< T1 >
 > make_pair(T0 && x, T1 && y) {
-	return Pair< TypeOperate::Decay< T0 >, TypeOperate::Decay< T1 > >(forward< T0 >(x), forward< T1 >(y));
+	return Pair< Decay< T0 >, Decay< T1 > >(forward< T0 >(x), forward< T1 >(y));
 }
 
 namespace Detail {
+namespace Utility {
 
-using namespace TypeOperate;
+template< typename T >
+struct IsTupleLike;
+
+template< typename T0, typename T1 >
+struct IsTupleLike< Pair< T0, T1 > > : BooleanTrue {};
+
+template< Size I >
+struct PairGetter;
+
+template<>
+struct PairGetter<0> {
+	template< typename T0, typename T1 >
+	BR_CONSTEXPR_AFTER_CPP11 T0 & operator()(Pair< T0, T1 > & P) const noexcept {
+		return P.first;
+	}
+
+	template< typename T0, typename T1 >
+	BR_CONSTEXPR_AFTER_CPP11 T0 const & operator()(Pair< T0, T1 > const & P) const noexcept {
+		return P.first;
+	}
+
+	template< typename T0, typename T1 >
+	BR_CONSTEXPR_AFTER_CPP11 T0 && operator()(Pair< T0, T1 > && P) const noexcept {
+		return forward(P.first);
+	}
+};
+
+template<>
+struct PairGetter<1> {
+	template< typename T0, typename T1 >
+	BR_CONSTEXPR_AFTER_CPP11 T1 & operator()(Pair< T0, T1 > & P) const noexcept {
+		return P.second;
+	}
+
+	template< typename T0, typename T1 >
+	BR_CONSTEXPR_AFTER_CPP11 T1 const & operator()(Pair< T0, T1 > const & P) const noexcept {
+		return P.second;
+	}
+
+	template< typename T0, typename T1 >
+	BR_CONSTEXPR_AFTER_CPP11 T1 && operator()(Pair< T0, T1 > && P) const noexcept {
+		return forward(P.second);
+	}
+};
+
+} // namespace Utility
+} // namespace Detail
 
 template< typename T >
 struct TupleSize;
+
+template< typename T0, typename T1 >
+struct TupleSize< Pair< T0, T1 > > : IntegerConstant< Size, 2 > {};
 
 template< Size I, typename T >
 struct TypeTupleElement;
 
 template< typename T0, typename T1 >
-struct TupleSize< Pair< T0, T1 > > : TypeOperate::IntegerConstant< Size, 2 > {};
+struct TypeTupleElement< 0, Pair< T0, T1 > > : TypeWrapper<T0> {};
 
 template< typename T0, typename T1 >
-struct TypeTupleElement< 0, Pair< T0, T1 > > : TypeOperate::TypeWrapper< T0 > {};
+struct TypeTupleElement< 1, Pair< T0, T1 > > : TypeWrapper<T1> {};
 
-template< typename T0, typename T1 >
-struct TypeTupleElement< 1, Pair< T0, T1 > > : TypeOperate::TypeWrapper< T1 > {};
-
-template< Size I >
-struct PairGet;
-
-template<>
-struct PairGet< 0 > {
-
-};
-
+template< Size I, typename T0, typename T1 >
+BR_CONSTEXPR_AFTER_CPP11 auto get(Pair< T0, T1 > & P) noexcept -> decltype(Detail::Utility::PairGetter<I>()(P)) {
+	return Detail::Utility::PairGetter<I>()(P);
 }
-// TODO
-// template< Size I, typename T0, typename T1 > BR_PAIR_CONSTEXPR Detail::TupleElement< I, Pair< T0, T1 > >       & get(Pair< T0, T1 >       &) noexcept;
-// template< Size I, typename T0, typename T1 > BR_PAIR_CONSTEXPR Detail::TupleElement< I, Pair< T0, T1 > > const & get(Pair< T0, T1 > const &) noexcept;
-// template< Size I, typename T0, typename T1 > BR_PAIR_CONSTEXPR Detail::TupleElement< I, Pair< T0, T1 > >      && get(Pair< T0, T1 >      &&) noexcept;
+
+template< Size I, typename T0, typename T1 >
+BR_CONSTEXPR_AFTER_CPP11 auto get(Pair< T0, T1 > const & P) noexcept -> decltype(Detail::Utility::PairGetter<I>()(P)) {
+	return Detail::Utility::PairGetter<I>()(P);
+}
+
+template< Size I, typename T0, typename T1 >
+BR_CONSTEXPR_AFTER_CPP11 auto get(Pair< T0, T1 > && P) noexcept -> decltype(Detail::Utility::PairGetter<I>()(move(P))) {
+	return Detail::Utility::PairGetter<I>()(move(P));
+}
+
+#if defined(BR_AFTER_CPP11)
+
+template< typename T0, typename T1 >
+BR_CONSTEXPR_AFTER_CPP11 T0 & get(Pair< T0, T1 > & P) noexcept {
+	return Detail::Utility::PairGetter<0>()(P);
+}
+
+template< typename T0, typename T1 >
+BR_CONSTEXPR_AFTER_CPP11 T0 const & get(Pair< T0, T1 > const & P) noexcept {
+	return Detail::Utility::PairGetter<0>()(P);
+}
+
+template< typename T0, typename T1 >
+BR_CONSTEXPR_AFTER_CPP11 T0 && get(Pair< T0, T1 > && P) noexcept {
+	return Detail::Utility::PairGetter<0>()(move(P));
+}
+
+template< typename T0, typename T1 >
+BR_CONSTEXPR_AFTER_CPP11 T0 & get(Pair< T1, T0 > & P) noexcept {
+	return Detail::Utility::PairGetter<1>()(P);
+}
+
+template< typename T0, typename T1 >
+BR_CONSTEXPR_AFTER_CPP11 T0 const & get(Pair< T1, T0 > const & P) noexcept {
+	return Detail::Utility::PairGetter<1>()(P);
+}
+
+template< typename T0, typename T1 >
+BR_CONSTEXPR_AFTER_CPP11 T0 && get(Pair< T1, T0 > && P) noexcept {
+	return Detail::Utility::PairGetter<1>()(move(P));
+}
+
+#endif
 
 } // namespace BR
-
-#undef BR_PAIR_CONSTEXPR

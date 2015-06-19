@@ -4,7 +4,6 @@
 #include <libbr/exception/runtime_exception.hpp>
 
 namespace BR {
-namespace Exception {
 
 class LogicalException : public RuntimeException {
 public:
@@ -21,5 +20,4 @@ public:
 	LogicalException & operator=(LogicalException const &) noexcept;
 };
 
-} // namespace Exception
 } // namespace BR

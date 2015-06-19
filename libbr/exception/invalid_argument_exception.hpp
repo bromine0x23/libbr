@@ -4,7 +4,6 @@
 #include <libbr/exception/logical_exception.hpp>
 
 namespace BR {
-namespace Exception {
 
 class InvalidArgumentException : public LogicalException {
 public:
@@ -21,5 +20,4 @@ public:
 	InvalidArgumentException & operator=(InvalidArgumentException const &) noexcept;
 };
 
-} // namespace Exception
 } // namespace BR

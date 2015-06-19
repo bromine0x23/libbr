@@ -6,14 +6,13 @@
 #include <libbr/utility/move.hpp>
 
 namespace BR {
-namespace Iterator {
 
 template< typename TContainer >
 class AddFirstIterator : public Iterator< OutputIteratorTag, void, void, void, AddFirstIterator< TContainer > & > {
 public:
 	using Container = TContainer;
 
-	explicit AddFirstIterator(Container & container) : m_container(Memory::address_of(container)) {}
+	explicit AddFirstIterator(Container & container) : m_container(address_of(container)) {}
 
 	AddFirstIterator & operator=(typename TContainer::Value const & value) {
 		m_container->addFirst(value);
@@ -34,9 +33,8 @@ private:
 }; // class AddFirstIterator< TContainer >
 
 template< typename TContainer >
-inline AddFirstIterator< TContainer > makeAddFirstIterator(TContainer & container) {
+inline AddFirstIterator< TContainer > make_add_first_iterator(TContainer & container) {
 	return AddFirstIterator< TContainer >(container);
 }
 
-} // namespace Iterator
 } // namespace BR

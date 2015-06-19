@@ -1,7 +1,6 @@
 #include <libbr/exception/logical_exception.hpp>
 
 namespace BR {
-namespace Exception {
 
 LogicalException::LogicalException() noexcept : BaseException("BR::Exception::LogicalException") {}
 
@@ -16,5 +15,4 @@ LogicalException & LogicalException::operator=(LogicalException const & exceptio
 
 LogicalException::~LogicalException() noexcept {}
 
-} // namespace Exception
 } // namespace BR

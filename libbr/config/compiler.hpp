@@ -1,3 +1,5 @@
+#pragma once
+
 #if defined(__GNUC__)
 #  define BR_COMPILER_CONFIG <libbr/config/compiler/gcc.hpp>
 #elif defined(__clang__)

@@ -1,39 +1,41 @@
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/exception/index_out_of_range_exception.hpp>
+#include <libbr/iterator/reverse_iterator.hpp>
+#include <libbr/type_operate/integer.hpp>
+#include <libbr/type_operate/is_nothrow_swappable.hpp>
+#include <libbr/utility/current_function.hpp>
+#include <libbr/utility/current_function.hpp>
 #include <libbr/utility/make_value.hpp>
+#include <libbr/utility/move.hpp>
 #include <libbr/utility/swap.hpp>
 
 namespace BR {
-namespace Container {
 
 template< typename TElement, Size S >
-struct Array {
-	using Element        = TElement;
-	using Reference      = Element &;
-	using ConstReference = Element const &;
-	using Pointer        = Element *;
-	using ConstPointer   = Element const *;
-	using Iterator       = Pointer;
-	using ConstIterator  = ConstPointer;
-	using Size           = BR::Size;
-	using Difference     = PointerDifference;
-
-	/* TODO
-	using ReverseIterator =;
-	using ConstReverseIterator =;
-	 */
+class Array {
+	using Element              = TElement;
+	using Reference            = Element &;
+	using ConstReference       = Element const &;
+	using Pointer              = Element *;
+	using ConstPointer         = Element const *;
+	using Iterator             = Pointer;
+	using ConstIterator        = ConstPointer;
+	using Size                 = BR::Size;
+	using Difference           = PointerDifference;
+	using ReverseIterator      = BR::ReverseIterator< Iterator >;
+	using ConstReverseIterator = BR::ReverseIterator< ConstIterator >;
 
 	void fill(Element const & element) {
 		// TODO: fill_n(m_elements, S, element);
 	}
 
 	void swap(Array & array) noexcept(
-		noexcept(BR::swap(make_reference< Element [S] >(), make_reference< Element [S] >()))
+		noexcept(IsNothrowSwappable< Element [S] >::value)
 	) {
-		BR::swap(m_elements, array.m_elements);
+		swap(m_elements, array.m_elements);
 	}
-
 
 	Iterator begin() noexcept {
 		return Iterator(m_elements);
@@ -51,7 +53,7 @@ struct Array {
 		return ConstIterator(m_elements + S);
 	}
 
-	/* TODO
+
 	ReverseIterator rbegin() noexcept {
 		return ReverseIterator(end());
 	}
@@ -67,7 +69,6 @@ struct Array {
 	ConstReverseIterator rend() const noexcept {
 		return ConstReverseIterator(begin());
 	}
-	 */
 
 	ConstIterator cbegin() const noexcept {
 		return begin();
@@ -102,14 +103,14 @@ struct Array {
 
 	Reference at(Size i) {
 		if (i >= S) {
-			// TODO: throw out_of_range("Array::at");
+			throw IndexOutOfRangeException(BR_CURRENT_FUNCTION);
 		}
 		return m_elements[i];
 	}
 
 	BR_CONSTEXPR_AFTER_CPP11 ConstReference at(Size i) const {
 		if (i >= S) {
-			// TODO: throw out_of_range("Array::at");
+			throw IndexOutOfRangeException(BR_CURRENT_FUNCTION);
 		}
 		return m_elements[i];
 	}
@@ -125,14 +126,73 @@ struct Array {
 
 private:
 	Element m_elements[S > 0 ? S : 1];
-}; // struct Array
+}; // struct Array< TElement, S >
 
-template< typename TElement, Size S>
-void swap(Array< TElement, S > & x, Array< TElement, S > & y) noexcept(
-	noexcept(make_reference< Array< TElement, S > >().swap(make_reference< Array< TElement, S > >()))
-) {
+template< typename T, Size S >
+inline bool operator==(Array< T, S > const & X, Array< T, S > const & Y) {
+	// TODO: return equal(X.begin(), X.end(), Y.begin());
+	return false;
+}
+
+template< typename T, Size S >
+inline bool operator!=(Array< T, S > const & X, Array< T, S > const & Y) {
+	return !(X == Y);
+}
+
+template< typename T, Size S >
+inline bool operator<(Array< T, S > const & X, Array< T, S > const & Y) {
+	// TODO: return lexicographical_compare(X.begin(), X.end(), Y.begin(), Y.end());
+	return false;
+}
+
+template< typename T, Size S >
+inline bool operator>(Array< T, S > const & X, Array< T, S > const & Y) {
+	return Y < X;
+}
+
+template< typename T, Size S >
+inline bool operator<=(Array< T, S > const & X, Array< T, S > const & Y) {
+	return !(Y < X);
+}
+
+template< typename T, Size S >
+inline bool operator>=(Array< T, S > const & X, Array< T, S > const & Y) {
+	return !(X < Y);
+}
+
+template< typename T, Size S>
+void swap(Array< T, S > & x, Array< T, S > & y) noexcept(IsNothrowSwappable< Array< T, S > >::value) {
 	x.swap(y);
 }
 
-} // namespace Container
+template< typename T >
+struct TupleSize;
+
+template< typename T, Size S >
+struct TupleSize< Array< T, S > > : IntegerConstant< Size, S > {};
+
+template< Size I, typename T >
+struct TypeTupleElement;
+
+template< Size I, typename T, Size S >
+struct TypeTupleElement< I, Array< T, S > > : TypeWrapper< T > {};
+
+template< Size I, typename T, Size S >
+inline BR_CONSTEXPR_AFTER_CPP11 T & get(Array< T, S > & A) noexcept  {
+	static_assert(I < S, "Index out of bounds.");
+	return A[I];
+}
+
+template< Size I, typename T, Size S >
+inline BR_CONSTEXPR_AFTER_CPP11 T const & get(Array< T, S > const & A) noexcept  {
+	static_assert(I < S, "Index out of bounds.");
+	return A[I];
+}
+
+template< Size I, typename T, Size S >
+inline BR_CONSTEXPR_AFTER_CPP11 T && get(Array< T, S > && A) noexcept  {
+	static_assert(I < S, "Index out of bounds.");
+	return move(A[I]);
+}
+
 } // namespace BR

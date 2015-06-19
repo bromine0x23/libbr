@@ -12,9 +12,7 @@ namespace BR {
 
 namespace {
 
-static void assert_base(char const * format, ...) BR_NORETURN;
-
-static void assert_base(char const * format, ...) {
+[[noreturn]] static void assert_base(char const * format, ...) {
 	va_list args;
 	va_start(args, format);
 	vfprintf(stderr, format, args);

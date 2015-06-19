@@ -2,11 +2,6 @@
 
 #include <libbr/config.hpp>
 
-namespace BR {
-namespace TypeOperate {
-} // namespace TypeOperate
-} // namespace BR
-
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/integer.hpp>
 #include <libbr/type_operate/type.hpp>

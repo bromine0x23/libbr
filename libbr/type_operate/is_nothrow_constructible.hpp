@@ -7,9 +7,9 @@
 #include <libbr/utility/make_value.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< typename T, typename ... TArguments >
 struct IsNothrowConstructibleBasic;
@@ -29,13 +29,13 @@ using IsNothrowConstructible = BooleanAnd<
 	IsNothrowConstructibleBasic< T, TArguments ... >
 >;
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T, typename ... TArguments >
-struct IsNothrowConstructible : Boolean< Detail::IsNothrowConstructible< T, TArguments ... > > {};
+struct IsNothrowConstructible : Boolean< Detail::TypeOperate::IsNothrowConstructible< T, TArguments ... > > {};
 
 template< typename T, typename ... TArguments >
-struct NotNothrowConstructible : BooleanNot< Detail::IsNothrowConstructible< T, TArguments ... > > {};
+struct NotNothrowConstructible : BooleanNot< Detail::TypeOperate::IsNothrowConstructible< T, TArguments ... > > {};
 
-} // namespace TypeOperate
 } // namespace BR

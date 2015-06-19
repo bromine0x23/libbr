@@ -4,7 +4,6 @@
 #include <libbr/type_operate/type.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 template< typename T, typename TArgument >
 struct TypeReplaceFirstTemplateArgument {
@@ -21,5 +20,4 @@ struct TypeReplaceFirstTemplateArgument<
 template< typename T, typename TArgument >
 using ReplaceFirstTemplateArgument = TypeUnwrap< TypeReplaceFirstTemplateArgument< T, TArgument > >;
 
-} // namespace TypeOperate
 } // namespace BR

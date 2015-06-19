@@ -9,7 +9,7 @@
 #define BR_TYPE_OPERATE_OP !
 #define BR_TYPE_OPERATE_FORBIDDEN_IF false
 
-#include <libbr/type_operate/detail/has_prefix_operator.hpp>
+#include <libbr/type_operate/detail/has_prefix_operator.inc>
 
 #if defined(BR_GCC) && (BR_GCC_FULL_VER > 40800)
 #pragma GCC diagnostic pop

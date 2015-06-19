@@ -6,10 +6,9 @@
 #include <libbr/memory/address_of.hpp>
 
 namespace BR {
-namespace Iterator {
 
 template< typename TIterator >
-class ReverseIterator : public BR::Iterator::Iterator<
+class ReverseIterator : public BR::Iterator<
 	IteratorCategory  < TIterator >,
 	IteratorValue     < TIterator >,
 	IteratorDifference< TIterator >,
@@ -17,7 +16,7 @@ class ReverseIterator : public BR::Iterator::Iterator<
 	IteratorReference < TIterator >
 > {
 private:
-	using Base = BR::Iterator::Iterator<
+	using Base = BR::Iterator<
 		IteratorCategory  < TIterator >,
 		IteratorValue     < TIterator >,
 		IteratorDifference< TIterator >,
@@ -48,7 +47,7 @@ public:
 	}
 
 	Pointer operator->() const {
-		return Memory::address_of(operator*());
+		return address_of(operator*());
 	}
 
 	ReverseIterator & operator++() { --m_iterator; return *this; }
@@ -134,9 +133,8 @@ inline IteratorDifference< TIterator0 > operator-(
 }
 
 template< typename TIterator >
-inline ReverseIterator< TIterator > makeReverseIterator(TIterator iterator) {
+inline ReverseIterator< TIterator > make_reverse_iterator(TIterator iterator) {
 	return ReverseIterator< TIterator >(iterator);
 }
 
-} // namespace Iterator
 } // namespace BR

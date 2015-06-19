@@ -6,9 +6,9 @@
 #include <libbr/utility/make_value.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< typename T, typename TArgument >
 struct IsNothrowAssignableBasic : BooleanConstant< noexcept(make_rvalue< T >() = make_rvalue< TArgument >()) > {};
@@ -19,13 +19,13 @@ using IsNothrowAssignable = BooleanAnd<
 	IsNothrowAssignableBasic< T, TArgument >
 >;
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T, typename TArgument >
-struct IsNothrowAssignable : Boolean< Detail::IsNothrowAssignable< T, TArgument > > {};
+struct IsNothrowAssignable : Boolean< Detail::TypeOperate::IsNothrowAssignable< T, TArgument > > {};
 
 template< typename T, typename TArgument >
-struct NotNothrowAssignable : BooleanNot< Detail::IsNothrowAssignable< T, TArgument > > {};
+struct NotNothrowAssignable : BooleanNot< Detail::TypeOperate::IsNothrowAssignable< T, TArgument > > {};
 
-} // namespace TypeOperate
 } // namespace BR

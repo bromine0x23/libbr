@@ -3,7 +3,6 @@
 #include <libbr/config.hpp>
 
 namespace BR {
-namespace Iterator {
 
 struct InputIteratorTag  {};
 
@@ -15,6 +14,4 @@ struct BidirectionalIteratorTag : ForwardIteratorTag {};
 
 struct RandomAccessIteratorTag : BidirectionalIteratorTag {};
 
-
-} // namespace Iterator
 } // namespace BR

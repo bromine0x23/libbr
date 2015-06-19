@@ -1,7 +1,6 @@
 #include <libbr/exception/runtime_exception.hpp>
 
 namespace BR {
-namespace Exception {
 
 RuntimeException::RuntimeException() noexcept : BaseException("BR::Exception::RuntimeException") {}
 
@@ -16,5 +15,4 @@ RuntimeException & RuntimeException::operator=(RuntimeException const & exceptio
 
 RuntimeException::~RuntimeException() noexcept {}
 
-} // namespace Exception
 } // namespace BR

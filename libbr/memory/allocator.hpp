@@ -8,7 +8,6 @@
 #include <libbr/utility/forward.hpp>
 
 namespace BR {
-namespace Memory {
 
 template< typename TValue >
 class Allocator;
@@ -21,10 +20,10 @@ public:
 	using ConstPointer = void const *;
 
 	template< typename TOtherValue >
-	struct TypeRebind : TypeOperate::TypeWrapper< Allocator< TOtherValue > > {};
+	struct TypeRebind : TypeWrapper< Allocator< TOtherValue > > {};
 
 	template< typename TOtherValue >
-	using Rebind = TypeOperate::TypeUnwrap< TypeRebind< TOtherValue > >;
+	using Rebind = TypeUnwrap< TypeRebind< TOtherValue > >;
 }; // class Allocator< void >
 
 template<>
@@ -35,10 +34,10 @@ public:
 	using ConstPointer = void const *;
 
 	template< typename TOtherValue >
-	struct TypeRebind : TypeOperate::TypeWrapper< Allocator< TOtherValue > > {};
+	struct TypeRebind : TypeWrapper< Allocator< TOtherValue > > {};
 
 	template< typename TOtherValue >
-	using Rebind = TypeOperate::TypeUnwrap< TypeRebind< TOtherValue > >;
+	using Rebind = TypeUnwrap< TypeRebind< TOtherValue > >;
 }; // class Allocator< void const >
 
 template< typename TValue >
@@ -52,13 +51,13 @@ public:
 	using Size           = BR::Size;
 	using Difference     = BR::PointerDifference;
 
-	using IsPropagateOnContainerMoveAssignment = TypeOperate::BooleanTrue;
+	using IsPropagateOnContainerMoveAssignment = BooleanTrue;
 
 	template< typename TOtherValue >
-	struct TypeRebind : TypeOperate::TypeWrapper< Allocator< TOtherValue > > {};
+	struct TypeRebind : TypeWrapper< Allocator< TOtherValue > > {};
 
 	template< typename TOtherValue >
-	using Rebind = TypeOperate::TypeUnwrap< TypeRebind< TOtherValue > >;
+	using Rebind = TypeUnwrap< TypeRebind< TOtherValue > >;
 
 	Allocator() noexcept {}
 
@@ -106,13 +105,13 @@ public:
 	using Size           = BR::Size;
 	using Difference     = BR::PointerDifference;
 
-	using IsPropagateOnContainerMoveAssignment = TypeOperate::BooleanTrue;
+	using IsPropagateOnContainerMoveAssignment = BooleanTrue;
 
 	template< typename TOtherValue >
-	struct TypeRebind : TypeOperate::TypeWrapper< Allocator< TOtherValue > > {};
+	struct TypeRebind : TypeWrapper< Allocator< TOtherValue > > {};
 
 	template< typename TOtherValue >
-	using Rebind = TypeOperate::TypeUnwrap< TypeRebind< TOtherValue > >;
+	using Rebind = TypeUnwrap< TypeRebind< TOtherValue > >;
 
 	Allocator() noexcept {}
 
@@ -155,5 +154,4 @@ inline bool operator!=(Allocator< T0 > const &, Allocator< T1 > const &) noexcep
 	return false;
 }
 
-} // namespace Memory
 } // namespace BR

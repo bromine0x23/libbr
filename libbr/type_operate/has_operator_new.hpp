@@ -6,7 +6,6 @@
 #include <libbr/type_operate/bool.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
 
@@ -86,5 +85,4 @@ struct HasOperatorNew : Boolean< Detail::HasOperatorNew< T > > {};
 template< typename T >
 struct NoOperatorNew : BooleanNot< Detail::HasOperatorNew< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

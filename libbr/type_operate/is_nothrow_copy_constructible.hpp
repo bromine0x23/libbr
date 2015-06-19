@@ -8,9 +8,9 @@
 #include <libbr/type_operate/is_referenceable.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< typename T >
 using IsNothrowCopyConstructible = BooleanAnd<
@@ -18,13 +18,13 @@ using IsNothrowCopyConstructible = BooleanAnd<
 	IsNothrowConstructible< T, AddLValueReference< AddConst< T > > >
 >;
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsNothrowCopyConstructible : Boolean< Detail::IsNothrowCopyConstructible< T > > {};
+struct IsNothrowCopyConstructible : Boolean< Detail::TypeOperate::IsNothrowCopyConstructible< T > > {};
 
 template< typename T >
-struct NotNothrowCopyConstructible : BooleanNot< Detail::IsNothrowCopyConstructible< T > > {};
+struct NotNothrowCopyConstructible : BooleanNot< Detail::TypeOperate::IsNothrowCopyConstructible< T > > {};
 
-} // namespace TypeOperate
 } // namespace BR

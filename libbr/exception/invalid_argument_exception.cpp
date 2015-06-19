@@ -1,7 +1,6 @@
 #include <libbr/exception/invalid_argument_exception.hpp>
 
 namespace BR {
-namespace Exception {
 
 InvalidArgumentException::InvalidArgumentException() noexcept : BaseException("BR::Exception::InvalidArgumentException") {}
 
@@ -16,5 +15,4 @@ InvalidArgumentException & InvalidArgumentException::operator=(InvalidArgumentEx
 
 InvalidArgumentException::~InvalidArgumentException() noexcept {}
 
-} // namespace Exception
 } // namespace BR

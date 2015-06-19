@@ -4,10 +4,8 @@
 #include <libbr/type_operate/bool.hpp>
 
 namespace BR {
-namespace Memory {
 
-template< typename ... T, typename TAllocator >
-struct IsUseAllocator : TypeOperate::BooleanFalse {};
+template< typename TAllocator, typename ... T >
+struct IsUseAllocator : BooleanFalse {};
 
-} // namespace Memory
 } // namespace BR

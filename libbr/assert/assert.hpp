@@ -4,7 +4,7 @@
 
 #if defined(NDEBUG)
 
-#define BR_ASSERT(expr) static_cast<void>(0)
+#define BR_ASSERT(expr) ((void)0)
 
 #else
 
@@ -19,11 +19,7 @@ namespace BR {
 
 } // namespace BR
 
-#define BR_ASSERT(expr) \
-	((expr) \
-	? static_cast<void>(0) \
-	: BR::__assert__(BR_STRINGIZE(expr), __FILE__, __LINE__, __func__)) \
-// ASSERT
+#define BR_ASSERT(expr) ((expr) ? (void)0 : BR::__assert__(BR_STRINGIZE(expr), __FILE__, __LINE__, __func__))
 
 #endif // NDEBUG
 

@@ -4,7 +4,6 @@
 #include <libbr/type_operate/type.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 template< bool condition, typename TWhenTrue, typename TWhenFalse = void >
 struct TypeConditionalByValue : TypeWrapper< TWhenTrue > {};
@@ -21,5 +20,4 @@ struct TypeConditional : TypeWrapper< ConditionalByValue< TCondition::value, TWh
 template< typename TCondition, typename TWhenTrue, typename TWhenFalse = void >
 using Conditional = TypeUnwrap< TypeConditional< TCondition, TWhenTrue, TWhenFalse > >;
 
-} // namespace TypeOperate
 } // namespace BR

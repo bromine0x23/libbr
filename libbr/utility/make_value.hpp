@@ -11,13 +11,13 @@ template< typename TValue >
 TValue make_value() noexcept;
 
 template< typename TValue >
-TypeOperate::AddRValueReference< TValue > make_rvalue() noexcept;
+AddRValueReference< TValue > make_rvalue() noexcept;
 
 template< typename TValue >
-TypeOperate::AddLValueReference< TValue > make_reference() noexcept;
+AddLValueReference< TValue > make_reference() noexcept;
 
 template< typename TValue >
-TypeOperate::AddPointer< TValue > make_pointer() noexcept;
+AddPointer< TValue > make_pointer() noexcept;
 
 } // namespace BR
 

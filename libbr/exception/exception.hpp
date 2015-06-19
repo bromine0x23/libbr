@@ -4,7 +4,6 @@
 #include <libbr/config.hpp>
 
 namespace BR {
-namespace Exception {
 
 using STDException = std::exception;
 
@@ -16,12 +15,12 @@ using ExceptionPointer = std::exception_ptr;
 
 using NestedException = std::nested_exception;
 
-inline TerminateHandler setTerminate(TerminateHandler handler) noexcept {
+inline TerminateHandler set_terminate(TerminateHandler handler) noexcept {
 	return std::set_terminate(handler);
 }
 
 /*
-TerminateHandler getTerminate() noexcept {
+TerminateHandler get_terminate() noexcept {
 	return std::get_terminate();
 }
 */
@@ -30,36 +29,36 @@ TerminateHandler getTerminate() noexcept {
 	std::terminate();
 }
 
-inline bool uncaughtException() noexcept {
+inline bool uncaught_exception() noexcept {
 	return std::uncaught_exception();
 }
 
 #if defined(BR_CPP17)
-inline int uncaughtExceptions() noexcept {
+inline int uncaught_exceptions() noexcept {
 	return std::uncaught_exceptions();
 }
 #endif
 
-inline ExceptionPointer currentException() noexcept {
+inline ExceptionPointer current_exception() noexcept {
 	return std::current_exception();
 }
 
-[[noreturn]] inline void rethrowException(ExceptionPointer pointer) {
+[[noreturn]] inline void rethrow_exception(ExceptionPointer pointer) {
 	std::rethrow_exception(pointer);
 }
 
 template< typename TException >
-inline ExceptionPointer makeExceptionPointer(TException exception) noexcept {
+inline ExceptionPointer make_exception_pointer(TException exception) noexcept {
 	return std::make_exception_ptr(exception);
 }
 
 template< typename TException >
-[[noreturn]] inline void throwNested(TException && exception) {
+[[noreturn]] inline void throw_nested(TException && exception) {
 	std::throw_with_nested(exception);
 }
 
 template< typename TException >
-inline void rethrowIfNested(TException const & exception) {
+inline void rethrow_if_nested(TException const & exception) {
 	std::rethrow_if_nested(exception);
 }
 
@@ -81,5 +80,4 @@ protected:
 	char const * m_message;
 };
 
-} // namespace Exception
 } // namespace BR

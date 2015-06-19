@@ -11,42 +11,30 @@
 #include <libbr/type_operate/type.hpp>
 
 namespace BR {
-namespace TypeOperate {
 
 namespace Detail {
+namespace TypeOperate {
 
 template< typename T >
 struct TypeMakeUnsignedInteger : TypeWrapper< T > {};
 
-template<>
-struct TypeMakeUnsignedInteger< char > : TypeWrapper< unsigned char > {};
+template<> struct TypeMakeUnsignedInteger<        char      > : TypeWrapper< unsigned char      > {};
+template<> struct TypeMakeUnsignedInteger< signed char      > : TypeWrapper< unsigned char      > {};
+template<> struct TypeMakeUnsignedInteger< signed short     > : TypeWrapper< unsigned short     > {};
+template<> struct TypeMakeUnsignedInteger< signed int       > : TypeWrapper< unsigned int       > {};
+template<> struct TypeMakeUnsignedInteger< signed long      > : TypeWrapper< unsigned long      > {};
+template<> struct TypeMakeUnsignedInteger< signed long long > : TypeWrapper< unsigned long long > {};
 
-template<>
-struct TypeMakeUnsignedInteger< signed char > : TypeWrapper< unsigned char > {};
-
-template<>
-struct TypeMakeUnsignedInteger< signed short > : TypeWrapper< unsigned short > {};
-
-template<>
-struct TypeMakeUnsignedInteger< signed int > : TypeWrapper< unsigned int > {};
-
-template<>
-struct TypeMakeUnsignedInteger< signed long > : TypeWrapper< unsigned long > {};
-
-template<>
-struct TypeMakeUnsignedInteger< signed long long > : TypeWrapper< unsigned long long > {};
+#if defined(BR_HAS_INT128)
+template<> struct TypeMakeUnsignedInteger< SInt128 > : TypeWrapper< UInt128 > {};
+#endif
 
 template< Size size >
 struct TypeMakeUnsignedEnum : TypeWrapper< UInt64 > {};
 
-template<>
-struct TypeMakeUnsignedEnum< sizeof(UInt8) > : TypeWrapper< UInt8 > {};
-
-template<>
-struct TypeMakeUnsignedEnum< sizeof(UInt16) > : TypeWrapper< UInt16 > {};
-
-template<>
-struct TypeMakeUnsignedEnum< sizeof(UInt32) > : TypeWrapper< UInt32 > {};
+template<> struct TypeMakeUnsignedEnum< sizeof(UInt8 ) > : TypeWrapper< UInt8  > {};
+template<> struct TypeMakeUnsignedEnum< sizeof(UInt16) > : TypeWrapper< UInt16 > {};
+template<> struct TypeMakeUnsignedEnum< sizeof(UInt32) > : TypeWrapper< UInt32 > {};
 
 template< typename T >
 struct TypeMakeUnsignedBasic : Conditional<
@@ -70,13 +58,13 @@ struct TypeMakeUnsignedBasic : Conditional<
 template< typename T >
 struct TypeMakeUnsigned : TypeMakeUnsignedBasic< RemoveConstVolatile< T > > {};
 
+} // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct TypeMakeUnsigned : TypeRewrap< Detail::TypeMakeUnsigned< T > > {};
+struct TypeMakeUnsigned : TypeRewrap< Detail::TypeOperate::TypeMakeUnsigned< T > > {};
 
 template< typename T >
 using MakeUnsigned = TypeUnwrap< TypeMakeUnsigned< T > >;
 
-} // namespace TypeOperate
 } // namespace BR
