@@ -10,10 +10,8 @@
 
 #define BR_LIKELY(x) __builtin_expect(x, 1)
 #define BR_UNLIKELY(x) __builtin_expect(x, 0)
-#define BR_NORETURN __attribute__ ((__noreturn__))
 #define BR_NOINLINE __attribute__ ((__noinline__))
 #define BR_FORCEINLINE inline __attribute__ ((__always_inline__))
-#define BR_ALIGNMENT(x) __attribute__ ((__aligned__(x)))
 
 #define BR_SYMBOL_VISIBLE __attribute__((__visibility__("default")))
 
@@ -28,4 +26,17 @@
 
 #if defined(__SIZEOF_INT128__)
 #  define BR_HAS_INT128
+#  define BR_SINT128   signed __int128
+#  define BR_UINT128 unsigned __int128
 #endif
+
+#if !defined(BR_BYTE_ORDER)
+#  if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#    define BR_BYTE_ORDER "little endian"
+#    define BR_LITTLE_ENDIAN
+#  elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#    define BR_BYTE_ORDER "big endian"
+#    define BR_BIG_ENDIAN
+#  endif
+#endif
+

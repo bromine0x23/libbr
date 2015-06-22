@@ -4,10 +4,10 @@
 
 namespace BR {
 
-struct TypeWrapperBase {};
+struct BasicTypeWrapper {};
 
 template< typename T >
-struct TypeWrapper : TypeWrapperBase {
+struct TypeWrapper : BasicTypeWrapper {
 	using Type = T;
 };
 

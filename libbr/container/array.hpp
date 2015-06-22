@@ -3,10 +3,10 @@
 #include <libbr/config.hpp>
 #include <libbr/exception/index_out_of_range_exception.hpp>
 #include <libbr/iterator/reverse_iterator.hpp>
-#include <libbr/type_operate/integer.hpp>
 #include <libbr/type_operate/is_nothrow_swappable.hpp>
 #include <libbr/utility/current_function.hpp>
 #include <libbr/utility/current_function.hpp>
+#include <libbr/utility/integer_constant.hpp>
 #include <libbr/utility/make_value.hpp>
 #include <libbr/utility/move.hpp>
 #include <libbr/utility/swap.hpp>
@@ -108,7 +108,7 @@ class Array {
 		return m_elements[i];
 	}
 
-	BR_CONSTEXPR_AFTER_CPP11 ConstReference at(Size i) const {
+	BR_CONSTEXPR_AFTER_CXX11 ConstReference at(Size i) const {
 		if (i >= S) {
 			throw IndexOutOfRangeException(BR_CURRENT_FUNCTION);
 		}
@@ -178,19 +178,19 @@ template< Size I, typename T, Size S >
 struct TypeTupleElement< I, Array< T, S > > : TypeWrapper< T > {};
 
 template< Size I, typename T, Size S >
-inline BR_CONSTEXPR_AFTER_CPP11 T & get(Array< T, S > & A) noexcept  {
+inline BR_CONSTEXPR_AFTER_CXX11 T & get(Array< T, S > & A) noexcept  {
 	static_assert(I < S, "Index out of bounds.");
 	return A[I];
 }
 
 template< Size I, typename T, Size S >
-inline BR_CONSTEXPR_AFTER_CPP11 T const & get(Array< T, S > const & A) noexcept  {
+inline BR_CONSTEXPR_AFTER_CXX11 T const & get(Array< T, S > const & A) noexcept  {
 	static_assert(I < S, "Index out of bounds.");
 	return A[I];
 }
 
 template< Size I, typename T, Size S >
-inline BR_CONSTEXPR_AFTER_CPP11 T && get(Array< T, S > && A) noexcept  {
+inline BR_CONSTEXPR_AFTER_CXX11 T && get(Array< T, S > && A) noexcept  {
 	static_assert(I < S, "Index out of bounds.");
 	return move(A[I]);
 }

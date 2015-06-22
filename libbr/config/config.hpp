@@ -8,14 +8,8 @@
 #  define BR_USER_CONFIG <libbr/config/user.hpp>
 #endif // !BR_USER_CONFIG
 
-#if !defined(BR_TARGET)
-#  if defined(NDEBUG)
-#    define BR_TARGET "RELEASE"
-#    define BR_RELEASE
-#  else
-#    define BR_TARGET "DEBUG"
-#    define BR_DEBUG
-# endif
+#if !defined(NDEBUG)
+#  define BR_DEBUG
 #endif
 
 #if !defined(BR_COMPILER_CONFIG)

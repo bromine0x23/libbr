@@ -6,6 +6,6 @@
 namespace BR {
 
 template< typename T >
-using AlignmentOf = IntegerConstant< Size, alignof(T) >;
+using BitWidth = IntegerConstant< Size, sizeof(T) * BIT_PER_CHAR >;
 
 } // namespace BR

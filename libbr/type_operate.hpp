@@ -3,7 +3,6 @@
 #include <libbr/config.hpp>
 
 #include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/integer.hpp>
 #include <libbr/type_operate/type.hpp>
 
 #include <libbr/type_operate/conditional.hpp>

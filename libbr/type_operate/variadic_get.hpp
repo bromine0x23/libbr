@@ -1,8 +1,8 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/integer.hpp>
 #include <libbr/type_operate/type.hpp>
+#include <libbr/utility/integer_constant.hpp>
 
 namespace BR {
 

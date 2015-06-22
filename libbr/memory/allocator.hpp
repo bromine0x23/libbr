@@ -77,7 +77,7 @@ public:
 	}
 
 	void deallocate(Pointer pointer, Size) noexcept {
-		return Detail::allocate((void *)pointer);
+		return Detail::allocate(reinterpret_cast< void * >(pointer));
 	}
 
 	Size maxSize() const noexcept {
@@ -86,7 +86,7 @@ public:
 
 	template< typename TOtherValue, typename ... TArguments >
 	void construct(TOtherValue * pointer, TArguments && ... arguments) {
-		::new((void *)pointer) TOtherValue(forward< TArguments >(arguments) ...);
+		::new(reinterpret_cast< void * >(pointer)) TOtherValue(forward<TArguments>(arguments) ...);
 	}
 
 	void destroy(Pointer pointer) {
@@ -127,7 +127,7 @@ public:
 	}
 
 	void deallocate(Pointer pointer, Size) noexcept {
-		return Detail::allocate((void *)pointer);
+		return Detail::allocate(reinterpret_cast< void * >(pointer));
 	}
 
 	Size maxSize() const noexcept {
@@ -136,7 +136,7 @@ public:
 
 	template< typename TOtherValue, typename ... TArguments >
 	void construct(TOtherValue * pointer, TArguments && ... arguments) {
-		::new((void *)pointer) TOtherValue(forward< TArguments >(arguments) ...);
+		::new(reinterpret_cast< void * >(pointer)) TOtherValue(forward< TArguments >(arguments) ...);
 	}
 
 	void destroy(Pointer pointer) {

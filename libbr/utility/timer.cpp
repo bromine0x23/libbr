@@ -1,26 +1,32 @@
 #include <libbr/utility/timer.hpp>
 
-#if defined(BR_LINUX)
+#if defined(BR_LINUX) || defined(BR_CYGWIN)
+
+#include <time.h>
+
+namespace BR {
+
+namespace {
+
+Timer::Unit get_time() noexcept {
+	timespec ts;
+	clock_gettime(CLOCK_REALTIME, &ts);
+	return Timer::Unit(ts.tv_nsec);
+}
+
+Timer::Unit quantify(Timer::Unit time) noexcept {
+	return time;
+}
+
+} // namespace [anonymous]
+
+} // namespace BR
 
 #elif defined(BR_WIN32)
 
 #include <windows.h>
 
-#else
-
-#endif // defined
-
 namespace BR {
-
-#if defined(BR_LINUX)
-
-#include <linux/timer.h>
-
-namespace {
-
-} // namespace [anonymous]
-
-#elif defined(BR_WIN32)
 
 namespace {
 
@@ -42,11 +48,13 @@ Timer::Unit quantify(Timer::Unit time) noexcept {
 
 } // namespace [anonymous]
 
-#elif defined(BR_LINUX)
+} // namespace BR
 
 #else
-#  error "not implement Timer"
+#  error "Timer not implement."
 #endif // defined
+
+namespace BR {
 
 void Timer::start() noexcept {
 	run_ = true;

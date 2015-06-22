@@ -12,7 +12,5 @@
 #  define BR_MSVC_FULL_VER _MSC_FULL_VER
 #endif // _MSC_FULL_VER <= 100000000
 
-#define BR_NORETURN __declspec(noreturn)
 #define BR_NOINLINE __declspec(noinline)
 #define BR_FORCEINLINE __forceinline
-#define BR_ALIGNMENT(x) __declspec(align(x))

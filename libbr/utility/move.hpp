@@ -9,12 +9,12 @@
 namespace BR {
 
 template< typename T >
-BR_CONSTEXPR_AFTER_CPP11 RemoveReference<T> && move(T && t) noexcept {
+BR_CONSTEXPR_AFTER_CXX11 RemoveReference<T> && move(T && t) noexcept {
 	return static_cast< RemoveReference<T> && >(t);
 }
 
 template< typename T >
-inline BR_CONSTEXPR_AFTER_CPP11
+inline BR_CONSTEXPR_AFTER_CXX11
 Conditional<
 	BooleanAnd<
 		NotNothrowMoveConstructible<T>,

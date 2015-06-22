@@ -23,17 +23,17 @@ public:
 public:
 	InitializerList(Implement list) : m_list(list) {}
 
-	BR_CONSTEXPR_AFTER_CPP11 InitializerList() noexcept : m_list() {}
+	BR_CONSTEXPR_AFTER_CXX11 InitializerList() noexcept : m_list() {}
 
-	BR_CONSTEXPR_AFTER_CPP11 Size size() const noexcept {
+	BR_CONSTEXPR_AFTER_CXX11 Size size() const noexcept {
 		return m_list.size();
 	}
 
-	BR_CONSTEXPR_AFTER_CPP11 Iterator begin() const noexcept {
+	BR_CONSTEXPR_AFTER_CXX11 Iterator begin() const noexcept {
 		return m_list.begin();
 	}
 
-	BR_CONSTEXPR_AFTER_CPP11 Iterator end() const noexcept {
+	BR_CONSTEXPR_AFTER_CXX11 Iterator end() const noexcept {
 		return m_list.end();
 	}
 
@@ -42,12 +42,12 @@ private:
 }; // class InitializerList<TElement>
 
 template< typename TElement >
-inline BR_CONSTEXPR_AFTER_CPP11 typename InitializerList<TElement>::Iterator begin(InitializerList<TElement> list) noexcept {
+inline BR_CONSTEXPR_AFTER_CXX11 typename InitializerList<TElement>::Iterator begin(InitializerList<TElement> list) noexcept {
 	return list.begin();
 }
 
 template< typename TElement >
-inline BR_CONSTEXPR_AFTER_CPP11 typename InitializerList<TElement>::Iterator end(InitializerList<TElement> list) noexcept {
+inline BR_CONSTEXPR_AFTER_CXX11 typename InitializerList<TElement>::Iterator end(InitializerList<TElement> list) noexcept {
 	return list.end();
 }
 

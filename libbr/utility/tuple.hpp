@@ -3,7 +3,6 @@
 #include <libbr/config.hpp>
 #include <libbr/memory/allocator_argument_tag.hpp>
 #include <libbr/type_operate/type.hpp>
-#include <libbr/type_operate/integer.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/conditional.hpp>
 #include <libbr/type_operate/add_const.hpp>
@@ -28,6 +27,7 @@
 #include <libbr/type_operate/map_qualifier.hpp>
 #include <libbr/type_operate/remove_reference.hpp>
 #include <libbr/utility/forward.hpp>
+#include <libbr/utility/integer_constant.hpp>
 #include <libbr/utility/wrapped_reference.hpp>
 
 namespace BR {
@@ -62,9 +62,9 @@ struct TypeTupleElement : TypeRewrap< Detail::Utility::TypeTupleElement< I, T > 
 template< Size I, typename T >
 using TupleElement =  TypeUnwrap< TypeTupleElement< I, T > >;
 
-template< Size I, typename ... Tn > BR_CONSTEXPR_AFTER_CPP11 TupleElement< I, Tuple< Tn ... > >       & get(Tuple< Tn ... >       &) noexcept;
-template< Size I, typename ... Tn > BR_CONSTEXPR_AFTER_CPP11 TupleElement< I, Tuple< Tn ... > > const & get(Tuple< Tn ... > const &) noexcept;
-template< Size I, typename ... Tn > BR_CONSTEXPR_AFTER_CPP11 TupleElement< I, Tuple< Tn ... > >      && get(Tuple< Tn ... >      &&) noexcept;
+template< Size I, typename ... Tn > BR_CONSTEXPR_AFTER_CXX11 TupleElement< I, Tuple< Tn ... > >       & get(Tuple< Tn ... >       &) noexcept;
+template< Size I, typename ... Tn > BR_CONSTEXPR_AFTER_CXX11 TupleElement< I, Tuple< Tn ... > > const & get(Tuple< Tn ... > const &) noexcept;
+template< Size I, typename ... Tn > BR_CONSTEXPR_AFTER_CXX11 TupleElement< I, Tuple< Tn ... > >      && get(Tuple< Tn ... >      &&) noexcept;
 
 namespace Detail {
 namespace Utility {
@@ -301,7 +301,7 @@ inline void swap(
 template< Size I, typename TElement, bool >
 class TupleLeaf {
 public:
-	BR_CONSTEXPR_AFTER_CPP11 TupleLeaf() noexcept(IsNothrowDefaultConstructible<TElement>::value) : m_element() {
+	BR_CONSTEXPR_AFTER_CXX11 TupleLeaf() noexcept(IsNothrowDefaultConstructible<TElement>::value) : m_element() {
 		m_assert();
 	}
 
@@ -333,7 +333,7 @@ public:
 			>
 		>
 	>
-	explicit BR_CONSTEXPR_AFTER_CPP11 TupleLeaf(TValue && value) noexcept(
+	explicit BR_CONSTEXPR_AFTER_CXX11 TupleLeaf(TValue && value) noexcept(
 		IsNothrowConstructible< TElement, TValue >::value
 	) : m_element(forward<TValue>(value)) {
 		static_assert(
@@ -395,8 +395,8 @@ public:
 		return 0;
 	}
 
-	BR_CONSTEXPR_AFTER_CPP11 TElement       & get()       noexcept { return m_element; }
-	BR_CONSTEXPR_AFTER_CPP11 TElement const & get() const noexcept { return m_element; }
+	BR_CONSTEXPR_AFTER_CXX11 TElement       & get()       noexcept { return m_element; }
+	BR_CONSTEXPR_AFTER_CXX11 TElement const & get() const noexcept { return m_element; }
 
 private:
 	TupleLeaf & operator=(TupleLeaf const &) = delete;
@@ -432,7 +432,7 @@ private:
 template< Size I, typename TElement >
 class TupleLeaf< I, TElement, true > : TElement {
 public:
-	BR_CONSTEXPR_AFTER_CPP11 TupleLeaf() noexcept(IsNothrowDefaultConstructible<TElement>::value) {}
+	BR_CONSTEXPR_AFTER_CXX11 TupleLeaf() noexcept(IsNothrowDefaultConstructible<TElement>::value) {}
 
 	template< typename TAllocator >
 	TupleLeaf(NotUseAllocator, TAllocator const &) {}
@@ -452,7 +452,7 @@ public:
 			>
 		>
 	>
-	explicit BR_CONSTEXPR_AFTER_CPP11 TupleLeaf(TValue && value) noexcept(
+	explicit BR_CONSTEXPR_AFTER_CXX11 TupleLeaf(TValue && value) noexcept(
 		IsNothrowConstructible< TElement, TValue >::value
 	) : TElement(forward<TValue>(value)) {}
 
@@ -486,8 +486,8 @@ public:
 		return 0;
 	}
 
-	BR_CONSTEXPR_AFTER_CPP11 TElement       & get()       noexcept { return static_cast< TElement       & >(*this); }
-	BR_CONSTEXPR_AFTER_CPP11 TElement const & get() const noexcept { return static_cast< TElement const & >(*this); }
+	BR_CONSTEXPR_AFTER_CXX11 TElement       & get()       noexcept { return static_cast< TElement       & >(*this); }
+	BR_CONSTEXPR_AFTER_CXX11 TElement const & get() const noexcept { return static_cast< TElement const & >(*this); }
 
 private:
 	TupleLeaf & operator=(TupleLeaf const &) = delete;
@@ -502,7 +502,7 @@ struct TupleImp;
 template< Size ... I, typename ... T >
 class TupleImp< TupleIndices< I ... >, T ... > : public TupleLeaf< I, T > ... {
 public:
-	BR_CONSTEXPR_AFTER_CPP11 TupleImp() noexcept(BooleanAnd< IsNothrowDefaultConstructible<T> ... >::value) {}
+	BR_CONSTEXPR_AFTER_CXX11 TupleImp() noexcept(BooleanAnd< IsNothrowDefaultConstructible<T> ... >::value) {}
 
 	TupleImp(TupleImp const &) = default;
 
@@ -513,7 +513,7 @@ public:
 		Size ... ITail, typename ... TTail,
 		typename ... TValue
 	>
-	explicit BR_CONSTEXPR_AFTER_CPP11 TupleImp(
+	explicit BR_CONSTEXPR_AFTER_CXX11 TupleImp(
 		TupleIndices< IHead ... >, TupleTypes< THead ... >,
 		TupleIndices< ITail ... >, TupleTypes< TTail ... >,
 		TValue && ... value
@@ -548,7 +548,7 @@ public:
 		typename TTuple,
 		typename = EnableIf< IsTupleConstructible< Tuple< T ... >, TTuple > >
 	>
-	BR_CONSTEXPR_AFTER_CPP11 TupleImp(TTuple && tuple) noexcept(
+	BR_CONSTEXPR_AFTER_CXX11 TupleImp(TTuple && tuple) noexcept(
 		BooleanAnd<
 			IsNothrowConstructible< T, TupleElement< I, MakeTupleTypes<TTuple> > > ...
 		>::value
@@ -606,12 +606,12 @@ public:
 	}
 
 	template< Size P >
-	BR_CONSTEXPR_AFTER_CPP11 TupleElement< P, TupleTypes< T ... > > & get() noexcept {
+	BR_CONSTEXPR_AFTER_CXX11 TupleElement< P, TupleTypes< T ... > > & get() noexcept {
 		return static_cast< TupleLeaf< P, TupleElement< P, TupleTypes< T ... > > > & >(*this).get();
 	}
 
 	template< Size P >
-	BR_CONSTEXPR_AFTER_CPP11 TupleElement< P, TupleTypes< T ... > > const & get() const noexcept {
+	BR_CONSTEXPR_AFTER_CXX11 TupleElement< P, TupleTypes< T ... > > const & get() const noexcept {
 		return static_cast< TupleLeaf< P, TupleElement< P, TupleTypes< T ... > > > const & >(*this).get();
 	}
 
@@ -634,12 +634,12 @@ public:
 		typename TDummy = BooleanTrue,
 		typename =  EnableIf< BooleanAnd< TDummy, IsDefaultConstructible<TElement> ... > >
 	>
-	BR_CONSTEXPR_AFTER_CPP11 Tuple() noexcept(BooleanAnd< IsNothrowDefaultConstructible<TElement> ... >::value) {}
+	BR_CONSTEXPR_AFTER_CXX11 Tuple() noexcept(BooleanAnd< IsNothrowDefaultConstructible<TElement> ... >::value) {}
 
 	/**
 	 *	@brief initialization conversion constructor
 	 */
-	explicit BR_CONSTEXPR_AFTER_CPP11 Tuple(TElement const & ... element) noexcept(
+	explicit BR_CONSTEXPR_AFTER_CXX11 Tuple(TElement const & ... element) noexcept(
 		BooleanAnd< IsNothrowCopyConstructible<TElement> ... >::value
 	) : m_imp(
 		Detail::Utility::MakeTupleIndices< 0, sizeof...(TElement) >(),
@@ -667,7 +667,7 @@ public:
 			bool
 		> = false
 	>
-	BR_CONSTEXPR_AFTER_CPP11 Tuple(
+	BR_CONSTEXPR_AFTER_CXX11 Tuple(
 		TValue && ... value
 	) noexcept(
 		IsNothrowConstructible<
@@ -704,7 +704,7 @@ public:
 			bool
 		> = false
 	>
-	explicit BR_CONSTEXPR_AFTER_CPP11 Tuple(
+	explicit BR_CONSTEXPR_AFTER_CXX11 Tuple(
 		TValue && ... value
 	) noexcept(
 		IsNothrowConstructible<
@@ -742,7 +742,7 @@ public:
 			Detail::Utility::IsTupleConvertible< TTuple, Tuple >, bool
 		> = false
 	>
-	BR_CONSTEXPR_AFTER_CPP11 Tuple(TTuple && tuple) noexcept(
+	BR_CONSTEXPR_AFTER_CXX11 Tuple(TTuple && tuple) noexcept(
 		IsNothrowConstructible< Imp, TTuple >::value
 	) : m_imp(forward< TTuple >(tuple)) {}
 
@@ -756,7 +756,7 @@ public:
 			bool
 		> = false
 	>
-	explicit BR_CONSTEXPR_AFTER_CPP11 Tuple(TTuple && tuple) noexcept(
+	explicit BR_CONSTEXPR_AFTER_CXX11 Tuple(TTuple && tuple) noexcept(
 		IsNothrowConstructible< Imp, TTuple >::value
 	) : m_imp(forward<TTuple>(tuple)) {}
 
@@ -837,13 +837,13 @@ public:
 
 	/// @brief get element at <b>I</b>
 	template< Size I >
-	BR_CONSTEXPR_AFTER_CPP11 TupleElement< I, Tuple > & get() noexcept {
+	BR_CONSTEXPR_AFTER_CXX11 TupleElement< I, Tuple > & get() noexcept {
 		return m_imp.get< I >();
 	}
 
 	/// @brief get element at <b>I</b>
 	template< Size I >
-	BR_CONSTEXPR_AFTER_CPP11 TupleElement< I, Tuple > const & get() const noexcept {
+	BR_CONSTEXPR_AFTER_CXX11 TupleElement< I, Tuple > const & get() const noexcept {
 		return m_imp.get< I >();
 	}
 
@@ -855,7 +855,7 @@ private:
 template <>
 class Tuple<> {
 public:
-	BR_CONSTEXPR_AFTER_CPP11 Tuple() noexcept {}
+	BR_CONSTEXPR_AFTER_CXX11 Tuple() noexcept {}
 
 	template< typename TAllocator >
 	Tuple(AllocatorArgumentTag, TAllocator const &) noexcept {}
@@ -883,28 +883,28 @@ void swap(
 }
 
 template< Size I, typename ... TElement >
-inline BR_CONSTEXPR_AFTER_CPP11 TupleElement< I, Tuple< TElement ... > > & get(
+inline BR_CONSTEXPR_AFTER_CXX11 TupleElement< I, Tuple< TElement ... > > & get(
 	Tuple< TElement ... > & tuple
 ) noexcept {
 	return tuple.get< I >();
 }
 
 template< Size I, typename ... TElement >
-inline BR_CONSTEXPR_AFTER_CPP11 TupleElement< I, Tuple< TElement ... > > const & get(
+inline BR_CONSTEXPR_AFTER_CXX11 TupleElement< I, Tuple< TElement ... > > const & get(
 	Tuple< TElement ... > const & tuple
 ) noexcept {
 	return tuple.get<I>();
 }
 
 template< Size I, typename ... TElement >
-inline BR_CONSTEXPR_AFTER_CPP11 TupleElement< I, Tuple< TElement ... > > && get(
+inline BR_CONSTEXPR_AFTER_CXX11 TupleElement< I, Tuple< TElement ... > > && get(
 	Tuple< TElement ... > && tuple
 ) noexcept {
 	return static_cast< TupleElement< I, Tuple< TElement ... > > && >(tuple.get< I >());
 }
 
 template< typename ... T >
-inline BR_CONSTEXPR_AFTER_CPP11 Tuple< T & ... > tie(T & ... t) noexcept {
+inline BR_CONSTEXPR_AFTER_CXX11 Tuple< T & ... > tie(T & ... t) noexcept {
 	return Tuple< T & ... >(t ...);
 }
 
@@ -940,12 +940,12 @@ using MakeTupleReturn = TypeUnwrap< TypeMakeTupleReturn<T> >;
 } // namespace Detail
 
 template< typename ... T >
-inline BR_CONSTEXPR_AFTER_CPP11 Tuple< Detail::Utility::MakeTupleReturn< T > ... > make_tuple(T && ... t) {
+inline BR_CONSTEXPR_AFTER_CXX11 Tuple< Detail::Utility::MakeTupleReturn< T > ... > make_tuple(T && ... t) {
 	return Tuple< Detail::Utility::MakeTupleReturn< T > ... >(forward<T>(t) ...);
 }
 
 template< typename ... T >
-inline BR_CONSTEXPR_AFTER_CPP11 Tuple< T && ... > forward_as_tuple(T && ... t) noexcept {
+inline BR_CONSTEXPR_AFTER_CXX11 Tuple< T && ... > forward_as_tuple(T && ... t) noexcept {
 	return Tuple< T && ... >(forward<T>(t) ...);
 }
 
@@ -955,12 +955,12 @@ namespace Utility {
 template< Size I >
 struct TupleCompare {
 	template< typename T0, typename T1 >
-	static BR_CONSTEXPR_AFTER_CPP11 bool equal(T0 const & t0, T1 const & t1) {
+	static BR_CONSTEXPR_AFTER_CXX11 bool equal(T0 const & t0, T1 const & t1) {
 		return TupleCompare< I-1 >::equal(t0, t1) && get< I-1 >(t0) == get< I-1 >(t1);
 	}
 
 	template< typename T0, typename T1 >
-	static BR_CONSTEXPR_AFTER_CPP11 bool less(T0 const & t0, T1 const & t1) {
+	static BR_CONSTEXPR_AFTER_CXX11 bool less(T0 const & t0, T1 const & t1) {
 		return TupleCompare< I-1 >::less(t0, t1) || (!TupleCompare< I-1 >::less(t1, t0) && get< I-1 >(t0) < get< I-1 >(t1));
 	}
 };
@@ -968,12 +968,12 @@ struct TupleCompare {
 template<>
 struct TupleCompare< 0 > {
 	template< typename T0, typename T1 >
-	static BR_CONSTEXPR_AFTER_CPP11 bool equal(T0 const &, T1 const &) {
+	static BR_CONSTEXPR_AFTER_CXX11 bool equal(T0 const &, T1 const &) {
 		return true;
 	}
 
 	template< typename T0, typename T1 >
-	static BR_CONSTEXPR_AFTER_CPP11 bool less(T0 const &, T1 const &) {
+	static BR_CONSTEXPR_AFTER_CXX11 bool less(T0 const &, T1 const &) {
 		return false;
 	}
 };
@@ -982,32 +982,32 @@ struct TupleCompare< 0 > {
 } // namespace Detail
 
 template< typename ... T0, typename ... T1 >
-BR_CONSTEXPR_AFTER_CPP11 bool operator==(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) {
+BR_CONSTEXPR_AFTER_CXX11 bool operator==(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) {
 	return Detail::Utility::TupleCompare< sizeof...(T0) >::equal(t0, t1);
 }
 
 template< typename ... T0, typename ... T1 >
-BR_CONSTEXPR_AFTER_CPP11 bool operator!=(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) {
+BR_CONSTEXPR_AFTER_CXX11 bool operator!=(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) {
 	return !(t0 == t1);
 }
 
 template< typename ... T0, typename ... T1 >
-BR_CONSTEXPR_AFTER_CPP11 bool operator<(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) {
+BR_CONSTEXPR_AFTER_CXX11 bool operator<(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) {
 	return Detail::Utility::TupleCompare< sizeof...(T0) >::less(t0, t1);
 }
 
 template< typename ... T0, typename ... T1 >
-BR_CONSTEXPR_AFTER_CPP11 bool operator>(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) {
+BR_CONSTEXPR_AFTER_CXX11 bool operator>(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) {
 	return t1 < t0;
 }
 
 template< typename ... T0, typename ... T1 >
-BR_CONSTEXPR_AFTER_CPP11 bool operator<=(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) {
+BR_CONSTEXPR_AFTER_CXX11 bool operator<=(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) {
 	return !(t1 < t0);
 }
 
 template< typename ... T0, typename ... T1 >
-BR_CONSTEXPR_AFTER_CPP11 bool operator>=(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) {
+BR_CONSTEXPR_AFTER_CXX11 bool operator>=(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) {
 	return !(t0 < t1);
 }
 
@@ -1092,7 +1092,7 @@ struct TupleCat;
 template< typename ... T, Size ... IHead, Size ... ITail >
 struct TupleCat< Tuple<  T ... >, TupleIndices< IHead ... >, TupleIndices< ITail ... > > {
 	template< typename TTuple >
-	BR_CONSTEXPR_AFTER_CPP11 TupleCatResultReference<
+	BR_CONSTEXPR_AFTER_CXX11 TupleCatResultReference<
 		Tuple< T ... > &&, TTuple &&
 	> operator()(
 		Tuple< T ... > head, TTuple && tail
@@ -1101,7 +1101,7 @@ struct TupleCat< Tuple<  T ... >, TupleIndices< IHead ... >, TupleIndices< ITail
 	}
 
 	template< typename TTuple0, typename TTuple1, typename ... TTuples >
-	BR_CONSTEXPR_AFTER_CPP11 TupleCatResultReference<
+	BR_CONSTEXPR_AFTER_CXX11 TupleCatResultReference<
 		Tuple< T ... > &&, TTuple0 &&, TTuple1 &&, TTuples && ...
 	> operator()(
 		Tuple< T ... > head, TTuple0 && tail0, TTuple1 && tail1, TTuples && ... tails
@@ -1122,12 +1122,12 @@ struct TupleCat< Tuple<  T ... >, TupleIndices< IHead ... >, TupleIndices< ITail
 } // namespace Utility
 } // namespace Detail
 
-inline BR_CONSTEXPR_AFTER_CPP11 Tuple<> tuple_cat() {
+inline BR_CONSTEXPR_AFTER_CXX11 Tuple<> tuple_cat() {
 	return Tuple<>();
 }
 
 template< typename TTuple0, typename ... TTuples >
-inline BR_CONSTEXPR_AFTER_CPP11 Detail::Utility::TupleCatResult< TTuple0, TTuples ... > tuple_cat(
+inline BR_CONSTEXPR_AFTER_CXX11 Detail::Utility::TupleCatResult< TTuple0, TTuples ... > tuple_cat(
 	TTuple0 && tuple0, TTuples ... tuples
 ) {
 	return Detail::Utility::TupleCat<

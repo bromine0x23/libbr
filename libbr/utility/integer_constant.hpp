@@ -6,12 +6,12 @@
 namespace BR {
 
 template< typename TValue >
-struct IntegerConstantBase {
+struct BasicIntegerConstant {
 	using Value = TValue;
 };
 
 template< typename TValue, TValue v >
-struct IntegerConstant : IntegerConstantBase< TValue >, TypeWrapper< IntegerConstant< TValue, v > > {
+struct IntegerConstant : BasicIntegerConstant< TValue >, TypeWrapper< IntegerConstant< TValue, v > > {
 	constexpr static auto value = v;
 	constexpr operator TValue() const { return value; }
 	constexpr TValue operator()() const { return value; }
@@ -19,6 +19,11 @@ struct IntegerConstant : IntegerConstantBase< TValue >, TypeWrapper< IntegerCons
 
 template< typename TValue, TValue ... values >
 struct Integers {};
+
+template< typename TValue, TValue value >
+constexpr IntegerConstant< TValue, value > integer_constant() {
+	return IntegerConstant< TValue, value >();
+}
 
 } // namespace BR
 

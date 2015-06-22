@@ -18,11 +18,6 @@ using UInt16 = __UINT16_TYPE__;
 using UInt32 = __UINT32_TYPE__;
 using UInt64 = __UINT64_TYPE__;
 
-#if defined(BR_HAS_INT128)
-using SInt128 =   signed __int128;
-using UInt128 = unsigned __int128;
-#endif
-
 constexpr static auto BIT_PER_CHAR = __CHAR_BIT__;
 
 using Size              = __SIZE_TYPE__;
@@ -78,11 +73,6 @@ using UInt64 = unsigned long long;
 #  error "defaults not correct; you must hand modify libbr/typedef.hpp"
 #endif
 
-#if defined(BR_HAS_INT128)
-typedef   signed __int128 SInt128;
-typedef unsigned __int128 UInt128;
-#endif
-
 constexpr static auto BIT_PER_CHAR = CHAR_BIT;
 
 using Size              = decltype(sizeof(char));
@@ -90,7 +80,16 @@ using PointerDifference = decltype(static_cast<char *>(nullptr) - static_cast<ch
 
 } // namespace BR
 
+#endif // defined(BR_GCC)
+
+namespace BR {
+
+#if defined(BR_HAS_INT128)
+using SInt128 = BR_SINT128;
+using UInt128 = BR_UINT128;
 #endif
+
+} // namespace BR
 
 namespace BR {
 
@@ -98,12 +97,14 @@ using NChar = char;
 
 using WChar = wchar_t;
 
+using Char16 = char16_t;
+
+using Char32 = char32_t;
+
 constexpr static auto IS_NCHAR_UNSIGNED = static_cast< NChar >(0) < static_cast< NChar >(-1);
 constexpr static auto IS_WCHAR_UNSIGNED = static_cast< WChar >(0) < static_cast< WChar >(-1);
 
 } // namespace BR
-
-// #include<cstddef>
 
 namespace BR {
 
@@ -124,26 +125,23 @@ using CArray = T[S];
 template< typename TChar >
 using CString = TChar const *;
 
-using CNString = CString< NChar>;
-using CWString = CString< WChar>;
-
 } // namespace BR
 
 namespace BR {
 
-BR_STATIC_ASSERT(BIT_PER_CHAR * sizeof(SInt8)  ==  8, "SInt8  isn't excatly  8 bits.");
-BR_STATIC_ASSERT(BIT_PER_CHAR * sizeof(SInt16) == 16, "SInt16 isn't excatly 16 bits.");
-BR_STATIC_ASSERT(BIT_PER_CHAR * sizeof(SInt32) == 32, "SInt32 isn't excatly 32 bits.");
-BR_STATIC_ASSERT(BIT_PER_CHAR * sizeof(SInt64) == 64, "SInt64 isn't excatly 64 bits.");
+static_assert(BIT_PER_CHAR * sizeof(SInt8)  ==  8, "SInt8  isn't excatly  8 bits.");
+static_assert(BIT_PER_CHAR * sizeof(SInt16) == 16, "SInt16 isn't excatly 16 bits.");
+static_assert(BIT_PER_CHAR * sizeof(SInt32) == 32, "SInt32 isn't excatly 32 bits.");
+static_assert(BIT_PER_CHAR * sizeof(SInt64) == 64, "SInt64 isn't excatly 64 bits.");
 
-BR_STATIC_ASSERT(BIT_PER_CHAR * sizeof(UInt8)  ==  8, "UInt8  isn't excatly  8 bits.");
-BR_STATIC_ASSERT(BIT_PER_CHAR * sizeof(UInt16) == 16, "UInt16 isn't excatly 16 bits.");
-BR_STATIC_ASSERT(BIT_PER_CHAR * sizeof(UInt32) == 32, "UInt32 isn't excatly 32 bits.");
-BR_STATIC_ASSERT(BIT_PER_CHAR * sizeof(UInt64) == 64, "UInt64 isn't excatly 64 bits.");
+static_assert(BIT_PER_CHAR * sizeof(UInt8)  ==  8, "UInt8  isn't excatly  8 bits.");
+static_assert(BIT_PER_CHAR * sizeof(UInt16) == 16, "UInt16 isn't excatly 16 bits.");
+static_assert(BIT_PER_CHAR * sizeof(UInt32) == 32, "UInt32 isn't excatly 32 bits.");
+static_assert(BIT_PER_CHAR * sizeof(UInt64) == 64, "UInt64 isn't excatly 64 bits.");
 
 #if defined(BR_HAS_INT128)
-BR_STATIC_ASSERT(BIT_PER_CHAR * sizeof(SInt128) == 128, "SInt128 isn't excatly 128 bits.");
-BR_STATIC_ASSERT(BIT_PER_CHAR * sizeof(UInt128) == 128, "UInt128 isn't excatly 128 bits.");
+static_assert(BIT_PER_CHAR * sizeof(SInt128) == 128, "SInt128 isn't excatly 128 bits.");
+static_assert(BIT_PER_CHAR * sizeof(UInt128) == 128, "UInt128 isn't excatly 128 bits.");
 #endif // defined
 
 } // namespace BR

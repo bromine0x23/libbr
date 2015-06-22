@@ -1,26 +1,23 @@
 #pragma once
 
 #include <libbr/config.hpp>
-
 #include <libbr/assert/assert.hpp>
 #include <libbr/math/relation.hpp>
 #include <libbr/math/sign.hpp>
 #include <libbr/exception/index_out_of_range_exception.hpp>
-#include <libbr/exception/invalid_argument_exception.hpp>
-#include <libbr/type_operate/conditional.hpp>
 #include <libbr/type_operate/make_signed.hpp>
 #include <libbr/type_operate/make_unsigned.hpp>
 #include <libbr/utility/bit_math.hpp>
+#include <libbr/utility/initializer_list.hpp>
 #include <libbr/utility/move.hpp>
 #include <libbr/utility/pair.hpp>
-#include <libbr/utility/initializer_list.hpp>
+#include <libbr/utility/swap.hpp>
 #include <string>
 
 namespace BR {
 
 class Bignum {
 public:
-
 	using Digit  = UInt32;
 	using DDigit = UInt64;
 
@@ -30,18 +27,48 @@ public:
 	using SDDigit = MakeSigned  <DDigit>;
 	using Index   = MakeSigned  <Size>;
 
-public:
-	constexpr static auto BITS_PER_DIGIT = sizeof(Digit) * BIT_PER_CHAR;
+private:
+	struct Positive {};
+	struct Negative {};
+	struct Absolute {};
+	struct Complement {};
 
-	constexpr static auto RADIX = UDDigit(1) << BITS_PER_DIGIT;
+	template< Digit value >
+	struct Value {};
+
+	template< typename TInt > struct Bits   { TInt const v; };
+	template< typename TInt > struct Digits { TInt const v; };
+
+	struct Power2 { Digit const v; };
+
+	struct Exponent { Digit const v; };
 
 public:
+	constexpr static auto BIT_PER_DIGIT = sizeof(Digit) * BIT_PER_CHAR;
+
+	constexpr static auto RADIX = UDDigit(1) << BIT_PER_DIGIT;
+
+	constexpr static auto positive   = Positive();
+	constexpr static auto negative   = Negative();
+	constexpr static auto absolute   = Absolute();
+	constexpr static auto complement = Complement();
+
 	static Bignum const ZERO;
 
 public:
-	struct Power2Tag {};
+	template< Digit v >
+	static constexpr Value<v> value() {
+		return Value<v>{};
+	}
 
-	constexpr static auto power_2_tag = Power2Tag();
+	static constexpr Bits  <UDigit> bits  (UDigit n) { return Bits  <UDigit>{n}; }
+	static constexpr Bits  <SDigit> bits  (SDigit n) { return Bits  <SDigit>{n}; }
+	static constexpr Digits<UDigit> digits(UDigit n) { return Digits<UDigit>{n}; }
+	static constexpr Digits<SDigit> digits(SDigit n) { return Digits<SDigit>{n}; }
+
+	static constexpr Power2 power2(Digit n) { return Power2{n}; }
+
+	static constexpr Exponent exponent(Digit n) { return Exponent{n}; }
 
 public:
 	Bignum();
@@ -62,12 +89,11 @@ public:
 
 	Bignum(InitializerList< Digit >);
 
-	Bignum(Power2Tag, Size n);
+	Bignum(Power2 n);
 
-	~Bignum();
+	virtual ~Bignum();
 
 public:
-
 	Bignum & operator=(Bignum const & Y);
 	Bignum & operator=(Bignum      && Y);
 
@@ -83,6 +109,8 @@ public:
 	Bignum & operator=(unsigned long long v);
 
 	Bignum & operator=(InitializerList< Digit >);
+
+	Bignum & operator=(Power2 n);
 
 #if defined(BR_HAS_INT128)
 	explicit Bignum(UInt128 v);
@@ -114,17 +142,17 @@ public:
 	}
 
 	Size bit_length() const noexcept {
-		return digit_length() * BITS_PER_DIGIT - count_leading_zeros(digits()[digit_length() - 1]);
+		return digit_length() * BIT_PER_DIGIT - count_leading_zeros(digits()[digit_length() - 1]);
 	}
 
 	// get digit at index
 	Digit operator()(Index index) const {
-		return digits()[m_normalize_index(index)];
+		return digits()[m_fix_index(index)];
 	}
 
-	Digit digit(Index index) const {
-		index = m_normalize_index(index);
-		if (!(Size(index) < length())) {
+	Digit digit(Index index) const noexcept(false) {
+		auto fixed_index = m_fix_index(index);
+		if (fixed_index >= length()) {
 			throw IndexOutOfRangeException("BR::Math::Bignum#digit(Index)");
 		}
 		return operator()(index);
@@ -132,13 +160,13 @@ public:
 
 	// get bit at index
 	Digit operator[](Index index) const {
-		index = m_normalize_index(index);
-		return (digit(index / BITS_PER_DIGIT) >> (index & (BITS_PER_DIGIT - 1))) & 1;
+		auto fixed_index = m_fix_index(index);
+		return (digit(fixed_index / BIT_PER_DIGIT) >> (fixed_index & (BIT_PER_DIGIT - 1))) & 1;
 	}
 
-	Digit bit(Index index) const {
-		index = m_normalize_index(index);
-		if (!(Size(index) < bit_length())) {
+	Digit bit(Index index) const noexcept(false) {
+		auto fixed_index = m_fix_index(index);
+		if (fixed_index >= bit_length()) {
 			throw IndexOutOfRangeException("BR::Math::Bignum#bit(Index)");
 		}
 		return operator[](index);
@@ -149,45 +177,43 @@ public:
 
 	Bignum & swap(Bignum & Y);
 
-	Bignum & set0();
+	Bignum & operator=(Value<0>);
 
 	bool is_pos() const noexcept { return sign() == Sign::POS; }
 	bool is_neg() const noexcept { return sign() == Sign::NEG; }
 
-	bool is_even() const noexcept { return mod2() == 0; }
-	bool is_odd () const noexcept { return mod2() == 1; }
+	bool is_even() const noexcept { return operator%(Value<2>()) == 0; }
+	bool is_odd () const noexcept { return operator%(Value<2>()) == 1; }
 
 	bool operator!() const noexcept {
 		return length() == 1 && digits()[0] == 0;
 	}
 
 	explicit operator bool() const noexcept {
-		return !*this;
+		return !operator!();
 	}
 
-	Relation cmp(Bignum const & Y) const; // X <=> Y
+	Relation compare(Bignum const & Y) const; // X <=> Y
 
-	bool operator< (Bignum const & Y) const noexcept { return cmp(Y) == Relation::LT; }
-	bool operator> (Bignum const & Y) const noexcept { return cmp(Y) == Relation::GT; }
-	bool operator<=(Bignum const & Y) const noexcept { return cmp(Y) != Relation::GT; }
-	bool operator>=(Bignum const & Y) const noexcept { return cmp(Y) != Relation::LT; }
-	bool operator==(Bignum const & Y) const noexcept { return cmp(Y) == Relation::EQ; }
-	bool operator!=(Bignum const & Y) const noexcept { return cmp(Y) != Relation::EQ; }
-
-public:
-
-	Bignum & set_pos () noexcept { m_imp.sign = +sign(); return *this; } // X = +X
-	Bignum & set_neg () noexcept { m_imp.sign = -sign(); return *this; } // X = -X
-	Bignum & set_conj();  // X = ~X
-	Bignum & set_abs () noexcept { m_imp.sign = Sign::POS; return *this; } // X = |X|
-
-	Bignum operator+() const { Bignum Z(*this); return Z.set_pos (); }
-	Bignum operator-() const { Bignum Z(*this); return Z.set_neg (); }
-	Bignum operator~() const { Bignum Z(*this); return Z.set_conj(); }
-	Bignum abs      () const { Bignum Z(*this); return Z.set_abs (); }
+	bool operator< (Bignum const & Y) const noexcept { return compare(Y) == Relation::LT; }
+	bool operator> (Bignum const & Y) const noexcept { return compare(Y) == Relation::GT; }
+	bool operator<=(Bignum const & Y) const noexcept { return compare(Y) != Relation::GT; }
+	bool operator>=(Bignum const & Y) const noexcept { return compare(Y) != Relation::LT; }
+	bool operator==(Bignum const & Y) const noexcept { return compare(Y) == Relation::EQ; }
+	bool operator!=(Bignum const & Y) const noexcept { return compare(Y) != Relation::EQ; }
 
 public:
+	Bignum & operator=(Positive) noexcept { m_imp.sign = +sign(); return *this; } // X = +X
+	Bignum & operator=(Negative) noexcept { m_imp.sign = -sign(); return *this; } // X = -X
+	Bignum & operator=(Absolute) noexcept { m_imp.sign = Sign::POS; return *this; } // X = |X|
+	Bignum & operator=(Complement);  // X = ~X
 
+	Bignum operator+() const { Bignum Z(*this); return Z.operator=(positive); }
+	Bignum operator-() const { Bignum Z(*this); return Z.operator=(negative); }
+	Bignum abs      () const { Bignum Z(*this); return Z.operator=(absolute); }
+	Bignum operator~() const { Bignum Z(*this); return Z.operator=(complement); }
+
+public:
 	Bignum operator+(Bignum const & Y) const;
 	Bignum operator-(Bignum const & Y) const;
 	Bignum operator*(Bignum const & Y) const;
@@ -207,38 +233,61 @@ public:
 	Bignum & operator^=(Bignum const & Y);
 
 public:
+	Bignum operator+ (       UDigit   d) const;
+	Bignum operator- (       UDigit   d) const;
+	Bignum operator* (       UDigit   d) const;
+	Bignum operator/ (       UDigit   d) const;
+	Bignum operator| (       UDigit   d) const;
+	Bignum operator& (       UDigit   d) const;
+	Bignum operator^ (       UDigit   d) const;
+	Bignum operator<<(       UDigit   n) const;
+	Bignum operator>>(       UDigit   n) const;
+	Bignum operator<<(Bits  <UDigit> bn) const;
+	Bignum operator>>(Bits  <UDigit> bn) const;
+	Bignum operator<<(Digits<UDigit> dn) const;
+	Bignum operator>>(Digits<UDigit> dn) const;
 
-	Bignum operator+ (UDigit d) const;
-	Bignum operator- (UDigit d) const;
-	Bignum operator* (UDigit d) const;
-	Bignum operator/ (UDigit d) const;
-	Bignum operator| (UDigit d) const;
-	Bignum operator& (UDigit d) const;
-	Bignum operator^ (UDigit d) const;
+	Bignum operator+ (       SDigit   d) const;
+	Bignum operator- (       SDigit   d) const;
+	Bignum operator* (       SDigit   d) const;
+	Bignum operator/ (       SDigit   d) const;
+	Bignum operator| (       SDigit   d) const;
+	Bignum operator& (       SDigit   d) const;
+	Bignum operator^ (       SDigit   d) const;
+	Bignum operator<<(       SDigit   n) const;
+	Bignum operator>>(       SDigit   n) const;
+	Bignum operator<<(Bits  <SDigit> bn) const;
+	Bignum operator>>(Bits  <SDigit> bn) const;
+	Bignum operator<<(Digits<SDigit> dn) const;
+	Bignum operator>>(Digits<SDigit> dn) const;
 
-	Bignum operator+ (SDigit d) const;
-	Bignum operator- (SDigit d) const;
-	Bignum operator* (SDigit d) const;
-	Bignum operator/ (SDigit d) const;
-	Bignum operator| (SDigit d) const;
-	Bignum operator& (SDigit d) const;
-	Bignum operator^ (SDigit d) const;
+	Bignum & operator +=(       UDigit   d);
+	Bignum & operator -=(       UDigit   d);
+	Bignum & operator *=(       UDigit   d);
+	Bignum & operator /=(       UDigit   d);
+	Bignum & operator |=(       UDigit   d);
+	Bignum & operator &=(       UDigit   d);
+	Bignum & operator ^=(       UDigit   d);
+	Bignum & operator<<=(       UDigit   n);
+	Bignum & operator>>=(       UDigit   n);
+	Bignum & operator<<=(Bits  <UDigit> bn);
+	Bignum & operator>>=(Bits  <UDigit> bn);
+	Bignum & operator<<=(Digits<UDigit> dn);
+	Bignum & operator>>=(Digits<UDigit> dn);
 
-	Bignum & operator+= (UDigit d);
-	Bignum & operator-= (UDigit d);
-	Bignum & operator*= (UDigit d);
-	Bignum & operator/= (UDigit d);
-	Bignum & operator|= (UDigit d);
-	Bignum & operator&= (UDigit d);
-	Bignum & operator^= (UDigit d);
-
-	Bignum & operator+= (SDigit d);
-	Bignum & operator-= (SDigit d);
-	Bignum & operator*= (SDigit d);
-	Bignum & operator/= (SDigit d);
-	Bignum & operator|= (SDigit d);
-	Bignum & operator&= (SDigit d);
-	Bignum & operator^= (SDigit d);
+	Bignum & operator +=(       SDigit   d);
+	Bignum & operator -=(       SDigit   d);
+	Bignum & operator *=(       SDigit   d);
+	Bignum & operator /=(       SDigit   d);
+	Bignum & operator |=(       SDigit   d);
+	Bignum & operator &=(       SDigit   d);
+	Bignum & operator ^=(       SDigit   d);
+	Bignum & operator<<=(       SDigit   n);
+	Bignum & operator>>=(       SDigit   n);
+	Bignum & operator<<=(Bits  <SDigit> bn);
+	Bignum & operator>>=(Bits  <SDigit> bn);
+	Bignum & operator<<=(Digits<SDigit> dn);
+	Bignum & operator>>=(Digits<SDigit> dn);
 
 	UDigit operator%(UDigit d) const;
 
@@ -246,46 +295,21 @@ public:
 		return operator=(operator%(d));
 	}
 
-public:
+	Bignum operator*(Value<2>) const; // X * 2
+	Bignum operator/(Value<2>) const; // X / 2
 
-	Bignum operator<<(UDigit n) const;
-	Bignum operator>>(UDigit n) const;
+	Bignum & operator*=(Value<2>); // X *= 2
+	Bignum & operator/=(Value<2>); // X /= 2
 
-	Bignum operator<<(SDigit n) const;
-	Bignum operator>>(SDigit n) const;
+	Digit operator%(Value<2>) const { return operator()(0) & Digit(1); } // X % 2
 
-	Bignum & operator<<=(UDigit n);
-	Bignum & operator>>=(UDigit n);
+	Bignum operator^(Value<2>) const; // X ^ 2 === X * X
 
-	Bignum & operator<<=(SDigit n);
-	Bignum & operator>>=(SDigit n);
+	Bignum & operator^=(Value<2>); // X = X ^ 2
 
-	template< typename TInt >
-	struct BitWidth { TInt v; };
+	Bignum operator^(Exponent n) const; // X ^ n
 
-	Bignum operator<<(BitWidth<UDigit> n) const;
-	Bignum operator>>(BitWidth<UDigit> n) const;
-
-	Bignum operator<<(BitWidth<SDigit> n) const;
-	Bignum operator>>(BitWidth<SDigit> n) const;
-
-	Bignum & operator<<=(BitWidth<UDigit> n);
-	Bignum & operator>>=(BitWidth<UDigit> n);
-
-	Bignum & operator<<=(BitWidth<SDigit> n);
-	Bignum & operator>>=(BitWidth<SDigit> n);
-
-/*
-	Bignum lshb(Digit bn) const; // X << n, n < BIT_PER_DIGIT
-	Bignum rshb(Digit bn) const; // X << n, n < BIT_PER_DIGIT
-	Bignum lshd(Digit dn) const; // X << (dn * BIT_PER_DIGIT)
-	Bignum rshd(Digit dn) const; // X >> (dn * BIT_PER_DIGIT)
-
-	Bignum & lshb_by(Digit bn); // X <<= n, n < BIT_PER_DIGIT
-	Bignum & rshb_by(Digit bn); // X >>= n, n < BIT_PER_DIGIT
-	Bignum & lshd_by(Digit dn); // X <<= (dn * BIT_PER_DIGIT)
-	Bignum & rshd_by(Digit dn); // X >>= (dn * BIT_PER_DIGIT)
- */
+	Bignum & operator^=(Exponent n); // X = X ^ n
 
 public:
 
@@ -300,22 +324,6 @@ public:
 
 public:
 
-	Bignum mul2() const; // X * 2
-	Bignum div2() const; // X / 2
-
-	Bignum & mul_by2(); // X *= 2
-	Bignum & div_by2(); // X /= 2
-
-	Digit mod2() const { return operator()(0) & Digit(1); } // X % 2
-
-public:
-
-	Bignum sqr() const; // X^2
-
-	Bignum & set_sqr(); // X = X^2
-
-public:
-
 	Pair< Bignum, Bignum > div_mod(Bignum const & Y) const;
 
 	Pair< Bignum, Digit > div_mod(Digit d) const;
@@ -325,14 +333,9 @@ public:
 
 	Reducer to_reducer() const;
 
-	Bignum reduce(Reducer const &) const;
+	Bignum operator/(Reducer const &) const;
 
-	Bignum &reduce_by(Reducer const &);
-
-public:
-	Bignum pow(Digit d) const;
-
-	Bignum & pow_by(Digit d);
+	Bignum & operator/=(Reducer const &);
 
 public:
 	template< typename functor_type >
@@ -348,10 +351,12 @@ public:
 
 	std::string to_s(Digit base = 10, bool show_plus = false) const;
 
-public:
+	operator std::string() const {
+		return to_s();
+	}
 
 private:
-	Index m_normalize_index(Index index) const noexcept { return index < 0 ? length() + index : index; }
+	Size m_fix_index(Index index) const noexcept { return index < 0 ? length() + index : static_cast<Size>(index); }
 
 private:
 	struct NotAllocateTag {};
@@ -382,5 +387,38 @@ inline Bignum && operator<<(Bignum && X, TInt n) { return move(X <<= n); }
 
 template< typename TInt >
 inline Bignum && operator>>(Bignum && X, TInt n) { return move(X >>= n); }
+
+namespace BignumHelper {
+
+constexpr static auto positive   = Bignum::positive;
+constexpr static auto negative   = Bignum::negative;
+constexpr static auto absolute   = Bignum::absolute;
+constexpr static auto complement = Bignum::complement;
+
+template< Bignum::Digit v >
+constexpr auto value() -> decltype(Bignum::value<v>()) {
+	return Bignum::value<v>();
+}
+
+template< typename T >
+constexpr auto bits(T n) -> decltype(Bignum::bits(n)) {
+	return Bignum::bits(n);
+}
+
+template< typename T >
+constexpr auto digits(T n) -> decltype(Bignum::digits(n)) {
+	return Bignum::digits(n);
+}
+
+template< Bignum::Digit v >
+constexpr auto power2(Bignum::Digit n) -> decltype(Bignum::power2(n)) {
+	return Bignum::power2(n);
+}
+
+constexpr auto exponent(Bignum::Digit n) -> decltype(Bignum::exponent(n)) {
+	return Bignum::exponent(n);
+}
+
+} // namespace BignumHelper
 
 } // namespace BR

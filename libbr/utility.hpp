@@ -2,12 +2,14 @@
 
 #include <libbr/utility/any.hpp>
 #include <libbr/utility/bit_math.hpp>
+#include <libbr/utility/bool_constant.hpp>
 #include <libbr/utility/current_function.hpp>
 #include <libbr/utility/compressed_pair.hpp>
 #include <libbr/utility/demangle.hpp>
 #include <libbr/utility/exchange.hpp>
 #include <libbr/utility/forward.hpp>
 #include <libbr/utility/initializer_list.hpp>
+#include <libbr/utility/integer_constant.hpp>
 #include <libbr/utility/make_value.hpp>
 #include <libbr/utility/move.hpp>
 #include <libbr/utility/pair.hpp>

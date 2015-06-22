@@ -13,4 +13,9 @@ enum class Relation {
 	GREATER_THAN = GT
 };
 
+template< typename TInt >
+constexpr Relation to_relation(TInt const & x) {
+	return x != TInt(0) ? (x < TInt(0) ? Relation::LT : Relation::GT) : Relation::EQ;
+}
+
 } // namespace BR
