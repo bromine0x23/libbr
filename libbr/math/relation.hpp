@@ -5,12 +5,9 @@
 namespace BR {
 
 enum class Relation {
-	LT = -1,
-	EQ = 0,
-	GT = 1,
-	LESS_THAN = LT,
-	EQUAL = EQ,
-	GREATER_THAN = GT
+	LT = -1, LESS_THAN    = LT,
+	EQ =  0, EQUAL        = EQ,
+	GT =  1, GREATER_THAN = GT
 };
 
 template< typename TInt >

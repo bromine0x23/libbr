@@ -1,72 +1,53 @@
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/assert/assert.hpp>
 
 namespace BR {
 
 enum class Sign {
 	NEG = false,
-	ZPOS = true,
-	POS = ZPOS
+	ZPOS = true
 };
 
-inline Sign operator+(Sign sign) {
-	return sign;
+constexpr Sign operator~(Sign s) {
+	return s == Sign::ZPOS ?  Sign::NEG : Sign::ZPOS;
 }
 
-inline Sign operator-(Sign s) {
-	switch (s) {
-		case Sign::POS:
-			return Sign::NEG;
-		case Sign::NEG:
-			return Sign::POS;
-		default:
-			BR_ASSERT(false);
-	}
+constexpr Sign operator|(Sign x, Sign y) {
+	return (x == Sign::ZPOS && y == Sign::ZPOS) ? Sign::ZPOS : Sign::NEG;
 }
 
-inline Sign operator~(Sign s) {
-	return -s;
+constexpr Sign operator&(Sign x, Sign y) {
+	return (x != Sign::ZPOS && y != Sign::ZPOS) ? Sign::ZPOS : Sign::NEG;
 }
 
-inline Sign operator*(Sign x, Sign y) {
-	return (x == y) ? Sign::POS : Sign::NEG;
+constexpr Sign operator^(Sign x, Sign y) {
+	return (x == y) ? Sign::ZPOS : Sign::NEG;
 }
 
-inline Sign operator|(Sign x, Sign y) {
-	return (x == Sign::POS && y == Sign::POS) ? Sign::POS : Sign::NEG;
+constexpr Sign operator+(Sign s) {
+	return s;
 }
 
-inline Sign operator&(Sign x, Sign y) {
-	return (x != Sign::POS && y != Sign::POS) ? Sign::POS : Sign::NEG;
+constexpr Sign operator-(Sign s) {
+	return ~s;
 }
 
-inline Sign operator^(Sign x, Sign y) {
+constexpr Sign operator*(Sign x, Sign y) {
+	return x ^ y;
+}
+
+constexpr Sign operator/(Sign x, Sign y) {
 	return x * y;
 }
 
-inline NChar sign_to_nchar(Sign s) {
-	switch (s) {
-		case Sign::POS:
-			return '+';
-		case Sign::NEG:
-			return '-';
-		default:
-			BR_ASSERT(false);
-			return '\0';
-	}
+constexpr NChar sign_to_nchar(Sign s) {
+	return s == Sign::ZPOS ? '+' : '-';
 }
 
-inline WChar sign_to_wchar(Sign s) {
-	switch (s) {
-		case Sign::POS:
-			return L'+';
-		case Sign::NEG:
-			return L'-';
-		default:
-			BR_ASSERT(false);
-			return L'\0';
-	}
+constexpr WChar sign_to_wchar(Sign s) {
+	return s == Sign::ZPOS ? L'+' : L'-';
 }
 
 } // namespace BR
