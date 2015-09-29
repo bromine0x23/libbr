@@ -19,16 +19,16 @@ using IsUnion = BooleanConstant< BR_IS_UNION(T) >;
 template< typename T >
 using IsUnion = BooleanFalse;
 
-#endif // BR_IS_UNION
+#endif // defined(BR_IS_UNION)
 
 } // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsUnion : Boolean< Detail::TypeOperate::IsUnion< T > > {};
+struct IsUnion : Boolean< Detail::TypeOperate::IsUnion<T> > {};
 
 template< typename T >
-struct NotUnion : BooleanNot< Detail::TypeOperate::IsUnion< T > > {};
+struct NotUnion : BooleanNot< Detail::TypeOperate::IsUnion<T> > {};
 
 } // namespace BR
 

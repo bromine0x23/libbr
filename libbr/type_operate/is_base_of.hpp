@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief 派生关系检查
+ * @author Bromine0x23
+ * @since 2015/6/16
+ */
 #pragma once
 
 #include <libbr/config.hpp>
@@ -12,13 +18,16 @@
 
 namespace BR {
 
+template< typename TBase, typename TDerived >
+struct IsBaseOf;
+
 namespace Detail {
 namespace TypeOperate {
 
 #if defined(BR_IS_BASE_OF)
 
 template< typename TBase, typename TDerived >
-using IsBaseOf = BooleanConstant < BR_IS_BASE_OF(RemoveConstVolatile< TBase >, RemoveConstVolatile< TDerived >) >;
+using IsBaseOf = BooleanConstant < BR_IS_BASE_OF(RemoveConstVolatile<TBase>, RemoveConstVolatile<TDerived>) >;
 
 #else
 
@@ -38,8 +47,8 @@ struct IsBaseOfHelper {
 
 template< typename TBase, typename TDerived >
 struct IsBaseOfBasic : BooleanAnd<
-	IsClass< TBase >,
-	IsClass< TDerived >,
+	IsClass<TBase>,
+	IsClass<TDerived>,
 	NotSame< TBase, TDerived >,
 	decltype(IsBaseOfTester< TBase, TDerived >::test(IsBaseOfHelper< TBase, TDerived >(), 0))
 > {
@@ -49,9 +58,9 @@ struct IsBaseOfBasic : BooleanAnd<
 
 template< typename TBase, typename TDerived >
 using IsBaseOf = BooleanAnd<
-	NotLValueReference< TBase >,
-	NotLValueReference< TDerived >,
-	IsBaseOfBasic< RemoveConstVolatile< TBase >, RemoveConstVolatile< TDerived > >
+	NotLValueReference<TBase>,
+	NotLValueReference<TDerived>,
+	IsBaseOfBasic< RemoveConstVolatile<TBase>, RemoveConstVolatile<TDerived> >
  >;
 
 #endif // BR_IS_BASE_OF
@@ -59,11 +68,51 @@ using IsBaseOf = BooleanAnd<
 } // namespace TypeOperate
 } // namespace Detail
 
+/**
+ * @brief 检查 \em TDerived 是否是 \em TBase 或派生自 \em TBase
+ * @tparam TBase 待检查类型，作为基类
+ * @tparam TDerived 待检查类型，作为派生类
+ * @see IntegerConstant
+ * @see NotAssignable
+ *
+ * 如果 \em TDerived 是否是 \em TBase 或派生自 \em TBase ，
+ * 那么封装的值为 \em true ；否则为 \em false
+ */
 template< typename TBase, typename TDerived >
 struct IsBaseOf : Boolean< Detail::TypeOperate::IsBaseOf< TBase, TDerived > > {};
 
+/**
+ * @brief IsBaseOf 的否定
+ * @tparam TBase 待检查类型，作为基类
+ * @tparam TDerived 待检查类型，作为派生类
+ * @see IsBaseOf
+ */
 template< typename TBase, typename TDerived >
 struct NotBaseOf : BooleanNot< Detail::TypeOperate::IsBaseOf< TBase, TDerived > > {};
+
+#if defined(BR_CXX14)
+
+/**
+ * @brief IsBaseOf 的模板变量版本
+ * @tparam TBase 待检查类型，作为基类
+ * @tparam TDerived 待检查类型，作为派生类
+ * @see IsBaseOf
+ * @see not_base_of
+ */
+template< typename TBase, typename TDerived >
+constexpr auto is_base_of = IsBaseOf< TBase, TDerived >::value;
+
+/**
+ * @brief NotBaseOf 的模板变量版本
+ * @tparam TBase 待检查类型，作为基类
+ * @tparam TDerived 待检查类型，作为派生类
+ * @see NotBaseOf
+ * @see is_base_of
+ */
+template< typename TBase, typename TDerived >
+constexpr auto not_base_of = NotBaseOf< TBase, TDerived >::value;
+
+#endif // defined(BR_CXX14)
 
 } // namespace BR
 

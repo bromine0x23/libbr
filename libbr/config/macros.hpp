@@ -1,15 +1,24 @@
+/**
+ * @file
+ * @author Bromine0x23
+ * @since 2015/6/16
+ */
 #pragma once
 
-#if __cplusplus >= 201402L
-# define BR_CXX14
+#if defined(BR_DOXYGEN)
+
+#else
+
+#if __cplusplus >= 201103L
+#  define BR_CXX11
 #endif
 
 #if __cplusplus > 201103L
-# define BR_AFTER_CXX11
+#  define BR_AFTER_CXX11
 #endif
 
-#if __cplusplus >= 201103L
-# define BR_CXX11
+#if __cplusplus >= 201402L
+#  define BR_CXX14
 #endif
 
 #if defined(BR_AFTER_CXX11)
@@ -48,13 +57,6 @@
 #  define BR_UNLIKELY(x) x
 #endif
 
-#define BR_STRINGIZE(X) BR_DO_STRINGIZE(X)
-#define BR_DO_STRINGIZE(X) #X
-
-#define BR_JOIN(X, Y) BR_DO_JOIN(X, Y)
-#define BR_DO_JOIN(X, Y) BR_DO_JOIN2(X,Y)
-#define BR_DO_JOIN2(X, Y) X##Y
-
 #define BR_EMPTY_ARG
 
 #if !defined(BR_FALLTHROUGH)
@@ -62,7 +64,9 @@
 #endif
 
 #if !defined(BR_BYTE_ORDER)
-#  warning "unknown byte order, set to little endian"
+#  pragma message("unknown byte order, set to little endian")
 #  define BR_BYTE_ORDER "little endian"
 #  define BR_LITTLE_ENDIAN
+#endif
+
 #endif

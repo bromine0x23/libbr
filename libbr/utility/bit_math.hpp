@@ -1,7 +1,12 @@
+/**
+ * @file
+ * @brief 位运算实用函数
+ * @author Bromine0x23
+ * @since 2015/9/25
+ */
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/call_result.hpp>
 #include <libbr/type_operate/enable_if.hpp>
 #include <libbr/type_operate/is_integer.hpp>
 #include <libbr/type_operate/is_signed.hpp>
@@ -12,6 +17,15 @@ namespace BR {
 
 namespace Detail {
 namespace BitMath {
+
+constexpr auto half(UInt16 x) -> UInt8;
+
+constexpr auto half(UInt32 x) -> UInt16;
+
+constexpr auto half(UInt64 x) -> UInt32;
+
+template< typename TInt >
+constexpr auto half(TInt x) -> TInt;
 
 constexpr auto bisect(UInt16 const & x) -> UInt8 const (&)[2] {
 	return *reinterpret_cast< UInt8 const (*)[2] >(&x);
@@ -72,11 +86,17 @@ constexpr UInt8 COUNT_ONES[] = {
 } // namespace BitMath
 } // namespace Detail
 
+/**
+ * @brief 二进制表示中1的个数
+ */
 constexpr UInt8 count_ones(UInt8 x) noexcept {
 	using namespace Detail::BitMath;
 	return COUNT_ONES[x];
 }
 
+/**
+ * @brief 二进制表示中1的个数
+ */
 template< typename TUInt >
 constexpr UInt8 count_ones(TUInt x) noexcept {
 	using namespace Detail::BitMath;
@@ -109,15 +129,23 @@ constexpr UInt8 PARITY[] = {
 } // namespace BitMath
 } // namespace Detail
 
+/**
+ * @brief 二进制表示中1个数的奇偶性
+ * @return 0 -> 偶, 1 -> 奇
+ */
 constexpr UInt8 bits_parity(UInt8 x) noexcept {
 	using namespace Detail::BitMath;
 	return PARITY[x];
 }
 
+/**
+ * @brief 二进制表示中1个数的奇偶性
+ * @return 0 -> 偶, 1 -> 奇
+ */
 template< typename TUInt >
 constexpr UInt8 bits_parity(TUInt x) noexcept {
 	using namespace Detail::BitMath;
-	return bits_parity(static_cast< decltype(part0(x)) >(part0(x) ^ part1(x)));
+	return bits_parity(static_cast< decltype(half(x)) >(part0(x) ^ part1(x)));
 }
 
 namespace Detail {
@@ -146,19 +174,31 @@ constexpr UInt8 COUNT_LEADING_ZEROS[] = {
 } // namespace BitMath
 } // namespace Detail
 
+/**
+ * @brief 前导0长度
+ */
 constexpr UInt8 count_leading_zeros(UInt8 x) noexcept {
 	using namespace Detail::BitMath;
 	return COUNT_LEADING_ZEROS[x];
 }
 
+/**
+ * @brief 前导0长度
+ */
 constexpr UInt16 count_leading_zeros(UInt16 x) noexcept {
 	return x > 0xFFU ? count_leading_zeros(UInt8(x >> 8)) : count_leading_zeros(UInt8(x)) + UInt16(8);
 }
 
+/**
+ * @brief 前导0长度
+ */
 constexpr UInt32 count_leading_zeros(UInt32 x) noexcept {
 	return x > 0xFFFFU ? count_leading_zeros(UInt16(x >> 16)) : count_leading_zeros(UInt16(x)) + UInt32(16);
 }
 
+/**
+ * @brief 前导0长度
+ */
 constexpr UInt64 count_leading_zeros(UInt64 x) noexcept {
 	return x > 0xFFFFFFFFU ? count_leading_zeros(UInt32(x >> 32)) : count_leading_zeros(UInt32(x)) + UInt64(32);
 }
@@ -200,24 +240,36 @@ constexpr UInt64 COUNT_TRAILING_ZEROS_MAGIC_64B = 0x0218A392CD3D5DBFULL;
 } // namespace BitMath
 } // namespace Detail
 
+/**
+ * @brief 尾随0长度
+ */
 constexpr Size count_trailing_zeros(UInt8 x) noexcept {
 	using namespace Detail::BitMath;
-	return COUNT_TRAILING_ZEROS_8B [((x & -x) * COUNT_TRAILING_ZEROS_MAGIC_8B ) >> ( 8 - 3)];
+	return COUNT_TRAILING_ZEROS_8B [((x & (~x + 1)) * COUNT_TRAILING_ZEROS_MAGIC_8B ) >> ( 8 - 3)];
 }
 
+/**
+ * @brief 尾随0长度
+ */
 constexpr Size count_trailing_zeros(UInt16 x) noexcept {
 	using namespace Detail::BitMath;
-	return COUNT_TRAILING_ZEROS_16B[((x & -x) * COUNT_TRAILING_ZEROS_MAGIC_16B) >> (16 - 4)];
+	return COUNT_TRAILING_ZEROS_16B[((x & (~x + 1)) * COUNT_TRAILING_ZEROS_MAGIC_16B) >> (16 - 4)];
 }
 
+/**
+ * @brief 尾随0长度
+ */
 constexpr Size count_trailing_zeros(UInt32 x) noexcept {
 	using namespace Detail::BitMath;
-	return COUNT_TRAILING_ZEROS_32B[((x & -x) * COUNT_TRAILING_ZEROS_MAGIC_32B) >> (32 - 5)];
+	return COUNT_TRAILING_ZEROS_32B[((x & (~x + 1)) * COUNT_TRAILING_ZEROS_MAGIC_32B) >> (32 - 5)];
 }
 
+/**
+ * @brief 尾随0长度
+ */
 constexpr Size count_trailing_zeros(UInt64 x) noexcept {
 	using namespace Detail::BitMath;
-	return COUNT_TRAILING_ZEROS_64B[((x & -x) * COUNT_TRAILING_ZEROS_MAGIC_64B) >> (64 - 6)];
+	return COUNT_TRAILING_ZEROS_64B[((x & (~x + 1)) * COUNT_TRAILING_ZEROS_MAGIC_64B) >> (64 - 6)];
 }
 
 namespace Detail {
@@ -246,19 +298,31 @@ constexpr UInt8 REVERSE_BITS[] = {
 } // namespace BitMath
 } // namespace Detail
 
+/**
+ * @brief 按位倒置
+ */
 constexpr UInt8 reverse_bits(UInt8 x) noexcept {
 	using namespace Detail::BitMath;
 	return REVERSE_BITS[x];
 }
 
+/**
+ * @brief 按位倒置
+ */
 constexpr UInt16 reverse_bits(UInt16 x) noexcept {
 	return UInt16(reverse_bits(UInt8(x))) << 8 | UInt16(reverse_bits(UInt8(x >> 8)));
 }
 
+/**
+ * @brief 按位倒置
+ */
 constexpr UInt32 reverse_bits(UInt32 x) noexcept {
 	return UInt32(reverse_bits(UInt16(x))) << 16 | UInt32(reverse_bits(UInt16(x >> 16)));
 }
 
+/**
+ * @brief 按位倒置
+ */
 constexpr UInt64 reverse_bits(UInt64 x) noexcept {
 	return UInt64(reverse_bits(UInt32(x))) << 32 | UInt64(reverse_bits(UInt32(x >> 32)));
 }
@@ -289,20 +353,31 @@ constexpr SInt8 INTEGRAL_LOG2[] = {
 } // namespace BitMath
 } // namespace Detail
 
-
+/**
+ * @brief 二进制对数
+ */
 constexpr SInt8 integral_log2(UInt8 x) noexcept {
 	using namespace Detail::BitMath;
 	return INTEGRAL_LOG2[x];
 }
 
+/**
+ * @brief 二进制对数
+ */
 constexpr SInt16 integral_log2(UInt16 x) noexcept {
 	return (x >> 8) != 0 ? integral_log2(UInt8(x >> 8)) + SInt16(8) : integral_log2(UInt8(x));
 }
 
+/**
+ * @brief 二进制对数
+ */
 constexpr SInt32 integral_log2(UInt32 x) noexcept {
 	return (x >> 16) != 0 ? integral_log2(UInt16(x >> 16)) + SInt32(16) : integral_log2(UInt16(x));
 }
 
+/**
+ * @brief 二进制对数
+ */
 constexpr SInt64 integral_log2(UInt64 x) noexcept {
 	return (x >> 32) != 0 ? integral_log2(UInt32(x >> 32)) + SInt64(32) : integral_log2(UInt32(x));
 }
@@ -333,16 +408,30 @@ constexpr UInt16 INTERLEAVE[] = {
 } // namespace BitMath
 } // namespace Detail
 
-
+/**
+ * @brief 按位交错
+ *
+ * x的0位为结果的0位，y的0位为结果的1位
+ */
 constexpr UInt16 interleave(UInt8 x, UInt8 y) noexcept {
 	using namespace Detail::BitMath;
 	return UInt16(INTERLEAVE[y]) << 1 | UInt16(INTERLEAVE[x]);
 }
 
+/**
+ * @brief 按位交错
+ *
+ * x的0位为结果的0位，y的0位为结果的1位
+ */
 constexpr UInt32 interleave(UInt16 x, UInt16 y) noexcept {
 	return UInt32(interleave(UInt8(x >> 8), UInt8(y >> 8))) | UInt32(interleave(UInt8(x), UInt8(y)));
 }
 
+/**
+ * @brief 按位交错
+ *
+ * x的0位为结果的0位，y的0位为结果的1位
+ */
 constexpr UInt64 interleave(UInt32 x, UInt32 y) noexcept {
 	return UInt64(interleave(UInt16(x >> 16), UInt16(y >> 16))) | UInt64(interleave(UInt16(x), UInt16(y)));
 }

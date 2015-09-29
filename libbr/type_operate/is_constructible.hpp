@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief 构造函数重载检查
+ * @author Bromine0x23
+ * @since 2015/6/16
+ */
 #pragma once
 
 #include <libbr/config.hpp>
@@ -23,84 +29,84 @@ namespace TypeOperate {
 
 #if defined(BR_IS_CONSTRUCTIBLE)
 
-template< typename T, typename ... TArguments >
-using IsConstructible = BooleanConstant< BR_IS_CONSTRUCTIBLE(T, TArguments ...) >;
+template< typename T, typename... TArgs >
+using IsConstructible = BooleanConstant< BR_IS_CONSTRUCTIBLE(T, TArgs...) >;
 
 #else
 
-template< typename T, typename TArgument >
+template< typename T, typename TArg >
 using IsConstructibleOneBaseToDerivedReference = BooleanAnd<
-	NotSame< T, TArgument >,
-	IsBaseOf< TArgument, T >
+	NotSame< T, TArg >,
+	IsBaseOf< TArg, T >
 >;
 
-template< typename T, typename TArgument >
+template< typename T, typename TArg >
 using IsConstructibleOneLValueToRValueReference = BooleanAnd<
-	NotFunction< TArgument >,
+	NotFunction<TArg>,
 	BooleanOr<
-		NotSame< T, TArgument >,
-		IsBaseOf< TArgument, T >
+		NotSame< T, TArg >,
+		IsBaseOf< TArg, T >
 	>
 >;
 
-template< typename T, typename TArgument >
+template< typename T, typename TArg >
 using IsConstructibleReferenceCast = BooleanAnd<
-	IsStaticCastable< TArgument, T >,
+	IsStaticCastable< TArg, T >,
 	BooleanNot<
 		BooleanOr<
-			IsConstructibleOneBaseToDerivedReference< RemoveReference< T >, RemoveReference< TArgument > >,
+			IsConstructibleOneBaseToDerivedReference< RemoveReference<T>, RemoveReference<TArg> >,
 			BooleanAnd<
-				IsRValueReference< T >,
-				IsLValueReference< TArgument >,
-				IsConstructibleOneLValueToRValueReference< RemoveReference< T >, RemoveReference< TArgument > >
+				IsRValueReference<T>,
+				IsLValueReference<TArg>,
+				IsConstructibleOneLValueToRValueReference< RemoveReference<T>, RemoveReference<TArg> >
 			>
 		>
 	>
 >;
 
 struct IsConstructibleOneTest {
-	template< typename T, typename TArgument, typename = decltype(::new T(make_rvalue< TArgument >())) >
+	template< typename T, typename TArg, typename = decltype(::new T(make_rvalue<TArg>())) >
 	static BooleanTrue test(int);
 
-	template< typename T, typename TArgument >
+	template< typename T, typename TArg >
 	static BooleanFalse test(...);
 };
 
-template< typename T, typename TArgument >
-using IsConstructibleOneBasic = decltype(IsConstructibleOneTest::test< T, TArgument >(0));
+template< typename T, typename TArg >
+using IsConstructibleOneBasic = decltype(IsConstructibleOneTest::test< T, TArg >(0));
 
-template< typename T, typename TArgument >
+template< typename T, typename TArg >
 using IsConstructibleOne = Conditional<
-	IsReference< T >,
-	IsConstructibleReferenceCast< T, TArgument >,
+	IsReference<T>,
+	IsConstructibleReferenceCast< T, TArg >,
 	BooleanAnd<
 		IsDestructible< T >,
-		IsConstructibleOneBasic< T, TArgument >
+		IsConstructibleOneBasic< T, TArg >
 	>
 >;
 
 struct IsConstructibleManyTest {
-	template< typename T, typename ... TArguments, typename = decltype(T(make_rvalue< TArguments >()...)) >
+	template< typename T, typename... TArgs, typename = decltype(T(make_rvalue<TArgs>()...)) >
 	static BooleanTrue test(int);
 
-	template< typename T, typename TArgument >
+	template< typename T, typename TArg >
 	static BooleanFalse test(...);
 };
 
-template< typename T, typename ... TArgument >
-using IsConstructibleMany = decltype(IsConstructibleManyTest::test< T, TArgument ... >(0));
+template< typename T, typename... TArgs >
+using IsConstructibleMany = decltype(IsConstructibleManyTest::test< T, TArgs... >(0));
 
-template< typename T, typename ... TArguments >
+template< typename T, typename... TArgs >
 struct IsConstructible;
 
 template< typename T >
-struct IsConstructible< T > : IsDefaultConstructible< T > {};
+struct IsConstructible<T> : IsDefaultConstructible<T> {};
 
-template< typename T, typename TArgument >
-struct IsConstructible< T, TArgument > : IsConstructibleOne< T, TArgument > {};
+template< typename T, typename TArg >
+struct IsConstructible< T, TArg > : IsConstructibleOne< T, TArg > {};
 
-template< typename T, typename ... TArguments >
-struct IsConstructible : IsConstructibleMany< T, TArguments ... > {
+template< typename T, typename... TArgs >
+struct IsConstructible : IsConstructibleMany< T, TArgs... > {
 	static_assert(sizeof...(TArguments) > 1, "Only useful for > 1 arguments");
 };
 
@@ -109,10 +115,49 @@ struct IsConstructible : IsConstructibleMany< T, TArguments ... > {
 } // namespace TypeOperate
 } // namespace Detail
 
-template< typename T, typename ... TArguments >
-struct IsConstructible : Boolean< Detail::TypeOperate::IsConstructible< T, TArguments ... > > {};
+/**
+ * @brief 检查 \em T 是否重载了特定参数的构造函数
+ * @tparam T 待检查类型
+ * @tparam TArgs 构造函数参数类型
+ * @see IntegerConstant
+ * @see NotConstructible
+ *
+ * 如果表达式 <tt>T(BR::make_rvalue<TArgs>()...)</tt> 是合法的，那么封装的值为 \em true ；否则为 \em false
+ */
+template< typename T, typename... TArgs >
+struct IsConstructible : Boolean< Detail::TypeOperate::IsConstructible< T, TArgs... > > {};
 
-template< typename T, typename ... TArguments >
-struct NotConstructible : BooleanNot< Detail::TypeOperate::IsConstructible< T, TArguments ... > > {};
+/**
+ * @brief IsConstructible 的否定
+ * @tparam T 待检查类型
+ * @tparam TArgs 构造函数参数类型
+ * @see IsConstructible
+ */
+template< typename T, typename... TArgs >
+struct NotConstructible : BooleanNot< Detail::TypeOperate::IsConstructible< T, TArgs... > > {};
+
+#if defined(BR_CXX14)
+
+/**
+ * @brief IsConstructible 的模板变量版本
+ * @tparam T 待检查类型
+ * @tparam TArgs 构造函数参数类型
+ * @see IsConstructible
+ * @see not_constructible
+ */
+template< typename T, typename... TArgs >
+constexpr auto is_constructible = IsConstructible< T, TArgs... >::value;
+
+/**
+ * @brief NotConstructible 的模板变量版本
+ * @tparam T 待检查类型
+ * @tparam TArgs 构造函数参数类型
+ * @see NotConstructible
+ * @see is_constructible
+ */
+template< typename T, typename... TArgs >
+constexpr auto not_constructible = NotConstructible< T, TArgs... >::value;
+
+#endif // defined(BR_CXX14)
 
 } // namespace BR

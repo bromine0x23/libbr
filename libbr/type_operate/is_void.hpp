@@ -9,6 +9,8 @@ namespace BR {
 namespace Detail {
 namespace TypeOperate {
 
+using BR::RemoveConstVolatile;
+
 template< typename T >
 struct IsVoidBasic : BooleanFalse {};
 
@@ -16,7 +18,7 @@ template<>
 struct IsVoidBasic< void > : BooleanTrue {};
 
 template< typename T >
-struct IsVoid : IsVoidBasic< RemoveConstVolatile< T > > {};
+using IsVoid = IsVoidBasic< RemoveConstVolatile<T> >;
 
 } // namespace TypeOperate
 } // namespace Detail

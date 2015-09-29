@@ -21,13 +21,13 @@ using IsPOD = BooleanConstant< BR_IS_POD(T) >;
 #else
 
 template< typename T >
-struct IsPOD : BooleanOr< IsScalar< T >, IsVoid< T > > {};
+struct IsPOD : BooleanOr< IsScalar<T>, IsVoid<T> > {};
 
 template< typename T >
-struct IsPOD< T [] > : IsPOD< T > {};
+struct IsPOD< T [] > : IsPOD<T> {};
 
 template< typename T, Size S >
-struct IsPOD< T [S] > : IsPOD< T > {};
+struct IsPOD< T [S] > : IsPOD<T> {};
 
 #endif // BR_IS_POD
 
@@ -35,9 +35,9 @@ struct IsPOD< T [S] > : IsPOD< T > {};
 } // namespace Detail
 
 template< typename T >
-struct IsPOD : Boolean< Detail::TypeOperate::IsPOD< T > > {};
+struct IsPOD : Boolean< Detail::TypeOperate::IsPOD<T> > {};
 
 template< typename T >
-struct NotPOD : BooleanNot< Detail::TypeOperate::IsPOD< T > > {};
+struct NotPOD : BooleanNot< Detail::TypeOperate::IsPOD<T> > {};
 
 } // namespace BR

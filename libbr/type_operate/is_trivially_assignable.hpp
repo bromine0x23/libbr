@@ -11,7 +11,7 @@ namespace TypeOperate {
 // TODO: IsTriviallyAssignable
 template< typename T >
 struct IsTriviallyAssignable {
-	static_assert(Conditional< BooleanFalse, T, BooleanFalse >::value, "Not implement yet.");
+	static_assert(sizeof(T *) == sizeof(nullptr), "Not implement yet.");
 };
 
 } // namespace TypeOperate

@@ -69,7 +69,7 @@ template< Size I, typename ... Tn > BR_CONSTEXPR_AFTER_CXX11 TupleElement< I, Tu
 namespace Detail {
 namespace Utility {
 
-////////////////////////////////
+//******************************
 //
 // TupleSize
 //
@@ -83,7 +83,7 @@ template< typename T > class TupleSize< T const volatile > : TupleSize<T> {};
 template< typename ...Tn >
 struct TupleSize< TupleTypes< Tn ... > > : IntegerConstant< Size, sizeof...(Tn) > {};
 
-////////////////////////////////
+//******************************
 //
 // TupleElement
 //
@@ -106,7 +106,7 @@ struct TypeTupleElement< 0, TupleTypes< THead, TTail ... > > : TypeWrapper<THead
 template< Size I, typename THead, typename ... TTail >
 struct TypeTupleElement< I, TupleTypes< THead, TTail ... > > : TypeTupleElement< I - 1, TupleTypes< TTail ... > > {};
 
-////////////////////////////////
+//******************************
 //
 // IsTupleLike
 //
@@ -128,7 +128,7 @@ struct IsTupleLike< Array< T, S > > : BooleanTrue {};
 template< typename ... Tn >
 struct IsTupleLike< TupleTypes< Tn ... > > : BooleanTrue {};
 
-////////////////////////////////
+//******************************
 //
 // MakeTupleIndices
 //
@@ -141,7 +141,8 @@ struct TypeMakeTupleIndices< To, To, In ... > : TypeWrapper< TupleIndices< In ..
 template< Size From, Size To >
 using MakeTupleIndices = TypeUnwrap< TypeMakeTupleIndices< From, To > >;
 
-////////////////////////////////
+
+//******************************
 //
 // MakeTupleTypes
 //
@@ -166,7 +167,7 @@ struct TypeMakeTupleTypes< T, To, To, Tn ... > : TypeWrapper< TupleTypes< Tn ...
 template< typename T, Size From = 0, Size To = TupleSize< RemoveReference<T> >::value >
 using MakeTupleTypes = TypeUnwrap< TypeMakeTupleTypes< T, From, To > >;
 
-////////////////////////////////
+//******************************
 //
 // IsTupleConvertible
 //
@@ -197,7 +198,7 @@ using IsTupleConvertible = BooleanAnd<
 template< typename TFrom, typename TTo >
 using NotTupleConvertible = BooleanNot< IsTupleConvertible< TFrom, TTo > >;
 
-////////////////////////////////
+//******************************
 //
 // IsTupleConstructible
 //
@@ -228,7 +229,7 @@ using IsTupleConstructible = BooleanAnd<
 template< typename TFrom, typename TTo >
 using NotTupleConstructible = BooleanNot< IsTupleConstructible< TFrom, TTo > >;
 
-////////////////////////////////
+//******************************
 //
 // IsTupleAssignable
 //
@@ -620,7 +621,7 @@ public:
 } // namespace Utility
 } // namespace Detail
 
-/// @brief Tuple
+/// Tuple
 template < typename ... TElement >
 class Tuple {
 public:
@@ -628,7 +629,7 @@ public:
 
 public:
 	/**
-	 *	@brief default constructor
+	 * default constructor
 	 */
 	template<
 		typename TDummy = BooleanTrue,
@@ -637,7 +638,7 @@ public:
 	BR_CONSTEXPR_AFTER_CXX11 Tuple() noexcept(BooleanAnd< IsNothrowDefaultConstructible<TElement> ... >::value) {}
 
 	/**
-	 *	@brief initialization conversion constructor
+	 *	initialization conversion constructor
 	 */
 	explicit BR_CONSTEXPR_AFTER_CXX11 Tuple(TElement const & ... element) noexcept(
 		BooleanAnd< IsNothrowCopyConstructible<TElement> ... >::value
@@ -650,7 +651,7 @@ public:
 	) {}
 
 	/**
-	 *	@brief implicit initialization conversion constructor
+	 *	implicit initialization conversion constructor
 	 */
     template<
 		typename ... TValue,
@@ -724,17 +725,17 @@ public:
 	) {}
 
 	/**
-	 *	@brief copy constructor
+	 *	copy constructor
 	 */
 	Tuple(Tuple const &) = default;
 
 	/**
-	 *	@brief move constructor
+	 *	move constructor
 	 */
 	Tuple(Tuple &&) = default;
 
 	/**
-	 *	@brief implicit move conversion constructor
+	 *	implicit move conversion constructor
 	 */
 	template<
 		typename TTuple,
@@ -761,7 +762,7 @@ public:
 	) : m_imp(forward<TTuple>(tuple)) {}
 
 	/**
-	 *	@brief allocator version initialization constructor
+	 *	allocator version initialization constructor
 	 */
 	template< typename TAllocator >
 	Tuple(AllocatorArgumentTag, TAllocator const & allocator, TElement const & ... element) : m_imp(
@@ -775,7 +776,7 @@ public:
 	) {}
 
 	/**
-	 *	@brief allocator version implicit initialization conversion constructor
+	 *	allocator version implicit initialization conversion constructor
 	 */
     template<
 		typename TAllocator,
@@ -803,7 +804,7 @@ public:
 	) {}
 
 	/**
-	 *	@brief allocator version move conversion constructor
+	 * allocator version move conversion constructor
 	 */
 	template<
 		typename TAllocator, typename TTuple,
@@ -814,7 +815,7 @@ public:
 	) {}
 
 	/**
-	 * @brief implicit move conversion assignment
+	 * implicit move conversion assignment
 	 */
 	template<
 		typename TTuple,
@@ -827,7 +828,9 @@ public:
 		return *this;
 	}
 
-	/// @brief swap
+	/**
+	 * swap
+	 */
 	void swap(Tuple & tuple) noexcept(
 		BooleanAnd< IsNothrowSwappable<TElement> ... >::value
 	) {
@@ -835,13 +838,17 @@ public:
 		m_imp.swap(tuple.m_imp);
 	}
 
-	/// @brief get element at <b>I</b>
+	/**
+	 *  get element at \em I
+	 */
 	template< Size I >
 	BR_CONSTEXPR_AFTER_CXX11 TupleElement< I, Tuple > & get() noexcept {
 		return m_imp.get< I >();
 	}
 
-	/// @brief get element at <b>I</b>
+	/**
+	 *  get element at \em I
+	 */
 	template< Size I >
 	BR_CONSTEXPR_AFTER_CXX11 TupleElement< I, Tuple > const & get() const noexcept {
 		return m_imp.get< I >();

@@ -1,4 +1,5 @@
-/**
+/// \cond
+/*
  * <libbr/type_operate/bool.hpp> should be included before.
  */
 #ifndef BR_TYPE_OPERATE_TYPE_NAME
@@ -34,3 +35,4 @@ struct BR_JOIN(NoMemberType, BR_TYPE_OPERATE_TYPE_NAME) : ::BR::BooleanNot<
 
 #undef BR_TYPE_OPERATE_NAMESPACE
 #undef BR_TYPE_OPERATE_TYPE_NAME
+/// \endcond

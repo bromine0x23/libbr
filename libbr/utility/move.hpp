@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @author Bromine0x23
+ * @since 2015/6/16
+ */
 #pragma once
 
 #include <libbr/config.hpp>
@@ -8,14 +13,17 @@
 
 namespace BR {
 
+/**
+ * @brief 强制转换为右值引用
+ * @author Bromine0x23
+ */
 template< typename T >
-BR_CONSTEXPR_AFTER_CXX11 RemoveReference<T> && move(T && t) noexcept {
+constexpr RemoveReference<T> && move(T && t) noexcept {
 	return static_cast< RemoveReference<T> && >(t);
 }
 
 template< typename T >
-inline BR_CONSTEXPR_AFTER_CXX11
-Conditional<
+constexpr Conditional<
 	BooleanAnd<
 		NotNothrowMoveConstructible<T>,
 		IsCopyConstructible<T>

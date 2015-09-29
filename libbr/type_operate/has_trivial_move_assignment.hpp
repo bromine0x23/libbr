@@ -22,7 +22,7 @@ using HasTrivialMoveAssignment = BooleanConstant< BR_HAS_TRIVIAL_MOVE_ASSIGNMENT
 #else
 
 template< typename T >
-using HasTrivialMoveAssignment = BooleanAnd< IsPOD< T >, NotConst< T >, NotVolatile< T > >;
+using HasTrivialMoveAssignment = BooleanAnd< IsPOD<T>, NotConst<T>, NotVolatile<T> >;
 
 #endif // BR_HAS_TRIVIAL_MOVE_ASSIGNMENT
 

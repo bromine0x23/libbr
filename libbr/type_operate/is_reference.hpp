@@ -11,15 +11,15 @@ namespace Detail {
 namespace TypeOperate {
 
 template< typename T >
-using IsReference = BooleanOr< IsLValueReference< T >, IsRValueReference< T > >;
+using IsReference = BooleanOr< IsLValueReference<T>, IsRValueReference<T> >;
 
 } // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct IsReference : Boolean< Detail::TypeOperate::IsReference< T > > {};
+struct IsReference : Boolean< Detail::TypeOperate::IsReference<T> > {};
 
 template< typename T >
-struct NotReference : BooleanNot< Detail::TypeOperate::IsReference< T > > {};
+struct NotReference : BooleanNot< Detail::TypeOperate::IsReference<T> > {};
 
 } // namespace BR

@@ -10,10 +10,10 @@ namespace BR {
 namespace Detail {
 namespace TypeOperate {
 
-#if defined(BR_MSVC) || defined(BR_WIN32)
-
 template< typename TResult, typename ... TArguments >
 BooleanTrue is_function_pointer_tester(TResult(*)(TArguments ...));
+
+#if defined(BR_MSVC) || defined(BR_WIN32)
 
 template< typename TResult, typename ... TArguments >
 BooleanTrue is_function_pointer_tester(TResult(__stdcall *)(TArguments ...));
@@ -24,23 +24,12 @@ BooleanTrue is_function_pointer_tester(TResult(__fastcall *)(TArguments ...));
 template< typename TResult, typename ... TArguments >
 BooleanTrue is_function_pointer_tester(TResult(__cdecl *)(TArguments ...));
 
+#endif // defined(BR_MSVC) || defined(BR_WIN32)
+
 BooleanFalse is_function_pointer_tester(...);
 
 template< typename T >
-using IsFunctionBasic = decltype(is_function_pointer_tester(static_cast< T * >(nullptr)));
-
-#else
-
-template< typename T >
-struct IsFunctionPointer : BooleanFalse {};
-
-template< typename TResult, typename ... TArguments >
-struct IsFunctionPointer< TResult(*)(TArguments ...) > : BooleanTrue {};
-
-template< typename T >
-using IsFunctionBasic = IsFunctionPointer< AddPointer< T > >;
-
-#endif // BR_MSVC
+using IsFunctionBasic = decltype(is_function_pointer_tester(static_cast< AddPointer< T > >(nullptr)));
 
 template< typename T >
 using IsFunction = BooleanAnd< NotReference< T >, IsFunctionBasic< T > >;

@@ -35,7 +35,7 @@ template<> struct IsIntegerBasic< UInt128 > : BooleanTrue {};
 #endif // BR_HAS_INT128
 
 template< typename T >
-struct IsInteger : IsIntegerBasic< RemoveConstVolatile< T > > {};
+struct IsInteger : IsIntegerBasic< RemoveConstVolatile<T> > {};
 
 } // namespace TypeOperate
 } // namespace Detail

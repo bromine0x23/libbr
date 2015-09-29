@@ -13,7 +13,12 @@ namespace Detail {
 namespace TypeOperate {
 
 template< typename T >
-using IsScalar = BooleanOr< IsArithmetic< T >, IsEnum< T >, IsPointer< T >, IsMemberPointer< T > >;
+using IsScalar = BooleanOr<
+	IsArithmetic<T>,
+	IsEnum<T>,
+	IsPointer<T>,
+	IsMemberPointer<T>
+>;
 
 } // namespace TypeOperate
 } // namespace Detail

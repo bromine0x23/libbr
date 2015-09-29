@@ -1,22 +1,45 @@
+/**
+ * @file
+ * @brief 类型包装
+ * @author Bromine0x23
+ * @since 2015/6/16
+ */
 #pragma once
 
 #include <libbr/config.hpp>
 
 namespace BR {
 
-struct BasicTypeWrapper {};
-
+/**
+ * @brief 类型包装器
+ * @tparam T 被包装类型
+ */
 template< typename T >
-struct TypeWrapper : BasicTypeWrapper {
+struct TypeWrapper {
+	/**
+	 * @brief 被包装类型
+	 */
 	using Type = T;
 };
 
-template< typename T >
-using TypeUnwrap = typename T::Type;
+/**
+ * @brief 类型解包
+ * @tparam TWrapper 包装器
+ */
+template< typename TWrapper >
+using TypeUnwrap = typename TWrapper::Type;
 
-template< typename T >
-using TypeRewrap = TypeWrapper< TypeUnwrap< T > >;
+/**
+ * @brief 类型重包装
+ * @tparam TWrapper 包装器
+ */
+template< typename TWrapper >
+using TypeRewrap = TypeWrapper< TypeUnwrap<TWrapper> >;
 
+/**
+ * @brief 包装类型列表
+ * @tparam T 被包装类型
+ */
 template< typename ... T >
 struct Types {};
 

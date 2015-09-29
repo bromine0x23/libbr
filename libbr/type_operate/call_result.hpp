@@ -10,62 +10,68 @@ namespace BR {
 namespace Detail {
 namespace TypeOperate {
 
-template< typename TFunction, typename ... TArguments >
-inline auto Call(TFunction && function, TArguments && ... arguments) -> decltype(
-forward< TFunction >(function)(forward< TArguments >(arguments) ...)
-) {
-	return forward< TFunction >(function)(forward< TArguments >(arguments) ...);
-}
+struct CallResultTest {
+	template< typename TFunc, typename... TArgs >
+	constexpr static auto test(
+		TFunc && func,
+		TArgs && ... args
+	) -> decltype(forward<TFunc>(func)(forward<TArgs>(args) ...));
 
-template< typename TBase, typename TMemberPointer, typename TDerived >
-inline auto Call(TMemberPointer TBase::*member_pointer, TDerived && derived) -> decltype(
-forward< TDerived >(derived).*member_pointer
-) {
-	return forward< TDerived >(derived).*member_pointer;
-}
+	template< typename TBase, typename TMemPtr, typename TDerived >
+	constexpr static auto test(
+		TMemPtr TBase::*mem_ptr,
+		TDerived && derived
+	) -> decltype(forward<TDerived>(derived).*mem_ptr);
 
-template< typename TMemberFunctionPointer, typename TPointer >
-inline auto Call(TMemberFunctionPointer && member_function_pointer, TPointer && pointer) -> decltype(
-(*forward< TPointer >(pointer)).*forward< TMemberFunctionPointer >(member_function_pointer)
-) {
-	return (*forward< TPointer >(pointer)).*forward< TMemberFunctionPointer >(member_function_pointer);
-}
+	template< typename TMemFuncPtr, typename TPtr >
+	constexpr static auto test(
+		TMemFuncPtr && mem_func_ptr,
+		TPtr && ptr
+	) -> decltype((*forward<TPtr>(ptr)).*forward<TMemFuncPtr>(mem_func_ptr));
 
-template< typename TBase, typename TMemberPointer, typename TDerived, typename ... TArguments >
-inline auto Call(TMemberPointer TBase::*member_pointer, TDerived && derived, TArguments && ... arguments) -> decltype(
-(forward< TDerived >(derived).*member_pointer)(forward< TArguments >(arguments) ...)
-) {
-	return (forward< TDerived >(derived).*member_pointer)(forward< TArguments >(arguments) ...);
-}
+	template< typename TBase, typename TMemPtr, typename TDerived, typename... TArgs >
+	constexpr static auto test(
+		TMemPtr TBase::*mem_ptr,
+		TDerived && derived,
+		TArgs && ... args
+	) -> decltype((forward<TDerived>(derived).*mem_ptr)(forward<TArgs>(args) ...));
 
-template< typename TMemberFunctionPointer, typename TPointer, typename ... TArguments >
-inline auto Call(TMemberFunctionPointer && member_function_pointer, TPointer && pointer,
-				 TArguments && ... arguments) -> decltype(
-((*forward< TPointer >(pointer)).*forward< TMemberFunctionPointer >(member_function_pointer))(
-	forward< TArguments >(arguments) ...)
-) {
-	return ((*forward< TPointer >(pointer)).*forward< TMemberFunctionPointer >(member_function_pointer))(
-		forward< TArguments >(arguments) ...);
-}
+	template< typename TMemFuncPtr, typename TPtr, typename... TArgs >
+	constexpr static auto test(
+		TMemFuncPtr && mem_func_ptr,
+		TPtr && ptr,
+		TArgs && ... args
+	) -> decltype(((*forward<TPtr>(ptr)).*forward<TMemFuncPtr>(mem_func_ptr))(forward<TArgs>(args) ...));
+};
 
-template< typename T, typename = void >
+template< typename TFunc, typename... TArgs >
+using CallResultBasic = decltype(CallResultTest::test(make_rvalue<TFunc>(), make_rvalue<TArgs>() ...));
+
+template< typename T >
 struct TypeCallResult {
-	static_assert((T(), false), "Type must be callable.");
+	static_assert(sizeof(T *) == sizeof(nullptr), "Type T must be callable.");
+
 };
 
-template< typename TFunction, typename ... TArguments >
-struct TypeCallResult<
-	TFunction(TArguments ...), decltype(void(Call(make_rvalue< TFunction >(), make_rvalue< TArguments >() ...)))
-> : TypeWrapper< decltype(Call(make_rvalue< TFunction >(), make_rvalue< TArguments >() ...)) > {
-};
+template< typename TResult, typename ... TArgs >
+struct TypeCallResult<TResult(TArgs ...)> : TypeWrapper< CallResultBasic< TResult(TArgs ...), TArgs ... > > {};
+
+template< typename TResult, typename ... TArgs >
+struct TypeCallResult<TResult(TArgs ..., ...)> : TypeWrapper< CallResultBasic< TResult(TArgs ...), TArgs ... > > {};
+
+template< typename TResult, typename ... TArgs >
+struct TypeCallResult<TResult(*)(TArgs ...)> : TypeWrapper< CallResultBasic< TResult(TArgs ...), TArgs ... > > {};
+
+template< typename TResult, typename ... TArgs >
+struct TypeCallResult<TResult(*)(TArgs ..., ...)> : TypeWrapper< CallResultBasic< TResult(TArgs ...), TArgs ... > > {};
 
 } // namespace TypeOperate
 } // namespace Detail
 
 template< typename T >
-struct TypeCallResult : TypeWrapper< TypeUnwrap< Detail::TypeOperate::TypeCallResult< T > > > {};
+struct TypeCallResult : TypeRewrap< Detail::TypeOperate::TypeCallResult<T> > {};
 
 template< typename T >
-using CallResult = TypeUnwrap< TypeCallResult< T > >;
+using CallResult = TypeUnwrap< TypeCallResult<T> >;
 
 } // namespace BR

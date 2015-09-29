@@ -1,67 +1,92 @@
+/**
+ * @file
+ * @author Bromine0x23
+ * @since 2015/6/16
+ */
 #pragma once
 
 #include <libbr/config.hpp>
 #include <libbr/type_operate/conditional.hpp>
 #include <libbr/utility/bool_constant.hpp>
-#include <libbr/utility/integer_constant.hpp>
 
 namespace BR {
 
+/**
+ * @brief 重封装布尔常量
+ */
 template< typename B >
 using Boolean = BooleanConstant< B::value >;
 
+/**
+ * @brief 封装否定值
+ */
 template< typename B >
 using BooleanNot = BooleanConstant< !B::value >;
 
-template< typename ... >
+/**
+ * @brief 布尔常量封装类逻辑与
+ */
+template< typename... >
 struct BooleanAnd;
 
 template<>
 struct BooleanAnd<> : BooleanTrue {};
 
 template< typename B0 >
-struct BooleanAnd< B0 > : BooleanConstant< B0::value > {};
+struct BooleanAnd<B0> : Boolean<B0> {};
 
-template< typename B0, typename B1, typename ... Bn >
-struct BooleanAnd< B0, B1, Bn ... > : Conditional< B0, BooleanAnd< B1, Bn ... >, B0 > {};
+template< typename B0, typename B1, typename... Bn >
+struct BooleanAnd< B0, B1, Bn... > : Conditional< B0, BooleanAnd< B1, Bn... >, BooleanFalse > {};
 
-template< typename ... >
+/**
+ * @brief 布尔常量封装类逻辑或
+ */
+template< typename... >
 struct BooleanOr;
 
 template<>
 struct BooleanOr<> : BooleanFalse {};
 
 template< typename B0 >
-struct BooleanOr< B0 > : BooleanConstant< B0::value > {};
+struct BooleanOr<B0> : Boolean<B0> {};
 
-template< typename B0, typename B1, typename ... Bn >
-struct BooleanOr< B0, B1, Bn ... > : Conditional< B0, B0, BooleanOr< B1, Bn ... > > {};
+template< typename B0, typename B1, typename... Bn >
+struct BooleanOr< B0, B1, Bn... > : Conditional< B0, BooleanTrue, BooleanOr< B1, Bn... > > {};
 
-template< bool ... Bn >
-using Booleans = Integers< bool, Bn ... >;
+/**
+ * @brief 封装布尔常量列表
+ */
+template< bool... Bn >
+using Booleans = Integers< bool, Bn... >;
 
-template< bool ... >
+/**
+ * @brief 布尔常量逻辑与
+ */
+template< bool... >
 struct BooleanAndByValue;
 
 template<>
 struct BooleanAndByValue<> : BooleanTrue {};
 
-template< bool ... Bn >
-struct BooleanAndByValue< true, Bn ... > : BooleanConstant< BooleanAndByValue< Bn ... >::value > {};
+template< bool... Bn >
+struct BooleanAndByValue< true, Bn... > : BooleanConstant< BooleanAndByValue< Bn... >::value > {};
 
-template< bool ... Bn >
-struct BooleanAndByValue< false, Bn ... > : BooleanFalse {};
+template< bool... Bn >
+struct BooleanAndByValue< false, Bn... > : BooleanFalse {};
 
-template< bool ... >
+/**
+ * @brief 布尔常量逻辑或
+ */
+template< bool... >
 struct BooleanOrByValue;
 
 template<>
 struct BooleanOrByValue<> : BooleanFalse {};
 
-template< bool ... Bn >
-struct BooleanOrByValue< false, Bn ... > : BooleanConstant< BooleanOrByValue< Bn ... >::value > {};
+template< bool... Bn >
+struct BooleanOrByValue< true, Bn... > : BooleanTrue {};
 
-template< bool ... Bn >
-struct BooleanOrByValue< true, Bn ... > : BooleanTrue{};
+template< bool... Bn >
+struct BooleanOrByValue< false, Bn... > : BooleanConstant< BooleanOrByValue< Bn... >::value > {};
 
 } // namespace BR

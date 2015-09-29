@@ -18,9 +18,9 @@ struct IsLValueReference< T & > : BooleanTrue {};
 } // namespace Detail
 
 template< typename T >
-struct IsLValueReference : Boolean< Detail::TypeOperate::IsLValueReference< T > > {};
+struct IsLValueReference : Boolean< Detail::TypeOperate::IsLValueReference<T> > {};
 
 template< typename T >
-struct NotLValueReference : BooleanNot< Detail::TypeOperate::IsLValueReference< T > > {};
+struct NotLValueReference : BooleanNot< Detail::TypeOperate::IsLValueReference<T> > {};
 
 } // namespace BR

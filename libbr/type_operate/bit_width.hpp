@@ -6,6 +6,6 @@
 namespace BR {
 
 template< typename T >
-using BitWidth = IntegerConstant< Size, sizeof(T) * BIT_PER_CHAR >;
+using BitWidth = IntegerConstant< Size, sizeof(T) * BIT_PER_BYTE >;
 
 } // namespace BR

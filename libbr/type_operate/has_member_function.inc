@@ -1,6 +1,6 @@
-/**
- * <libbr/type_operate/bool.hpp> and
- * <libbr/utility/make_value.hpp> should be included before.
+/// \cond
+/*
+ * <libbr/type_operate/bool.hpp> and <libbr/utility/make_value.hpp> should be included before.
  */
 #ifndef BR_TYPE_OPERATE_FUNCTION_NAME
 #error "BR_TYPE_OPERATE_FUNCTION_NAME not defined!"
@@ -39,3 +39,4 @@ struct BR_JOIN(NoMemberFunction_, BR_TYPE_OPERATE_FUNCTION_NAME) : ::BR::Boolean
 
 #undef BR_TYPE_OPERATE_NAMESPACE
 #undef BR_TYPE_OPERATE_FUNCTION_NAME
+/// \endcond

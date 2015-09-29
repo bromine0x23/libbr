@@ -11,7 +11,7 @@ namespace TypeOperate {
 // TODO: IsTriviallyConstructible
 template< typename T >
 struct IsTriviallyConstructible {
-	static_assert(Conditional< BooleanFalse, T, BooleanFalse >::value, "Not implement yet.");
+	static_assert(sizeof(T *) == sizeof(nullptr), "Not implement yet.");
 };
 
 } // namespace TypeOperate

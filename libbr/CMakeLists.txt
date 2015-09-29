@@ -1,4 +1,4 @@
-
+cmake_minimum_required(VERSION 3.1)
 
 aux_source_directory(.              BR_SRC)
 aux_source_directory(./assert       BR_SRC_ASSERT)
@@ -13,7 +13,7 @@ aux_source_directory(./type_traits  BR_SRC_TYPE_TRAITS)
 aux_source_directory(./utility      BR_SRC_UTILITY)
 
 add_library (
-    br
+    br STATIC
     ${BR_SRC}
     ${BR_SRC_ASSERT}
     ${BR_SRC_CONTAINER}

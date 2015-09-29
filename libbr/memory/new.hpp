@@ -25,7 +25,7 @@ using NothrowTag = std::nothrow_t;
 
 extern NothrowTag nothrow_tag;
 
-/** TODO
+/* TODO
 inline NewHandler get_new_handler() noexcept {
 	return std::get_new_handler();
 }

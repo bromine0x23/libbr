@@ -1,51 +1,31 @@
-#include <libbr/math/detail/bignum.hpp>
+/**
+ * @file
+ * @author Bromine0x23
+ * @since 2015/9/24
+ */
+#include <libbr/math/bignum.hpp>
 
+#include <libbr/assert/assert.hpp>
 #include <libbr/exception/invalid_argument_exception.hpp>
-#include <libbr/utility/current_function.hpp>
-
+#include <libbr/utility/duff_device.hpp>
 #include <sstream>
 #include <iomanip>
 
 namespace BR {
-namespace Detail {
-namespace Bignum {
 
-constexpr static inline Size align_mask() {
-	return ~(Size(DIGIT_PER_BLOCK) - 1);
-}
+namespace {
 
-constexpr static inline Size align_size(Size size) {
-	return (size + DIGIT_PER_BLOCK - 1) & align_mask();
-}
-
-template< typename TFunctor >
-static inline void duff_device(Size size, TFunctor functor) {
-	auto count = size >> 3;
-	switch (size & 7) {
-		default:
-			BR_ASSERT(false);
-			do {
-				functor(); case 7:;
-				functor(); case 6:;
-				functor(); case 5:;
-				functor(); case 4:;
-				functor(); case 3:;
-				functor(); case 2:;
-				functor(); case 1:;
-				functor(); case 0:;
-			} while (count-- > 0);
-	}
-}
-
-static inline void fill_digits_0(Digit * D, Size length) {
+inline void fill_digits_0(BignumConfig::Digit * D, BignumConfig::Size length) {
 	duff_device(length, [&](){ *D++ = 0; });
 }
 
-static inline void copy_digits(Digit const * S, Size length, Digit * D) {
+inline void copy_digits(BignumConfig::Digit const * S, BignumConfig::Size length, BignumConfig::Digit * D) {
 	duff_device(length, [&](){ *D++ = *S++; });
 }
 
-void reserve(Imp & X, Size size) {
+} // namespace [Anonymous]
+
+void BignumAlgorithm::reserve(BignumData & X, Size size) {
 	size = align_size(size);
 	if (capacity(X) < size) {
 		auto old_digits = X.digits;
@@ -56,7 +36,7 @@ void reserve(Imp & X, Size size) {
 	}
 }
 
-static void clamp(Imp & X) {
+void BignumAlgorithm::clamp(BignumData & X) {
 	for (auto & xlength = length(X); xlength > 0 && digits(X)[xlength - 1] == 0; --xlength) {}
 	if (length(X) == 0) {
 		sign(X) = Sign::ZPOS;
@@ -64,7 +44,7 @@ static void clamp(Imp & X) {
 	}
 }
 
-void set_power2(Imp & X, Size n) {
+void BignumAlgorithm::set_power2(BignumData & X, UDigit n) {
 	auto const bn = n % BIT_PER_DIGIT;
 	auto const dn = n / BIT_PER_DIGIT;
 	reserve(X, dn + 1);
@@ -74,41 +54,38 @@ void set_power2(Imp & X, Size n) {
 	BR_ASSERT(digits(X)[dn] != 0);
 }
 
-void copy(Imp & X, Imp const & Y) {
+void BignumAlgorithm::copy(BignumData & X, BignumData const & Y) {
 	reserve(X, length(Y));
 	sign(X) = sign(Y);
 	length(X) = length(Y);
 	copy_digits(digits(Y), capacity(X), digits(X));
 }
 
-void copy_list(Imp & X, InitializerList<Digit> L) {
-	reserve(X, L.size());
-	length(X) = 0;
-	for (Digit d : L) {
-		digits(X)[length(X)++] = d;
+Relation BignumAlgorithm::cmp_u(BignumData const & X, BignumData const & Y) {
+	if (length(X) < length(Y)) {
+		return Relation::LT;
 	}
-	clamp(X);
-}
 
-Relation cmp_u(Imp const & X, Imp const & Y) {
-	if (length(X) < length(Y)) { return Relation::LT; }
-	if (length(Y) < length(X)) { return Relation::GT; }
+	if (length(Y) < length(X)) {
+		return Relation::GT;
+	}
 
 	auto xds = digits(X) + length(X);
 	auto yds = digits(Y) + length(X);
 
-	Size i = length(X); for (; i-- > 0 && *--xds == *--yds;) {}
+	Size i = length(X);
+	for (; i-- > 0 && *--xds == *--yds;) {}
 
 	return i != Size(-1) ? (*xds < *yds ? Relation::LT : Relation::GT) : Relation::EQ;
 }
 
-void conj(Imp & X) {
+void BignumAlgorithm::conj(BignumData & X) {
 	sign(X) = ~sign(X);
 	auto xds = digits(X);
 	duff_device(length(X), [&xds](){ *xds = ~*xds; ++xds; });
 }
 
-void add_u(Imp const & X, Imp const & Y, Imp & Z) {
+void BignumAlgorithm::add_u(BignumData const & X, BignumData const & Y, BignumData & Z) {
 	auto const xlength = length(X);
 	auto const ylength = length(Y);
 	auto const zlength = xlength + 1;
@@ -143,7 +120,7 @@ void add_u(Imp const & X, Imp const & Y, Imp & Z) {
 	clamp(Z);
 }
 
-void sub_u(Imp const & X, Imp const & Y, Imp & Z) {
+void BignumAlgorithm::sub_u(BignumData const & X, BignumData const & Y, BignumData & Z) {
 	auto const xlength = length(X);
 	auto const ylength = length(Y);
 	auto const zlength = xlength;
@@ -177,13 +154,13 @@ void sub_u(Imp const & X, Imp const & Y, Imp & Z) {
 	clamp(Z);
 }
 
-void mul(Imp const & X, Imp const & Y, Imp & Z) {
-	constexpr static auto base = [](Imp const & X, Imp const & Y, Imp & Z) {
+void BignumAlgorithm::mul(BignumData const & X, BignumData const & Y, BignumData & Z) {
+	static const auto base = [](BignumData const & X, BignumData const & Y, BignumData & Z) {
 		auto const xlength = length(X);
 		auto const ylength = length(Y);
 		auto const tlength = xlength + ylength;
 
-		Imp T; init(T); reserve(T, tlength); fill_digits_0(T.digits, tlength);
+		BignumData T; init(T); reserve(T, tlength); fill_digits_0(T.digits, tlength);
 
 		for (auto xi = 0U; xi < xlength; ++xi) {
 			auto yds = digits(Y);
@@ -206,7 +183,7 @@ void mul(Imp const & X, Imp const & Y, Imp & Z) {
 
 		clear(T);
 	};
-	constexpr static auto karatsuba = [](Imp const & X, Imp const & Y, Imp & Z) {
+	static const auto karatsuba = [](BignumData const & X, BignumData const & Y, BignumData & Z) {
 		/*
 		 *  https://en.wikipedia.org/wiki/Karatsuba_multiplication
 		 *
@@ -222,26 +199,26 @@ void mul(Imp const & X, Imp const & Y, Imp & Z) {
 		auto const ylength = length(Y);
 		auto const blength = (xlength < ylength ? xlength : ylength) / 2;
 
-		Imp X0; fake(X0, digits(X), blength); clamp(X0);
-		Imp Y0; fake(Y0, digits(Y), blength); clamp(Y0);
+		BignumData X0; fake(X0, digits(X), blength); clamp(X0);
+		BignumData Y0; fake(Y0, digits(Y), blength); clamp(Y0);
 
-		Imp X1; fake(X1, digits(X) + blength, xlength - blength);
-		Imp Y1; fake(Y1, digits(Y) + blength, ylength - blength);
+		BignumData X1; fake(X1, digits(X) + blength, xlength - blength);
+		BignumData Y1; fake(Y1, digits(Y) + blength, ylength - blength);
 
-		Imp Z0; init(Z0); mul(X0, Y0, Z0); // Z0 <- X0 * Y0
-		Imp Z2; init(Z2); mul(X1, Y1, Z2); // Z2 <- X1 * Y1
+		BignumData Z0; init(Z0); mul(X0, Y0, Z0); // Z0 <- X0 * Y0
+		BignumData Z2; init(Z2); mul(X1, Y1, Z2); // Z2 <- X1 * Y1
 
-		Imp TX; init(TX); add_u(X1, X0, TX); // TX <- X1 + X0
-		Imp TY; init(TY); add_u(Y1, Y0, TY); // TY <- Y1 + Y0
+		BignumData TX; init(TX); add_u(X1, X0, TX); // TX <- X1 + X0
+		BignumData TY; init(TY); add_u(Y1, Y0, TY); // TY <- Y1 + Y0
 
-		Imp & Z1 = TX; mul(TX, TY, Z1); sub(Z1, Z0, Z1); sub(Z1, Z2, Z1); // Z1 <- (TX * TY) - Z0 - Z2
+		BignumData & Z1 = TX; mul(TX, TY, Z1); sub(Z1, Z0, Z1); sub(Z1, Z2, Z1); // Z1 <- (TX * TY) - Z0 - Z2
 
 		// Z <- (Z2 * B + Z1) * B + Z0
 		BR_ASSERT(sign(Z0) == Sign::ZPOS);
 		BR_ASSERT(sign(Z1) == Sign::ZPOS);
 		BR_ASSERT(sign(Z2) == Sign::ZPOS);
 
-		Imp & T = Z2;
+		BignumData & T = Z2;
 		reserve(Z, xlength + ylength);
 		lsh_d(T, blength, T); add_u(T, Z1, T);
 		lsh_d(T, blength, T); add_u(T, Z0, Z);
@@ -250,7 +227,7 @@ void mul(Imp const & X, Imp const & Y, Imp & Z) {
 		clear(Z0); clear(Z2);
 		clear(TX); clear(TY);
 	};
-	constexpr static auto toom3 = [](Imp const & X, Imp const & Y, Imp & Z) {
+	static const auto toom3 = [](BignumData const & X, BignumData const & Y, BignumData & Z) {
 		/*
 		 *  https://en.wikipedia.org/wiki/Toom%E2%80%93Cook_multiplication
 		 *
@@ -281,18 +258,18 @@ void mul(Imp const & X, Imp const & Y, Imp & Z) {
 		auto const blength = (xlength < ylength ? xlength : ylength) / 3;
 
 		// {Step1} Splitting
-		Imp X0; fake(X0, digits(X), blength); clamp(X0);
-		Imp Y0; fake(Y0, digits(Y), blength); clamp(Y0);
+		BignumData X0; fake(X0, digits(X), blength); clamp(X0);
+		BignumData Y0; fake(Y0, digits(Y), blength); clamp(Y0);
 
-		Imp X1; fake(X1, digits(X) + blength, blength); clamp(X1);
-		Imp Y1; fake(Y1, digits(Y) + blength, blength); clamp(Y1);
+		BignumData X1; fake(X1, digits(X) + blength, blength); clamp(X1);
+		BignumData Y1; fake(Y1, digits(Y) + blength, blength); clamp(Y1);
 
-		Imp X2; fake(X2, digits(X) + blength + blength, xlength - blength - blength);
-		Imp Y2; fake(Y2, digits(Y) + blength + blength, ylength - blength - blength);
+		BignumData X2; fake(X2, digits(X) + blength + blength, xlength - blength - blength);
+		BignumData Y2; fake(Y2, digits(Y) + blength + blength, ylength - blength - blength);
 
 		// {Step2} Evaluation
-		Imp TX1; init(TX1); Imp TX2; init(TX2); Imp TX3; init(TX3);
-		Imp TY1; init(TY1); Imp TY2; init(TY2); Imp TY3; init(TY3);
+		BignumData TX1; init(TX1); BignumData TX2; init(TX2); BignumData TX3; init(TX3);
+		BignumData TY1; init(TY1); BignumData TY2; init(TY2); BignumData TY3; init(TY3);
 
 		add_u(X2, X0, TX1); // TX1 <- X2 + X0
 		add_u(Y2, Y0, TY1); // TY1 <- Y2 + Y0
@@ -307,20 +284,20 @@ void mul(Imp const & X, Imp const & Y, Imp & Z) {
 		add(TY2, Y2, TY3); mul2(TY3, TY3); sub(TY3, Y0, TY3); // TY3 <- (TY2 + Y2) * 2 - X0 = Y(-2)
 
 		// {Step3} Pointwise multiplication
-		Imp W0; init(W0); mul( X0,  Y0, W0);                         // W0 <-  X0 *  Y0 = Z(0)   = [ 1  0  0  0  0]
-		Imp W1; init(W1); mul(TX1, TY1, W1); clear(TX1); clear(TY1); // W1 <- TX1 * TY1 = Z(1)   = [ 1  1  1  1  1]
-		Imp W2; init(W2); mul(TX2, TY2, W2); clear(TX2); clear(TY2); // W2 <- TX2 * TY2 = Z(-1)  = [ 1 -1  1 -1  1]
-		Imp W3; init(W3); mul(TX3, TY3, W3); clear(TX3); clear(TY3); // W3 <- TX3 * TY3 = Z(-2)  = [ 1 -2  4 -8 16]
-		Imp W4; init(W4); mul( X2,  Y2, W4);                         // W4 <-  X2 *  Y2 = Z(inf) = [ 0  0  0  0  1]
+		BignumData W0; init(W0); mul( X0,  Y0, W0);                         // W0 <-  X0 *  Y0 = Z(0)   = [ 1  0  0  0  0]
+		BignumData W1; init(W1); mul(TX1, TY1, W1); clear(TX1); clear(TY1); // W1 <- TX1 * TY1 = Z(1)   = [ 1  1  1  1  1]
+		BignumData W2; init(W2); mul(TX2, TY2, W2); clear(TX2); clear(TY2); // W2 <- TX2 * TY2 = Z(-1)  = [ 1 -1  1 -1  1]
+		BignumData W3; init(W3); mul(TX3, TY3, W3); clear(TX3); clear(TY3); // W3 <- TX3 * TY3 = Z(-2)  = [ 1 -2  4 -8 16]
+		BignumData W4; init(W4); mul( X2,  Y2, W4);                         // W4 <-  X2 *  Y2 = Z(inf) = [ 0  0  0  0  1]
 
 		// {Step4} Interpolation
-		Imp & Z0 = W0; // Z0 <- W0 = [ 1  0  0  0  0]
-		Imp & Z1 = W1;
-		Imp & Z2 = W2;
-		Imp & Z3 = W3;
-		Imp & Z4 = W4; // Z4 <- W4 = [ 0  0  0  0  1]
+		BignumData & Z0 = W0; // Z0 <- W0 = [ 1  0  0  0  0]
+		BignumData & Z1 = W1;
+		BignumData & Z2 = W2;
+		BignumData & Z3 = W3;
+		BignumData & Z4 = W4; // Z4 <- W4 = [ 0  0  0  0  1]
 
-		sub(W3, W1, Z3); div_d(Z3, 3, Z3); // Z3 <- (W3 - W1) / 3 = [ 0 -1  1 -3  5]
+		sub(W3, W1, Z3); div_ud(Z3, 3, Z3); // Z3 <- (W3 - W1) / 3 = [ 0 -1  1 -3  5]
 
 		sub(W1, W2, Z1); div2(Z1, Z1); // Z1 <- (W1 - W2) / 2 = [ 0  1  0  1  0]
 
@@ -340,7 +317,7 @@ void mul(Imp const & X, Imp const & Y, Imp & Z) {
 		BR_ASSERT(sign(Z3) == Sign::ZPOS);
 		BR_ASSERT(sign(Z4) == Sign::ZPOS);
 
-		Imp & T = Z4;
+		BignumData & T = Z4;
 		reserve(Z, xlength + ylength);
 		lsh_d(T, blength, T); add_u(T, Z3, T);
 		lsh_d(T, blength, T); add_u(T, Z2, T);
@@ -365,7 +342,7 @@ void mul(Imp const & X, Imp const & Y, Imp & Z) {
 	sign(Z) = zsign;
 }
 
-void mul_d(Imp const & X, Digit d, Imp & Z) {
+void BignumAlgorithm::mul_d(BignumData const & X, Digit d, BignumData & Z) {
 	auto const xlength = length(X);
 	auto const zlength = xlength + 1;
 
@@ -389,13 +366,13 @@ void mul_d(Imp const & X, Digit d, Imp & Z) {
 	clamp(Z);
 }
 
-void div_mod(Imp const & X, Imp const & Y, Imp * Q, Imp * R) {
-	if (is0(Y)) {
+void BignumAlgorithm::div_mod(BignumData const & X, BignumData const & Y, BignumData * Q, BignumData * R) {
+	if (is_zero(Y)) {
 		throw;
 	}
 	if (cmp_u(X, Y) == Relation::LT) {
 		if (Q != nullptr) {
-			set0(*Q);
+			set_zero(*Q);
 		}
 		if (R != nullptr) {
 			copy(*R, X);
@@ -405,15 +382,15 @@ void div_mod(Imp const & X, Imp const & Y, Imp * Q, Imp * R) {
 
 	auto const qsign = sign(X) * sign(Y);
 
-	Imp TQ; init(TQ);
+	BignumData TQ; init(TQ);
 
 	auto const tqlength = length(X) - length(Y) + 1;
 	reserve(TQ, tqlength);
 
 	auto tqds = digits(TQ) + tqlength;
 
-	Imp TX; init(TX); copy(TX, X); sign(TX) = Sign::ZPOS;
-	Imp TY; init(TY); copy(TY, Y); sign(TY) = Sign::ZPOS;
+	BignumData TX; init(TX); copy(TX, X); sign(TX) = Sign::ZPOS;
+	BignumData TY; init(TY); copy(TY, Y); sign(TY) = Sign::ZPOS;
 
 	auto const norm = count_leading_zeros(digits(TY)[length(TY)-1]);
 
@@ -429,8 +406,8 @@ void div_mod(Imp const & X, Imp const & Y, Imp * Q, Imp * R) {
 	}
 	rsh_d(TY, lx - ly, TY);
 
-	Imp T1; init(T1); reserve(T1, 3);
-	Imp T2; init(T2); reserve(T2, 2);
+	BignumData T1; init(T1); reserve(T1, 3);
+	BignumData T2; init(T2); reserve(T2, 2);
 
 	for (auto i = lx; i > ly; --i) {
 		auto const j = i - ly - 1;
@@ -482,7 +459,7 @@ void div_mod(Imp const & X, Imp const & Y, Imp * Q, Imp * R) {
 	}
 
 	if (R != nullptr) {
-		sign(TX) = is0(TX) ? Sign::ZPOS : sign(X);
+		sign(TX) = is_zero(TX) ? Sign::ZPOS : sign(X);
 		rsh_b(TX, norm, TX);
 		swap(*R, TX);
 	}
@@ -492,7 +469,11 @@ void div_mod(Imp const & X, Imp const & Y, Imp * Q, Imp * R) {
 	clear(T1); clear(T2);
 }
 
-Digit div_mod_d(Imp const & X, Digit d, Imp & Z) {
+auto BignumAlgorithm::div_mod_d(BignumData const & X, Digit d, BignumData & Z) -> Digit {
+	if (d == 0) {
+		throw;
+	}
+
 	auto const xlength = length(X);
 	auto const zlength = xlength;
 
@@ -520,7 +501,7 @@ Digit div_mod_d(Imp const & X, Digit d, Imp & Z) {
 	return Digit(t);
 }
 
-Digit mod_d(Imp const & X, UDigit d) {
+auto BignumAlgorithm::mod_d(BignumData const & X, UDigit d) -> Digit {
 	auto const xlength = length(X);
 
 	auto xds = digits(X) + xlength;
@@ -536,8 +517,8 @@ Digit mod_d(Imp const & X, UDigit d) {
 	return Digit(t);
 }
 
-void bor(Imp const & X, Imp const & Y, Imp & Z) {
-	constexpr static auto base = [](Imp const & X, Imp const & Y, Imp & Z) {
+void BignumAlgorithm::bor(BignumData const & X, BignumData const & Y, BignumData & Z) {
+	static const auto base = [](BignumData const & X, BignumData const & Y, BignumData & Z) {
 		auto const xlength = length(X);
 		auto const ylength = length(Y);
 		auto const zlength = xlength;
@@ -568,8 +549,8 @@ void bor(Imp const & X, Imp const & Y, Imp & Z) {
 	sign(Z) = sign(X) | sign(Y);
 }
 
-void band(Imp const & X, Imp const & Y, Imp & Z) {
-	constexpr static auto base = [](Imp const & X, Imp const & Y, Imp & Z) {
+void BignumAlgorithm::band(BignumData const & X, BignumData const & Y, BignumData & Z) {
+	static const auto base = [](BignumData const & X, BignumData const & Y, BignumData & Z) {
 		auto const xlength = length(X);
 		auto const ylength = length(Y);
 		auto const zlength = xlength;
@@ -600,8 +581,8 @@ void band(Imp const & X, Imp const & Y, Imp & Z) {
 	sign(Z) = sign(X) & sign(Y);
 }
 
-void bxor(Imp const & X, Imp const & Y, Imp & Z) {
-	constexpr static auto base = [](Imp const & X, Imp const & Y, Imp & Z) {
+void BignumAlgorithm::bxor(BignumData const & X, BignumData const & Y, BignumData & Z) {
+	static const auto base = [](BignumData const & X, BignumData const & Y, BignumData & Z) {
 		auto const xlength = length(X);
 		auto const ylength = length(Y);
 		auto const zlength = xlength;
@@ -632,12 +613,12 @@ void bxor(Imp const & X, Imp const & Y, Imp & Z) {
 	sign(Z) = sign(X) ^ sign(Y);
 }
 
-void sqr(Imp const & X, Imp & Z) {
-	constexpr static auto base = [](Imp const & X, Imp & Z) {
+void BignumAlgorithm::sqr(BignumData const & X, BignumData & Z) {
+	static const auto base = [](BignumData const & X, BignumData & Z) {
 		auto const xlength = length(X);
 		auto const tlength = xlength + xlength + 1;
 
-		Imp T; init(T); reserve(T, tlength); fill_digits_0(digits(T), tlength);
+		BignumData T; init(T); reserve(T, tlength); fill_digits_0(digits(T), tlength);
 
 		for (auto xi = 0U; xi < xlength; ++xi) {
 			auto const xdi = UDDigit(digits(X)[xi]);
@@ -665,7 +646,7 @@ void sqr(Imp const & X, Imp & Z) {
 		swap(T, Z);
 		clear(T);
 	};
-	constexpr static auto karatsuba = [](Imp const & X, Imp & Z) {
+	static const auto karatsuba = [](BignumData const & X, BignumData & Z) {
 		/*
 		 * https://en.wikipedia.org/wiki/Karatsuba_multiplication
 		 *
@@ -679,23 +660,23 @@ void sqr(Imp const & X, Imp & Z) {
 		auto const xlength = length(X);
 		auto const blength = xlength / 2;
 
-		Imp X0; fake(X0, digits(X), blength); clamp(X0);
+		BignumData X0; fake(X0, digits(X), blength); clamp(X0);
 
-		Imp X1; fake(X1, digits(X) + blength, xlength - blength);
+		BignumData X1; fake(X1, digits(X) + blength, xlength - blength);
 
-		Imp Z0; init(Z0); sqr(X0, Z0); // Z0 <- X0^2
-		Imp Z2; init(Z2); sqr(X1, Z2); // Z2 <- X1^2
+		BignumData Z0; init(Z0); sqr(X0, Z0); // Z0 <- X0^2
+		BignumData Z2; init(Z2); sqr(X1, Z2); // Z2 <- X1^2
 
-		Imp TX; init(TX); add_u(X1, X0, TX); // TX <- X1 + X0
+		BignumData TX; init(TX); add_u(X1, X0, TX); // TX <- X1 + X0
 
-		Imp & Z1 = TX; sqr(TX, Z1); sub(Z1, Z0, Z1); sub(Z1, Z2, Z1); // Z1 <- TX^2 - Z0 - Z2
+		BignumData & Z1 = TX; sqr(TX, Z1); sub(Z1, Z0, Z1); sub(Z1, Z2, Z1); // Z1 <- TX^2 - Z0 - Z2
 
 		// Z <- (Z2 * B + Z1) * B + Z0
 		BR_ASSERT(sign(Z0) == Sign::ZPOS);
 		BR_ASSERT(sign(Z1) == Sign::ZPOS);
 		BR_ASSERT(sign(Z2) == Sign::ZPOS);
 
-		Imp & T = Z2;
+		BignumData & T = Z2;
 		reserve(Z, xlength + xlength);
 		lsh_d(T, blength, T); add_u(T, Z1, T);
 		lsh_d(T, blength, T); add_u(T, Z0, Z);
@@ -703,7 +684,7 @@ void sqr(Imp const & X, Imp & Z) {
 
 		clear(Z0); clear(Z2); clear(TX);
 	};
-	constexpr static auto toom3 = [](Imp const & X, Imp & Z) {
+	static const auto toom3 = [](BignumData const & X, BignumData & Z) {
 		/*
 		 * https://en.wikipedia.org/wiki/Toom%E2%80%93Cook_multiplication
 		 *
@@ -732,16 +713,16 @@ void sqr(Imp const & X, Imp & Z) {
 		auto const blength = xlength / 3;
 
 		// {Step1} Splitting
-		Imp X0; fake(X0, digits(X), blength); clamp(X0);
+		BignumData X0; fake(X0, digits(X), blength); clamp(X0);
 
-		Imp X1; fake(X1, digits(X) + blength, blength); clamp(X1);
+		BignumData X1; fake(X1, digits(X) + blength, blength); clamp(X1);
 
-		Imp X2; fake(X2, digits(X) + blength + blength, xlength - blength - blength);
+		BignumData X2; fake(X2, digits(X) + blength + blength, xlength - blength - blength);
 
 		// {Step2} Evaluation
-		Imp TX1; init(TX1);
-		Imp TX2; init(TX2);
-		Imp TX3; init(TX3);
+		BignumData TX1; init(TX1);
+		BignumData TX2; init(TX2);
+		BignumData TX3; init(TX3);
 
 		add_u(X2, X0, TX1); // TX1 <- X2 + X0
 
@@ -752,18 +733,18 @@ void sqr(Imp const & X, Imp & Z) {
 		add(TX2, X2, TX3); mul2(TX3, TX3); sub(TX3, X0, TX3); // TX3 <- (Tx2 + X2) * 2 - X0 = X(-2)
 
 		// {Step3} Pointwise multiplication
-		Imp W0; init(W0); sqr( X0, W0); // W0 <-  X0^2 = Z(0)   = [ 1  0  0  0  0]
-		Imp W1; init(W1); sqr(TX1, W1); // W1 <- TX1^2 = Z(1)   = [ 1  1  1  1  1]
-		Imp W2; init(W2); sqr(TX2, W2); // W2 <- TX2^2 = Z(-1)  = [ 1 -1  1 -1  1]
-		Imp W3; init(W3); sqr(TX3, W3); // W3 <- TX3^2 = Z(-2)  = [ 1 -2  4 -8 16]
-		Imp W4; init(W4); sqr( X2, W4); // W4 <-  X2^2 = Z(inf) = [ 0  0  0  0  1]
+		BignumData W0; init(W0); sqr( X0, W0); // W0 <-  X0^2 = Z(0)   = [ 1  0  0  0  0]
+		BignumData W1; init(W1); sqr(TX1, W1); // W1 <- TX1^2 = Z(1)   = [ 1  1  1  1  1]
+		BignumData W2; init(W2); sqr(TX2, W2); // W2 <- TX2^2 = Z(-1)  = [ 1 -1  1 -1  1]
+		BignumData W3; init(W3); sqr(TX3, W3); // W3 <- TX3^2 = Z(-2)  = [ 1 -2  4 -8 16]
+		BignumData W4; init(W4); sqr( X2, W4); // W4 <-  X2^2 = Z(inf) = [ 0  0  0  0  1]
 
 		// {Step4} Interpolation
-		Imp & Z0 = W0; // Z0 <- W0 = [ 1  0  0  0  0]
-		Imp & Z1 = W1;
-		Imp & Z2 = W2;
-		Imp & Z3 = W3;
-		Imp & Z4 = W4; // Z4 <- W4 = [ 0  0  0  0  1]
+		BignumData & Z0 = W0; // Z0 <- W0 = [ 1  0  0  0  0]
+		BignumData & Z1 = W1;
+		BignumData & Z2 = W2;
+		BignumData & Z3 = W3;
+		BignumData & Z4 = W4; // Z4 <- W4 = [ 0  0  0  0  1]
 
 		sub(W3, W1, Z3); div_ud(Z3, 3, Z3); // Z3 <- (W3 - W1) / 3 = [ 0 -1  1 -3  5]
 
@@ -785,7 +766,7 @@ void sqr(Imp const & X, Imp & Z) {
 		BR_ASSERT(sign(Z3) == Sign::ZPOS);
 		BR_ASSERT(sign(Z4) == Sign::ZPOS);
 
-		Imp & T = Z4;
+		BignumData & T = Z4;
 		reserve(Z, xlength + xlength);
 		lsh_d(T, blength, T); add_u(T, Z3, T);
 		lsh_d(T, blength, T); add_u(T, Z2, T);
@@ -810,8 +791,8 @@ void sqr(Imp const & X, Imp & Z) {
 	sign(Z) = zsign;
 }
 
-void power(Imp const & X, Digit n, Imp & Z) {
-	Imp T; init(T);
+void BignumAlgorithm::power(BignumData const & X, Digit n, BignumData & Z) {
+	BignumData T; init(T);
 	set_uint(T, 1U);
 	auto x = BIT_PER_DIGIT - count_leading_zeros(n);
 	for (n = reverse_bits(n) >> count_leading_zeros(n); x-- > 0; n >>= 1) {
@@ -824,7 +805,7 @@ void power(Imp const & X, Digit n, Imp & Z) {
 	clear(T);
 }
 
-void mul2(Imp const & X, Imp & Z) {
+void BignumAlgorithm::mul2(BignumData const & X, BignumData & Z) {
 	auto const xlength = length(X);
 	auto const zlength = xlength + 1;
 
@@ -849,7 +830,7 @@ void mul2(Imp const & X, Imp & Z) {
 	clamp(Z);
 }
 
-void div2(Imp const & X, Imp & Z) {
+void BignumAlgorithm::div2(BignumData const & X, BignumData & Z) {
 	auto const xlength = length(X);
 	auto const zlength = xlength;
 
@@ -873,7 +854,7 @@ void div2(Imp const & X, Imp & Z) {
 	clamp(Z);
 }
 
-void lsh_b(Imp const & X, Digit bn, Imp & Z) {
+void BignumAlgorithm::lsh_b(BignumData const & X, Digit bn, BignumData & Z) {
 	BR_ASSERT(0 <= bn && bn < BIT_PER_DIGIT);
 
 	auto const xlength = length(X);
@@ -900,7 +881,7 @@ void lsh_b(Imp const & X, Digit bn, Imp & Z) {
 	clamp(Z);
 }
 
-void rsh_b(Imp const & X, Digit bn, Imp & Z) {
+void BignumAlgorithm::rsh_b(BignumData const & X, Digit bn, BignumData & Z) {
 	BR_ASSERT(0 <= bn && bn < BIT_PER_DIGIT);
 
 	auto const xlength = length(X);
@@ -927,7 +908,7 @@ void rsh_b(Imp const & X, Digit bn, Imp & Z) {
 	clamp(Z);
 }
 
-void lsh_d(Imp const & X, Digit dn, Imp & Z) {
+void BignumAlgorithm::lsh_d(BignumData const & X, Digit dn, BignumData & Z) {
 	BR_ASSERT(0 <= dn);
 
 	auto const xlength = length(X);
@@ -948,11 +929,11 @@ void lsh_d(Imp const & X, Digit dn, Imp & Z) {
 	length(Z) = zlength;
 }
 
-void rsh_d(Imp const & X, Digit dn, Imp & Z) {
+void BignumAlgorithm::rsh_d(BignumData const & X, Digit dn, BignumData & Z) {
 	BR_ASSERT(0 <= dn);
 
 	if (length(X) <= dn) {
-		set0(Z);
+		set_zero(Z);
 		return;
 	}
 
@@ -973,8 +954,8 @@ void rsh_d(Imp const & X, Digit dn, Imp & Z) {
 	length(Z) = zlength;
 }
 
-void lsh(Imp const & X, Digit n, Imp & Z) {
-	constexpr static auto base = [](Imp const & X, Digit n, Imp & Z) {
+void BignumAlgorithm::lsh(BignumData const & X, Digit n, BignumData & Z) {
+	static const auto base = [](BignumData const & X, Digit n, BignumData & Z) {
 		BR_ASSERT(0 <= n);
 
 		auto const bn = n % BIT_PER_DIGIT;
@@ -1014,15 +995,15 @@ void lsh(Imp const & X, Digit n, Imp & Z) {
 	}
 }
 
-void rsh(Imp const & X, Digit n, Imp & Z) {
-	constexpr static auto base = [](Imp const & X, Digit n, Imp & Z) {
+void BignumAlgorithm::rsh(BignumData const & X, Digit n, BignumData & Z) {
+	static const auto base = [](BignumData const & X, Digit n, BignumData & Z) {
 		BR_ASSERT(0 <= n);
 
 		auto const bn = n % BIT_PER_DIGIT;
 		auto const dn = n / BIT_PER_DIGIT;
 
 		if (dn - X.length >= 0) {
-			set0(Z);
+			set_zero(Z);
 			return;
 		}
 
@@ -1055,7 +1036,7 @@ void rsh(Imp const & X, Digit n, Imp & Z) {
 	}
 }
 
-std::string inspect(Imp const & X) {
+std::string BignumAlgorithm::inspect(BignumData const & X) {
 	std::ostringstream oss;
 
 	oss << sign_to_nchar(X.sign) << "0x";
@@ -1067,18 +1048,18 @@ std::string inspect(Imp const & X) {
 	return oss.str();
 }
 
-std::string to_s(Imp const & X, Digit b, bool show_plus) {
-	constexpr static auto ALPHABETA = "0123456789abcdefghijklmnopqrstuvwxyz";
-	static auto to_s_generic = [](Imp const & X, Digit base) {
+std::string BignumAlgorithm::to_s(BignumData const & X, Digit b, bool show_plus) {
+	constexpr static auto ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyz";
+	static auto to_s_generic = [](BignumData const & X, Digit base) {
 		std::string s;
-		Imp T; init(T); copy(T, X);
+		BignumData T; init(T); copy(T, X);
 		do {
-			s += ALPHABETA[div_mod_d(T, base, T)];
-		} while (!is0(T));
+			s += ALPHABET[div_mod_d(T, base, T)];
+		} while (!is_zero(T));
 		clear(T);
 		return std::string(s.rbegin(), s.rend());
 	};
-	static auto to_s_power_2 = [](Imp const & X, Digit base) {
+	static auto to_s_power_2 = [](BignumData const & X, Digit base) {
 		auto const xlength = X.length;
 		auto const bits_per_char = integral_log2(base);
 		auto mod_base_mask = (1 << bits_per_char) - 1;
@@ -1096,7 +1077,7 @@ std::string to_s(Imp const & X, Digit b, bool show_plus) {
 		for (auto xi = xlength - 1;;) {
 			bit_pos -= bits_per_char;
 			for (; bit_pos >= 0;) {
-				s += ALPHABETA[(buffer >> bit_pos) & mod_base_mask];
+				s += ALPHABET[(buffer >> bit_pos) & mod_base_mask];
 				bit_pos -= bits_per_char;
 			}
 			if (xi-- <= 0) {
@@ -1105,14 +1086,14 @@ std::string to_s(Imp const & X, Digit b, bool show_plus) {
 			auto temp = (buffer << -bit_pos) & mod_base_mask;
 			buffer = *--xds;
 			bit_pos += BIT_PER_DIGIT;
-			s += ALPHABETA[temp | (buffer >> bit_pos)];
+			s += ALPHABET[temp | (buffer >> bit_pos)];
 		}
 
 		return s;
 	};
 
 	if (b < 2 || 36 < b) {
-		throw InvalidArgumentException(BR_CURRENT_FUNCTION);
+		throw InvalidArgumentException(__func__);
 	}
 
 	std::string s;
@@ -1122,7 +1103,7 @@ std::string to_s(Imp const & X, Digit b, bool show_plus) {
 		s += '+';
 	}
 
-	if (is0(X)) {
+	if (is_zero(X)) {
 		return "0";
 	} else if (is_power_of_2(b)) {
 		return s + to_s_power_2(X, b);
@@ -1131,6 +1112,7 @@ std::string to_s(Imp const & X, Digit b, bool show_plus) {
 	}
 }
 
-} // namespace Bignum
-} // namespace Detail
+Bignum const Bignum::ZERO;
+
 } // namespace BR
+

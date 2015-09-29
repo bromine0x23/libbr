@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @author Bromine0x23
+ * @since 2015/6/16
+ */
 #pragma once
 
 #if defined(linux) || defined(__linux) || defined(__linux__) || defined(__GNU__) || defined(__GLIBC__)
@@ -12,6 +17,7 @@
 
 #if 0
 #include <libbr/config/platform/linux.hpp>
+#include <libbr/config/platform/cygwin.hpp>
 #include <libbr/config/platform/win32.hpp>
 #endif // 0
 
