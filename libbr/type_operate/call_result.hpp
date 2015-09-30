@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief 函数调用结果
+ * @author Bromine0x23
+ * @since 2015/6/16
+ */
 #pragma once
 
 #include <libbr/config.hpp>
@@ -50,27 +56,38 @@ using CallResultBasic = decltype(CallResultTest::test(make_rvalue<TFunc>(), make
 template< typename T >
 struct TypeCallResult {
 	static_assert(sizeof(T *) == sizeof(nullptr), "Type T must be callable.");
-
 };
 
-template< typename TResult, typename ... TArgs >
-struct TypeCallResult<TResult(TArgs ...)> : TypeWrapper< CallResultBasic< TResult(TArgs ...), TArgs ... > > {};
+template< typename TResult, typename... TArgs >
+struct TypeCallResult<TResult(TArgs...)> : TypeWrapper< CallResultBasic< TResult(TArgs...), TArgs... > > {};
 
-template< typename TResult, typename ... TArgs >
-struct TypeCallResult<TResult(TArgs ..., ...)> : TypeWrapper< CallResultBasic< TResult(TArgs ...), TArgs ... > > {};
+template< typename TResult, typename... TArgs >
+struct TypeCallResult<TResult(TArgs..., ...)> : TypeWrapper< CallResultBasic< TResult(TArgs...), TArgs... > > {};
 
-template< typename TResult, typename ... TArgs >
-struct TypeCallResult<TResult(*)(TArgs ...)> : TypeWrapper< CallResultBasic< TResult(TArgs ...), TArgs ... > > {};
+template< typename TResult, typename... TArgs >
+struct TypeCallResult<TResult(*)(TArgs...)> : TypeWrapper< CallResultBasic< TResult(TArgs...), TArgs... > > {};
 
-template< typename TResult, typename ... TArgs >
-struct TypeCallResult<TResult(*)(TArgs ..., ...)> : TypeWrapper< CallResultBasic< TResult(TArgs ...), TArgs ... > > {};
+template< typename TResult, typename... TArgs >
+struct TypeCallResult<TResult(*)(TArgs..., ...)> : TypeWrapper< CallResultBasic< TResult(TArgs...), TArgs... > > {};
 
 } // namespace TypeOperate
 } // namespace Detail
 
+/**
+ * @brief 获取函数的调用结果类型
+ * @tparam T 需要是可调用对象
+ * @see TypeWrapper
+ *
+ * 包装调用 \em T 类型变量的的返回值类型
+ */
 template< typename T >
 struct TypeCallResult : TypeRewrap< Detail::TypeOperate::TypeCallResult<T> > {};
 
+/**
+ * @brief TypeCallResult 的简写版本
+ * @tparam Tn
+ * @see TypeCallResult
+ */
 template< typename T >
 using CallResult = TypeUnwrap< TypeCallResult<T> >;
 

@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief 将整数类型转换成对应的有符号整数类型
+ * @author Bromine0x23
+ * @since 2015/6/16
+ */
 #pragma once
 
 #include <libbr/config.hpp>
@@ -26,29 +32,38 @@ template<> struct TypeMakeSignedInteger< unsigned long      > : TypeWrapper< sig
 template<> struct TypeMakeSignedInteger< unsigned long long > : TypeWrapper< signed long long > {};
 
 #if defined(BR_HAS_INT128)
-template<> struct TypeMakeSignedInteger< UInt128 > : TypeWrapper< SInt128 > {};
-#endif
+
+template<> struct TypeMakeSignedInteger<UInt128> : TypeWrapper<SInt128> {};
 
 template< Size size >
-struct TypeMakeSignedEnum : TypeWrapper< SInt64 > {};
+struct TypeMakeSignedEnum : TypeWrapper<SInt128> {};
 
-template<> struct TypeMakeSignedEnum< sizeof(SInt8 ) > : TypeWrapper< SInt8  > {};
-template<> struct TypeMakeSignedEnum< sizeof(SInt16) > : TypeWrapper< SInt16 > {};
-template<> struct TypeMakeSignedEnum< sizeof(SInt32) > : TypeWrapper< SInt32 > {};
+template<> struct TypeMakeSignedEnum< sizeof(SInt64) > : TypeWrapper<SInt64> {};
+
+#else
+
+template< Size size >
+struct TypeMakeSignedEnum : TypeWrapper<SInt64> {};
+
+#endif // defined(BR_HAS_INT128)
+
+template<> struct TypeMakeSignedEnum< sizeof(SInt8) > : TypeWrapper<SInt8> {};
+template<> struct TypeMakeSignedEnum< sizeof(SInt16) > : TypeWrapper<SInt16> {};
+template<> struct TypeMakeSignedEnum< sizeof(SInt32) > : TypeWrapper<SInt32> {};
 
 template< typename T >
 struct TypeMakeSignedBasic : Conditional<
-	IsSigned< T >,
-	TypeWrapper< T >,
+	IsSigned<T>,
+	TypeWrapper<T>,
 	Conditional<
-		IsInteger< T >,
-		TypeMakeSignedInteger< T >,
+		IsInteger<T>,
+		TypeMakeSignedInteger<T>,
 		TypeMakeSignedEnum< sizeof(T) >
 	>
 > {
 	static_assert(
 		BooleanAnd<
-			BooleanOr< IsInteger< T >, IsEnum< T > >,
+			BooleanOr< IsInteger<T>, IsEnum<T> >,
 			NotSame< T, bool >
 		>::value,
 		"Type must be integer type (except bool), or an enumeration type."
@@ -56,15 +71,28 @@ struct TypeMakeSignedBasic : Conditional<
 };
 
 template< typename T >
-struct TypeMakeSigned : TypeMakeSignedBasic< RemoveConstVolatile< T > > {};
+struct TypeMakeSigned : TypeMakeSignedBasic< RemoveConstVolatile<T> > {};
 
 } // namespace TypeOperate
 } // namespace Detail
 
+/**
+ * @brief 将 \em T 转换成对应的有符号整数类型
+ * @tparam T
+ * @see TypeWrapper
+ * @see MakeSigned
+ *
+ * 包装整型类型或枚举类型 \em T 对应的的有符号整型类型
+ */
 template< typename T >
-struct TypeMakeSigned : TypeRewrap< Detail::TypeOperate::TypeMakeSigned< T > > {};
+struct TypeMakeSigned : TypeRewrap< Detail::TypeOperate::TypeMakeSigned<T> > {};
 
+/**
+ * @brief TypeMakeSigned 的简写版本
+ * @tparam T
+ * @see TypeMakeSigned
+ */
 template< typename T >
-using MakeSigned = TypeUnwrap< TypeMakeSigned< T > >;
+using MakeSigned = TypeUnwrap< TypeMakeSigned<T> >;
 
 } // namespace BR

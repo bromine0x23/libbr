@@ -10,7 +10,7 @@ namespace Detail {
 namespace TypeOperate {
 
 struct IsStaticCastableTest {
-	template< typename TFrom, typename TTo, typename = decltype(static_cast< TTo >(make_rvalue< TFrom >())) >
+	template< typename TFrom, typename TTo, typename = decltype(static_cast<TTo>(make_rvalue<TFrom>())) >
 	static BooleanTrue test(int);
 
 	template< typename TFrom, typename TTo >

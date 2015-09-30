@@ -27,7 +27,7 @@ struct TypeAddPointer : TypeWrapper< RemoveReference<T> * > {};
  * @see TypeWrapper
  * @see AddPointer
  *
- * 包装 \em T 添加指针修饰(<tt>T *<\tt>)后的类型
+ * 包装 \em T 添加指针修饰(<tt>T *</tt>)后的类型
  */
 template< typename T >
 struct TypeAddPointer : TypeRewrap< Detail::TypeOperate::TypeAddPointer<T> > {};

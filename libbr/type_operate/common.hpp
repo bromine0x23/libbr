@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief 兼容类型
+ * @author Bromine0x23
+ * @since 2015/6/16
+ */
 #pragma once
 
 #include <libbr/config.hpp>
@@ -7,27 +13,48 @@
 
 namespace BR {
 
-template< typename ... Tn >
+namespace Detail {
+namespace TypeOperate {
+
+template< typename... Tn >
 struct TypeCommon;
 
-template< typename ... Tn >
-using Common = TypeUnwrap< TypeCommon< Tn ... > >;
-
 template< typename T >
-struct TypeCommon< T > : TypeWrapper< Decay< T > > {
+struct TypeCommon< T > : TypeWrapper< Decay<T> > {
 	static_assert(sizeof(T) > 0, "Type must be complete.");
 };
 
 template< typename T0, typename T1 >
 struct TypeCommon< T0, T1 > : TypeWrapper<
-	Decay< decltype(make_rvalue< bool >() ? make_rvalue< T0 >() : make_rvalue< T1 >()) >
+	Decay< decltype(make_rvalue<bool>() ? make_rvalue<T0>() : make_rvalue<T1>()) >
 > {
 	static_assert(sizeof(T0) > 0, "Type must be complete.");
 	static_assert(sizeof(T1) > 0, "Type must be complete.");
 };
 
-template < typename T0, typename T1, typename ... Tn >
-struct TypeCommon< T0, T1, Tn ... > : TypeWrapper< Common< Common< T0, T1 >, Tn ... > > {};
+template < typename T0, typename T1, typename... Tn >
+struct TypeCommon< T0, T1, Tn... > : TypeCommon< TypeUnwrap< TypeCommon< T0, T1 > >, Tn... > {};
+
+} // namespace TypeOperate
+} // namespace Detail
+
+/**
+ * @brief 获取能兼容所给各个类型的类型
+ * @tparam Tn
+ * @see TypeWrapper
+ *
+ * TODO
+ */
+template< typename... Tn >
+struct TypeCommon: TypeRewrap< Detail::TypeOperate::TypeCommon< Tn... > > {};
+
+/**
+ * @brief TypeCommon 的简写版本
+ * @tparam Tn
+ * @see TypeCommon
+ */
+template< typename... Tn >
+using Common = TypeUnwrap< TypeCommon< Tn... > >;
 
 } // namespace BR
 

@@ -37,6 +37,6 @@ struct TypeAddConst : TypeRewrap< Detail::TypeOperate::TypeAddConst<T> > {};
  * @see TypeAddConst
  */
 template< typename T >
-using AddConst = TypeUnwrap< TypeAddConst< T > >;
+using AddConst = TypeUnwrap< TypeAddConst<T> >;
 
 } // namespace BR

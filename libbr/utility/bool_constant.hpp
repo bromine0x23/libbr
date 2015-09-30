@@ -27,4 +27,11 @@ using BooleanTrue = BooleanConstant<true>;
  */
 using BooleanFalse = BooleanConstant<false>;
 
+#if defined(BR_CXX14)
+
+template< typename TB >
+constexpr static bool bool_constant = integer_constant<TB>;
+
+#endif // defined(BR_CXX14)
+
 } // namespace BR

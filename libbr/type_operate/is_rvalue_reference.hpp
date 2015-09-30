@@ -27,9 +27,10 @@ struct IsRValueReference< T && > : BooleanTrue {};
  * @brief 检查 \em T 是否是右值引用类型
  * @tparam T 待检查类型
  * @see IntegerConstant
+ * @see IsLValueReference
  * @see NotRValueReference
  *
- * 如果\em T 是右值引用类型，那么封装的值为 \em true ；否则为 \em false
+ * 如果 \em T 是右值引用类型，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
 struct IsRValueReference : Boolean< Detail::TypeOperate::IsRValueReference<T> > {};
