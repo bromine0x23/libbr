@@ -60,7 +60,7 @@ struct NotAssignable : BooleanNot< Detail::TypeOperate::IsAssignable< T, TSrc > 
  * @see IsAssignable
  * @see not_assignable
  */
-template< class T, typename TSrc >
+template< typename T, typename TSrc >
 constexpr auto is_assignable = IsAssignable< T, TSrc >::value;
 
 /**
@@ -70,7 +70,7 @@ constexpr auto is_assignable = IsAssignable< T, TSrc >::value;
  * @see NotAssignable
  * @see is_assignable
  */
-template< class T, typename TSrc >
+template< typename T, typename TSrc >
 constexpr auto not_assignable = NotAssignable< T, TSrc >::value;
 
 #endif // defined(BR_CXX14)

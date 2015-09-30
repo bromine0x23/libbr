@@ -38,7 +38,7 @@ using IsArray = BooleanOr< IsArrayKnownBounds<T>, IsArrayUnknownBounds<T> >;
  * @see IntegerConstant
  * @see NotArrayKnownBounds
  *
- * 如果T是约束长度的数组类型，那么封装的值为 true ；否则为 false
+ * 如果 \em T 是约束长度的数组类型，那么封装的值为 true ；否则为 false
  */
 template< typename T >
 struct IsArrayKnownBounds : Boolean< Detail::TypeOperate::IsArrayKnownBounds<T> > {};
@@ -57,7 +57,7 @@ struct NotArrayKnownBounds : BooleanNot< Detail::TypeOperate::IsArrayKnownBounds
  * @see IntegerConstant
  * @see NotArrayUnknownBounds
  *
- * 如果T是不约束长度的数组类型，那么封装的值为 true ；否则为 false
+ * 如果 \em T 是不约束长度的数组类型，那么封装的值为 true ；否则为 false
  */
 template< typename T >
 struct IsArrayUnknownBounds : Boolean< Detail::TypeOperate::IsArrayUnknownBounds<T> > {};
@@ -78,7 +78,7 @@ struct NotArrayUnknownBounds : BooleanNot< Detail::TypeOperate::IsArrayUnknownBo
  * @see IsArrayUnknownBounds
  * @see NotArray
  *
- * 如果T是数组类型，那么封装的值为 true ；否则为 false
+ * 如果 \em T 是数组类型，那么封装的值为 true ；否则为 false
  */
 template< typename T >
 struct IsArray : Boolean< Detail::TypeOperate::IsArray<T> > {};
@@ -99,7 +99,7 @@ struct NotArray : BooleanNot< Detail::TypeOperate::IsArray<T> > {};
  * @see IsArrayKnownBounds
  * @see not_array_known_bounds
  */
-template< class T >
+template< typename T >
 constexpr auto is_array_known_bounds = IsArrayKnownBounds<T>::value;
 
 /**
@@ -108,7 +108,7 @@ constexpr auto is_array_known_bounds = IsArrayKnownBounds<T>::value;
  * @see NotArrayKnownBounds
  * @see is_array_known_bounds
  */
-template< class T >
+template< typename T >
 constexpr auto not_array_known_bounds = NotArrayKnownBounds<T>::value;
 
 /**
@@ -117,7 +117,7 @@ constexpr auto not_array_known_bounds = NotArrayKnownBounds<T>::value;
  * @see IsArrayUnknownBounds
  * @see not_array_unknown_bounds
  */
-template< class T >
+template< typename T >
 constexpr auto is_array_unknown_bounds = IsArrayUnknownBounds<T>::value;
 
 /**
@@ -126,7 +126,7 @@ constexpr auto is_array_unknown_bounds = IsArrayUnknownBounds<T>::value;
  * @see NotArrayUnknownBounds
  * @see is_array_unknown_bounds
  */
-template< class T >
+template< typename T >
 constexpr auto not_array_unknown_bounds = NotArrayUnknownBounds<T>::value;
 
 /**
@@ -135,7 +135,7 @@ constexpr auto not_array_unknown_bounds = NotArrayUnknownBounds<T>::value;
  * @see IsArray
  * @see not_array
  */
-template< class T >
+template< typename T >
 constexpr auto is_array = IsArray<T>::value;
 
 /**
@@ -144,7 +144,7 @@ constexpr auto is_array = IsArray<T>::value;
  * @see NotArray
  * @see is_array
  */
-template< class T >
+template< typename T >
 constexpr auto not_array = NotArray<T>::value;
 
 #endif // defined(BR_CXX14)

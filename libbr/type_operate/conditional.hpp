@@ -6,7 +6,10 @@
 namespace BR {
 
 template< bool condition, typename TWhenTrue, typename TWhenFalse = void >
-struct TypeConditionalByValue : TypeWrapper< TWhenTrue > {};
+struct TypeConditionalByValue;
+
+template< typename TWhenTrue, typename TWhenFalse >
+struct TypeConditionalByValue< true, TWhenTrue, TWhenFalse > : TypeWrapper< TWhenTrue > {};
 
 template< typename TWhenTrue, typename TWhenFalse >
 struct TypeConditionalByValue< false, TWhenTrue, TWhenFalse > : TypeWrapper< TWhenFalse > {};

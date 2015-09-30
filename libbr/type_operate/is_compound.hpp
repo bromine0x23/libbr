@@ -28,7 +28,7 @@ using IsCompound = BooleanNot< IsFundamental<T> >;
  * @see IsFundamental
  * @see NotCompound
  *
- * 如果T是复合类型(非基本类型，包括数组、函数、对象指针、函数指针、成员对象指针、成员函数指针、引用、类、联合、枚举及其cv变种)，
+ * 如果 \em T 是复合类型(非基本类型，包括数组、函数、对象指针、函数指针、成员对象指针、成员函数指针、引用、类、联合、枚举及其cv变种)，
  * 那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
@@ -50,7 +50,7 @@ struct NotCompound : BooleanNot< Detail::TypeOperate::IsCompound<T> > {};
  * @see IsCompound
  * @see not_compound
  */
-template< class T >
+template< typename T >
 constexpr auto is_compound = IsCompound<T>::value;
 
 /**
@@ -59,7 +59,7 @@ constexpr auto is_compound = IsCompound<T>::value;
  * @see NotCompound
  * @see is_compound
  */
-template< class T >
+template< typename T >
 constexpr auto not_compound = NotCompound<T>::value;
 
 #endif // defined(BR_CXX14)

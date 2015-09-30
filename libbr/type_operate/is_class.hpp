@@ -56,7 +56,7 @@ using IsClass = BooleanAnd<
  * @see IntegerConstant
  * @see NotClass
  *
- * 如果T是类(\em struct 或 \em class)，那么封装的值为 \em true ；否则为 \em false
+ * 如果 \em T 是类(\em struct 或 \em class)，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
 struct IsClass : Boolean< Detail::TypeOperate::IsClass<T> > {};
@@ -77,7 +77,7 @@ struct NotClass : BooleanNot< Detail::TypeOperate::IsClass<T> > {};
  * @see IsClass
  * @see not_class
  */
-template< class T >
+template< typename T >
 constexpr auto is_class = IsClass<T>::value;
 
 /**
@@ -86,7 +86,7 @@ constexpr auto is_class = IsClass<T>::value;
  * @see NotClass
  * @see is_class
  */
-template< class T >
+template< typename T >
 constexpr auto not_class = NotClass<T>::value;
 
 #endif // defined(BR_CXX14)

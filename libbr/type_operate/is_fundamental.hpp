@@ -30,7 +30,7 @@ using IsFundamental = BooleanOr< IsArithmetic<T>, IsVoid<T> >;
  * @see IsVoid
  * @see NotCompound
  *
- * 如果T是基本类型(算术类型或\em void)，那么封装的值为 \em true ；否则为 \em false
+ * 如果 \em T 是基本类型(算术类型或 \em void)，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
 struct IsFundamental : Boolean< Detail::TypeOperate::IsFundamental<T> > {};
@@ -51,7 +51,7 @@ struct NotFundamental : BooleanNot< Detail::TypeOperate::IsFundamental<T> > {};
  * @see IsFundamental
  * @see not_fundamental
  */
-template< class T >
+template< typename T >
 constexpr auto is_fundamental = IsFundamental<T>::value;
 
 /**
@@ -60,7 +60,7 @@ constexpr auto is_fundamental = IsFundamental<T>::value;
  * @see NotFundamental
  * @see is_fundamental
  */
-template< class T >
+template< typename T >
 constexpr auto not_fundamental = NotFundamental<T>::value;
 
 #endif // defined(BR_CXX14)

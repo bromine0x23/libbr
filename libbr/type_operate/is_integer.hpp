@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief 整型类型检查
+ * @author Bromine0x23
+ * @since 2015/6/16
+ */
 #pragma once
 
 #include <libbr/config.hpp>
@@ -8,6 +14,8 @@ namespace BR {
 
 namespace Detail {
 namespace TypeOperate {
+
+using BR::RemoveConstVolatile;
 
 template< typename T >
 struct IsIntegerBasic : BooleanFalse {};
@@ -40,10 +48,46 @@ struct IsInteger : IsIntegerBasic< RemoveConstVolatile<T> > {};
 } // namespace TypeOperate
 } // namespace Detail
 
+/**
+ * @brief 检查 \em T 是否是整型类型
+ * @tparam T 待检查类型
+ * @see IntegerConstant
+ * @see NotInteger
+ *
+ * 如果 \em T 是整型类型(\em bool、\em char、\em char16_t、\em char32_t、\em wchar_t、\em short、\em int、\em long、<em>long long</em>及扩展整型类型，包括 \em signed 和 \em unsigned 和带CV修饰的版本)，
+ * 那么封装的值为 \em true ；否则为 \em false
+ */
 template< typename T >
-struct IsInteger : Boolean< Detail::TypeOperate::IsInteger< T > > {};
+struct IsInteger : Boolean< Detail::TypeOperate::IsInteger<T> > {};
 
+/**
+ * @brief IsInteger 的否定
+ * @tparam T 待检查类型
+ * @see IsInteger
+ */
 template< typename T >
-struct NotInteger : BooleanNot< Detail::TypeOperate::IsInteger< T > > {};
+struct NotInteger : BooleanNot< Detail::TypeOperate::IsInteger<T> > {};
+
+#if defined(BR_CXX14)
+
+/**
+ * @brief IsInteger 的模板变量版本
+ * @tparam T 待检查类型
+ * @see IsInteger
+ * @see not_integer
+ */
+template< typename T >
+constexpr auto is_integer = IsInteger<T>::value;
+
+/**
+ * @brief NotInteger 的模板变量版本
+ * @tparam T 待检查类型
+ * @see NotInteger
+ * @see is_integer
+ */
+template< typename T >
+constexpr auto not_integer = NotInteger<T>::value;
+
+#endif // defined(BR_CXX14)
 
 } // namespace BR

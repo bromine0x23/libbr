@@ -52,7 +52,7 @@ using IsAbstract = BooleanAnd< IsClass<T>, IsAbstractBasic<T> >;
  * @see IntegerConstant
  * @see NotAbstract
  *
- * 如果T是抽象类(含有至少一个纯虚函数声明的类)，那么封装的值为 \em true ；否则为 \em false
+ * 如果 \em T 是抽象类(含有至少一个纯虚函数声明的类)，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
 struct IsAbstract : Boolean< Detail::TypeOperate::IsAbstract<T> > {};
@@ -73,7 +73,7 @@ struct NotAbstract : BooleanNot< Detail::TypeOperate::IsAbstract<T> > {};
  * @see IsAbstract
  * @see not_abstract
  */
-template< class T >
+template< typename T >
 constexpr auto is_abstract = IsAbstract<T>::value;
 
 /**
@@ -82,7 +82,7 @@ constexpr auto is_abstract = IsAbstract<T>::value;
  * @see NotAbstract
  * @see is_abstract
  */
-template< class T >
+template< typename T >
 constexpr auto not_abstract = NotAbstract<T>::value;
 
 #endif // defined(BR_CXX14)

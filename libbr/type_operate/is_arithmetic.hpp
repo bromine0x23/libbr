@@ -30,7 +30,7 @@ using IsArithmetic = BooleanOr< IsInteger<T>, IsFloatingPoint<T> >;
  * @see IsFloatingPoint
  * @see NotArithmetic
  *
- * 如果T是算术类型(整型类型或浮点类型)，那么封装的值为 \em true ；否则为 \em false
+ * 如果 \em T 是算术类型(整型类型或浮点类型)，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
 struct IsArithmetic : Boolean< Detail::TypeOperate::IsArithmetic<T> > {};
@@ -51,7 +51,7 @@ struct NotArithmetic : BooleanNot< Detail::TypeOperate::IsArithmetic<T> > {};
  * @see IsArithmetic
  * @see not_arithmetic
  */
-template< class T >
+template< typename T >
 constexpr auto is_arithmetic = IsArithmetic<T>::value;
 
 /**
@@ -60,7 +60,7 @@ constexpr auto is_arithmetic = IsArithmetic<T>::value;
  * @see NotArithmetic
  * @see is_arithmetic
  */
-template< class T >
+template< typename T >
 constexpr auto not_arithmetic = NotArithmetic<T>::value;
 
 #endif // defined(BR_CXX14)
