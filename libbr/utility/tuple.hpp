@@ -133,7 +133,10 @@ struct IsTupleLike< TupleTypes< Tn ... > > : BooleanTrue {};
 // MakeTupleIndices
 //
 template< Size From, Size To, Size ... In >
-struct TypeMakeTupleIndices : TypeMakeTupleIndices< From + 1, To, In ..., From > {};
+struct TypeMakeTupleIndices;
+
+template< Size From, Size To, Size ... In >
+struct TypeMakeTupleIndices< From, To, In ... > : TypeMakeTupleIndices< From + 1, To, In ..., From > {};
 
 template< Size To, Size ... In >
 struct TypeMakeTupleIndices< To, To, In ... > : TypeWrapper< TupleIndices< In ... > > {};
@@ -157,7 +160,10 @@ using MakeTupleType = Conditional<
 >;
 
 template< typename T, Size From, Size To, typename ... Tn >
-struct TypeMakeTupleTypes : TypeMakeTupleTypes< T, From + 1, To, Tn ..., MakeTupleType< From, RemoveReference<T> > > {
+struct TypeMakeTupleTypes;
+
+template< typename T, Size From, Size To, typename ... Tn >
+struct TypeMakeTupleTypes< T, From, To, Tn ... > : TypeMakeTupleTypes< T, From + 1, To, Tn ..., MakeTupleType< From, RemoveReference<T> > > {
 	static_assert(From <= To, "MakeTupleTypes input error");
 };
 

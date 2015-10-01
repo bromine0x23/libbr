@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 
+find_package(Doxygen)
+
 #===============================================================================
 # Setup Project
 #===============================================================================
@@ -19,6 +21,7 @@ set(PACKAGE_STRING "${PACKAGE_NAME} ${PACKAGE_VERSION}")
 option(LIBBR_ENABLE_CXX14 "Enable -std=c++14 and use of c++14 language features if the compiler supports it." OFF)
 option(LIBBR_ENABLE_SHARED "Build libbr as a shared library." OFF)
 option(LIBBR_BUILD_32_BITS "Build 32 bit libbr" OFF)
+option(LIBBR_GENERATE_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
 
 #===============================================================================
 # Configure System
@@ -74,3 +77,21 @@ add_subdirectory(libbr)
 #===============================================================================
 
 add_subdirectory(test)
+
+#===============================================================================
+# Setup Doxygen Target
+#===============================================================================
+
+if(LIBBR_GENERATE_DOCUMENTATION)
+	if(NOT DOXYGEN_FOUND)
+		message(FATAL_ERROR "Doxygen is needed to build the documentation.")
+	endif()
+
+	add_custom_target(doc
+		COMMAND ${DOXYGEN_EXECUTABLE} "${PROJECT_SOURCE_DIR}/Doxyfile"
+		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+		COMMENT "Generating API documentation with Doxygen"
+		VERBATIM
+		USES_TERMINAL
+	)
+endif()
