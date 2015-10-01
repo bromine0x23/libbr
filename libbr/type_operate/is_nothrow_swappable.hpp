@@ -13,7 +13,7 @@ namespace TypeOperate {
 
 template< typename T >
 struct IsNothrowSwappableBasic {
-	constexpr static auto value = noexcept(swapmake_reference<T>(), make_reference<T>());
+	constexpr static auto value = noexcept(swap(make_reference<T>(), make_reference<T>()));
 };
 
 template< typename T >

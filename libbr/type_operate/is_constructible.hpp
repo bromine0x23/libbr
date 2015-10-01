@@ -107,7 +107,7 @@ struct IsConstructible< T, TArg > : IsConstructibleOne< T, TArg > {};
 
 template< typename T, typename... TArgs >
 struct IsConstructible : IsConstructibleMany< T, TArgs... > {
-	static_assert(sizeof...(TArguments) > 1, "Only useful for > 1 arguments");
+	static_assert(sizeof...(TArgs) > 1, "Only useful for > 1 arguments");
 };
 
 #endif // BR_IS_CONSTRUCTIBLE

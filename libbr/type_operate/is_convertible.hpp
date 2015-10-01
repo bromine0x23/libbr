@@ -24,7 +24,7 @@ namespace TypeOperate {
 #if defined(BR_IS_CONVERTIBLE)
 
 template< typename TFrom, typename TTo >
-using IsConvertible = BoolConstant< BR_IS_CONVERTIBLE(TFrom, TTo) >;
+using IsConvertible = BooleanConstant< BR_IS_CONVERTIBLE(TFrom, TTo) >;
 
 #else
 

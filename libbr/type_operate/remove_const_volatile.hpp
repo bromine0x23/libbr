@@ -38,7 +38,7 @@ struct TypeRemoveConstVolatile< T const volatile > : TypeWrapper<T> {};
  * 包装 \em T 移除顶层的 \em const 和 \em volatile 修饰(如果存在)后的类型
  */
 template< typename T >
-struct TypeRemoveConst : TypeRewrap< Detail::TypeOperate::TypeRemoveConstVolatile<T> > {};
+struct TypeRemoveConstVolatile : TypeRewrap< Detail::TypeOperate::TypeRemoveConstVolatile<T> > {};
 
 /**
  * @brief TypeRemoveConstVolatile 的简写版本

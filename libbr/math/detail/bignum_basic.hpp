@@ -53,7 +53,7 @@ public:
 	 * @brief 用于表示一元+操作
 	 */
 	// constexpr static auto positive = Positive();
-	static Positive const positive = Positive();
+	static Positive const positive;
 
 	/**
 	 * @brief 用于表示一元-操作

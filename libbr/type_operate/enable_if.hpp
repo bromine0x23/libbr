@@ -26,7 +26,7 @@ struct TypeEnableIfByValue;
 template< typename T >
 struct TypeEnableIfByValue< true, T > : TypeWrapper< T > {};
 
-template< bool condition, typename T >
+template< typename T >
 struct TypeEnableIfByValue< false, T > {};
 
 /**
@@ -41,7 +41,7 @@ struct TypeEnableIfByValue< false, T > {};
 template< bool condition, typename T = void >
 struct TypeDisableIfValue;
 
-template< bool condition, typename T >
+template< typename T >
 struct TypeDisableIfValue< true, T > {};
 
 template< typename T >

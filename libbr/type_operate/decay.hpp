@@ -22,7 +22,7 @@ namespace Detail {
 namespace TypeOperate {
 
 template< typename T >
-using TypeDecayBasic = Conditional<
+using DecayBasic = Conditional<
 	IsArray<T>,
 	AddPointer< RemoveExtent<T> >,
 	Conditional<
@@ -33,7 +33,7 @@ using TypeDecayBasic = Conditional<
 >;
 
 template< typename T >
-using TypeDecay = TypeDecayBasic< RemoveReference<T> >;
+using Decay = DecayBasic< RemoveReference<T> >;
 
 } // namespace TypeOperate
 } // namespace Detail
@@ -49,7 +49,7 @@ using TypeDecay = TypeDecayBasic< RemoveReference<T> >;
  * - 对于其他类型，应用左值至右值的转换规则：<code>RemoveConstVolatile< RemoveReference<T> ></code>
  */
 template< typename T >
-struct TypeDecay : TypeRewrap< Detail::TypeOperate::TypeDecay<T> > {};
+struct TypeDecay : TypeWrapper< Detail::TypeOperate::Decay<T> > {};
 
 /**
  * @brief TypeDecay 的简写版本
