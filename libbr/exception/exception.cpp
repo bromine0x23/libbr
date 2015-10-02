@@ -2,21 +2,14 @@
 
 namespace BR {
 
-Exception::Exception() noexcept : m_message("BR::Exception::Exception") {};
-
-Exception::Exception(char const * message) noexcept : m_message(message) {}
-
-Exception::Exception(Exception const & exception) noexcept : m_message(exception.m_message) {}
-
 Exception::~Exception() noexcept {}
 
-Exception & Exception::operator=(Exception const & exception) noexcept {
-	m_message = exception.m_message;
-	return *this;
+Exception::Message Exception::message() const noexcept {
+	return "BR::Exception";
 }
 
-char const * Exception::what() const noexcept {
-	return m_message;
+Exception::Message Exception::what() const noexcept {
+	return message();
 }
 
 } // namespace BR

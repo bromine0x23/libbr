@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief Exception
+ * @author Bromine0x23
+ * @since 2015/10/2
+ */
 #pragma once
 
 #include <exception>
@@ -62,22 +68,20 @@ inline void rethrow_if_nested(TException const & exception) {
 	std::rethrow_if_nested(exception);
 }
 
+/**
+ * @brief Basic exception class
+ */
 class Exception : STDException {
 public:
-	Exception() noexcept;
+	using Message = CString<NChar>;
 
-	explicit Exception(char const * message) noexcept;
-
-	Exception(Exception const & exception) noexcept;
+	Exception() noexcept {};
 
 	virtual ~Exception() noexcept;
 
-	Exception & operator=(Exception const & exception) noexcept;
+	virtual Message message() const noexcept;
 
-	virtual char const * what() const noexcept;
-
-protected:
-	char const * m_message;
+	virtual Message what() const noexcept;
 };
 
 } // namespace BR

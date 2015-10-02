@@ -1,23 +1,21 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/exception/logical_exception.hpp>
+#include <libbr/exception/logic_exception.hpp>
 
 namespace BR {
 
-class IndexOutOfRangeException : public LogicalException {
+class IndexOutOfRangeException : public LogicException {
 public:
-	using BaseException = LogicalException;
+	using BaseException = LogicException;
 
-	IndexOutOfRangeException() noexcept;
+	IndexOutOfRangeException() : BaseException("BR::IndexOutOfRangeException") {};
 
-	explicit IndexOutOfRangeException(char const * message) noexcept;
+	explicit IndexOutOfRangeException(std::string const & message) : BaseException(message) {};
 
-	IndexOutOfRangeException(IndexOutOfRangeException const &) noexcept;
+	explicit IndexOutOfRangeException(CString<NChar> message) : BaseException(message) {};
 
 	virtual ~IndexOutOfRangeException() noexcept;
-
-	IndexOutOfRangeException & operator=(IndexOutOfRangeException const &) noexcept;
 };
 
 } // namespace BR

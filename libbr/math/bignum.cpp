@@ -6,7 +6,7 @@
 #include <libbr/math/bignum.hpp>
 
 #include <libbr/assert/assert.hpp>
-#include <libbr/exception/invalid_argument_exception.hpp>
+#include <libbr/exception/argument_exception.hpp>
 #include <libbr/utility/duff_device.hpp>
 #include <sstream>
 #include <iomanip>
@@ -1093,7 +1093,7 @@ std::string BignumAlgorithm::to_s(BignumData const & X, Digit b, bool show_plus)
 	};
 
 	if (b < 2 || 36 < b) {
-		throw InvalidArgumentException(__func__);
+		throw ArgumentException(__func__);
 	}
 
 	std::string s;
