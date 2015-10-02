@@ -16,3 +16,6 @@
 
 # CLion Project
 .idea
+
+#
+bin/

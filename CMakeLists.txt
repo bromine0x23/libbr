@@ -18,7 +18,7 @@ set(PACKAGE_STRING "${PACKAGE_NAME} ${PACKAGE_VERSION}")
 # Setup CMake Options
 #===============================================================================
 
-option(LIBBR_ENABLE_CXX14 "Enable -std=c++14 and use of c++14 language features if the compiler supports it." OFF)
+option(LIBBR_ENABLE_CXX14 "Use c++14 language features if the compiler supports it." OFF)
 option(LIBBR_ENABLE_SHARED "Build libbr as a shared library." OFF)
 option(LIBBR_BUILD_32_BITS "Build 32 bit libbr" OFF)
 option(LIBBR_GENERATE_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
@@ -28,8 +28,6 @@ option(LIBBR_GENERATE_DOCUMENTATION "Create and install the HTML based API docum
 #===============================================================================
 
 set(LIBBR_CXX_FLAGS "")
-set(LIBBR_COMPILE_FLAGS "")
-set(LIBBR_LINK_FLAGS "")
 
 #===============================================================================
 # Setup Compiler Flags
@@ -47,9 +45,9 @@ else()
 endif()
 
 if (LIBBR_ENABLE_SHARED)
-	list(APPEND LIBBR_COMPILE_FLAGS -DBR_BUILD_SHARED)
+	add_definitions(-DBR_BUILD_SHARED)
 else()
-	list(APPEND LIBBR_COMPILE_FLAGS -DBR_BUILD_STATIC)
+	add_definitions(-DBR_BUILD_STATIC)
 endif()
 
 if (LIBBR_BUILD_32_BITS)
@@ -68,7 +66,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LIBBR_CXX_FLAGS}")
 # Setup Source Code
 #===============================================================================
 
-include_directories(${PROJECT_SOURCE_DIR})
+include_directories(${PROJECT_SOURCE_DIR}/libbr/..)
 
 add_subdirectory(libbr)
 
