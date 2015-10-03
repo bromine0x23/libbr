@@ -1,8 +1,8 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/intrinsics.hpp>
+#include <libbr/utility/bool_constant.hpp>
+#include <libbr/type_traits/intrinsics.hpp>
 
 namespace BR {
 
@@ -25,9 +25,9 @@ using HasVirtualDestructor = BooleanFalse;
 } // namespace Detail
 
 template< typename T >
-struct HasVirtualDestructor : Boolean< Detail::TypeOperate::HasVirtualDestructor< T > > {};
+struct HasVirtualDestructor : BooleanRewrapPositive< Detail::TypeOperate::HasVirtualDestructor< T > > {};
 
 template< typename T >
-struct NoVirtualDestructor : BooleanNot< Detail::TypeOperate::HasVirtualDestructor< T > > {};
+struct NoVirtualDestructor : BooleanRewrapNegative< Detail::TypeOperate::HasVirtualDestructor< T > > {};
 
 } // namespace BR

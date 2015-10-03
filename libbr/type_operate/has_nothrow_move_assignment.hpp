@@ -1,8 +1,8 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/intrinsics.hpp>
+#include <libbr/utility/bool_constant.hpp>
+#include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_HAS_NOTHROW_MOVE_ASSIGNMENT)
 #  include <libbr/type_operate/has_trivial_move_assignment.hpp>
 #endif
@@ -28,9 +28,9 @@ using HasNothrowMoveAssignment = HasTrivialMoveAssignment< T >;
 } // namespace Detail
 
 template< typename T >
-struct HasNothrowMoveAssignment : Boolean< Detail::TypeOperate::HasNothrowMoveAssignment< T > > {};
+struct HasNothrowMoveAssignment : BooleanRewrapPositive< Detail::TypeOperate::HasNothrowMoveAssignment< T > > {};
 
 template< typename T >
-struct NoNothrowMoveAssignment : BooleanNot< Detail::TypeOperate::HasNothrowMoveAssignment< T > > {};
+struct NoNothrowMoveAssignment : BooleanRewrapNegative< Detail::TypeOperate::HasNothrowMoveAssignment< T > > {};
 
 } // namespace BR

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/exception/index_out_of_range_exception.hpp>
+#include "out_of_range_exception.hpp"
 #include <libbr/iterator/reverse_iterator.hpp>
 #include <libbr/type_operate/is_nothrow_swappable.hpp>
 #include <libbr/utility/current_function.hpp>

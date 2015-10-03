@@ -6,11 +6,12 @@
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/assert/assert.hpp>
 
 namespace BR {
 
 /**
- * @brief 达夫设备，用于加速循环
+ * @brief Duff's device ，用于加速循环
  * @param[in] size 循环次数
  * @param[in] functor 循环体（可调用对象）
  * @see https://en.wikipedia.org/wiki/Duff%27s_device

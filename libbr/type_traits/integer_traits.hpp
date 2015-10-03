@@ -3,8 +3,8 @@
 #include <climits>
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/is_signed.hpp>
-#include <libbr/type_operate/is_unsigned.hpp>
+#include <libbr/type_traits/is_signed.hpp>
+#include <libbr/type_traits/is_unsigned.hpp>
 
 namespace BR {
 

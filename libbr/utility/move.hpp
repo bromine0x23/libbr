@@ -7,9 +7,9 @@
 
 #include <libbr/config.hpp>
 #include <libbr/type_operate/conditional.hpp>
-#include <libbr/type_operate/is_copy_constructible.hpp>
-#include <libbr/type_operate/is_nothrow_move_constructible.hpp>
 #include <libbr/type_operate/remove_reference.hpp>
+#include <libbr/type_traits/is_copy_constructible.hpp>
+#include <libbr/type_traits/is_nothrow_move_constructible.hpp>
 
 namespace BR {
 

@@ -13,12 +13,12 @@
 #include <libbr/type_operate/add_pointer.hpp>
 #include <libbr/type_operate/enable_if.hpp>
 #include <libbr/type_operate/type.hpp>
-#include <libbr/type_operate/is_nothrow_default_constructible.hpp>
-#include <libbr/type_operate/is_nothrow_move_assignable.hpp>
-#include <libbr/type_operate/is_nothrow_move_constructible.hpp>
-#include <libbr/type_operate/is_same.hpp>
 #include <libbr/type_traits/allocator_traits.hpp>
 #include <libbr/type_traits/integer_traits.hpp>
+#include <libbr/type_traits/is_nothrow_default_constructible.hpp>
+#include <libbr/type_traits/is_nothrow_move_assignable.hpp>
+#include <libbr/type_traits/is_nothrow_move_constructible.hpp>
+#include <libbr/type_traits/is_same.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>
 #include <libbr/type_traits/pointer_traits.hpp>
 #include <libbr/utility/move.hpp>

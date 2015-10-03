@@ -32,49 +32,7 @@
 #include <libbr/type_operate/template_argument.hpp>
 #include <libbr/type_operate/variadic_get.hpp>
 
-#include <libbr/type_operate/is_array.hpp>
-#include <libbr/type_operate/is_class.hpp>
-#include <libbr/type_operate/is_enum.hpp>
-#include <libbr/type_operate/is_function.hpp>
-#include <libbr/type_operate/is_floating_point.hpp>
-#include <libbr/type_operate/is_integer.hpp>
-#include <libbr/type_operate/is_lvalue_reference.hpp>
-#include <libbr/type_operate/is_member_function_pointer.hpp>
-#include <libbr/type_operate/is_member_object_pointer.hpp>
-#include <libbr/type_operate/is_null_pointer.hpp>
-#include <libbr/type_operate/is_pointer.hpp>
-#include <libbr/type_operate/is_rvalue_reference.hpp>
-#include <libbr/type_operate/is_template_instance.hpp>
-#include <libbr/type_operate/is_void.hpp>
-#include <libbr/type_operate/is_union.hpp>
-
-#include <libbr/type_operate/is_arithmetic.hpp>
-#include <libbr/type_operate/is_compound.hpp>
-#include <libbr/type_operate/is_fundamental.hpp>
-#include <libbr/type_operate/is_member_pointer.hpp>
-#include <libbr/type_operate/is_object.hpp>
-#include <libbr/type_operate/is_reference.hpp>
-#include <libbr/type_operate/is_referenceable.hpp>
-#include <libbr/type_operate/is_scalar.hpp>
-
-#include <libbr/type_operate/is_abstract.hpp>
-#include <libbr/type_operate/is_const.hpp>
-#include <libbr/type_operate/is_empty.hpp>
-#include <libbr/type_operate/is_pod.hpp>
-#include <libbr/type_operate/is_polymorphic.hpp>
-#include <libbr/type_operate/is_signed.hpp>
-#include <libbr/type_operate/is_volatile.hpp>
-#include <libbr/type_operate/is_unsigned.hpp>
-
-#include <libbr/type_operate/is_base_of.hpp>
-#include <libbr/type_operate/is_convertible.hpp>
-#include <libbr/type_operate/is_same.hpp>
-#include <libbr/type_operate/is_static_castable.hpp>
-#include <libbr/type_operate/is_virtual_base_of.hpp>
-
 #include <libbr/type_operate/alignment_of.hpp>
-#include <libbr/type_operate/extent.hpp>
-#include <libbr/type_operate/rank.hpp>
 
 #include <libbr/type_operate/has_nothrow_copy_assignment.hpp>
 #include <libbr/type_operate/has_nothrow_copy_constructor.hpp>
@@ -89,24 +47,6 @@
 #include <libbr/type_operate/has_trivial_move_assignment.hpp>
 #include <libbr/type_operate/has_trivial_move_constructor.hpp>
 #include <libbr/type_operate/has_virtual_destructor.hpp>
-
-#include <libbr/type_operate/is_assignable.hpp>
-#include <libbr/type_operate/is_constructible.hpp>
-#include <libbr/type_operate/is_copy_assignable.hpp>
-#include <libbr/type_operate/is_copy_constructible.hpp>
-#include <libbr/type_operate/is_default_constructible.hpp>
-#include <libbr/type_operate/is_destructible.hpp>
-#include <libbr/type_operate/is_move_assignable.hpp>
-#include <libbr/type_operate/is_move_constructible.hpp>
-
-#include <libbr/type_operate/is_nothrow_assignable.hpp>
-#include <libbr/type_operate/is_nothrow_constructible.hpp>
-#include <libbr/type_operate/is_nothrow_copy_assignable.hpp>
-#include <libbr/type_operate/is_nothrow_copy_constructible.hpp>
-#include <libbr/type_operate/is_nothrow_default_constructible.hpp>
-#include <libbr/type_operate/is_nothrow_destructible.hpp>
-#include <libbr/type_operate/is_nothrow_move_assignable.hpp>
-#include <libbr/type_operate/is_nothrow_move_constructible.hpp>
 
 #include <libbr/type_operate/is_trivially_assignable.hpp>
 #include <libbr/type_operate/is_trivially_constructible.hpp>
@@ -155,6 +95,3 @@
 #include <libbr/type_operate/has_operator_suffix_increment.hpp>
 #include <libbr/type_operate/has_operator_unary_minus.hpp>
 #include <libbr/type_operate/has_operator_unary_plus.hpp>
-
-#include <libbr/type_operate/is_swappable.hpp>
-#include <libbr/type_operate/is_nothrow_swappable.hpp>

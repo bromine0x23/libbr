@@ -353,7 +353,7 @@ struct CharTraits<Char32> {
 	static constexpr Int eof() noexcept { return Int(0xFFFFFFFF); }
 
 	static constexpr Int not_eof(Int i) noexcept { return eq_int(i, eof()) ? ~eof() : i; }
-}; // struct CharTraits<Char16>
+}; // struct CharTraits<Char32>
 
 } // namespace BR
 

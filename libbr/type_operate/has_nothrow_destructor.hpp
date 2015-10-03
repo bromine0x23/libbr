@@ -1,12 +1,12 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/intrinsics.hpp>
+#include <libbr/utility/bool_constant.hpp>
+#include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_HAS_NOTHROW_DESTRUCTOR)
-#  include <libbr/type_operate/is_const.hpp>
-#  include <libbr/type_operate/is_reference.hpp>
-#  include <libbr/type_operate/is_volatile.hpp>
+#  include <libbr/type_traits/is_const.hpp>
+#  include <libbr/type_traits/is_reference.hpp>
+#  include <libbr/type_traits/is_volatile.hpp>
 #  include <libbr/utility/make_value.hpp>
 #endif
 
@@ -34,9 +34,9 @@ using HasNothrowDestructor = BooleanAnd< NotConst< T >, NotVolatile< T >, NotRef
 } // namespace Detail
 
 template< typename T >
-struct HasNothrowDestructor : Boolean< Detail::TypeOperate::HasNothrowDestructor< T > > {};
+struct HasNothrowDestructor : BooleanRewrapPositive< Detail::TypeOperate::HasNothrowDestructor< T > > {};
 
 template< typename T >
-struct NoNothrowDestructor : BooleanNot< Detail::TypeOperate::HasNothrowDestructor< T > > {};
+struct NoNothrowDestructor : BooleanRewrapNegative< Detail::TypeOperate::HasNothrowDestructor< T > > {};
 
 } // namespace BR

@@ -1,10 +1,10 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/intrinsics.hpp>
+#include <libbr/utility/bool_constant.hpp>
+#include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_HAS_TRIVIAL_DESTRUCTOR)
-#  include <libbr/type_operate/is_pod.hpp>
+#  include <libbr/type_traits/is_pod.hpp>
 #endif
 
 namespace BR {
@@ -28,9 +28,9 @@ using HasTrivialDestructor = IsPOD< T >;
 } // namespace Detail
 
 template< typename T >
-struct HasTrivialDestructor : Boolean< Detail::TypeOperate::HasTrivialDestructor< T > > {};
+struct HasTrivialDestructor : BooleanRewrapPositive< Detail::TypeOperate::HasTrivialDestructor< T > > {};
 
 template< typename T >
-struct NoTrivialDestructor : BooleanNot< Detail::TypeOperate::HasTrivialDestructor< T > > {};
+struct NoTrivialDestructor : BooleanRewrapNegative< Detail::TypeOperate::HasTrivialDestructor< T > > {};
 
 } // namespace BR

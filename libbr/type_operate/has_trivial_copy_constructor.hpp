@@ -1,11 +1,11 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/intrinsics.hpp>
+#include <libbr/utility/bool_constant.hpp>
+#include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_HAS_TRIVIAL_COPY_CONSTRUCTOR)
-#  include <libbr/type_operate/is_pod.hpp>
-#  include <libbr/type_operate/is_volatile.hpp>
+#  include <libbr/type_traits/is_pod.hpp>
+#  include <libbr/type_traits/is_volatile.hpp>
 #endif
 
 namespace BR {
@@ -29,9 +29,9 @@ using HasTrivialCopyConstructor = BooleanAnd< IsPOD< T >, NotVolatile< T > >;
 } // namespace Detail
 
 template< typename T >
-struct HasTrivialCopyConstructor : Boolean< Detail::TypeOperate::HasTrivialCopyConstructor< T > > {};
+struct HasTrivialCopyConstructor : BooleanRewrapPositive< Detail::TypeOperate::HasTrivialCopyConstructor< T > > {};
 
 template< typename T >
-struct NoTrivialCopyConstructor : BooleanNot< Detail::TypeOperate::HasTrivialCopyConstructor< T > > {};
+struct NoTrivialCopyConstructor : BooleanRewrapNegative< Detail::TypeOperate::HasTrivialCopyConstructor< T > > {};
 
 } // namespace BR

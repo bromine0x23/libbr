@@ -1,8 +1,8 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/intrinsics.hpp>
+#include <libbr/utility/bool_constant.hpp>
+#include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_HAS_NOTHROW_COPY_ASSIGNMENT)
 #  include <libbr/type_operate/has_trivial_copy_assignment.hpp>
 #endif
@@ -28,9 +28,9 @@ using HasNothrowCopyAssignment = HasTrivialCopyAssignment< T >;
 } // namespace Detail
 
 template< typename T >
-struct HasNothrowCopyAssignment : Boolean< Detail::TypeOperate::HasNothrowCopyAssignment< T > > {};
+struct HasNothrowCopyAssignment : BooleanRewrapPositive< Detail::TypeOperate::HasNothrowCopyAssignment< T > > {};
 
 template< typename T >
-struct NoNothrowCopyAssignment : BooleanNot< Detail::TypeOperate::HasNothrowCopyAssignment< T > > {};
+struct NoNothrowCopyAssignment : BooleanRewrapNegative< Detail::TypeOperate::HasNothrowCopyAssignment< T > > {};
 
 } // namespace BR

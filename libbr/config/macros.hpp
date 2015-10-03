@@ -63,10 +63,4 @@
 #  define BR_FALLTHROUGH ((void)0)
 #endif
 
-#if !defined(BR_BYTE_ORDER)
-#  pragma message("unknown byte order, set to little endian")
-#  define BR_BYTE_ORDER "little endian"
-#  define BR_LITTLE_ENDIAN
-#endif
-
 #endif

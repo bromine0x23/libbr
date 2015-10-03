@@ -20,7 +20,7 @@ class LogicException : public Exception {
 public:
 	using BaseException = RuntimeException;
 
-	LogicException() : LogicException("BR::LogicException");
+	LogicException() : LogicException("BR::LogicException") {}
 
 	LogicException(LogicException const &) noexcept;
 

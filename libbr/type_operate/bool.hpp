@@ -12,16 +12,10 @@
 namespace BR {
 
 /**
- * @brief 重封装布尔常量
+ * @brief 布尔常量封装类否定
  */
 template< typename TB >
-using Boolean = BooleanConstant< TB::value >;
-
-/**
- * @brief 封装否定值
- */
-template< typename TB >
-using BooleanNot = BooleanConstant< !TB::value >;
+using BooleanNot = BooleanRewrapNegative<TB>;
 
 /**
  * @brief 布尔常量封装类逻辑与
@@ -33,7 +27,7 @@ template<>
 struct BooleanAnd<> : BooleanTrue {};
 
 template< typename TB0 >
-struct BooleanAnd<TB0> : Boolean<TB0> {};
+struct BooleanAnd<TB0> : BooleanRewrapPositive<TB0> {};
 
 template< typename TB0, typename TB1, typename... TBn >
 struct BooleanAnd< TB0, TB1, TBn... > : Conditional< TB0, BooleanAnd< TB1, TBn... >, BooleanFalse > {};
@@ -48,7 +42,7 @@ template<>
 struct BooleanOr<> : BooleanFalse {};
 
 template< typename TB0 >
-struct BooleanOr<TB0> : Boolean<TB0> {};
+struct BooleanOr<TB0> : BooleanRewrapPositive<TB0> {};
 
 template< typename TB0, typename TB1, typename... TBn >
 struct BooleanOr< TB0, TB1, TBn... > : Conditional< TB0, BooleanTrue, BooleanOr< TB1, TBn... > > {};

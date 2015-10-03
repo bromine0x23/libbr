@@ -3,13 +3,13 @@
 #include <libbr/config.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/conditional.hpp>
-#include <libbr/type_operate/is_empty.hpp>
-#include <libbr/type_operate/is_final.hpp>
-#include <libbr/type_operate/is_nothrow_copy_constructible.hpp>
-#include <libbr/type_operate/is_nothrow_move_constructible.hpp>
-#include <libbr/type_operate/is_nothrow_swappable.hpp>
-#include <libbr/type_operate/is_same.hpp>
 #include <libbr/type_operate/remove_reference.hpp>
+#include <libbr/type_traits/is_empty.hpp>
+#include <libbr/type_traits/is_final.hpp>
+#include <libbr/type_traits/is_nothrow_copy_constructible.hpp>
+#include <libbr/type_traits/is_nothrow_move_constructible.hpp>
+#include <libbr/type_traits/is_nothrow_swappable.hpp>
+#include <libbr/type_traits/is_same.hpp>
 #include <libbr/utility/forward.hpp>
 
 namespace BR {
@@ -52,10 +52,7 @@ public:
 	SecondConstReference second() const noexcept { return m_second; }
 
 	void swap(CommonPair & pair) noexcept(
-		BooleanAnd<
-			IsNothrowSwappable<First>,
-			IsNothrowSwappable<Second>
-		>::value
+		BooleanAnd< IsNothrowSwappable<First>, IsNothrowSwappable<Second> >::value
 	) {
 		using ::BR::swap;
 		swap(m_first, pair.m_first);

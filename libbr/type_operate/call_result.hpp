@@ -55,7 +55,7 @@ using CallResultBasic = decltype(CallResultTest::test(make_rvalue<TFunc>(), make
 
 template< typename T >
 struct TypeCallResult {
-	static_assert(sizeof(T *) == sizeof(nullptr), "Type T must be callable.");
+	static_assert(sizeof(T *) != sizeof(nullptr), "Type T must be callable.");
 };
 
 template< typename TResult, typename... TArgs >

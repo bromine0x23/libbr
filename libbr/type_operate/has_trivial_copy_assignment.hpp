@@ -1,12 +1,12 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/intrinsics.hpp>
+#include <libbr/utility/bool_constant.hpp>
+#include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_HAS_TRIVIAL_COPY_ASSIGNMENT)
-#  include <libbr/type_operate/is_const.hpp>
-#  include <libbr/type_operate/is_pod.hpp>
-#  include <libbr/type_operate/is_volatile.hpp>
+#  include <libbr/type_traits/is_const.hpp>
+#  include <libbr/type_traits/is_pod.hpp>
+#  include <libbr/type_traits/is_volatile.hpp>
 #endif
 
 namespace BR {
@@ -30,9 +30,9 @@ using HasTrivialCopyAssignment = BooleanAnd< IsPOD< T >, NotVolatile< T >, NotCo
 } // namespace Detail
 
 template< typename T >
-struct HasTrivialCopyAssignment : Boolean< Detail::TypeOperate::HasTrivialCopyAssignment< T > > {};
+struct HasTrivialCopyAssignment : BooleanRewrapPositive< Detail::TypeOperate::HasTrivialCopyAssignment< T > > {};
 
 template< typename T >
-struct NoTrivialCopyAssignment : BooleanNot< Detail::TypeOperate::HasTrivialCopyAssignment< T > > {};
+struct NoTrivialCopyAssignment : BooleanRewrapNegative< Detail::TypeOperate::HasTrivialCopyAssignment< T > > {};
 
 } // namespace BR

@@ -43,7 +43,7 @@ struct TypeRemoveAllExtents : TypeRewrap< Detail::TypeOperate::TypeRemoveAllExte
  * @see TypeRemoveAllExtents
  */
 template< typename T >
-using RemoveAllExtents = TypeUnwrap< TypeRemoveAllExtents< T > >;
+using RemoveAllExtents = TypeUnwrap< TypeRemoveAllExtents<T> >;
 
 } // namespace BR
 

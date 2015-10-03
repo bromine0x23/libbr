@@ -9,12 +9,12 @@
 #include <libbr/config.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/conditional.hpp>
-#include <libbr/type_operate/is_enum.hpp>
-#include <libbr/type_operate/is_integer.hpp>
-#include <libbr/type_operate/is_same.hpp>
-#include <libbr/type_operate/is_signed.hpp>
 #include <libbr/type_operate/remove_const_volatile.hpp>
 #include <libbr/type_operate/type.hpp>
+#include <libbr/type_traits/is_enum.hpp>
+#include <libbr/type_traits/is_integer.hpp>
+#include <libbr/type_traits/is_same.hpp>
+#include <libbr/type_traits/is_signed.hpp>
 
 namespace BR {
 

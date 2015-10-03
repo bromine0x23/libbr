@@ -1,9 +1,9 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/intrinsics.hpp>
-#include <libbr/type_operate/is_pod.hpp>
+#include <libbr/utility/bool_constant.hpp>
+#include <libbr/type_traits/intrinsics.hpp>
+#include <libbr/type_traits/is_pod.hpp>
 
 namespace BR {
 
@@ -29,9 +29,9 @@ using HasTrivialDefaultConstructor = BooleanOr< IsPOD< T >, HasTrivialDefaultCon
 } // namespace Detail
 
 template< typename T >
-struct HasTrivialDefaultConstructor : Boolean< Detail::TypeOperate::HasTrivialDefaultConstructor< T > > {};
+struct HasTrivialDefaultConstructor : BooleanRewrapPositive< Detail::TypeOperate::HasTrivialDefaultConstructor< T > > {};
 
 template< typename T >
-struct NoTrivialDefaultConstructor : BooleanNot< Detail::TypeOperate::HasTrivialDefaultConstructor< T > > {};
+struct NoTrivialDefaultConstructor : BooleanRewrapNegative< Detail::TypeOperate::HasTrivialDefaultConstructor< T > > {};
 
 } // namespace BR

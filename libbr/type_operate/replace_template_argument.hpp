@@ -5,19 +5,19 @@
 
 namespace BR {
 
-template< typename T, typename TArgument >
+template< typename T, typename TNewArg >
 struct TypeReplaceFirstTemplateArgument {
 	static_assert(Conditional< BooleanFalse, T, BooleanFalse >::value, "Type must be template class.");
 };
 
-template< template< typename, typename... > class TemplateClass, typename TFirstArgument, typename... TOtherArguments, typename TArgument >
+template< template< typename, typename... > class TemplateClass, typename TArg0, typename... TArgs, typename TNewArg >
 struct TypeReplaceFirstTemplateArgument<
-	TemplateClass< TFirstArgument, TOtherArguments ... >, TArgument
+	TemplateClass< TArg0, TArgs... >, TNewArg
 > : TypeWrapper<
-	TemplateClass< TArgument, TOtherArguments ... >
+	TemplateClass< TNewArg, TArgs... >
 >  {};
 
-template< typename T, typename TArgument >
-using ReplaceFirstTemplateArgument = TypeUnwrap< TypeReplaceFirstTemplateArgument< T, TArgument > >;
+template< typename T, typename TNewArg >
+using ReplaceFirstTemplateArgument = TypeUnwrap< TypeReplaceFirstTemplateArgument< T, TNewArg > >;
 
 } // namespace BR

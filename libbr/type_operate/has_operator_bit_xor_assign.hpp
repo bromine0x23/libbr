@@ -38,8 +38,8 @@ BooleanOr< \
 /* BR_TYPE_OPERATE_FORBIDDEN_IF */
 
 #include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/is_const.hpp>
-#include <libbr/type_operate/is_fundamental.hpp>
-#include <libbr/type_operate/is_integer.hpp>
-#include <libbr/type_operate/is_pointer.hpp>
+#include <libbr/type_traits/is_const.hpp>
+#include <libbr/type_traits/is_fundamental.hpp>
+#include <libbr/type_traits/is_integer.hpp>
+#include <libbr/type_traits/is_pointer.hpp>
 #include <libbr/type_operate/detail/has_binary_operator.inc>

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/intrinsics.hpp>
+#include <libbr/utility/bool_constant.hpp>
+#include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_HAS_NOTHROW_DEFAULT_CONSTRUCTOR)
 #  include <libbr/type_operate/has_trivial_default_constructor.hpp>
 #endif
@@ -28,9 +28,9 @@ using HasNothrowDefaultConstructor = HasTrivialDefaultConstructor< T >;
 } // namespace Detail
 
 template< typename T >
-struct HasNothrowDefaultConstructor : Boolean< Detail::TypeOperate::HasNothrowDefaultConstructor< T > > {};
+struct HasNothrowDefaultConstructor : BooleanRewrapPositive< Detail::TypeOperate::HasNothrowDefaultConstructor< T > > {};
 
 template< typename T >
-struct NoNothrowDefaultConstructor : BooleanNot< Detail::TypeOperate::HasNothrowDefaultConstructor< T > > {};
+struct NoNothrowDefaultConstructor : BooleanRewrapNegative< Detail::TypeOperate::HasNothrowDefaultConstructor< T > > {};
 
 } // namespace BR

@@ -4,10 +4,10 @@
 #include <libbr/memory/address_of.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/is_void.hpp>
 #include <libbr/type_operate/replace_template_argument.hpp>
 #include <libbr/type_operate/template_argument.hpp>
 #include <libbr/type_operate/type.hpp>
+#include <libbr/type_traits/is_void.hpp>
 
 namespace BR {
 
@@ -21,17 +21,17 @@ namespace PointerTraits {
 #define BR_TYPE_OPERATE_TYPE_NAME Element
 #include <libbr/type_operate/has_member_type.inc>
 
-template< typename TPointer, bool = HasMemberTypeElement< TPointer >::value >
+template< typename TPointer, bool = HasMemberTypeElement<TPointer>::value >
 struct TypeElement;
 
 template< typename TPointer >
 struct TypeElement< TPointer, true > : TypeWrapper< typename TPointer::Element > {};
 
 template< typename TPointer >
-struct TypeElement< TPointer, false > : TypeFirstTemplateArgument< TPointer > {};
+struct TypeElement< TPointer, false > : TypeFirstTemplateArgument<TPointer> {};
 
 template< typename TPointer >
-using Element = TypeUnwrap< TypeElement< TPointer > >;
+using Element = TypeUnwrap< TypeElement<TPointer> >;
 
 ////////////////////////////////
 //
@@ -40,14 +40,14 @@ using Element = TypeUnwrap< TypeElement< TPointer > >;
 #define BR_TYPE_OPERATE_TYPE_NAME Difference
 #include <libbr/type_operate/has_member_type.inc>
 
-template< typename TPointer, bool = HasMemberTypeDifference< TPointer >::value >
+template< typename TPointer, bool = HasMemberTypeDifference<TPointer>::value >
 struct TypeDifference;
 
 template< typename TPointer >
 struct TypeDifference< TPointer, true > : TypeWrapper< typename TPointer::Difference > {};
 
 template< typename TPointer >
-struct TypeDifference< TPointer, false > : TypeWrapper< BR::PointerDifference > {};
+struct TypeDifference< TPointer, false > : TypeWrapper<BR::PointerDifference> {};
 
 template< typename TPointer >
 using Difference = TypeUnwrap< TypeDifference< TPointer > >;
@@ -59,11 +59,11 @@ using Difference = TypeUnwrap< TypeDifference< TPointer > >;
 #define BR_TYPE_OPERATE_TYPE_NAME Rebind
 #include <libbr/type_operate/has_member_type.inc>
 
-template< typename TPointer, typename TValue, bool = HasMemberTypeRebind< TPointer >::value >
+template< typename TPointer, typename TValue, bool = HasMemberTypeRebind<TPointer>::value >
 struct TypeRebind;
 
 template< typename TPointer, typename TValue >
-struct TypeRebind< TPointer, TValue, true > : TypeWrapper< typename TPointer::template Rebind< TValue > > {};
+struct TypeRebind< TPointer, TValue, true > : TypeWrapper< typename TPointer::template Rebind<TValue> > {};
 
 template< typename TPointer, typename TValue >
 struct TypeRebind< TPointer, TValue, false > : TypeReplaceFirstTemplateArgument< TPointer, TValue > {};
@@ -83,7 +83,7 @@ struct PointerTraits {
 	template< typename TValue >
 	using Rebind = Detail::PointerTraits::Rebind< Pointer, TValue >;
 
-	static Pointer make_pointer(EnableIf< NotVoid< Element >, Element > & reference) {
+	static Pointer make_pointer(EnableIf< NotVoid<Element>, Element > & reference) {
 		return Pointer::make_pointer(reference);
 	}
 };
@@ -97,7 +97,7 @@ struct PointerTraits< TElement * > {
 	template< typename TOtherValue >
 	using Rebind = TOtherValue *;
 
-	static Pointer make_pointer(EnableIf< NotVoid< Element >, Element > & reference) {
+	static Pointer make_pointer(EnableIf< NotVoid<Element>, Element > & reference) {
 		return address_of(reference);
 	}
 };

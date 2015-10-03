@@ -4,9 +4,9 @@
 #include <libbr/type_operate/add_const.hpp>
 #include <libbr/type_operate/add_volatile.hpp>
 #include <libbr/type_operate/add_const_volatile.hpp>
-#include <libbr/type_operate/is_const.hpp>
-#include <libbr/type_operate/is_volatile.hpp>
 #include <libbr/type_operate/remove_const_volatile.hpp>
+#include <libbr/type_traits/is_const.hpp>
+#include <libbr/type_traits/is_volatile.hpp>
 
 namespace BR {
 

@@ -7,8 +7,8 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/is_lvalue_reference.hpp>
 #include <libbr/type_operate/remove_reference.hpp>
+#include <libbr/type_traits/is_lvalue_reference.hpp>
 
 namespace BR {
 

@@ -7,11 +7,6 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/is_integer.hpp>
-#include <libbr/type_operate/is_signed.hpp>
-#include <libbr/type_operate/is_unsigned.hpp>
-#include <libbr/utility/make_value.hpp>
 
 namespace BR {
 

@@ -10,11 +10,11 @@
 #include <libbr/type_operate/type.hpp>
 #include <libbr/type_operate/conditional.hpp>
 #include <libbr/type_operate/add_pointer.hpp>
-#include <libbr/type_operate/is_array.hpp>
-#include <libbr/type_operate/is_function.hpp>
 #include <libbr/type_operate/remove_extent.hpp>
 #include <libbr/type_operate/remove_reference.hpp>
 #include <libbr/type_operate/remove_const_volatile.hpp>
+#include <libbr/type_traits/is_array.hpp>
+#include <libbr/type_traits/is_function.hpp>
 
 namespace BR {
 

@@ -4,10 +4,10 @@
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/decay.hpp>
 #include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/is_convertible.hpp>
-#include <libbr/type_operate/is_nothrow_swappable.hpp>
-#include <libbr/type_operate/is_swappable.hpp>
 #include <libbr/type_operate/has_nothrow_move_assignment.hpp>
+#include <libbr/type_traits/is_convertible.hpp>
+#include <libbr/type_traits/is_nothrow_swappable.hpp>
+#include <libbr/type_traits/is_swappable.hpp>
 #include <libbr/utility/forward.hpp>
 #include <libbr/utility/move.hpp>
 #include <libbr/utility/piecewise_construct_tag.hpp>

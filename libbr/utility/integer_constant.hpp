@@ -52,6 +52,9 @@ struct IntegerConstant : TypeWrapper< IntegerConstant< TValue, v > > {
 template< typename TValue, TValue... values >
 struct Integers {};
 
+template< typename TI >
+using IntegerRewrap = IntegerConstant< typename TI::Value, TI::value >;
+
 #if defined(BR_CXX14)
 
 template< typename TI >
