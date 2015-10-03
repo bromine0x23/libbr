@@ -25,7 +25,7 @@ namespace TypeTraits {
 #if defined(BR_IS_BASE_OF)
 
 template< typename TBase, typename TDerived >
-using IsBaseOf = BooleanConstant < BR_IS_BASE_OF(RemoveConstVolatile<TBase>, RemoveConstVolatile<TDerived>) >;
+using IsBaseOf = BooleanConstant < BR_IS_BASE_OF(TBase, TDerived) >;
 
 #else
 
@@ -47,11 +47,10 @@ template< typename TBase, typename TDerived >
 struct IsBaseOfBasic : BooleanAnd<
 	IsClass<TBase>,
 	IsClass<TDerived>,
-	NotSame< TBase, TDerived >,
 	decltype(IsBaseOfTester< TBase, TDerived >::test(IsBaseOfHelper< TBase, TDerived >(), 0))
 > {
-	static_assert(sizeof(TBase   ) != 0, "Base must be complete."   );
-	static_assert(sizeof(TDerived) != 0, "Derived must be complete.");
+	static_assert(sizeof(TBase   ) != 0, "TBase must be complete."   );
+	static_assert(sizeof(TDerived) != 0, "TDerived must be complete.");
 };
 
 template< typename TBase, typename TDerived >
@@ -67,11 +66,12 @@ using IsBaseOf = BooleanAnd<
 } // namespace Detail
 
 /**
- * @brief 检查 \em TDerived 是否是 \em TBase 或派生自 \em TBase
+ * @brief 检查 \em TDerived 是否是 \em TBase 的基类(不考虑CV修饰符)
  * @tparam TBase 待检查类型，作为基类
  * @tparam TDerived 待检查类型，作为派生类
- * @see IntegerConstant
- * @see NotAssignable
+ * @see BR::IntegerConstant
+ * @see BR_IS_BASE_OF
+ * @see BR::NotAssignable
  *
  * 如果 \em TDerived 是否是 \em TBase 或派生自 \em TBase ，
  * 那么封装的值为 \em true ；否则为 \em false
@@ -83,7 +83,7 @@ struct IsBaseOf : BooleanRewrapPositive< Detail::TypeTraits::IsBaseOf< TBase, TD
  * @brief IsBaseOf 的否定
  * @tparam TBase 待检查类型，作为基类
  * @tparam TDerived 待检查类型，作为派生类
- * @see IsBaseOf
+ * @see BR::IsBaseOf
  */
 template< typename TBase, typename TDerived >
 struct NotBaseOf : BooleanRewrapNegative< Detail::TypeTraits::IsBaseOf< TBase, TDerived > > {};
@@ -94,8 +94,8 @@ struct NotBaseOf : BooleanRewrapNegative< Detail::TypeTraits::IsBaseOf< TBase, T
  * @brief IsBaseOf 的模板变量版本
  * @tparam TBase 待检查类型，作为基类
  * @tparam TDerived 待检查类型，作为派生类
- * @see IsBaseOf
- * @see not_base_of
+ * @see BR::IsBaseOf
+ * @see BR::not_base_of
  */
 template< typename TBase, typename TDerived >
 constexpr auto is_base_of = bool_constant< IsBaseOf< TBase, TDerived > >;
@@ -104,8 +104,8 @@ constexpr auto is_base_of = bool_constant< IsBaseOf< TBase, TDerived > >;
  * @brief NotBaseOf 的模板变量版本
  * @tparam TBase 待检查类型，作为基类
  * @tparam TDerived 待检查类型，作为派生类
- * @see NotBaseOf
- * @see is_base_of
+ * @see BR::NotBaseOf
+ * @see BR::is_base_of
  */
 template< typename TBase, typename TDerived >
 constexpr auto not_base_of = bool_constant< NotBaseOf< TBase, TDerived > >;

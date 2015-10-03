@@ -32,7 +32,7 @@ using BR::RemoveConstVolatile;
 #if defined(BR_IS_ENUM)
 
 template< typename T >
-using IsEnumBasic = BooleanConstant< BR_IS_ENUM(T) >;
+using IsEnum = BooleanConstant< BR_IS_ENUM(T) >;
 
 #else
 
@@ -54,10 +54,10 @@ using IsEnumBasic = BooleanAnd<
 	>
 >;
 
-#endif // defined(BR_IS_ENUM)
-
 template< typename T >
 using IsEnum = IsEnumBasic< RemoveConstVolatile<T> >;
+
+#endif // defined(BR_IS_ENUM)
 
 } // namespace TypeTraits
 } // namespace Detail
@@ -65,8 +65,9 @@ using IsEnum = IsEnumBasic< RemoveConstVolatile<T> >;
 /**
  * @brief 检查 \em T 是否是枚举类型
  * @tparam T 待检查类型
- * @see IntegerConstant
- * @see NotEnum
+ * @see BR::IntegerConstant
+ * @see BR_IS_ENUM
+ * @see BR::NotEnum
  *
  * 如果 \em T 是枚举类型，那么封装的值为 \em true ；否则为 \em false
  */
@@ -76,7 +77,7 @@ struct IsEnum : BooleanRewrapPositive< Detail::TypeTraits::IsEnum<T> > {};
 /**
  * @brief IsEnum 的否定
  * @tparam T 待检查类型
- * @see IsEnum
+ * @see BR::IsEnum
  */
 template< typename T >
 struct NotEnum : BooleanRewrapNegative< Detail::TypeTraits::IsEnum<T> > {};
@@ -86,8 +87,8 @@ struct NotEnum : BooleanRewrapNegative< Detail::TypeTraits::IsEnum<T> > {};
 /**
  * @brief IsEnum 的模板变量版本
  * @tparam T 待检查类型
- * @see IsEnum
- * @see not_enum
+ * @see BR::IsEnum
+ * @see BR::not_enum
  */
 template< typename T >
 constexpr auto is_enum = bool_constant< IsEnum<T> >;
@@ -95,8 +96,8 @@ constexpr auto is_enum = bool_constant< IsEnum<T> >;
 /**
  * @brief NotEnum 的模板变量版本
  * @tparam T 待检查类型
- * @see NotEnum
- * @see is_enum
+ * @see BR::NotEnum
+ * @see BR::is_enum
  */
 template< typename T >
 constexpr auto not_enum = bool_constant< NotEnum<T> >;

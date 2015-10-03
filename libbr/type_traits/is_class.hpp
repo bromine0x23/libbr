@@ -51,8 +51,9 @@ using IsClass = BooleanAnd<
 /**
  * @brief 检查 \em T 是否是类
  * @tparam T 待检查类型
- * @see IntegerConstant
- * @see NotClass
+ * @see BR::IntegerConstant
+ * @see BR_IS_CLASS
+ * @see BR::NotClass
  *
  * 如果 \em T 是类(\em struct 或 \em class)，那么封装的值为 \em true ；否则为 \em false
  */
@@ -62,7 +63,7 @@ struct IsClass : BooleanRewrapPositive< Detail::TypeTraits::IsClass<T> > {};
 /**
  * @brief IsClass 的否定
  * @tparam T 待检查类型
- * @see IsClass
+ * @see BR::IsClass
  */
 template< typename T >
 struct NotClass : BooleanRewrapNegative< Detail::TypeTraits::IsClass<T> > {};
@@ -72,8 +73,8 @@ struct NotClass : BooleanRewrapNegative< Detail::TypeTraits::IsClass<T> > {};
 /**
  * @brief IsClass 的模板变量版本
  * @tparam T 待检查类型
- * @see IsClass
- * @see not_class
+ * @see BR::IsClass
+ * @see BR::not_class
  */
 template< typename T >
 constexpr auto is_class = bool_constant< IsClass<T> >;
@@ -81,8 +82,8 @@ constexpr auto is_class = bool_constant< IsClass<T> >;
 /**
  * @brief NotClass 的模板变量版本
  * @tparam T 待检查类型
- * @see NotClass
- * @see is_class
+ * @see BR::NotClass
+ * @see BR::is_class
  */
 template< typename T >
 constexpr auto not_class = bool_constant< NotClass<T> >;

@@ -29,7 +29,7 @@ using Value = typename TAllocator::Value;
 // AllocatorTraits::Pointer
 //
 #define BR_TYPE_OPERATE_TYPE_NAME Pointer
-#include <libbr/type_operate/has_member_type.inc>
+#include <libbr/type_traits/has_member_type.inc>
 
 template< typename TAllocator, bool = HasMemberTypePointer<TAllocator>::value >
 struct TypePointer;
@@ -48,7 +48,7 @@ using Pointer = TypeUnwrap< TypePointer<TAllocator> >;
 // AllocatorTraits::ConstPointer
 //
 #define BR_TYPE_OPERATE_TYPE_NAME ConstPointer
-#include <libbr/type_operate/has_member_type.inc>
+#include <libbr/type_traits/has_member_type.inc>
 
 template< typename TAllocator, bool = HasMemberTypeConstPointer<TAllocator>::value >
 struct TypeConstPointer;
@@ -67,7 +67,7 @@ using ConstPointer = TypeUnwrap< TypeConstPointer<TAllocator> >;
 // AllocatorTraits::VoidPointer
 //
 #define BR_TYPE_OPERATE_TYPE_NAME VoidPointer
-#include <libbr/type_operate/has_member_type.inc>
+#include <libbr/type_traits/has_member_type.inc>
 
 template< typename TAllocator, bool = HasMemberTypeVoidPointer<TAllocator>::value >
 struct TypeVoidPointer;
@@ -86,7 +86,7 @@ using VoidPointer = TypeUnwrap< TypeVoidPointer<TAllocator> >;
 // AllocatorTraits::ConstVoidPointer
 //
 #define BR_TYPE_OPERATE_TYPE_NAME ConstVoidPointer
-#include <libbr/type_operate/has_member_type.inc>
+#include <libbr/type_traits/has_member_type.inc>
 
 template< typename TAllocator, bool = HasMemberTypeConstVoidPointer< TAllocator >::value >
 struct TypeConstVoidPointer;
@@ -105,7 +105,7 @@ using ConstVoidPointer = TypeUnwrap< TypeVoidPointer<TAllocator> >;
 // AllocatorTraits::Difference
 //
 #define BR_TYPE_OPERATE_TYPE_NAME Difference
-#include <libbr/type_operate/has_member_type.inc>
+#include <libbr/type_traits/has_member_type.inc>
 
 template< typename TAllocator, bool = HasMemberTypeDifference<TAllocator>::value >
 struct TypeDifference;
@@ -124,7 +124,7 @@ using Difference = TypeUnwrap< TypeDifference<TAllocator> >;
 // AllocatorTraits::Size
 //
 #define BR_TYPE_OPERATE_TYPE_NAME Size
-#include <libbr/type_operate/has_member_type.inc>
+#include <libbr/type_traits/has_member_type.inc>
 
 template< typename TAllocator, bool = HasMemberTypeSize<TAllocator>::value >
 struct TypeSize;
@@ -143,7 +143,7 @@ using Size = TypeUnwrap< TypeSize<TAllocator> >;
 // AllocatorTraits::IsPropagateOnContainerCopyAssignment
 //
 #define BR_TYPE_OPERATE_TYPE_NAME IsPropagateOnContainerCopyAssignment
-#include <libbr/type_operate/has_member_type.inc>
+#include <libbr/type_traits/has_member_type.inc>
 
 template< typename TAllocator, bool = HasMemberTypeIsPropagateOnContainerCopyAssignment<TAllocator>::value >
 struct TypeIsPropagateOnContainerCopyAssignment;
@@ -162,7 +162,7 @@ using IsPropagateOnContainerCopyAssignment = TypeUnwrap< TypeIsPropagateOnContai
 // AllocatorTraits::IsPropagateOnContainerMoveAssignment
 //
 #define BR_TYPE_OPERATE_TYPE_NAME IsPropagateOnContainerMoveAssignment
-#include <libbr/type_operate/has_member_type.inc>
+#include <libbr/type_traits/has_member_type.inc>
 
 template< typename TAllocator, bool = HasMemberTypeIsPropagateOnContainerMoveAssignment<TAllocator>::value >
 struct TypeIsPropagateOnContainerMoveAssignment;
@@ -181,7 +181,7 @@ using IsPropagateOnContainerMoveAssignment = TypeUnwrap< TypeIsPropagateOnContai
 // AllocatorTraits::IsPropagateOnContainerSwap
 //
 #define BR_TYPE_OPERATE_TYPE_NAME IsPropagateOnContainerSwap
-#include <libbr/type_operate/has_member_type.inc>
+#include <libbr/type_traits/has_member_type.inc>
 
 template< typename TAllocator, bool = HasMemberTypeIsPropagateOnContainerSwap< TAllocator >::value >
 struct TypeIsPropagateOnContainerSwap;
@@ -200,7 +200,7 @@ using IsPropagateOnContainerSwap = TypeUnwrap< TypeIsPropagateOnContainerSwap<TA
 // AllocatorTraits::Rebind
 //
 #define BR_TYPE_OPERATE_TYPE_NAME Rebind
-#include <libbr/type_operate/has_member_type.inc>
+#include <libbr/type_traits/has_member_type.inc>
 
 template< typename TAllocator, typename TValue, bool = HasMemberTypeRebind< TAllocator >::value >
 struct TypeRebind;
@@ -219,7 +219,7 @@ using Rebind = TypeUnwrap< TypeRebind< TAllocator, TValue > >;
 // AllocatorTraits::allocate()
 //
 #define BR_TYPE_OPERATE_FUNCTION_NAME allocate
-#include <libbr/type_operate/has_member_function.inc>
+#include <libbr/type_traits/has_member_function.inc>
 
 template< bool has_member_function, typename TAllocator, typename ... TArguments >
 struct AllocateBasic;
@@ -246,7 +246,7 @@ struct AllocateBasic< false, TAllocator, TSize, TConstVoidPointer > {
 // AllocatorTraits::construct()
 //
 #define BR_TYPE_OPERATE_FUNCTION_NAME construct
-#include <libbr/type_operate/has_member_function.inc>
+#include <libbr/type_traits/has_member_function.inc>
 
 template< bool has_member_function, typename TAllocator, typename ... TArguments >
 struct ConstructBasic;
@@ -273,7 +273,7 @@ struct ConstructBasic< false, TAllocator, TValue, TArguments ... > {
 // AllocatorTraits::destroy()
 //
 #define BR_TYPE_OPERATE_FUNCTION_NAME destroy
-#include <libbr/type_operate/has_member_function.inc>
+#include <libbr/type_traits/has_member_function.inc>
 
 template< bool has_member_function, typename TAllocator, typename ... TArguments >
 struct DestroyBasic;
@@ -300,7 +300,7 @@ struct DestroyBasic< false, TAllocator, TValue * > {
 // AllocatorTraits::max_size()
 //
 #define BR_TYPE_OPERATE_FUNCTION_NAME max_size
-#include <libbr/type_operate/has_member_function.inc>
+#include <libbr/type_traits/has_member_function.inc>
 
 template< bool has_member_function, typename TAllocator, typename ... TArguments >
 struct MaxSizeBasic;
@@ -327,7 +327,7 @@ struct MaxSizeBasic< false, TAllocator > {
 // AllocatorTraits::select_on_container_copy_construction()
 //
 #define BR_TYPE_OPERATE_FUNCTION_NAME select_on_container_copy_construction
-#include <libbr/type_operate/has_member_function.inc>
+#include <libbr/type_traits/has_member_function.inc>
 
 template< bool has_member_function, typename TAllocator, typename ... TArguments >
 struct SelectOnContainerCopyConstructionBasic;

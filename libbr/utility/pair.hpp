@@ -31,12 +31,8 @@ public:
 public:
 	constexpr Pair() : first(), second() { }
 
-	template< typename U0, typename U1,
-		typename = EnableIf<
-			BooleanAnd<
-				IsConvertible< U0 const &, T0 >,
-				IsConvertible< U1 const &, T1 >
-			>
+	template< typename U0, typename U1, typename = EnableIf<
+			BooleanAnd< IsConvertible< U0 const &, T0 >, IsConvertible< U1 const &, T1 > >
 		>
 	>
 	BR_CONSTEXPR_AFTER_CXX11 Pair(Pair< U0, U1 > const & P) : first(P.first), second(P.second) {}
@@ -49,7 +45,7 @@ public:
 			>
 		>
 	>
-	BR_CONSTEXPR_AFTER_CXX11 Pair(Pair< U0, U1 > && P) : first(forward< U0 >(P.first)), second(forward< U1 >(P.second)) {}
+	BR_CONSTEXPR_AFTER_CXX11 Pair(Pair< U0, U1 > && P) : first(forward<U0>(P.first)), second(forward<U1>(P.second)) {}
 
 	Pair(Pair const &) = default;
 
@@ -57,12 +53,11 @@ public:
 
 	BR_CONSTEXPR_AFTER_CXX11 Pair(First const & x, Second const & y) : first(x), second(y) {}
 
-	template< typename U0, typename U1,
-		typename = EnableIf<
+	template< typename U0, typename U1, typename = EnableIf<
 			BooleanAnd< IsConvertible< U0 const &, T0 >, IsConvertible< U1 const &, T1 > >
 		>
 	>
-	BR_CONSTEXPR_AFTER_CXX11 Pair(U0 const & x, U1 const & y) : first(forward< U0 >(x)), second(forward< U1 >(y)) {}
+	BR_CONSTEXPR_AFTER_CXX11 Pair(U0 const & x, U1 const & y) : first(forward<U0>(x)), second(forward<U1>(y)) {}
 
 	Pair & operator=(Pair const & P) {
 		first = P.first;
@@ -80,24 +75,24 @@ public:
 	Pair & operator=(
 		Pair && P
 	) noexcept(
-		BooleanAnd< HasNothrowMoveAssignment< T0 >, HasNothrowMoveAssignment< T1 > >::value
+		BooleanAnd< HasNothrowMoveAssignment<T0>, HasNothrowMoveAssignment<T1> >::value
 	) {
-		first = forward< T0 >(P.first);
-		second = forward< T1 >(P.second);
+		first = forward<T0>(P.first);
+		second = forward<T1>(P.second);
 		return *this;
 	}
 
 	template< typename U0, typename U1 >
 	Pair & operator=(Pair< U0, U1 > && P) {
-		first = forward< U0 >(P.first);
-		second = forward< U1 >(P.second);
+		first = forward<U0>(P.first);
+		second = forward<U1>(P.second);
 		return *this;
 	}
 
 	Pair & swap(
 		Pair & P
 	) noexcept(
-		BooleanAnd< IsNothrowSwappable< First >, IsNothrowSwappable< Second > >::value
+		BooleanAnd< IsNothrowSwappable<First>, IsNothrowSwappable<Second> >::value
 	) {
 		swap(first, P.first);
 		swap(second, P.second);
@@ -145,10 +140,10 @@ inline void swap(
 
 template< typename T0, typename T1 >
 BR_CONSTEXPR_AFTER_CXX11 Pair<
-	Decay< T0 >,
-	Decay< T1 >
+	Decay<T0>,
+	Decay<T1>
 > make_pair(T0 && x, T1 && y) {
-	return Pair< Decay< T0 >, Decay< T1 > >(forward< T0 >(x), forward< T1 >(y));
+	return Pair< Decay<T0>, Decay<T1> >(forward<T0>(x), forward<T1>(y));
 }
 
 namespace Detail {
@@ -232,8 +227,6 @@ BR_CONSTEXPR_AFTER_CXX11 auto get(Pair< T0, T1 > && P) noexcept -> decltype(Deta
 	return Detail::Utility::PairGetter<I>()(move(P));
 }
 
-#if defined(BR_AFTER_CPP11)
-
 template< typename T0, typename T1 >
 BR_CONSTEXPR_AFTER_CXX11 T0 & get(Pair< T0, T1 > & P) noexcept {
 	return Detail::Utility::PairGetter<0>()(P);
@@ -263,7 +256,5 @@ template< typename T0, typename T1 >
 BR_CONSTEXPR_AFTER_CXX11 T0 && get(Pair< T1, T0 > && P) noexcept {
 	return Detail::Utility::PairGetter<1>()(move(P));
 }
-
-#endif
 
 } // namespace BR

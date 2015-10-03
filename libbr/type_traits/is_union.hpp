@@ -33,8 +33,9 @@ using IsUnion = BooleanFalse;
 /**
  * @brief 检查 \em T 是否是联合类型
  * @tparam T 待检查类型
- * @see IntegerConstant
- * @see NotUnion
+ * @see BR::IntegerConstant
+ * @see BR_IS_UNION
+ * @see BR::NotUnion
  *
  * 如果 \em T 是联合类型，那么封装的值为 \em true ；否则为 \em false
  */
@@ -44,7 +45,7 @@ struct IsUnion : BooleanRewrapPositive< Detail::TypeTraits::IsUnion<T> > {};
 /**
  * @brief IsUnion 的否定
  * @tparam T 待检查类型
- * @see IsUnion
+ * @see BR::IsUnion
  */
 template< typename T >
 struct NotUnion : BooleanRewrapNegative< Detail::TypeTraits::IsUnion<T> > {};
@@ -54,8 +55,8 @@ struct NotUnion : BooleanRewrapNegative< Detail::TypeTraits::IsUnion<T> > {};
 /**
  * @brief IsUnion 的模板变量版本
  * @tparam T 待检查类型
- * @see IsUnion
- * @see not_union
+ * @see BR::IsUnion
+ * @see BR::not_union
  */
 template< typename T >
 constexpr auto is_union = bool_constant< IsUnion<T> >;
@@ -63,8 +64,8 @@ constexpr auto is_union = bool_constant< IsUnion<T> >;
 /**
  * @brief NotUnion 的模板变量版本
  * @tparam T 待检查类型
- * @see NotUnion
- * @see is_union
+ * @see BR::NotUnion
+ * @see BR::is_union
  */
 template< typename T >
 constexpr auto not_union = bool_constant< NotUnion<T> >;

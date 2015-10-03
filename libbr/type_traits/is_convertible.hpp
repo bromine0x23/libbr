@@ -34,10 +34,10 @@ struct IsConvertibleTest {
 	static void test_aux(T);
 
 	template< typename TFrom, typename TTo >
-	static decltype((test_aux<TTo>(make_rvalue<TFrom>()), BooleanTrue())) test(int);
+	static auto test(int) -> decltype((test_aux<TTo>(make_rvalue<TFrom>()), BooleanTrue()));
 
 	template< typename TFrom, typename TTo >
-	static BooleanFalse test(...);
+	static auto test(...) -> BooleanFalse;
 };
 
 template< typename TFrom, typename TTo >
@@ -66,8 +66,9 @@ using IsConvertible = BooleanAnd<
  * @brief 检查 \em TFrom 是否能转换为 \em TTo
  * @tparam TFrom 被转换类型
  * @tparam TTo 转换目标类型
- * @see IntegerConstant
- * @see NotConvertible
+ * @see BR::IntegerConstant
+ * @see BR_IS_CONVERTIBLE
+ * @see BR::NotConvertible
  *
  * 如果一个 \em TFrom 的右值能用在返回 \em TTo 类型的函数的返回语句中，即 \em TFrom 能被隐式装换为 \em TTo
  * 那么封装的值为 \em true ；否则为 \em false
@@ -79,7 +80,7 @@ struct IsConvertible : BooleanRewrapPositive< Detail::TypeTraits::IsConvertible<
  * @brief IsConvertible 的否定
  * @tparam TFrom 被转换类型
  * @tparam TTo 转换目标类型
- * @see IsConvertible
+ * @see BR::IsConvertible
  */
 template< typename TFrom, typename TTo >
 struct NotConvertible : BooleanRewrapNegative< Detail::TypeTraits::IsConvertible< TFrom, TTo > > {};
@@ -90,8 +91,8 @@ struct NotConvertible : BooleanRewrapNegative< Detail::TypeTraits::IsConvertible
  * @brief IsConvertible 的模板变量版本
  * @tparam TFrom 被转换类型
  * @tparam TTo 转换目标类型
- * @see IsConvertible
- * @see not_convertible
+ * @see BR::IsConvertible
+ * @see BR::not_convertible
  */
 template< typename TFrom, typename TTo >
 constexpr auto is_convertible = bool_constant< IsConvertible< TFrom, TTo > >;
@@ -100,8 +101,8 @@ constexpr auto is_convertible = bool_constant< IsConvertible< TFrom, TTo > >;
  * @brief NotConvertible 的模板变量版本
  * @tparam TFrom 被转换类型
  * @tparam TTo 转换目标类型
- * @see NotConvertible
- * @see is_convertible
+ * @see BR::NotConvertible
+ * @see BR::is_convertible
  */
 template< typename TFrom, typename TTo >
 constexpr auto not_convertible = bool_constant< NotConvertible< TFrom, TTo > >;

@@ -51,10 +51,12 @@ using IsEmpty = BooleanAnd< IsClass<T>, IsEmptyBasic< RemoveConstVolatile<T> > >
 /**
  * @brief 检查 \em T 是否是空类型
  * @tparam T 待检查类型
- * @see IntegerConstant
- * @see NotEmpty
+ * @see BR::IntegerConstant
+ * @see BR_IS_EMPTY
+ * @see BR::IsClass
+ * @see BR::NotEmpty
  *
- * 如果 \em T 是空类型(除静态成员外的字段位宽为0、无虚函数、无虚基类、无非空基类)，那么封装的值为 \em true ；否则为 \em false
+ * 如果 \em T 是空的(除静态成员外的字段位宽为0、无虚函数、无虚基类、无非空基类)类类型，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
 struct IsEmpty : BooleanRewrapPositive< Detail::TypeTraits::IsEmpty<T> > {};
@@ -62,7 +64,7 @@ struct IsEmpty : BooleanRewrapPositive< Detail::TypeTraits::IsEmpty<T> > {};
 /**
  * @brief IsEmpty 的否定
  * @tparam T 待检查类型
- * @see IsEmpty
+ * @see BR::IsEmpty
  */
 template< typename T >
 struct NotEmpty : BooleanRewrapNegative< Detail::TypeTraits::IsEmpty<T> > {};
@@ -72,8 +74,8 @@ struct NotEmpty : BooleanRewrapNegative< Detail::TypeTraits::IsEmpty<T> > {};
 /**
  * @brief IsEmpty 的模板变量版本
  * @tparam T 待检查类型
- * @see IsEmpty
- * @see not_empty
+ * @see BR::IsEmpty
+ * @see BR::not_empty
  */
 template< typename T >
 constexpr auto is_empty = bool_constant< IsEmpty<T> >;
@@ -81,8 +83,8 @@ constexpr auto is_empty = bool_constant< IsEmpty<T> >;
 /**
  * @brief NotEmpty 的模板变量版本
  * @tparam T 待检查类型
- * @see NotEmpty
- * @see is_empty
+ * @see BR::NotEmpty
+ * @see BR::is_empty
  */
 template< typename T >
 constexpr auto not_empty = bool_constant< NotEmpty<T> >;

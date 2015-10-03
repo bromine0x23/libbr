@@ -32,12 +32,12 @@ using HasMemberFunction = decltype(HasMemberFunctionTest::test<T, TArgs...>(0));
 } // namespace BR_JOIN(MemberFunction_, BR_TYPE_OPERATE_FUNCTION_NAME)
 
 template< typename T, typename... TArgs >
-struct BR_JOIN(HasMemberFunction_, BR_TYPE_OPERATE_FUNCTION_NAME) : BR::Boolean<
+struct BR_JOIN(HasMemberFunction_, BR_TYPE_OPERATE_FUNCTION_NAME) : BR::BooleanRewrapPositive<
 	BR_JOIN(MemberFunction_, BR_TYPE_OPERATE_FUNCTION_NAME)::HasMemberFunction< T, TArgs... >
 > {};
 
 template< typename T, typename... TArgs >
-struct BR_JOIN(NoMemberFunction_, BR_TYPE_OPERATE_FUNCTION_NAME) : ::BR::BooleanNot<
+struct BR_JOIN(NoMemberFunction_, BR_TYPE_OPERATE_FUNCTION_NAME) : ::BR::BooleanRewrapNegative<
 	BR_JOIN(MemberFunction_, BR_TYPE_OPERATE_FUNCTION_NAME)::HasMemberFunction< T, TArgs... >
 > {};
 

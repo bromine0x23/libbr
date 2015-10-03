@@ -28,14 +28,14 @@ using IsAbstract = BooleanConstant< BR_IS_ABSTRACT(T) >;
 
 struct IsAbstractTest {
 	template< typename T >
-	static BooleanFalse test(T(*)[1]);
+	static auto test(T(*)[1]) -> BooleanFalse;
 
 	template< typename T >
-	static BooleanTrue test(...);
+	static auto test(...) -> BooleanTrue;
 };
 
 template< typename T >
-struct IsAbstractBasic : decltype(IsAbstractTest::test< T >(nullptr)) {
+struct IsAbstractBasic : decltype(IsAbstractTest::test<T>(nullptr)) {
 	static_assert(sizeof(T) != 0, "Type must be complete.");
 };
 
@@ -50,8 +50,9 @@ using IsAbstract = BooleanAnd< IsClass<T>, IsAbstractBasic<T> >;
 /**
  * @brief 检查 \em T 是否是抽象类
  * @tparam T 待检查类型
- * @see IntegerConstant
- * @see NotAbstract
+ * @see BR::IntegerConstant
+ * @see BR_IS_ABSTRACT
+ * @see BR::NotAbstract
  *
  * 如果 \em T 是抽象类(含有至少一个纯虚函数声明的类)，那么封装的值为 \em true ；否则为 \em false
  */
@@ -61,7 +62,7 @@ struct IsAbstract : BooleanRewrapPositive< Detail::TypeTraits::IsAbstract<T> > {
 /**
  * @brief IsAbstract 的否定
  * @tparam T 待检查类型
- * @see IsAbstract
+ * @see BR::IsAbstract
  */
 template< typename T >
 struct NotAbstract : BooleanRewrapNegative< Detail::TypeTraits::IsAbstract<T> > {};
@@ -71,8 +72,8 @@ struct NotAbstract : BooleanRewrapNegative< Detail::TypeTraits::IsAbstract<T> > 
 /**
  * @brief IsAbstract 的模板变量版本
  * @tparam T 待检查类型
- * @see IsAbstract
- * @see not_abstract
+ * @see BR::IsAbstract
+ * @see BR::not_abstract
  */
 template< typename T >
 constexpr auto is_abstract = bool_constant< IsAbstract<T> >;
@@ -80,8 +81,8 @@ constexpr auto is_abstract = bool_constant< IsAbstract<T> >;
 /**
  * @brief NotAbstract 的模板变量版本
  * @tparam T 待检查类型
- * @see NotAbstract
- * @see is_abstract
+ * @see BR::NotAbstract
+ * @see BR::is_abstract
  */
 template< typename T >
 constexpr auto not_abstract = bool_constant< NotAbstract<T> >;

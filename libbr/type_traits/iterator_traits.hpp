@@ -48,33 +48,33 @@ template< typename TIterator >
 using IteratorCategory = typename IteratorTraits< TIterator >::Category;
 
 template< typename TIterator >
-using IsInputIterator = IsBaseOf< InputIteratorTag, IteratorTraits<TIterator>::Category >;
+using IsInputIterator = IsBaseOf< InputIteratorTag, typename IteratorTraits<TIterator>::Category >;
 
 template< typename TIterator >
-using NotInputIterator = NotBaseOf< InputIteratorTag, IteratorTraits<TIterator>::Category >;
+using NotInputIterator = NotBaseOf< InputIteratorTag, typename IteratorTraits<TIterator>::Category >;
 
 template< typename TIterator >
-using IsOutputIterator = IsBaseOf< OutputIteratorTag, IteratorTraits<TIterator>::Category >;
+using IsOutputIterator = IsBaseOf< OutputIteratorTag, typename IteratorTraits<TIterator>::Category >;
 
 template< typename TIterator >
-using NotOutputIterator = NotBaseOf< OutputIteratorTag, IteratorTraits<TIterator>::Category >;
+using NotOutputIterator = NotBaseOf< OutputIteratorTag, typename IteratorTraits<TIterator>::Category >;
 
 template< typename TIterator >
-using IsForwardIterator = IsBaseOf< ForwardIteratorTag, IteratorTraits<TIterator>::Category >;
+using IsForwardIterator = IsBaseOf< ForwardIteratorTag, typename IteratorTraits<TIterator>::Category >;
 
 template< typename TIterator >
-using NotForwardIterator = NotBaseOf< ForwardIteratorTag, IteratorTraits<TIterator>::Category >;
+using NotForwardIterator = NotBaseOf< ForwardIteratorTag, typename IteratorTraits<TIterator>::Category >;
 
 template< typename TIterator >
-using IsBidirectionalIterator = IsBaseOf< BidirectionalIteratorTag, IteratorTraits<TIterator>::Category >;
+using IsBidirectionalIterator = IsBaseOf< BidirectionalIteratorTag, typename IteratorTraits<TIterator>::Category >;
 
 template< typename TIterator >
-using NotBidirectionalIterator = NotBaseOf< BidirectionalIteratorTag, IteratorTraits<TIterator>::Category >;
+using NotBidirectionalIterator = NotBaseOf< BidirectionalIteratorTag, typename IteratorTraits<TIterator>::Category >;
 
 template< typename TIterator >
-using IsRandomAccessIterator = IsBaseOf< RandomAccessIteratorTag, IteratorTraits<TIterator>::Category >;
+using IsRandomAccessIterator = IsBaseOf< RandomAccessIteratorTag, typename IteratorTraits<TIterator>::Category >;
 
 template< typename TIterator >
-using  NotRandomAccessIterator =  NotBaseOf< RandomAccessIteratorTag, IteratorTraits<TIterator>::Category >;
+using  NotRandomAccessIterator =  NotBaseOf< RandomAccessIteratorTag, typename IteratorTraits<TIterator>::Category >;
 
 } // namespace BR

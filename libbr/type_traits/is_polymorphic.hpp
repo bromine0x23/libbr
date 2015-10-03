@@ -67,10 +67,11 @@ using IsPolymorphic = BooleanAnd< IsClass<T>, BooleanConstant< IsPolymorphicBasi
 /**
  * @brief 检查 \em T 是否是多态类型
  * @tparam T 待检查类型
- * @see IntegerConstant
- * @see IsClass
- * @see IsAbstract
- * @see NotPolymorphic
+ * @see BR::IntegerConstant
+ * @see BR::BR_IS_POLYMORPHIC
+ * @see BR::IsClass
+ * @see BR::IsAbstract
+ * @see BR::NotPolymorphic
  *
  * 如果 \em T 是多态类(声明或继承了至少一个虚函数的类)，那么封装的值为 \em true ；否则为 \em false
  */
@@ -80,7 +81,7 @@ struct IsPolymorphic : BooleanRewrapPositive< Detail::TypeTraits::IsPolymorphic<
 /**
  * @brief IsPolymorphic 的否定
  * @tparam T 待检查类型
- * @see IsPolymorphic
+ * @see BR::IsPolymorphic
  */
 template< typename T >
 struct NotPolymorphic : BooleanRewrapNegative< Detail::TypeTraits::IsPolymorphic<T> > {};
@@ -90,8 +91,8 @@ struct NotPolymorphic : BooleanRewrapNegative< Detail::TypeTraits::IsPolymorphic
 /**
  * @brief IsPolymorphic 的模板变量版本
  * @tparam T 待检查类型
- * @see IsPolymorphic
- * @see not_polymorphic
+ * @see BR::IsPolymorphic
+ * @see BR::not_polymorphic
  */
 template< typename T >
 constexpr auto is_polymorphic = bool_constant< IsPolymorphic<T> >;
@@ -99,8 +100,8 @@ constexpr auto is_polymorphic = bool_constant< IsPolymorphic<T> >;
 /**
  * @brief NotPolymorphic 的模板变量版本
  * @tparam T 待检查类型
- * @see NotPolymorphic
- * @see is_polymorphic
+ * @see BR::NotPolymorphic
+ * @see BR::is_polymorphic
  */
 template< typename T >
 constexpr auto not_polymorphic = bool_constant< NotPolymorphic<T> >;

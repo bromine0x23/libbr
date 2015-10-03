@@ -19,7 +19,7 @@ namespace PointerTraits {
 // PointerTraits::Element
 //
 #define BR_TYPE_OPERATE_TYPE_NAME Element
-#include <libbr/type_operate/has_member_type.inc>
+#include <libbr/type_traits/has_member_type.inc>
 
 template< typename TPointer, bool = HasMemberTypeElement<TPointer>::value >
 struct TypeElement;
@@ -38,7 +38,7 @@ using Element = TypeUnwrap< TypeElement<TPointer> >;
 // PointerTraits::Difference
 //
 #define BR_TYPE_OPERATE_TYPE_NAME Difference
-#include <libbr/type_operate/has_member_type.inc>
+#include <libbr/type_traits/has_member_type.inc>
 
 template< typename TPointer, bool = HasMemberTypeDifference<TPointer>::value >
 struct TypeDifference;
@@ -57,7 +57,7 @@ using Difference = TypeUnwrap< TypeDifference< TPointer > >;
 // PointerTraits::Rebind
 //
 #define BR_TYPE_OPERATE_TYPE_NAME Rebind
-#include <libbr/type_operate/has_member_type.inc>
+#include <libbr/type_traits/has_member_type.inc>
 
 template< typename TPointer, typename TValue, bool = HasMemberTypeRebind<TPointer>::value >
 struct TypeRebind;

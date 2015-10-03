@@ -44,8 +44,9 @@ struct IsPOD< T [S] > : IsPOD<T> {};
 /**
  * @brief 检查 \em T 是否是 \em POD 类型
  * @tparam T 待检查类型
- * @see IntegerConstant
- * @see NotPOD
+ * @see BR::IntegerConstant
+ * @see BR_IS_POD
+ * @see BR::NotPOD
  *
  * 如果 \em T 是 \em POD 类型，那么封装的值为 \em true ；否则为 \em false
  */
@@ -55,7 +56,7 @@ struct IsPOD : BooleanRewrapPositive< Detail::TypeTraits::IsPOD<T> > {};
 /**
  * @brief IsPOD 的否定
  * @tparam T 待检查类型
- * @see IsPOD
+ * @see BR::IsPOD
  */
 template< typename T >
 struct NotPOD : BooleanRewrapNegative< Detail::TypeTraits::IsPOD<T> > {};
@@ -65,8 +66,8 @@ struct NotPOD : BooleanRewrapNegative< Detail::TypeTraits::IsPOD<T> > {};
 /**
  * @brief IsPOD 的模板变量版本
  * @tparam T 待检查类型
- * @see IsPOD
- * @see not_pod
+ * @see BR::IsPOD
+ * @see BR::not_pod
  */
 template< typename T >
 constexpr auto is_pod = bool_constant< IsPOD<T> >;
@@ -74,8 +75,8 @@ constexpr auto is_pod = bool_constant< IsPOD<T> >;
 /**
  * @brief NotPOD 的模板变量版本
  * @tparam T 待检查类型
- * @see NotPOD
- * @see is_pod
+ * @see BR::NotPOD
+ * @see BR::is_pod
  */
 template< typename T >
 constexpr auto not_pod = bool_constant< NotPOD<T> >;

@@ -27,12 +27,12 @@ using HasMemberType = decltype(HasMemberTypeTest::test< T >(0));
 } // namespace BR_JOIN(MemberType, BR_TYPE_OPERATE_TYPE_NAME)
 
 template< typename T >
-struct BR_JOIN(HasMemberType, BR_TYPE_OPERATE_TYPE_NAME) : BR::Boolean<
+struct BR_JOIN(HasMemberType, BR_TYPE_OPERATE_TYPE_NAME) : BR::BooleanRewrapPositive<
 	BR_JOIN(MemberType, BR_TYPE_OPERATE_TYPE_NAME)::HasMemberType<T>
 > {};
 
 template< typename T >
-struct BR_JOIN(NoMemberType, BR_TYPE_OPERATE_TYPE_NAME) : BR::BooleanNot<
+struct BR_JOIN(NoMemberType, BR_TYPE_OPERATE_TYPE_NAME) : BR::BooleanRewrapNegative<
 	BR_JOIN(MemberType, BR_TYPE_OPERATE_TYPE_NAME)::HasMemberType<T>
 > {};
 
