@@ -6,8 +6,8 @@
 #include <libbr/type_operate/remove_reference.hpp>
 #include <libbr/type_traits/is_empty.hpp>
 #include <libbr/type_traits/is_final.hpp>
-#include <libbr/type_traits/is_nothrow_copy_constructible.hpp>
-#include <libbr/type_traits/is_nothrow_move_constructible.hpp>
+#include "has_nothrow_copy_constructor.hpp"
+#include "has_nothrow_move_constructor.hpp"
 #include <libbr/type_traits/is_nothrow_swappable.hpp>
 #include <libbr/type_traits/is_same.hpp>
 #include <libbr/utility/forward.hpp>

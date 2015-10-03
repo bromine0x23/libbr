@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief 由编译期提供的检测特性的内部函数
+ * @author Bromine0x23
+ * @since 2015/10/4
+ */
 #pragma once
 
 #include <libbr/config.hpp>
@@ -30,7 +36,6 @@
 /**
  * @brief 当且仅当 \em T 是空的(除静态成员外的字段位宽为0、无虚函数、无虚基类、无非空基类，忽略CV修饰符)类类型时返回 \em true.
  * @pre \em T 是完全类型、数组或 \em void (允许带CV修饰符)
- * @see BR_IS_CLASS
  */
 #define BR_IS_EMPTY(T)
 
@@ -81,6 +86,46 @@
  */
 #define BR_IS_UNION(T)
 
+/**
+ * @brief 当且仅当 \em T 可以从参数 \em TArgs... 构造时返回 \em true.
+ */
+#define BR_IS_CONSTRUCTIBLE(T, TArgs...)
+
+/**
+ * @brief 当且仅当 \em T 可以从参数 \em TArgs... \em trivial 地构造时返回 \em true.
+ */
+#define BR_IS_TRIVIALLY_CONSTRUCTIBLE(T, TArgs...)
+
+/**
+ * @brief 当且仅当 \em T 可以从参数 \em TArgs... \em nothrow 地构造时返回 \em true.
+ */
+#define BR_IS_NOTHROW_CONSTRUCTIBLE(T, TArgs...)
+
+/**
+ * @brief 当且仅当 \em T 具有以 \em TArg 为参数的 \em trivial 赋值运算符时返回 \em true.
+ */
+#define BR_IS_TRIVIALLY_ASSIGNABLE(T, TArg)
+
+/**
+ * @brief 当且仅当 \em T 具有以 \em TArg 为参数的 \em nothrow 赋值运算符时返回 \em true.
+ */
+#define BR_IS_NOTHROW_ASSIGNABLE(T, TArg)
+
+/**
+ * @brief 当且仅当 \em T 具有析构函数时返回 \em true.
+ */
+#define BR_HAS_DESTRUCTOR(T)
+
+/**
+ * @brief 当且仅当 \em T 具有平凡的析构函数时返回 \em true.
+ */
+#define BR_HAS_TRIVIAL_DESTRUCTOR(T)
+
+/**
+ * @brief 当且仅当 \em T 具有虚析构函数时返回 \em true.
+ */
+#define BR_HAS_VIRTUAL_DESTRUCTOR(T)
+
 #elif defined(BR_MSVC)
 
 #include <libbr/type_traits/is_const.hpp>
@@ -90,7 +135,6 @@
 #  define BR_IS_ABSTRACT(T) __is_abstract(T)
 #  define BR_IS_BASE_OF(T0, T1) __is_base_of(T0, T1)
 #  define BR_IS_CLASS(T) __is_class(T)
-#  define BR_IS_CONSTRUCTIBLE __is_constructible
 #  define BR_IS_CONVERTIBLE(T0, T1) __is_convertible_to(T0, T1)
 #  define BR_IS_EMPTY(T) __is_empty(T)
 #  define BR_IS_ENUM(T) __is_enum(T)
@@ -102,15 +146,15 @@
 #  define BR_IS_TRIVIAL(T) __is_trivial(T)
 #  define BR_IS_UNION(T) __is_union(T)
 
-#  define BR_HAS_TRIVIAL_DEFAULT_CONSTRUCTOR(T) __has_trivial_constructor(T)
-#  define BR_HAS_TRIVIAL_COPY_CONSTRUCTOR(T) (__has_trivial_copy(T)|| ::BR::BooleanAnd< ::BR::NotVolatile<T> >::value)
-#  define BR_HAS_TRIVIAL_MOVE_CONSTRUCTOR(T) (__has_trivial_move_constructor(T) && ::BR::BooleanAnd< ::BR::NotVolatile<T>, ::BR::NotReference<T> >::value)
-#  define BR_HAS_TRIVIAL_COPY_ASSIGNMENT(T) (__has_trivial_assign(T) || ::BR::BooleanAnd< ::BR::NotConst<T>, ::BR::NotVolatile<T> >::value)
-#  define BR_HAS_TRIVIAL_MOVE_ASSIGNMENT(T) (__has_trivial_move_assign(T) && ::BR::BooleanAnd< ::BR::NotConst<T>, ::BR::NotVolatile<T>, ::BR::NotReference<T> >::value)
+#  define BR_IS_CONSTRUCTIBLE __is_constructible
+#  define BR_IS_TRIVIALLY_CONSTRUCTIBLE __is_trivially_constructible
+#  define BR_IS_NOTHROW_CONSTRUCTIBLE __is_nothrow_constructible
+
+#  define BR_IS_TRIVIALLY_ASSIGNABLE(T0, T1) __is_trivially_assignable(T0, T1)
+#  define BR_IS_NOTHROW_ASSIGNABLE(T0, T1) __is_nothrow_assignable(T0, T1)
+
+#  define BR_HAS_DESTRUCTOR(T) __is_destructible(T)
 #  define BR_HAS_TRIVIAL_DESTRUCTOR(T) __has_trivial_destructor(T)
-#  define BR_HAS_NOTHROW_COPY_CONSTRUCTOR(T) (__has_nothrow_copy(T) || BR_HAS_TRIVIAL_COPY_CONSTRUCTOR(T))
-#  define BR_HAS_NOTHROW_DEFAULT_CONSTRUCTOR(T) (__has_nothrow_constructor(T) || BR_HAS_TRIVIAL_DEFAULT_CONSTRUCTOR(T))
-#  define BR_HAS_NOTHROW_COPY_ASSIGNMENT(T) (__has_nothrow_assign(T) || BR_HAS_TRIVIAL_COPY_ASSIGNMENT(T))
 #  define BR_HAS_VIRTUAL_DESTRUCTOR(T) __has_virtual_destructor(T)
 
 #  define BR_HAS_INTRINSICS
@@ -152,32 +196,20 @@
 #    define BR_IS_UNION(T) __is_union(T)
 #  endif
 
-#  if __has_feature(has_trivial_constructor)
-#    define BR_HAS_TRIVIAL_DEFAULT_CONSTRUCTOR(T) __has_trivial_constructor(T)
+#  if __has_feature(is_constructible)
+#    define BR_IS_CONSTRUCTIBLE __is_constructible
 #  endif
-#  if __has_feature(has_trivial_copy)
-#    define BR_HAS_TRIVIAL_COPY_CONSTRUCTOR(T) (__has_trivial_copy(T) && ::BR::BooleanAnd< ::BR::NotReference<T>, ::BR::NotVolatile<T> >::value)
+#  if __has_feature(is_trivially_constructible)
+#    define BR_IS_TRIVIALLY_CONSTRUCTIBLE __is_trivially_constructible
 #  endif
-#  if __has_feature(has_trivial_move_constructor)
-#    define BR_HAS_TRIVIAL_MOVE_CONSTRUCTOR(T) __has_trivial_move_constructor(T)
+#  if __has_feature(is_nothrow_constructible)
+#    define BR_IS_NOTHROW_CONSTRUCTIBLE __is_nothrow_constructible
 #  endif
-#  if __has_feature(__has_trivial_assign)
-#    define BR_HAS_TRIVIAL_COPY_ASSIGNMENT(T) (__has_trivial_assign(T) && ::BR::NotVolatile<T>::value)
-#  endif
-#  if __has_feature(has_trivial_move_assign)
-#    define BR_HAS_TRIVIAL_MOVE_ASSIGNMENT(T) __has_trivial_move_assign(T)
+#  if __has_feature(is_trivially_assignable)
+#    define BR_IS_TRIVIALLY_ASSIGNABLE is_trivially_assignable
 #  endif
 #  if __has_feature(has_trivial_destructor)
 #    define BR_HAS_TRIVIAL_DESTRUCTOR(T) __has_trivial_destructor(T)
-#  endif
-#  if __has_feature(has_nothrow_constructor)
-#    define BR_HAS_NOTHROW_DEFAULT_CONSTRUCTOR(T) __has_nothrow_constructor(T)
-#  endif
-#  if __has_feature(has_nothrow_copy)
-#    define BR_HAS_NOTHROW_COPY_CONSTRUCTOR(T) (__has_nothrow_copy(T) && ::BR::BooleanAnd< ::BR::NotReference<T>, ::BR::NotVolatile<T> >::value)
-#  endif
-#  if __has_feature(has_nothrow_assign)
-#    define BR_HAS_NOTHROW_COPY_ASSIGNMENT(T) (__has_nothrow_assign(T) && ::BR::NotVolatile<T>::value)
 #  endif
 #  if __has_feature(has_virtual_destructor)
 #    define BR_HAS_VIRTUAL_DESTRUCTOR(T) __has_virtual_destructor(T)
@@ -204,13 +236,7 @@
 #  define BR_IS_TRIVIAL(T) __is_trivial(T)
 #  define BR_IS_UNION(T) __is_union(T)
 
-#  define BR_HAS_TRIVIAL_DEFAULT_CONSTRUCTOR(T) __has_trivial_constructor(T)
-#  define BR_HAS_TRIVIAL_COPY_CONSTRUCTOR(T) (__has_trivial_copy(T) && ::BR::BooleanAnd< ::BR::NotReference<T>, ::BR::NotVolatile<T> >::value)
-#  define BR_HAS_TRIVIAL_COPY_ASSIGNMENT(T) (__has_trivial_assign(T) && ::BR::BooleanAnd< ::BR::NotConst<T>, ::BR::NotVolatile<T> >::value)
 #  define BR_HAS_TRIVIAL_DESTRUCTOR(T) __has_trivial_destructor(T)
-#  define BR_HAS_NOTHROW_DEFAULT_CONSTRUCTOR(T) __has_nothrow_constructor(T)
-#  define BR_HAS_NOTHROW_COPY_CONSTRUCTOR(T) (__has_nothrow_copy(T) && ::BR::BooleanAnd< ::BR::NotReference<T>, ::BR::NotVolatile<T> >::value)
-#  define BR_HAS_NOTHROW_COPY_ASSIGNMENT(T) (__has_nothrow_assign(T) && ::BR::BooleanAnd< ::BR::NotConst<T>, ::BR::NotVolatile<T> >::value)
 #  define BR_HAS_VIRTUAL_DESTRUCTOR(T) __has_virtual_destructor(T)
 
 #  define BR_HAS_INTRINSICS

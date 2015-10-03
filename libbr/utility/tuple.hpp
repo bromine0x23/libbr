@@ -11,21 +11,21 @@
 #include <libbr/type_operate/add_volatile.hpp>
 #include <libbr/type_operate/decay.hpp>
 #include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/is_assignable.hpp>
-#include <libbr/type_operate/is_constructible.hpp>
-#include <libbr/type_operate/is_convertible.hpp>
-#include <libbr/type_operate/is_empty.hpp>
-#include <libbr/type_operate/is_final.hpp>
-#include <libbr/type_operate/is_lvalue_reference.hpp>
-#include <libbr/type_operate/is_same.hpp>
-#include <libbr/type_operate/is_nothrow_assignable.hpp>
-#include <libbr/type_operate/is_nothrow_default_constructible.hpp>
-#include <libbr/type_operate/is_nothrow_constructible.hpp>
-#include <libbr/type_operate/is_nothrow_copy_assignable.hpp>
-#include <libbr/type_operate/is_nothrow_copy_constructible.hpp>
-#include <libbr/type_operate/is_nothrow_move_assignable.hpp>
 #include <libbr/type_operate/map_qualifier.hpp>
 #include <libbr/type_operate/remove_reference.hpp>
+#include <libbr/type_traits/has_nothrow_default_constructor.hpp>
+#include <libbr/type_traits/has_nothrow_copy_assign.hpp>
+#include <libbr/type_traits/has_nothrow_copy_constructor.hpp>
+#include <libbr/type_traits/has_nothrow_move_assign.hpp>
+#include <libbr/type_traits/is_assignable.hpp>
+#include <libbr/type_traits/is_constructible.hpp>
+#include <libbr/type_traits/is_convertible.hpp>
+#include <libbr/type_traits/is_empty.hpp>
+#include <libbr/type_traits/is_final.hpp>
+#include <libbr/type_traits/is_lvalue_reference.hpp>
+#include <libbr/type_traits/is_same.hpp>
+#include <libbr/type_traits/is_nothrow_assignable.hpp>
+#include <libbr/type_traits/is_nothrow_constructible.hpp>
 #include <libbr/utility/forward.hpp>
 #include <libbr/utility/integer_constant.hpp>
 #include <libbr/utility/wrapped_reference.hpp>
@@ -308,7 +308,7 @@ inline void swap(
 template< Size I, typename TElement, bool >
 class TupleLeaf {
 public:
-	BR_CONSTEXPR_AFTER_CXX11 TupleLeaf() noexcept(IsNothrowDefaultConstructible<TElement>::value) : m_element() {
+	BR_CONSTEXPR_AFTER_CXX11 TupleLeaf() noexcept(HasNothrowDefaultConstructor<TElement>::value) : m_element() {
 		m_assert();
 	}
 
@@ -439,7 +439,7 @@ private:
 template< Size I, typename TElement >
 class TupleLeaf< I, TElement, true > : TElement {
 public:
-	BR_CONSTEXPR_AFTER_CXX11 TupleLeaf() noexcept(IsNothrowDefaultConstructible<TElement>::value) {}
+	BR_CONSTEXPR_AFTER_CXX11 TupleLeaf() noexcept(HasNothrowDefaultConstructor<TElement>::value) {}
 
 	template< typename TAllocator >
 	TupleLeaf(NotUseAllocator, TAllocator const &) {}
@@ -509,7 +509,7 @@ struct TupleImp;
 template< Size ... I, typename ... T >
 class TupleImp< TupleIndices< I ... >, T ... > : public TupleLeaf< I, T > ... {
 public:
-	BR_CONSTEXPR_AFTER_CXX11 TupleImp() noexcept(BooleanAnd< IsNothrowDefaultConstructible<T> ... >::value) {}
+	BR_CONSTEXPR_AFTER_CXX11 TupleImp() noexcept(BooleanAnd< HasNothrowDefaultConstructor<T> ... >::value) {}
 
 	TupleImp(TupleImp const &) = default;
 
@@ -527,7 +527,7 @@ public:
 	) noexcept(
 		BooleanAnd<
 			IsNothrowConstructible< THead, TValue > ...,
-			IsNothrowDefaultConstructible<TTail> ...
+			HasNothrowDefaultConstructor<TTail> ...
 		>::value
 	) :
 		TupleLeaf< IHead, THead >(forward<TValue>(value)) ...,
@@ -595,14 +595,14 @@ public:
 	}
 
 	TupleImp & operator=(TupleImp const & tuple) noexcept(
-		BooleanAnd< IsNothrowCopyAssignable<T> ... >::value
+		BooleanAnd< HasNothrowCopyAssign<T> ... >::value
 	) {
 		swallow(TupleLeaf< I, T >::operator=(static_cast< TupleLeaf< I, T > const & >(tuple).get()) ...);
 		return *this;
 	}
 
 	TupleImp & operator=(TupleImp && tuple) noexcept(
-		BooleanAnd< IsNothrowMoveAssignable<T> ... >::value
+		BooleanAnd< HasNothrowMoveAssign<T> ... >::value
 	) {
 		swallow(TupleLeaf< I, T >::operator=(forward< T >(static_cast< TupleLeaf< I, T > & >(tuple).get())) ...);
 		return *this;
@@ -641,13 +641,13 @@ public:
 		typename TDummy = BooleanTrue,
 		typename =  EnableIf< BooleanAnd< TDummy, IsDefaultConstructible<TElement> ... > >
 	>
-	BR_CONSTEXPR_AFTER_CXX11 Tuple() noexcept(BooleanAnd< IsNothrowDefaultConstructible<TElement> ... >::value) {}
+	BR_CONSTEXPR_AFTER_CXX11 Tuple() noexcept(BooleanAnd< HasNothrowDefaultConstructor<TElement> ... >::value) {}
 
 	/**
 	 *	initialization conversion constructor
 	 */
 	explicit BR_CONSTEXPR_AFTER_CXX11 Tuple(TElement const & ... element) noexcept(
-		BooleanAnd< IsNothrowCopyConstructible<TElement> ... >::value
+		BooleanAnd< HasNothrowCopyConstructor<TElement> ... >::value
 	) : m_imp(
 		Detail::Utility::MakeTupleIndices< 0, sizeof...(TElement) >(),
 		Detail::Utility::MakeTupleTypes< Tuple, 0, sizeof...(TElement) >(),

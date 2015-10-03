@@ -46,7 +46,7 @@ struct Rank : IntegerRewrap< Detail::TypeTraits::Rank<T> > {};
  * @see Rank
  */
 template< typename T >
-constexpr auto rank = Rank<T>::value;
+constexpr auto rank = integer_constant< Rank<T> >;
 
 #endif // defined(BR_CXX14)
 

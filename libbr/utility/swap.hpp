@@ -2,8 +2,8 @@
 
 #include <libbr/config.hpp>
 #include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/has_nothrow_move_assignment.hpp>
-#include <libbr/type_operate/has_nothrow_move_constructor.hpp>
+#include <libbr/type_traits/has_nothrow_move_assign.hpp>
+#include <libbr/type_traits/has_nothrow_move_constructor.hpp>
 #include <libbr/utility/move.hpp>
 
 namespace BR {
@@ -13,7 +13,7 @@ namespace Detail {
 template< typename T >
 inline void swap(T & a, T & b) noexcept(
 	BooleanAnd<
-		HasNothrowMoveAssignment< T >,
+		HasNothrowMoveAssign< T >,
 		HasNothrowMoveConstructor< T >
 	>::value
 ) {

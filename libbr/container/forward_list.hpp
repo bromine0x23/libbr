@@ -15,9 +15,9 @@
 #include <libbr/type_operate/type.hpp>
 #include <libbr/type_traits/allocator_traits.hpp>
 #include <libbr/type_traits/integer_traits.hpp>
-#include <libbr/type_traits/is_nothrow_default_constructible.hpp>
-#include <libbr/type_traits/is_nothrow_move_assignable.hpp>
-#include <libbr/type_traits/is_nothrow_move_constructible.hpp>
+#include <libbr/type_traits/has_nothrow_default_constructor.hpp>
+#include "has_nothrow_move_assign.hpp"
+#include "has_nothrow_move_constructor.hpp"
 #include <libbr/type_traits/is_same.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>
 #include <libbr/type_traits/pointer_traits.hpp>
@@ -240,7 +240,7 @@ public:
 
 protected:
 
-	Base() noexcept(IsNothrowDefaultConstructible<NodeAllocator>::value) : m_impl(HeadNode()) {}
+	Base() noexcept(HasNothrowDefaultConstructor<NodeAllocator>::value) : m_impl(HeadNode()) {}
 
 	Base(Allocator const & allocator) : m_impl(HeadNode(), NodeAllocator(allocator)) {}
 
@@ -349,7 +349,7 @@ public:
 	using Iterator       = typename Base::Iterator;
 	using ConstIterator  = typename Base::ConstIterator;
 
-	ForwardList() noexcept(TypeOperate::IsNothrowDefaultConstructible<NodeAllocator>::value) = default;
+	ForwardList() noexcept(HasNothrowDefaultConstructor<NodeAllocator>::value) = default;
 
 	explicit ForwardList(Allocator const & allocator) : Base(allocator) {};
 

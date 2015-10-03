@@ -13,12 +13,12 @@ template< Size I, typename ... T >
 struct TypeVariadicGet;
 
 template< Size I >
-struct TypeVariadicGet< I > {
+struct TypeVariadicGet<I> {
 	static_assert(Conditional< BooleanFalse, IntegerConstant< Size, I >, BooleanFalse >::value, "Index out of range.");
 };
 
 template< typename THead, typename ... TTail >
-struct TypeVariadicGet< 0, THead, TTail ... > : TypeWrapper< THead > {};
+struct TypeVariadicGet< 0, THead, TTail ... > : TypeWrapper<THead> {};
 
 template< Size I, typename THead, typename ... TTail >
 struct TypeVariadicGet< I, THead, TTail ... > : TypeVariadicGet< I - 1, TTail ... > {};

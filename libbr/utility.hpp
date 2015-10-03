@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief 实用工具模块
+ * @author Bromine0x23
+ * @since 2015/10/4
+ */
 #pragma once
 
 #include <libbr/utility/any.hpp>

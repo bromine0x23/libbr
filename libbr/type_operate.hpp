@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief 类型运算模块
+ * @author Bromine0x23
+ * @since 2015/10/4
+ */
 #pragma once
 
 #include <libbr/config.hpp>
@@ -31,30 +37,3 @@
 #include <libbr/type_operate/decay.hpp>
 #include <libbr/type_operate/template_argument.hpp>
 #include <libbr/type_operate/variadic_get.hpp>
-
-#include <libbr/type_operate/alignment_of.hpp>
-
-#include <libbr/type_operate/has_nothrow_copy_assignment.hpp>
-#include <libbr/type_operate/has_nothrow_copy_constructor.hpp>
-#include <libbr/type_operate/has_nothrow_default_constructor.hpp>
-#include <libbr/type_operate/has_nothrow_destructor.hpp>
-#include <libbr/type_operate/has_nothrow_move_assignment.hpp>
-#include <libbr/type_operate/has_nothrow_move_constructor.hpp>
-#include <libbr/type_operate/has_trivial_copy_assignment.hpp>
-#include <libbr/type_operate/has_trivial_copy_constructor.hpp>
-#include <libbr/type_operate/has_trivial_default_constructor.hpp>
-#include <libbr/type_operate/has_trivial_destructor.hpp>
-#include <libbr/type_operate/has_trivial_move_assignment.hpp>
-#include <libbr/type_operate/has_trivial_move_constructor.hpp>
-#include <libbr/type_operate/has_virtual_destructor.hpp>
-
-#include <libbr/type_operate/is_trivially_assignable.hpp>
-#include <libbr/type_operate/is_trivially_constructible.hpp>
-#include <libbr/type_operate/is_trivially_copy_assignable.hpp>
-#include <libbr/type_operate/is_trivially_copy_constructible.hpp>
-#include <libbr/type_operate/is_trivially_default_constructible.hpp>
-#include <libbr/type_operate/is_trivially_destructible.hpp>
-#include <libbr/type_operate/is_trivially_move_assignable.hpp>
-#include <libbr/type_operate/is_trivially_move_constructible.hpp>
-
-#include <libbr/type_operate/has_operator_new.hpp>

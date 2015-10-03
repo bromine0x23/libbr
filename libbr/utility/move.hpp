@@ -8,8 +8,8 @@
 #include <libbr/config.hpp>
 #include <libbr/type_operate/conditional.hpp>
 #include <libbr/type_operate/remove_reference.hpp>
-#include <libbr/type_traits/is_copy_constructible.hpp>
-#include <libbr/type_traits/is_nothrow_move_constructible.hpp>
+#include <libbr/type_traits/has_copy_constructor.hpp>
+#include <libbr/type_traits/has_nothrow_move_constructor.hpp>
 
 namespace BR {
 
@@ -24,10 +24,7 @@ constexpr RemoveReference<T> && move(T && t) noexcept {
 
 template< typename T >
 constexpr Conditional<
-	BooleanAnd<
-		NotNothrowMoveConstructible<T>,
-		IsCopyConstructible<T>
-	>,
+	BooleanAnd< NoNothrowMoveConstructor<T>, HasCopyConstructor<T> >,
 	T const &,
 	T &&
 > move_if_noexcept(T & t) noexcept {

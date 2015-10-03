@@ -17,10 +17,10 @@ namespace TypeTraits {
 
 struct IsAssignableTest {
 	template< typename T, typename TArg, typename = decltype(make_rvalue<T>() = make_rvalue<TArg>()) >
-	static BooleanTrue test(int);
+	static auto test(int) -> BooleanTrue;
 
 	template< typename T, typename TArg >
-	static BooleanFalse test(...);
+	static auto test(...) -> BooleanFalse;
 };
 
 template< typename T, typename TArg >

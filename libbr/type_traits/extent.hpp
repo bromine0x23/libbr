@@ -38,7 +38,6 @@ struct Extent< T [S], 0 > : IntegerConstant< Size, S > {};
  * @tparam T
  * @tparam I 维度
  * @see IntegerConstant
- * @see NotMemberObjectPointer
  *
  * 如果 \em T 是至少 \em I 维的数组类型，那么封装的值第 \em I 维的大小；否则为 0
  */
@@ -53,7 +52,7 @@ struct Extent : IntegerRewrap< Detail::TypeTraits::Extent< T, I > > {};
  * @see Rank
  */
 template< typename T, Size I = 0 >
-constexpr auto extent = Extent< T, I >::value;
+constexpr auto extent = integer_constant< Extent< T, I > >;
 
 #endif // defined(BR_CXX14)
 

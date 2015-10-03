@@ -19,14 +19,12 @@ namespace Detail {
 namespace TypeTraits {
 
 template< typename T >
-struct IsNothrowSwappableBasic {
-	constexpr static auto value = noexcept(swap(make_reference<T>(), make_reference<T>()));
-};
+struct IsNothrowSwappableBasic : BooleanConstant< noexcept(swap(make_reference<T>(), make_reference<T>())) > {};
 
 template< typename T >
 using IsNothrowSwappable = BooleanAnd<
 	IsSwappable<T>,
-	BooleanConstant< IsNothrowSwappableBasic<T>::value >
+	IsNothrowSwappableBasic<T>
 >;
 
 } // namespace TypeTraits

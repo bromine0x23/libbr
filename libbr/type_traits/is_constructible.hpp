@@ -11,16 +11,19 @@
 #include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_IS_CONSTRUCTIBLE)
 #  include <libbr/type_operate/bool.hpp>
+#  include <libbr/type_operate/conditional.hpp>
+#  include <libbr/type_operate/remove_all_extents.hpp>
 #  include <libbr/type_operate/remove_reference.hpp>
+#  include <libbr/type_traits/is_array.hpp>
 #  include <libbr/type_traits/is_base_of.hpp>
-#  include <libbr/type_traits/is_default_constructible.hpp>
 #  include <libbr/type_traits/is_destructible.hpp>
 #  include <libbr/type_traits/is_function.hpp>
-#  include <libbr/type_traits/is_static_castable.hpp>
 #  include <libbr/type_traits/is_lvalue_reference.hpp>
 #  include <libbr/type_traits/is_reference.hpp>
 #  include <libbr/type_traits/is_rvalue_reference.hpp>
 #  include <libbr/type_traits/is_same.hpp>
+#  include <libbr/type_traits/is_static_castable.hpp>
+#  include <libbr/type_traits/is_void.hpp>
 #  include <libbr/utility/make_value.hpp>
 #endif
 
@@ -35,6 +38,27 @@ template< typename T, typename... TArgs >
 using IsConstructible = BooleanConstant< BR_IS_CONSTRUCTIBLE(T, TArgs...) >;
 
 #else
+
+struct IsConstructibleZeroTest {
+	template< typename T, typename = decltype(T()) >
+	static auto test(int) -> BooleanTrue;
+
+	template< typename T >
+	static auto test(...) -> BooleanFalse;
+};
+
+template< typename T >
+using IsConstructibleZeroBasic = BooleanAnd< NotVoid<T>, decltype(IsConstructibleZeroTest::test<T>(0))>;
+
+template< typename T >
+using IsConstructibleZero = Conditional<
+	IsArray<T>,
+	BooleanAnd<
+		IsArrayKnownBounds<T>,
+		IsConstructibleZeroBasic< RemoveAllExtents<T> >
+	>,
+	IsConstructibleZeroBasic<T>
+>;
 
 template< typename T, typename TArg >
 using IsConstructibleOneBaseToDerivedReference = BooleanAnd<
@@ -68,10 +92,10 @@ using IsConstructibleReferenceCast = BooleanAnd<
 
 struct IsConstructibleOneTest {
 	template< typename T, typename TArg, typename = decltype(::new T(make_rvalue<TArg>())) >
-	static BooleanTrue test(int);
+	static auto test(int) -> BooleanTrue;
 
 	template< typename T, typename TArg >
-	static BooleanFalse test(...);
+	static auto test(...) -> BooleanFalse;
 };
 
 template< typename T, typename TArg >
@@ -89,10 +113,10 @@ using IsConstructibleOne = Conditional<
 
 struct IsConstructibleManyTest {
 	template< typename T, typename... TArgs, typename = decltype(T(make_rvalue<TArgs>()...)) >
-	static BooleanTrue test(int);
+	static auto test(int) -> BooleanTrue;
 
 	template< typename T, typename TArg >
-	static BooleanFalse test(...);
+	static auto test(...) -> BooleanFalse;
 };
 
 template< typename T, typename... TArgs >
@@ -102,7 +126,7 @@ template< typename T, typename... TArgs >
 struct IsConstructible;
 
 template< typename T >
-struct IsConstructible<T> : IsDefaultConstructible<T> {};
+struct IsConstructible<T> : IsConstructibleZero<T> {};
 
 template< typename T, typename TArg >
 struct IsConstructible< T, TArg > : IsConstructibleOne< T, TArg > {};
@@ -122,6 +146,7 @@ struct IsConstructible : IsConstructibleMany< T, TArgs... > {
  * @tparam T 待检查类型
  * @tparam TArgs 构造函数参数类型
  * @see IntegerConstant
+ * @see BR_IS_CONSTRUCTIBLE
  * @see NotConstructible
  *
  * 如果表达式 <tt>T(BR::make_rvalue<TArgs>()...)</tt> 是合法的，那么封装的值为 \em true ；否则为 \em false

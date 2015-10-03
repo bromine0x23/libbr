@@ -4,7 +4,7 @@
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/decay.hpp>
 #include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/has_nothrow_move_assignment.hpp>
+#include <libbr/type_traits/has_nothrow_move_assign.hpp>
 #include <libbr/type_traits/is_convertible.hpp>
 #include <libbr/type_traits/is_nothrow_swappable.hpp>
 #include <libbr/type_traits/is_swappable.hpp>
@@ -75,7 +75,7 @@ public:
 	Pair & operator=(
 		Pair && P
 	) noexcept(
-		BooleanAnd< HasNothrowMoveAssignment<T0>, HasNothrowMoveAssignment<T1> >::value
+		BooleanAnd< HasNothrowMoveAssign<T0>, HasNothrowMoveAssign<T1> >::value
 	) {
 		first = forward<T0>(P.first);
 		second = forward<T1>(P.second);

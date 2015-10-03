@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief 类型特性模块
+ * @author Bromine0x23
+ * @since 2015/10/4
+ */
 #pragma once
 
 #include <libbr/config.hpp>
@@ -53,64 +59,81 @@
 #include <libbr/type_traits/is_void.hpp>
 #include <libbr/type_traits/is_volatile.hpp>
 
+#include <libbr/type_traits/alignment_of.hpp>
 #include <libbr/type_traits/extent.hpp>
 #include <libbr/type_traits/rank.hpp>
 
-#include <libbr/type_traits/is_assignable.hpp>
 #include <libbr/type_traits/is_constructible.hpp>
-#include <libbr/type_traits/is_copy_assignable.hpp>
-#include <libbr/type_traits/is_copy_constructible.hpp>
-#include <libbr/type_traits/is_default_constructible.hpp>
-#include <libbr/type_traits/is_destructible.hpp>
-#include <libbr/type_traits/is_move_assignable.hpp>
-#include <libbr/type_traits/is_move_constructible.hpp>
-
-#include <libbr/type_traits/is_nothrow_assignable.hpp>
+#include <libbr/type_traits/is_trivially_constructible.hpp>
 #include <libbr/type_traits/is_nothrow_constructible.hpp>
-#include <libbr/type_traits/is_nothrow_copy_assignable.hpp>
-#include <libbr/type_traits/is_nothrow_copy_constructible.hpp>
-#include <libbr/type_traits/is_nothrow_default_constructible.hpp>
-#include <libbr/type_traits/is_nothrow_destructible.hpp>
-#include <libbr/type_traits/is_nothrow_move_assignable.hpp>
-#include <libbr/type_traits/is_nothrow_move_constructible.hpp>
 
-#include <libbr/type_traits/is_swappable.hpp>
-#include <libbr/type_traits/is_nothrow_swappable.hpp>
+#include <libbr/type_traits/is_assignable.hpp>
+#include <libbr/type_traits/is_trivially_assignable.hpp>
+#include <libbr/type_traits/is_nothrow_assignable.hpp>
 
+#include <libbr/type_traits/has_default_constructor.hpp>
+#include <libbr/type_traits/has_trivial_default_constructor.hpp>
+#include <libbr/type_traits/has_nothrow_default_constructor.hpp>
+
+#include <libbr/type_traits/has_copy_constructor.hpp>
+#include <libbr/type_traits/has_trivial_copy_constructor.hpp>
+#include <libbr/type_traits/has_nothrow_copy_constructor.hpp>
+
+#include <libbr/type_traits/has_move_constructor.hpp>
+#include <libbr/type_traits/has_trivial_move_constructor.hpp>
+#include <libbr/type_traits/has_nothrow_move_constructor.hpp>
+
+#include <libbr/type_traits/has_copy_assign.hpp>
+#include <libbr/type_traits/has_trivial_copy_assign.hpp>
+#include <libbr/type_traits/has_nothrow_copy_assign.hpp>
+
+#include <libbr/type_traits/has_move_assign.hpp>
+#include <libbr/type_traits/has_trivial_move_assign.hpp>
+#include <libbr/type_traits/has_nothrow_move_assign.hpp>
+
+#include <libbr/type_traits/has_destructor.hpp>
+#include <libbr/type_traits/has_trivial_destructor.hpp>
+#include <libbr/type_traits/has_nothrow_destructor.hpp>
+#include <libbr/type_traits/has_virtual_destructor.hpp>
+
+#include <libbr/type_traits/has_operator_plus.hpp>
+#include <libbr/type_traits/has_operator_plus_assign.hpp>
+#include <libbr/type_traits/has_operator_minus.hpp>
+#include <libbr/type_traits/has_operator_minus_assign.hpp>
+#include <libbr/type_traits/has_operator_multiply.hpp>
+#include <libbr/type_traits/has_operator_multiply_assign.hpp>
+#include <libbr/type_traits/has_operator_divide.hpp>
+#include <libbr/type_traits/has_operator_divide_assign.hpp>
+#include <libbr/type_traits/has_operator_modulo.hpp>
+#include <libbr/type_traits/has_operator_modulo_assign.hpp>
 #include <libbr/type_traits/has_operator_bit_and.hpp>
 #include <libbr/type_traits/has_operator_bit_and_assign.hpp>
 #include <libbr/type_traits/has_operator_bit_or.hpp>
 #include <libbr/type_traits/has_operator_bit_or_assign.hpp>
 #include <libbr/type_traits/has_operator_bit_xor.hpp>
 #include <libbr/type_traits/has_operator_bit_xor_assign.hpp>
-#include <libbr/type_traits/has_operator_complement.hpp>
-#include <libbr/type_traits/has_operator_dereference.hpp>
-#include <libbr/type_traits/has_operator_divide.hpp>
-#include <libbr/type_traits/has_operator_divide_assign.hpp>
-#include <libbr/type_traits/has_operator_equal.hpp>
-#include <libbr/type_traits/has_operator_greater.hpp>
-#include <libbr/type_traits/has_operator_greater_equal.hpp>
 #include <libbr/type_traits/has_operator_left_shift.hpp>
 #include <libbr/type_traits/has_operator_left_shift_assign.hpp>
-#include <libbr/type_traits/has_operator_less.hpp>
-#include <libbr/type_traits/has_operator_less_equal.hpp>
-#include <libbr/type_traits/has_operator_logical_and.hpp>
-#include <libbr/type_traits/has_operator_logical_not.hpp>
-#include <libbr/type_traits/has_operator_logical_or.hpp>
-#include <libbr/type_traits/has_operator_minus.hpp>
-#include <libbr/type_traits/has_operator_minus_assign.hpp>
-#include <libbr/type_traits/has_operator_modulo.hpp>
-#include <libbr/type_traits/has_operator_modulo_assign.hpp>
-#include <libbr/type_traits/has_operator_multiply.hpp>
-#include <libbr/type_traits/has_operator_multiply_assign.hpp>
-#include <libbr/type_traits/has_operator_not_equal.hpp>
-#include <libbr/type_traits/has_operator_prefix_decrement.hpp>
-#include <libbr/type_traits/has_operator_prefix_increment.hpp>
-#include <libbr/type_traits/has_operator_plus.hpp>
-#include <libbr/type_traits/has_operator_plus_assign.hpp>
 #include <libbr/type_traits/has_operator_right_shift.hpp>
 #include <libbr/type_traits/has_operator_right_shift_assign.hpp>
-#include <libbr/type_traits/has_operator_suffix_decrement.hpp>
-#include <libbr/type_traits/has_operator_suffix_increment.hpp>
-#include <libbr/type_traits/has_operator_unary_minus.hpp>
+#include <libbr/type_traits/has_operator_equal.hpp>
+#include <libbr/type_traits/has_operator_not_equal.hpp>
+#include <libbr/type_traits/has_operator_greater.hpp>
+#include <libbr/type_traits/has_operator_greater_equal.hpp>
+#include <libbr/type_traits/has_operator_less.hpp>
+#include <libbr/type_traits/has_operator_less_equal.hpp>
+#include <libbr/type_traits/has_operator_logical_not.hpp>
+#include <libbr/type_traits/has_operator_logical_and.hpp>
+#include <libbr/type_traits/has_operator_logical_or.hpp>
 #include <libbr/type_traits/has_operator_unary_plus.hpp>
+#include <libbr/type_traits/has_operator_unary_minus.hpp>
+#include <libbr/type_traits/has_operator_complement.hpp>
+#include <libbr/type_traits/has_operator_dereference.hpp>
+#include <libbr/type_traits/has_operator_prefix_increment.hpp>
+#include <libbr/type_traits/has_operator_prefix_decrement.hpp>
+#include <libbr/type_traits/has_operator_suffix_increment.hpp>
+#include <libbr/type_traits/has_operator_suffix_decrement.hpp>
+#include <libbr/type_traits/has_operator_new.hpp>
+
+#include <libbr/type_traits/is_swappable.hpp>
+#include <libbr/type_traits/is_nothrow_swappable.hpp>
