@@ -5,7 +5,7 @@
  */
 #pragma once
 
-#define BR_COMPILER "Microsoft Visual C++ version " BR_STRINGIZE(_MSC_VER)
+#define BR_COMPILER "Microsoft Visual C++ version " BR_STRINGIFY(_MSC_VER)
 
 #define BR_MSVC
 

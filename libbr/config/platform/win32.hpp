@@ -14,3 +14,8 @@
 #  define BR_SYMBOL_EXPORT __declspec(dllexport)
 #  define BR_SYMBOL_IMPORT __declspec(dllimport)
 #endif
+
+#if !defined(BR_BYTE_ORDER)
+#  define BR_BYTE_ORDER "little endian"
+#  define BR_BIG_ENDIAN
+#endif

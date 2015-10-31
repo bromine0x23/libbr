@@ -11,8 +11,8 @@
 #  endif // __cplusplus
 #endif // __cplusplus
 
-#define BR_STRINGIZE(X) BR_DO_STRINGIZE(X)
-#define BR_DO_STRINGIZE(X) #X
+#define BR_STRINGIFY(X) BR_DO_STRINGIFY(X)
+#define BR_DO_STRINGIFY(X) #X
 
 #define BR_JOIN(X, Y) BR_DO_JOIN(X, Y)
 #define BR_DO_JOIN(X, Y) BR_DO_JOIN2(X,Y)
@@ -26,23 +26,23 @@
 #  define BR_DEBUG
 #endif
 
-#if !defined(BR_COMPILER_CONFIG)
-#  include <libbr/config/compiler.hpp>
-#endif // !BR_COMPILER_CONFIG
-
-#if !defined(BR_PLATFORM_CONFIG)
-#  include <libbr/config/platform.hpp>
-#endif // !BR_PLATFORM_CONFIG
+#include BR_USER_CONFIG
 
 #if 0
 #  include <libbr/config/user.hpp>
 #endif // 0
 
-#include BR_USER_CONFIG
+#if !defined(BR_COMPILER_CONFIG)
+#  include <libbr/config/compiler.hpp>
+#endif // !BR_COMPILER_CONFIG
 
 #if defined(BR_COMPILER_CONFIG)
 #  include BR_COMPILER_CONFIG
 #endif
+
+#if !defined(BR_PLATFORM_CONFIG)
+#  include <libbr/config/platform.hpp>
+#endif // !BR_PLATFORM_CONFIG
 
 #if defined(BR_PLATFORM_CONFIG)
 #  include BR_PLATFORM_CONFIG

@@ -199,6 +199,12 @@ constexpr static auto IS_NCHAR_UNSIGNED = static_cast< NChar >(0) < static_cast<
  */
 constexpr static auto IS_WCHAR_UNSIGNED = static_cast< WChar >(0) < static_cast< WChar >(-1);
 
+using SFloat = float;
+
+using DFloat = double;
+
+using QFloat = long double;
+
 } // namespace BR
 
 namespace BR {

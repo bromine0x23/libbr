@@ -36,11 +36,11 @@
 #endif
 
 #if !defined(BR_BYTE_ORDER)
-#  if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#    define BR_BYTE_ORDER "little endian"
-#    define BR_LITTLE_ENDIAN
-#  elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#  if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 #    define BR_BYTE_ORDER "big endian"
+#    define BR_LITTLE_ENDIAN
+#  elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#    define BR_BYTE_ORDER "little endian"
 #    define BR_BIG_ENDIAN
 #  endif
 #endif
