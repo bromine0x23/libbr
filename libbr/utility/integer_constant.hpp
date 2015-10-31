@@ -17,7 +17,7 @@ namespace BR {
  * @tparam v 常量值
  */
 template< typename TValue, TValue v >
-struct IntegerConstant : TypeWrapper< IntegerConstant< TValue, v > > {
+struct IntegerConstant : public TypeWrapper< IntegerConstant< TValue, v > > {
 
 	/**
 	 * @brief 整型常量类型
@@ -27,7 +27,9 @@ struct IntegerConstant : TypeWrapper< IntegerConstant< TValue, v > > {
 	/**
 	 * @brief 整型常量值
 	 */
-	constexpr static auto value = v;
+	constexpr static TValue value = v;
+
+	constexpr IntegerConstant() noexcept = default;
 
 	/**
 	 * @brief 返回整型常量值
@@ -39,7 +41,7 @@ struct IntegerConstant : TypeWrapper< IntegerConstant< TValue, v > > {
 	/**
 	 * @brief 返回整型常量值
 	 */
-	constexpr TValue operator()() const {
+	constexpr auto operator()() const -> TValue {
 		return value;
 	}
 };
@@ -50,7 +52,17 @@ struct IntegerConstant : TypeWrapper< IntegerConstant< TValue, v > > {
  * @tparam values 常量值
  */
 template< typename TValue, TValue... values >
-struct Integers {};
+struct Integers {
+	constexpr static Size size = sizeof...(values);
+
+	constexpr operator Size() const {
+		return size;
+	}
+
+	constexpr auto operator()() const -> TValue {
+		return size;
+	}
+};
 
 template< typename TI >
 using IntegerRewrap = IntegerConstant< typename TI::Value, TI::value >;

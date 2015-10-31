@@ -1,9 +1,12 @@
 #pragma once
 
+#include <libbr/config.hpp>
+
 namespace BR {
 
-struct PiecewiseConstructTag {};
+struct PiecewiseConstructTag {
+};
 
-constexpr static auto piecewise_construct_tag = PiecewiseConstructTag();
+constexpr auto piecewise_construct_tag = PiecewiseConstructTag();
 
 } // namespace BR

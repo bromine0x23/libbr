@@ -9,6 +9,7 @@
 namespace BR {
 
 namespace Detail {
+namespace Utility {
 
 template< typename T >
 inline void swap(T & a, T & b) noexcept(
@@ -29,11 +30,12 @@ inline void swap(T (&lhs)[S], T (&rhs)[S]) noexcept(noexcept(swap(*lhs, *rhs))) 
 	}
 }
 
+} // namespace Utility
 } // namespace Detail
 
 template< typename T >
-inline void swap(T & lhs, T & rhs) noexcept(noexcept(Detail::swap(lhs, rhs))) {
-	Detail::swap(lhs, rhs);
+inline void swap(T & lhs, T & rhs) noexcept(noexcept(Detail::Utility::swap(lhs, rhs))) {
+	Detail::Utility::swap(lhs, rhs);
 }
 
 } // namespace BR

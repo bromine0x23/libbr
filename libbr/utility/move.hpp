@@ -18,16 +18,15 @@ namespace BR {
  * @author Bromine0x23
  */
 template< typename T >
-constexpr RemoveReference<T> && move(T && t) noexcept {
+constexpr auto move(T && t) noexcept -> RemoveReference<T> && {
 	return static_cast< RemoveReference<T> && >(t);
 }
 
 template< typename T >
-constexpr Conditional<
+constexpr auto move_if_noexcept(T & t) noexcept -> Conditional<
 	BooleanAnd< NoNothrowMoveConstructor<T>, HasCopyConstructor<T> >,
-	T const &,
-	T &&
-> move_if_noexcept(T & t) noexcept {
+	T const &, T &&
+> {
 	return move(t);
 }
 

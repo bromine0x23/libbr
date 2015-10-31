@@ -15,7 +15,7 @@ namespace BR {
  * @brief 布尔常量封装类
  */
 template< bool value >
-struct BooleanConstant : IntegerConstant< bool, value > {};
+using BooleanConstant = IntegerConstant< bool, value >;;
 
 /**
  * @brief 封装布尔常量true

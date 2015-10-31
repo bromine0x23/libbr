@@ -8,16 +8,16 @@
 namespace BR {
 
 template< typename TValue >
-TValue make_value() noexcept;
+auto make_value() noexcept -> TValue;
 
 template< typename TValue >
-AddRValueReference< TValue > make_rvalue() noexcept;
+auto make_rvalue() noexcept -> AddRValueReference<TValue>;
 
 template< typename TValue >
-AddLValueReference< TValue > make_reference() noexcept;
+auto make_reference() noexcept -> AddLValueReference<TValue>;
 
 template< typename TValue >
-AddPointer< TValue > make_pointer() noexcept;
+auto make_pointer() noexcept -> AddPointer<TValue>;
 
 } // namespace BR
 

@@ -5,92 +5,113 @@
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/remove_const_volatile.hpp>
 #include <libbr/type_operate/type.hpp>
+#include <libbr/type_operate/call_result.hpp>
+#include <libbr/utility/bool_constant.hpp>
+#include <libbr/utility/forward.hpp>
 
 namespace BR {
 
 template< typename T >
-class WrappedReference {
-
-public:
-
-	using Type = T;
-
-	inline explicit WrappedReference(Type & t) noexcept : m_t(address_of(t)) {}
-
-	operator Type & () const noexcept { return *m_t; }
-
-	Type & get() const noexcept { return *m_t; }
-
-	Type * get_pointer() const noexcept { return m_t; }
-
-private:
-
-	WrappedReference(Type &&) = delete;
-
-	Type * m_t;
-
-}; // class WrappedReference<T>
+class WrappedReference;
 
 template< typename T >
-inline WrappedReference<T> const wrap_reference(T & t) {
+inline auto reference(T & t) -> WrappedReference<T> {
 	return WrappedReference<T>(t);
 }
 
 template< typename T >
-inline WrappedReference< T const > const wrap_const_reference(T const & t) {
+inline auto reference(WrappedReference<T> r) -> WrappedReference<T> {
+	return reference(r.get());
+}
+
+template< typename T >
+void reference(T && t) = delete;
+
+template< typename T >
+inline auto const_reference(T const & t) -> WrappedReference< T const > {
 	return WrappedReference< T const >(t);
 }
 
 template< typename T >
-void wrap_reference(T && t) = delete;
+inline auto const_reference(WrappedReference<T> r) -> WrappedReference< T const > {
+	return const_reference(r.get());
+}
 
 template< typename T >
-void wrap_const_reference(T && t) = delete;
+void const_reference(T && t) = delete;
+
+template< typename T >
+struct IsWrappedReference;
+
+template< typename T >
+struct NotWrappedReference;
+
+#if defined(BR_CXX14)
+
+template< typename T >
+constexpr auto is_wrapped_reference = bool_constant< IsWrappedReference<T> >;
+
+constexpr auto not_wrapped_reference = bool_constant< NotWrappedReference<T> >;
+
+#endif // defined(BR_CXX14)
 
 namespace Detail {
 namespace Utility {
 
 template< typename T >
-struct IsWrappedReferenceBasic : BooleanFalse {};
+struct IsWrappedReferenceBasic : BooleanFalse {
+};
 
 template< typename T >
-struct IsWrappedReferenceBasic< WrappedReference<T> > : BooleanTrue {};
+struct IsWrappedReferenceBasic< WrappedReference<T> > : BooleanTrue {
+};
 
 template< typename T >
 using IsWrappedReference = IsWrappedReferenceBasic< RemoveConstVolatile<T> >;
-
-template< typename T >
-struct TypeUnwrapReferenceBasic : TypeWrapper<T> {};
-
-template< typename T >
-struct TypeUnwrapReferenceBasic< WrappedReference<T> > : TypeWrapper< T > {};
-
-template< typename T >
-using TypeUnwrapReference = TypeUnwrapReferenceBasic< RemoveConstVolatile<T> >;
 
 } // namespace Utility
 } // namespace Detail
 
 template< typename T >
-struct IsWrappedReference : Boolean< Detail::Utility::IsWrappedReference< T > > {};
+struct IsWrappedReference : BooleanRewrapPositive< Detail::Utility::IsWrappedReference<T> > {};
 
 template< typename T >
-struct NotWrappedReference : BooleanNot< Detail::Utility::IsWrappedReference< T > > {};
-
-template< typename T >
-struct TypeUnwrapReference : TypeRewrap< Detail::Utility::TypeUnwrapReference<T> > {};
-
-template< typename T >
-using UnwrapReference = TypeUnwrap< TypeUnwrapReference<T> >;
-
-template< typename T >
-UnwrapReference<T> & unwrap_reference(T & t) noexcept {
-	return t;
-}
+struct NotWrappedReference : BooleanRewrapNegative< Detail::Utility::IsWrappedReference<T> > {};
 
 template< typename T >
 T * get_pointer(WrappedReference<T> const & reference) {
 	return reference.get_pointer();
 }
+
+template< typename T >
+class WrappedReference {
+public:
+
+	using Type = T;
+
+	explicit WrappedReference(Type & t) noexcept : m_t(address_of(t)) {
+	}
+
+	WrappedReference(WrappedReference const & t) noexcept {}
+
+	auto get() const noexcept -> Type & {
+		return *m_t;
+	}
+
+	operator Type & () const noexcept {
+		return *m_t;
+	}
+
+	template< typename ... TArguments >
+	auto operator()(TArguments && ... arguments) const -> CallResult< Type &, TArguments... > {
+		return invoke(get(), forward<TArguments>(arguments)...);
+	}
+
+private:
+	WrappedReference(Type &&) = delete;
+
+	Type * m_t;
+
+}; // class WrappedReference<T>
 
 } // namespace BR
