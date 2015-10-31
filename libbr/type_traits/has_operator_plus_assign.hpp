@@ -11,7 +11,7 @@ BooleanOr< \
 		IsPointer< TRhsNoRef > \
 	>, \
 	/* TLhs == void * && TRhs == fundamental */ \
-		BooleanAnd< \
+	BooleanAnd< \
 		IsPointer< TLhsNoRef >, \
 		IsVoid< TLhsNoRef >, \
 		IsFundamental< TRhsNoCV > \
@@ -26,7 +26,7 @@ BooleanOr< \
 	BooleanAnd< \
 		IsPointer< TLhsNoRef >, \
 		IsFundamental< TRhsNoCV >, \
-		NotInteger< TRhsNoRef > \
+		NotIntegral< TRhsNoRef > \
 	>,\
 	/* TRhs == pointer && TLhs == fundamental && TLhs != bool */\
 	BooleanAnd<\
@@ -51,7 +51,7 @@ BooleanOr< \
 
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_traits/is_fundamental.hpp>
-#include <libbr/type_traits/is_integer.hpp>
+#include <libbr/type_traits/is_integral.hpp>
 #include <libbr/type_traits/is_pointer.hpp>
 #include <libbr/type_traits/is_same.hpp>
 #include <libbr/type_traits/is_void.hpp>

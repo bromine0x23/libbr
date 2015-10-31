@@ -27,10 +27,15 @@ using HasNothrowDestructor = BooleanConstant< BR_HAS_NOTHROW_DESTRUCTOR(T) >;
 #else
 
 template< typename T >
-struct HasNothrowDestructorBasic : BooleanConstant< noexcept(make_reference<T>().~T()) > {};
+struct HasNothrowDestructorBasic {
+	constexpr static auto value = noexcept(make_reference<T>().~T());
+};
 
 template< typename T >
-using HasNothrowDestructor = BooleanAnd< HasDestructor<T>, HasNothrowDestructorBasic<T> >;
+using HasNothrowDestructor = BooleanAnd<
+	HasDestructor<T>,
+	BooleanConstant< HasNothrowDestructorBasic<T>::value >
+>;
 
 #endif // defined(BR_HAS_NOTHROW_DESTRUCTOR)
 

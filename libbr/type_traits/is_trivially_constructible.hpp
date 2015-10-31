@@ -24,7 +24,7 @@ namespace TypeTraits {
 #if defined(BR_IS_TRIVIALLY_CONSTRUCTIBLE)
 
 template< typename T, typename... TArgs >
-using IsTriviallyConstructible = BooleanConstant< BR_IS_TRIVIALLY_CONSTRUCTIBLE(T, TArgs...) >
+using IsTriviallyConstructible = BooleanConstant< BR_IS_TRIVIALLY_CONSTRUCTIBLE(T, TArgs...) >;
 
 #else
 

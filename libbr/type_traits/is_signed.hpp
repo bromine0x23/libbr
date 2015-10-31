@@ -10,8 +10,8 @@
 #include <libbr/utility/bool_constant.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/remove_const_volatile.hpp>
-#include <libbr/type_traits/is_integer.hpp>
 #include <libbr/type_traits/is_enum.hpp>
+#include <libbr/type_traits/is_integral.hpp>
 
 namespace BR {
 
@@ -25,7 +25,7 @@ struct IsSignedBasic {
 };
 
 template< typename T >
-using IsSigned = BooleanAnd< BooleanOr< IsInteger<T>, IsEnum<T> >, BooleanConstant< IsSignedBasic<T>::value > >;
+using IsSigned = BooleanAnd< BooleanOr< IsIntegral<T>, IsEnum<T> >, BooleanConstant< IsSignedBasic<T>::value > >;
 
 } // namespace TypeTraits
 } // namespace Detail
@@ -41,7 +41,8 @@ using IsSigned = BooleanAnd< BooleanOr< IsInteger<T>, IsEnum<T> >, BooleanConsta
  * 如果 \em T 是有符号整型类型，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsSigned : BooleanRewrapPositive< Detail::TypeTraits::IsSigned<T> > {};
+struct IsSigned : BooleanRewrapPositive< Detail::TypeTraits::IsSigned<T> > {
+};
 
 /**
  * @brief IsSigned 的否定
@@ -49,7 +50,8 @@ struct IsSigned : BooleanRewrapPositive< Detail::TypeTraits::IsSigned<T> > {};
  * @see IsSigned
  */
 template< typename T >
-struct NotSigned : BooleanRewrapNegative< Detail::TypeTraits::IsSigned<T> > {};
+struct NotSigned : BooleanRewrapNegative< Detail::TypeTraits::IsSigned<T> > {
+};
 
 #if defined(BR_CXX14)
 

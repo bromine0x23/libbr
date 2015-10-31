@@ -18,7 +18,7 @@ namespace Detail {
 namespace TypeTraits {
 
 template< typename T >
-using HasTrivialCopyAssign = IsTrivialAssignable< AddLValueReference<T>, AddLValueReference< AddConst<T> > >;
+using HasTrivialCopyAssign = IsTriviallyAssignable< AddLValueReference<T>, AddLValueReference< AddConst<T> > >;
 
 } // namespace TypeTraits
 } // namespace Detail

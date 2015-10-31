@@ -3,7 +3,6 @@
 #include <libbr/config.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/type.hpp>
-#include <libbr/type_operate/call_result.hpp>
 #include <libbr/type_operate/make_unsigned.hpp>
 #include <libbr/type_operate/replace_template_argument.hpp>
 #include <libbr/type_traits/integer_traits.hpp>
@@ -15,6 +14,7 @@
 namespace BR {
 
 namespace Detail {
+namespace TypeTraits {
 namespace AllocatorTraits {
 
 ////////////////////////////////
@@ -35,10 +35,12 @@ template< typename TAllocator, bool = HasMemberTypePointer<TAllocator>::value >
 struct TypePointer;
 
 template< typename TAllocator >
-struct TypePointer< TAllocator, true > : TypeWrapper< typename TAllocator::Pointer > {};
+struct TypePointer< TAllocator, true > : TypeWrapper< typename TAllocator::Pointer > {
+};
 
 template< typename TAllocator >
-struct TypePointer< TAllocator, false > :  TypeWrapper< Value<TAllocator> * > {};
+struct TypePointer< TAllocator, false > : TypeWrapper< Value<TAllocator> * > {
+};
 
 template< typename TAllocator >
 using Pointer = TypeUnwrap< TypePointer<TAllocator> >;
@@ -54,10 +56,12 @@ template< typename TAllocator, bool = HasMemberTypeConstPointer<TAllocator>::val
 struct TypeConstPointer;
 
 template< typename TAllocator >
-struct TypeConstPointer< TAllocator, true > : TypeWrapper< typename TAllocator::ConstPointer > {};
+struct TypeConstPointer< TAllocator, true > : TypeWrapper< typename TAllocator::ConstPointer > {
+};
 
 template< typename TAllocator >
-struct TypeConstPointer< TAllocator, false > : PointerTraits::TypeRebind< Pointer<TAllocator>, Value< TAllocator > const > {};
+struct TypeConstPointer< TAllocator, false > : TypeWrapper< typename PointerTraits< Pointer<TAllocator> >::template Rebind< Value<TAllocator> const > > {
+};
 
 template< typename TAllocator >
 using ConstPointer = TypeUnwrap< TypeConstPointer<TAllocator> >;
@@ -73,10 +77,12 @@ template< typename TAllocator, bool = HasMemberTypeVoidPointer<TAllocator>::valu
 struct TypeVoidPointer;
 
 template< typename TAllocator >
-struct TypeVoidPointer< TAllocator, true > : TypeWrapper< typename TAllocator::VoidPointer > {};
+struct TypeVoidPointer< TAllocator, true > : TypeWrapper< typename TAllocator::VoidPointer > {
+};
 
 template< typename TAllocator >
-struct TypeVoidPointer< TAllocator, false > : PointerTraits::TypeRebind< Pointer<TAllocator>, void > {};
+struct TypeVoidPointer< TAllocator, false > : TypeWrapper< typename PointerTraits< Pointer<TAllocator> >::template Rebind< void > > {
+};
 
 template< typename TAllocator >
 using VoidPointer = TypeUnwrap< TypeVoidPointer<TAllocator> >;
@@ -92,10 +98,12 @@ template< typename TAllocator, bool = HasMemberTypeConstVoidPointer< TAllocator 
 struct TypeConstVoidPointer;
 
 template< typename TAllocator >
-struct TypeConstVoidPointer< TAllocator, true > : TypeWrapper< typename TAllocator::ConstVoidPointer > {};
+struct TypeConstVoidPointer< TAllocator, true > : TypeWrapper< typename TAllocator::ConstVoidPointer > {
+};
 
 template< typename TAllocator >
-struct TypeConstVoidPointer< TAllocator, false > : PointerTraits::TypeRebind< Pointer<TAllocator>, void const > {};
+struct TypeConstVoidPointer< TAllocator, false > : TypeWrapper< typename PointerTraits< Pointer<TAllocator> >::template Rebind< void const > > {
+};
 
 template< typename TAllocator >
 using ConstVoidPointer = TypeUnwrap< TypeVoidPointer<TAllocator> >;
@@ -111,10 +119,12 @@ template< typename TAllocator, bool = HasMemberTypeDifference<TAllocator>::value
 struct TypeDifference;
 
 template< typename TAllocator >
-struct TypeDifference< TAllocator, true > : TypeWrapper< typename TAllocator::Difference > {};
+struct TypeDifference< TAllocator, true > : TypeWrapper< typename TAllocator::Difference > {
+};
 
 template< typename TAllocator >
-struct TypeDifference< TAllocator, false > : PointerTraits::TypeDifference< Pointer<TAllocator> > {};
+struct TypeDifference< TAllocator, false > : TypeWrapper< typename PointerTraits< Pointer<TAllocator> >::Difference > {
+};
 
 template< typename TAllocator >
 using Difference = TypeUnwrap< TypeDifference<TAllocator> >;
@@ -130,10 +140,12 @@ template< typename TAllocator, bool = HasMemberTypeSize<TAllocator>::value >
 struct TypeSize;
 
 template< typename TAllocator >
-struct TypeSize< TAllocator, true > : TypeWrapper< typename TAllocator::Size > {};
+struct TypeSize< TAllocator, true > : TypeWrapper< typename TAllocator::Size > {
+};
 
 template< typename TAllocator >
-struct TypeSize< TAllocator, false > : TypeMakeUnsigned< Difference<TAllocator> > {};
+struct TypeSize< TAllocator, false > : TypeMakeUnsigned< Difference<TAllocator> > {
+};
 
 template< typename TAllocator >
 using Size = TypeUnwrap< TypeSize<TAllocator> >;
@@ -149,10 +161,12 @@ template< typename TAllocator, bool = HasMemberTypeIsPropagateOnContainerCopyAss
 struct TypeIsPropagateOnContainerCopyAssignment;
 
 template< typename TAllocator >
-struct TypeIsPropagateOnContainerCopyAssignment< TAllocator, true > : TypeWrapper< typename TAllocator::IsPropagateOnContainerCopyAssignment > {};
+struct TypeIsPropagateOnContainerCopyAssignment< TAllocator, true > : TypeWrapper< typename TAllocator::IsPropagateOnContainerCopyAssignment > {
+};
 
 template< typename TAllocator >
-struct TypeIsPropagateOnContainerCopyAssignment< TAllocator, false > : TypeWrapper<BooleanFalse> {};
+struct TypeIsPropagateOnContainerCopyAssignment< TAllocator, false > : TypeWrapper<BooleanFalse> {
+};
 
 template< typename TAllocator >
 using IsPropagateOnContainerCopyAssignment = TypeUnwrap< TypeIsPropagateOnContainerCopyAssignment<TAllocator> >;
@@ -168,10 +182,12 @@ template< typename TAllocator, bool = HasMemberTypeIsPropagateOnContainerMoveAss
 struct TypeIsPropagateOnContainerMoveAssignment;
 
 template< typename TAllocator >
-struct TypeIsPropagateOnContainerMoveAssignment< TAllocator, true > : TypeWrapper< typename TAllocator::IsPropagateOnContainerMoveAssignment > {};
+struct TypeIsPropagateOnContainerMoveAssignment< TAllocator, true > : TypeWrapper< typename TAllocator::IsPropagateOnContainerMoveAssignment > {
+};
 
 template< typename TAllocator >
-struct TypeIsPropagateOnContainerMoveAssignment< TAllocator, false > : TypeWrapper<BooleanFalse> {};
+struct TypeIsPropagateOnContainerMoveAssignment< TAllocator, false > : TypeWrapper<BooleanFalse> {
+};
 
 template< typename TAllocator >
 using IsPropagateOnContainerMoveAssignment = TypeUnwrap< TypeIsPropagateOnContainerMoveAssignment<TAllocator> >;
@@ -187,10 +203,12 @@ template< typename TAllocator, bool = HasMemberTypeIsPropagateOnContainerSwap< T
 struct TypeIsPropagateOnContainerSwap;
 
 template< typename TAllocator >
-struct TypeIsPropagateOnContainerSwap< TAllocator, true > : TypeWrapper< typename TAllocator::IsPropagateOnContainerSwap > {};
+struct TypeIsPropagateOnContainerSwap< TAllocator, true > : TypeWrapper< typename TAllocator::IsPropagateOnContainerSwap > {
+};
 
 template< typename TAllocator >
-struct TypeIsPropagateOnContainerSwap< TAllocator, false > : TypeWrapper<BooleanFalse> {};
+struct TypeIsPropagateOnContainerSwap< TAllocator, false > : TypeWrapper<BooleanFalse> {
+};
 
 template< typename TAllocator >
 using IsPropagateOnContainerSwap = TypeUnwrap< TypeIsPropagateOnContainerSwap<TAllocator> >;
@@ -206,10 +224,12 @@ template< typename TAllocator, typename TValue, bool = HasMemberTypeRebind< TAll
 struct TypeRebind;
 
 template< typename TAllocator, typename TValue >
-struct TypeRebind< TAllocator, TValue, true > : TypeWrapper< typename TAllocator::template Rebind<TValue> > {};
+struct TypeRebind< TAllocator, TValue, true > : TypeWrapper< typename TAllocator::template Rebind<TValue> > {
+};
 
 template< typename TAllocator, typename TValue >
-struct TypeRebind< TAllocator, TValue, false > : TypeReplaceFirstTemplateArgument< TAllocator, TValue > {};
+struct TypeRebind< TAllocator, TValue, false > : TypeReplaceFirstTemplateArgument< TAllocator, TValue > {
+};
 
 template< typename TAllocator, typename TValue >
 using Rebind = TypeUnwrap< TypeRebind< TAllocator, TValue > >;
@@ -221,16 +241,17 @@ using Rebind = TypeUnwrap< TypeRebind< TAllocator, TValue > >;
 #define BR_TYPE_OPERATE_FUNCTION_NAME allocate
 #include <libbr/type_traits/has_member_function.inc>
 
-template< bool has_member_function, typename TAllocator, typename ... TArguments >
+template< bool has_member_function, typename TAllocator, typename ... TArgs >
 struct AllocateBasic;
 
-template< typename TAllocator, typename ... TArguments >
-struct Allocate : AllocateBasic< HasMemberFunction_allocate< TAllocator, TArguments ... >::value, TAllocator, TArguments ... > {};
+template< typename TAllocator, typename ... TArgs >
+struct Allocate : AllocateBasic< HasMemberFunction_allocate< TAllocator, TArgs ... >::value, TAllocator, TArgs ... > {
+};
 
-template< typename TAllocator, typename ... TArguments >
-struct AllocateBasic< true, TAllocator, TArguments ... > {
-	static Pointer< TAllocator > call(TAllocator allocator, TArguments && ... arguments) {
-		return allocator.allocate(forward<TArguments>(arguments) ...);
+template< typename TAllocator, typename ... TArgs >
+struct AllocateBasic< true, TAllocator, TArgs ... > {
+	static Pointer< TAllocator > call(TAllocator allocator, TArgs && ... args) {
+		return allocator.allocate(forward<TArgs>(args) ...);
 	}
 };
 
@@ -252,17 +273,18 @@ template< bool has_member_function, typename TAllocator, typename ... TArguments
 struct ConstructBasic;
 
 template< typename TAllocator, typename ... TArguments >
-struct Construct : ConstructBasic< HasMemberFunction_construct< TAllocator, TArguments ... >::value, TAllocator, TArguments ... > {};
+struct Construct : ConstructBasic< HasMemberFunction_construct< TAllocator, TArguments ... >::value, TAllocator, TArguments ... > {
+};
 
-template< typename TAllocator, typename ... TArguments >
-struct ConstructBasic< true, TAllocator, TArguments ... > {
-	static void call(TAllocator allocator, TArguments && ... arguments) {
-		allocator.construct(forward<TArguments>(arguments) ...);
+template< typename TAllocator, typename TValue, typename ... TArguments >
+struct ConstructBasic< true, TAllocator, TValue *, TArguments ... > {
+	static void call(TAllocator allocator, TValue * pointer, TArguments && ... arguments) {
+		allocator.construct(pointer, forward<TArguments>(arguments) ...);
 	}
 };
 
 template< typename TAllocator, typename TValue, typename ... TArguments >
-struct ConstructBasic< false, TAllocator, TValue, TArguments ... > {
+struct ConstructBasic< false, TAllocator, TValue *, TArguments ... > {
 	static void call(TAllocator allocator, TValue * pointer, TArguments && ... arguments) {
 		::new (reinterpret_cast< void * >(pointer)) TValue(forward<TArguments>(arguments) ...);
 	}
@@ -279,7 +301,8 @@ template< bool has_member_function, typename TAllocator, typename ... TArguments
 struct DestroyBasic;
 
 template< typename TAllocator, typename ... TArguments >
-struct Destroy : DestroyBasic< HasMemberFunction_destroy< TAllocator, TArguments ... >::value, TAllocator, TArguments ... > {};
+struct Destroy : DestroyBasic< HasMemberFunction_destroy< TAllocator, TArguments ... >::value, TAllocator, TArguments ... > {
+};
 
 template< typename TAllocator, typename ... TArguments >
 struct DestroyBasic< true, TAllocator, TArguments ... > {
@@ -306,7 +329,8 @@ template< bool has_member_function, typename TAllocator, typename ... TArguments
 struct MaxSizeBasic;
 
 template< typename TAllocator, typename ... TArguments >
-struct MaxSize : MaxSizeBasic< HasMemberFunction_max_size< TAllocator, TArguments ... >::value, TAllocator, TArguments ... > {};
+struct MaxSize : MaxSizeBasic< HasMemberFunction_max_size< TAllocator, TArguments ... >::value, TAllocator, TArguments ... > {
+};
 
 template< typename TAllocator, typename ... TArguments >
 struct MaxSizeBasic< true, TAllocator, TArguments ... > {
@@ -333,51 +357,51 @@ template< bool has_member_function, typename TAllocator, typename ... TArguments
 struct SelectOnContainerCopyConstructionBasic;
 
 template< typename TAllocator, typename ... TArguments >
-struct SelectOnContainerCopyConstruction : SelectOnContainerCopyConstructionBasic<
-	HasMemberFunction_select_on_container_copy_construction< TAllocator, TArguments ... >::value, TAllocator, TArguments ...
-> {};
-
-template< typename TAllocator, typename ... TArguments >
 struct SelectOnContainerCopyConstructionBasic< true, TAllocator, TArguments ... > {
-	static TAllocator call(TAllocator allocator, TArguments && ... arguments) {
+	static TAllocator call(TAllocator allocator, TArguments && ... arguments) noexcept {
 		return allocator.select_on_container_copy_construction(forward<TArguments>(arguments) ...);
 	}
 };
 
-template< typename TAllocator >
-struct SelectOnContainerCopyConstructionBasic< false, TAllocator > {
-	static TAllocator call(TAllocator allocator) {
+template< typename TAllocator, typename ... TArguments >
+struct SelectOnContainerCopyConstructionBasic< false, TAllocator, TArguments ... > {
+	static TAllocator call(TAllocator allocator) noexcept {
 		return allocator;
 	}
 };
 
+template< typename TAllocator, typename ... TArguments >
+struct SelectOnContainerCopyConstruction : SelectOnContainerCopyConstructionBasic< HasMemberFunction_select_on_container_copy_construction< TAllocator, TArguments ... >::value, TAllocator, TArguments ... > {
+};
+
 } // namespace AllocatorTraits
+} // namespace TypeTraits
 } // namespace Detail
 
 template< typename TAllocator >
 struct AllocatorTraits {
 	using Allocator        = TAllocator;
-	using Value            = Detail::AllocatorTraits::Value<Allocator>;
-	using Pointer          = Detail::AllocatorTraits::Pointer<Allocator>;
-	using ConstPointer     = Detail::AllocatorTraits::ConstPointer<Allocator>;
-	using VoidPointer      = Detail::AllocatorTraits::VoidPointer<Allocator>;
-	using ConstVoidPointer = Detail::AllocatorTraits::ConstVoidPointer<Allocator>;
-	using Difference       = Detail::AllocatorTraits::Difference<Allocator>;
-	using Size             = Detail::AllocatorTraits::Size<Allocator>;
+	using Value            = Detail::TypeTraits::AllocatorTraits::Value<Allocator>;
+	using Pointer          = Detail::TypeTraits::AllocatorTraits::Pointer<Allocator>;
+	using ConstPointer     = Detail::TypeTraits::AllocatorTraits::ConstPointer<Allocator>;
+	using VoidPointer      = Detail::TypeTraits::AllocatorTraits::VoidPointer<Allocator>;
+	using ConstVoidPointer = Detail::TypeTraits::AllocatorTraits::ConstVoidPointer<Allocator>;
+	using Difference       = Detail::TypeTraits::AllocatorTraits::Difference<Allocator>;
+	using Size             = Detail::TypeTraits::AllocatorTraits::Size<Allocator>;
 
-	using IsPropagateOnContainerCopyAssignment = Detail::AllocatorTraits::IsPropagateOnContainerCopyAssignment<Allocator>;
-	using IsPropagateOnContainerMoveAssignment = Detail::AllocatorTraits::IsPropagateOnContainerMoveAssignment<Allocator>;
-	using IsPropagateOnContainerSwap           = Detail::AllocatorTraits::IsPropagateOnContainerSwap<Allocator>;
+	using IsPropagateOnContainerCopyAssignment = Detail::TypeTraits::AllocatorTraits::IsPropagateOnContainerCopyAssignment<Allocator>;
+	using IsPropagateOnContainerMoveAssignment = Detail::TypeTraits::AllocatorTraits::IsPropagateOnContainerMoveAssignment<Allocator>;
+	using IsPropagateOnContainerSwap           = Detail::TypeTraits::AllocatorTraits::IsPropagateOnContainerSwap<Allocator>;
 
 	template< typename TValue >
-	using Rebind = Detail::AllocatorTraits::Rebind< TAllocator, TValue >;
+	using Rebind = Detail::TypeTraits::AllocatorTraits::Rebind< TAllocator, TValue >;
 
 	static Pointer allocate(Allocator & allocator, Size size) {
 		return allocator.allocate(size);
 	}
 
 	static Pointer allocate(Allocator & allocator, Size size, ConstVoidPointer hint) {
-		return Detail::AllocatorTraits::Allocate< Allocator, Size, ConstVoidPointer >::call(
+		return Detail::TypeTraits::AllocatorTraits::Allocate< Allocator, Size, ConstVoidPointer >::call(
 			allocator, size, hint
 		);
 	}
@@ -388,22 +412,22 @@ struct AllocatorTraits {
 
 	template< typename TValue, typename ... TArguments >
 	static void construct(Allocator & allocator, TValue * pointer, TArguments && ... arguments) {
-		Detail::AllocatorTraits::Construct< Allocator, TValue *, TArguments ... >::call(
+		Detail::TypeTraits::AllocatorTraits::Construct< Allocator, TValue *, TArguments ... >::call(
 			allocator, pointer, forward<TArguments>(arguments) ...
 		);
 	}
 
 	template< typename TValue >
 	static void destroy(Allocator & allocator, TValue * pointer) {
-		Detail::AllocatorTraits::Destroy< Allocator, TValue * >::call(allocator, pointer);
+		Detail::TypeTraits::AllocatorTraits::Destroy< Allocator, TValue * >::call(allocator, pointer);
 	}
 
 	static Size max_size(Allocator const & allocator) noexcept {
-		return Detail::AllocatorTraits::MaxSize<Allocator>::call(allocator);
+		return Detail::TypeTraits::AllocatorTraits::MaxSize<Allocator>::call(allocator);
 	}
 
-	static Allocator select_on_container_copy_construction(Allocator const & allocator) {
-		Detail::AllocatorTraits::SelectOnContainerCopyConstruction<Allocator>::call(allocator);
+	static Allocator select_on_container_copy_construction(Allocator const & allocator) noexcept {
+		Detail::TypeTraits::AllocatorTraits::SelectOnContainerCopyConstruction<Allocator>::call(allocator);
 	}
 };
 

@@ -35,7 +35,8 @@ BooleanTrue is_function_pointer_tester(TResult(__cdecl *)(TArgs...));
 BooleanFalse is_function_pointer_tester(...);
 
 template< typename T >
-using IsFunctionBasic = decltype(is_function_pointer_tester(static_cast< T * >(nullptr)));
+struct IsFunctionBasic : decltype(is_function_pointer_tester(static_cast< T * >(nullptr))) {
+};
 
 template< typename T >
 using IsFunction = BooleanAnd< NotReference<T>, IsFunctionBasic<T> >;

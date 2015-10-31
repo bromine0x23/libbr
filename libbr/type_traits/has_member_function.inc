@@ -19,15 +19,15 @@ using BR::BooleanTrue;
 using BR::BooleanFalse;
 
 struct HasMemberFunctionTest {
-	template<typename T, typename... TArgs>
+	template< typename T, typename... TArgs >
 	static auto test(int) -> decltype(make_rvalue<T>().BR_TYPE_OPERATE_FUNCTION_NAME(make_rvalue<TArgs>() ...), BooleanTrue());
 
-	template<typename T, typename... TArgs>
+	template< typename T, typename... TArgs >
 	static auto test(...) -> BooleanFalse;
 };
 
-template<typename T, typename... TArgs>
-using HasMemberFunction = decltype(HasMemberFunctionTest::test<T, TArgs...>(0));
+template< typename T, typename... TArgs >
+using HasMemberFunction = decltype(HasMemberFunctionTest::test< T, TArgs... >(0));
 
 } // namespace BR_JOIN(MemberFunction_, BR_TYPE_OPERATE_FUNCTION_NAME)
 
@@ -37,7 +37,7 @@ struct BR_JOIN(HasMemberFunction_, BR_TYPE_OPERATE_FUNCTION_NAME) : BR::BooleanR
 > {};
 
 template< typename T, typename... TArgs >
-struct BR_JOIN(NoMemberFunction_, BR_TYPE_OPERATE_FUNCTION_NAME) : ::BR::BooleanRewrapNegative<
+struct BR_JOIN(NoMemberFunction_, BR_TYPE_OPERATE_FUNCTION_NAME) : BR::BooleanRewrapNegative<
 	BR_JOIN(MemberFunction_, BR_TYPE_OPERATE_FUNCTION_NAME)::HasMemberFunction< T, TArgs... >
 > {};
 

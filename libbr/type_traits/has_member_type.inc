@@ -13,16 +13,19 @@
 
 namespace BR_JOIN(MemberType, BR_TYPE_OPERATE_TYPE_NAME) {
 
+using BR::BooleanTrue;
+using BR::BooleanFalse;
+
 struct HasMemberTypeTest {
 	template < typename T >
-	static BR::BooleanTrue test(typename T::BR_TYPE_OPERATE_TYPE_NAME * = nullptr);
+	static auto test(typename T::BR_TYPE_OPERATE_TYPE_NAME * = nullptr) -> BR::BooleanTrue;
 
 	template < typename T >
-	static BR::BooleanFalse test(...);
+	static auto test(...) -> BR::BooleanFalse;
 };
 
 template < typename T >
-using HasMemberType = decltype(HasMemberTypeTest::test< T >(0));
+using HasMemberType = decltype(HasMemberTypeTest::test<T>(nullptr));
 
 } // namespace BR_JOIN(MemberType, BR_TYPE_OPERATE_TYPE_NAME)
 

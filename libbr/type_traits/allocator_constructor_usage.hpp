@@ -4,26 +4,27 @@
 #include <libbr/memory/allocator_argument_tag.hpp>
 #include <libbr/type_operate/conditional.hpp>
 #include <libbr/type_traits/is_constructible.hpp>
-#include <libbr/type_traits/use_allocator.hpp>
+#include <libbr/type_traits/is_use_allocator.hpp>
 
 namespace BR {
 
-struct NotUseAllocator {};
+enum class AllocatorConstructorUsageType {
+	not_used, use_with_tag, use_without_tag
+};
 
-struct UseAllocatorWithTag {};
-
-struct UseAllocatorWithoutTag {};
+template< AllocatorConstructorUsageType type >
+using AllocatorConstructorUsageConstant = IntegerConstant< AllocatorConstructorUsageType, type >;
 
 template< typename T, typename TAllocator, typename ... TArguments >
 struct TypeAllocatorConstructorUsage : TypeWrapper<
 	Conditional<
-		UseAllocator< T, TAllocator >,
+		IsUseAllocator< T, TAllocator >,
 		Conditional<
 			IsConstructible< T, AllocatorArgumentTag, TAllocator, TArguments ... >,
-			UseAllocatorWithTag,
-			UseAllocatorWithoutTag
+			AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_with_tag >,
+			AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_without_tag >
 		>,
-		NotUseAllocator
+		AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::not_used >
 	>
 > {};
 

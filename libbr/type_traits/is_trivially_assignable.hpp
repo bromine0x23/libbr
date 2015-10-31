@@ -25,7 +25,7 @@ namespace TypeTraits {
 #if defined(BR_IS_TRIVIALLY_ASSIGNABLE)
 
 template< typename T, typename TArg >
-using IsTriviallyAssignable = BooleanConstant< BR_IS_TRIVIALLY_ASSIGNABLE(T, TArg) >
+using IsTriviallyAssignable = BooleanConstant< BR_IS_TRIVIALLY_ASSIGNABLE(T, TArg) >;
 
 #else
 
@@ -55,7 +55,7 @@ using IsTriviallyAssignable = BooleanAnd<
  * 如果 \em T 是否具有 \em trivially 的赋值运算符，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T, typename TArg >
-struct IsTriviallyAssignable : BooleanRewrapPositive< Detail::TypeOperate::IsTriviallyAssignable< T, TArg > > {};
+struct IsTriviallyAssignable : BooleanRewrapPositive< Detail::TypeTraits::IsTriviallyAssignable< T, TArg > > {};
 
 /**
  * @brief IsTriviallyAssignable 的否定
@@ -64,7 +64,7 @@ struct IsTriviallyAssignable : BooleanRewrapPositive< Detail::TypeOperate::IsTri
  * @see BR::IsTriviallyAssignable
  */
 template< typename T, typename TArg >
-struct NotTriviallyAssignable : BooleanRewrapNegative< Detail::TypeOperate::IsTriviallyAssignable< T, TArg > > {};
+struct NotTriviallyAssignable : BooleanRewrapNegative< Detail::TypeTraits::IsTriviallyAssignable< T, TArg > > {};
 
 #if defined(BR_CXX14)
 

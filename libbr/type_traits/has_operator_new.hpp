@@ -21,7 +21,7 @@ template< typename T, T t >
 struct HasOperatorNewHelper;
 
 struct HasOperatorNewTester0 {
-	template< typename T, typename = HasOperatorNewHelper< void *(*)(std::size_t), &T::operator new > >
+	template< typename T, typename _TDummy = HasOperatorNewHelper< void *(*)(std::size_t), &T::operator new > >
 	static auto test(int) -> BooleanTrue;
 
 	template< typename T >
@@ -29,7 +29,7 @@ struct HasOperatorNewTester0 {
 };
 
 struct HasOperatorNewTester1 {
-	template< typename T, typename = HasOperatorNewHelper< void *(*)(std::size_t, std::nothrow_t const &), &T::operator new > >
+	template< typename T, typename _TDummy = HasOperatorNewHelper< void *(*)(std::size_t, std::nothrow_t const &), &T::operator new > >
 	static auto test(int) -> BooleanTrue;
 
 	template< typename T >
@@ -37,7 +37,7 @@ struct HasOperatorNewTester1 {
 };
 
 struct HasOperatorNewTester2 {
-	template< typename T, typename = HasOperatorNewHelper< void *(*)(std::size_t, void *), &T::operator new > >
+	template< typename T, typename _TDummy = HasOperatorNewHelper< void *(*)(std::size_t, void *), &T::operator new > >
 	static auto test(int) -> BooleanTrue;
 
 	template< typename T >
@@ -45,7 +45,7 @@ struct HasOperatorNewTester2 {
 };
 
 struct HasOperatorNewTester3 {
-	template< typename T, typename = HasOperatorNewHelper< void *(*)(std::size_t), &T::operator new [] > >
+	template< typename T, typename _TDummy = HasOperatorNewHelper< void *(*)(std::size_t), &T::operator new [] > >
 	static auto test(int) -> BooleanTrue;
 
 	template< typename T >
@@ -53,7 +53,7 @@ struct HasOperatorNewTester3 {
 };
 
 struct HasOperatorNewTester4 {
-	template< typename T, typename = HasOperatorNewHelper< void *(*)(std::size_t, std::nothrow_t const &), &T::operator new []  > >
+	template< typename T, typename _TDummy = HasOperatorNewHelper< void *(*)(std::size_t, std::nothrow_t const &), &T::operator new []  > >
 	static auto test(int) -> BooleanTrue;
 
 	template< typename T >
@@ -61,28 +61,21 @@ struct HasOperatorNewTester4 {
 };
 
 struct HasOperatorNewTester5 {
-	template< typename T, typename = HasOperatorNewHelper< void *(*)(std::size_t, void *), &T::operator new []  > >
+	template< typename T, typename _TDummy = HasOperatorNewHelper< void *(*)(std::size_t, void *), &T::operator new []  > >
 	static auto test(int) -> BooleanTrue;
 
 	template< typename T >
 	static auto test(...) -> BooleanFalse;
 };
 
-template< typename T > using HasOperatorNew0 = decltype(HasOperatorNewTester0::test<T>(nullptr));
-template< typename T > using HasOperatorNew1 = decltype(HasOperatorNewTester1::test<T>(nullptr));
-template< typename T > using HasOperatorNew2 = decltype(HasOperatorNewTester2::test<T>(nullptr));
-template< typename T > using HasOperatorNew3 = decltype(HasOperatorNewTester3::test<T>(nullptr));
-template< typename T > using HasOperatorNew4 = decltype(HasOperatorNewTester4::test<T>(nullptr));
-template< typename T > using HasOperatorNew5 = decltype(HasOperatorNewTester5::test<T>(nullptr));
-
 template< typename T >
 using HasOperatorNew = BooleanOr<
-	HasOperatorNew0<T>,
-	HasOperatorNew1<T>,
-	HasOperatorNew2<T>,
-	HasOperatorNew3<T>,
-	HasOperatorNew4<T>,
-	HasOperatorNew5<T>
+	decltype(HasOperatorNewTester0::test<T>(nullptr)),
+	decltype(HasOperatorNewTester1::test<T>(nullptr)),
+	decltype(HasOperatorNewTester2::test<T>(nullptr)),
+	decltype(HasOperatorNewTester3::test<T>(nullptr)),
+	decltype(HasOperatorNewTester4::test<T>(nullptr)),
+	decltype(HasOperatorNewTester5::test<T>(nullptr))
 >;
 
 } // namespace TypeTraits
@@ -97,7 +90,8 @@ using HasOperatorNew = BooleanOr<
  * 如果 \em T 重载了 \em new 操作符，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct HasOperatorNew : BooleanRewrapPositive< Detail::TypeTraits::HasOperatorNew<T> > {};
+struct HasOperatorNew : BooleanRewrapPositive< Detail::TypeTraits::HasOperatorNew<T> > {
+};
 
 /**
  * @brief HasOperatorNew 的否定
@@ -105,7 +99,8 @@ struct HasOperatorNew : BooleanRewrapPositive< Detail::TypeTraits::HasOperatorNe
  * @see BR::HasOperatorNew
  */
 template< typename T >
-struct NoOperatorNew : BooleanRewrapNegative< Detail::TypeTraits::HasOperatorNew<T> > {};
+struct NoOperatorNew : BooleanRewrapNegative< Detail::TypeTraits::HasOperatorNew<T> > {
+};
 
 #if defined(BR_CXX14)
 

@@ -9,7 +9,7 @@
 #include <libbr/config.hpp>
 #include <libbr/utility/bool_constant.hpp>
 #include <libbr/type_operate/bool.hpp>
-#include <libbr/type_traits/is_integer.hpp>
+#include <libbr/type_traits/is_integral.hpp>
 #include <libbr/type_traits/is_floating_point.hpp>
 
 namespace BR {
@@ -18,7 +18,7 @@ namespace Detail {
 namespace TypeTraits {
 
 template< typename T >
-using IsArithmetic = BooleanOr< IsInteger<T>, IsFloatingPoint<T> >;
+using IsArithmetic = BooleanOr< IsIntegral<T>, IsFloatingPoint<T> >;
 
 } // namespace TypeTraits
 } // namespace Detail
@@ -34,7 +34,8 @@ using IsArithmetic = BooleanOr< IsInteger<T>, IsFloatingPoint<T> >;
  * 如果 \em T 是算术类型(整型类型或浮点类型)，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsArithmetic : BooleanRewrapPositive< Detail::TypeTraits::IsArithmetic<T> > {};
+struct IsArithmetic : BooleanRewrapPositive< Detail::TypeTraits::IsArithmetic<T> > {
+};
 
 /**
  * @brief IsArithmetic 的否定
@@ -42,7 +43,8 @@ struct IsArithmetic : BooleanRewrapPositive< Detail::TypeTraits::IsArithmetic<T>
  * @see IsArithmetic
  */
 template< typename T >
-struct NotArithmetic : BooleanRewrapNegative< Detail::TypeTraits::IsArithmetic<T> > {};
+struct NotArithmetic : BooleanRewrapNegative< Detail::TypeTraits::IsArithmetic<T> > {
+};
 
 #if defined(BR_CXX14)
 

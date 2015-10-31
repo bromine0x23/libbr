@@ -10,8 +10,8 @@
 #include <libbr/utility/bool_constant.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/remove_const_volatile.hpp>
-#include <libbr/type_traits/is_integer.hpp>
 #include <libbr/type_traits/is_enum.hpp>
+#include <libbr/type_traits/is_integral.hpp>
 
 namespace BR {
 
@@ -25,7 +25,7 @@ struct IsUnsignedBasic {
 };
 
 template< typename T >
-using IsUnsigned = BooleanAnd< BooleanOr< IsInteger<T>, IsEnum<T> >, BooleanConstant< IsUnsignedBasic<T>::value > >;
+using IsUnsigned = BooleanAnd< BooleanOr< IsIntegral<T>, IsEnum<T> >, BooleanConstant< IsUnsignedBasic<T>::value > >;
 
 } // namespace TypeTraits
 } // namespace Detail

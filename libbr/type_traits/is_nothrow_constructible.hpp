@@ -20,7 +20,7 @@ namespace TypeTraits {
 #if defined(BR_IS_NOTHROW_CONSTRUCTIBLE)
 
 template< typename T, typename... TArgs >
-using IsNothrowConstructible = BooleanConstant< BR_IS_NOTHROW_CONSTRUCTIBLE(T, TArgs...) >
+using IsNothrowConstructible = BooleanConstant< BR_IS_NOTHROW_CONSTRUCTIBLE(T, TArgs...) >;
 
 #else
 

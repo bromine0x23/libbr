@@ -41,7 +41,8 @@ template<> struct IsIntegerBasic< UInt128 > : BooleanTrue {};
 #endif // BR_HAS_INT128
 
 template< typename T >
-struct IsInteger : IsIntegerBasic< RemoveConstVolatile<T> > {};
+struct IsInteger : IsIntegerBasic< RemoveConstVolatile<T> > {
+};
 
 } // namespace TypeTraits
 } // namespace Detail
@@ -49,8 +50,8 @@ struct IsInteger : IsIntegerBasic< RemoveConstVolatile<T> > {};
 /**
  * @brief 检查 \em T 是否是整型类型
  * @tparam T 待检查类型
- * @see IntegerConstant
- * @see NotInteger
+ * @see BR::IntegerConstant
+ * @see BR::NotInteger
  *
  * 如果 \em T 是整型类型(\em bool、\em char、\em char16_t、\em char32_t、\em wchar_t、\em short、\em int、\em long、<em>long long</em>及扩展整型类型，包括 \em signed 和 \em unsigned 和带CV修饰的版本)，
  * 那么封装的值为 \em true ；否则为 \em false
@@ -61,7 +62,7 @@ struct IsInteger : BooleanRewrapPositive< Detail::TypeTraits::IsInteger<T> > {};
 /**
  * @brief IsInteger 的否定
  * @tparam T 待检查类型
- * @see IsInteger
+ * @see BR::IsInteger
  */
 template< typename T >
 struct NotInteger : BooleanRewrapNegative< Detail::TypeTraits::IsInteger<T> > {};
@@ -71,8 +72,8 @@ struct NotInteger : BooleanRewrapNegative< Detail::TypeTraits::IsInteger<T> > {}
 /**
  * @brief IsInteger 的模板变量版本
  * @tparam T 待检查类型
- * @see IsInteger
- * @see not_integer
+ * @see BR::IsInteger
+ * @see BR::not_integer
  */
 template< typename T >
 constexpr auto is_integer = bool_constant< IsInteger<T> >;
@@ -80,8 +81,8 @@ constexpr auto is_integer = bool_constant< IsInteger<T> >;
 /**
  * @brief NotInteger 的模板变量版本
  * @tparam T 待检查类型
- * @see NotInteger
- * @see is_integer
+ * @see BR::NotInteger
+ * @see BR::is_integer
  */
 template< typename T >
 constexpr auto not_integer = bool_constant< NotInteger<T> >;

@@ -10,8 +10,8 @@ BooleanOr< \
 		IsFundamental< TLhsNoCV >, \
 		IsFundamental< TRhsNoCV >, \
 		BooleanOr< \
-			NotInteger< TLhsNoRef >, \
-			NotInteger< TRhsNoRef > \
+			NotIntegral< TLhsNoRef >, \
+			NotIntegral< TRhsNoRef > \
 		> \
 	>, \
 	/* TLhs == fundamental && TRhs == pointer */ \
@@ -34,6 +34,6 @@ BooleanOr< \
 
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_traits/is_fundamental.hpp>
-#include <libbr/type_traits/is_integer.hpp>
+#include <libbr/type_traits/is_integral.hpp>
 #include <libbr/type_traits/is_pointer.hpp>
 #include <libbr/type_traits/detail/has_binary_operator.inc>
