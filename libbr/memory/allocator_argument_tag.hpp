@@ -4,8 +4,9 @@
 
 namespace BR {
 
-struct AllocatorArgumentTag {};
+struct AllocatorArgumentTag {
+};
 
-constexpr static auto allocator_argument_tag = AllocatorArgumentTag();
+constexpr auto allocator_argument_tag = AllocatorArgumentTag();
 
 } // namespace BR

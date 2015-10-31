@@ -1,21 +1,20 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/type.hpp>
+#include <libbr/functional/unary_functor.hpp>
+#include <libbr/type_operate/types.hpp>
 
 namespace BR {
 
 template< typename T >
-inline static T * address_of(T & t) noexcept {
+inline auto address_of(T & t) noexcept -> T * {
 	return reinterpret_cast< T * >(&const_cast< char & >(reinterpret_cast< char const volatile & >(t)));
 }
 
 template< typename T >
-struct AddressOf {
+struct AddressOf : public UnaryFunctor< T & > {
 	using Result = T *;
-	using Argument = T &;
-	using Arguments = Types< Argument >;
-	Result operator()(Argument x) const {
+	auto operator()(T & x) const -> Result {
 		return address_of(x);
 	}
 };

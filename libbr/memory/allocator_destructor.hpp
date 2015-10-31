@@ -1,19 +1,20 @@
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/functional/unary_functor.hpp>
 #include <libbr/type_traits/allocator_traits.hpp>
 
 namespace BR {
 
 template< typename Allocator >
-class AllocatorDestructor {
+class AllocatorDestructor : public UnaryFunctor< typename AllocatorTraits<Allocator>::Pointer > {
 
-	using Traits = BR::AllocatorTraits<Allocator>;
+	using Traits = AllocatorTraits<Allocator>;
 
 public:
-
 	using Pointer = typename Traits::Pointer;
-	using Size    = typename Traits::Size;
+
+	using Size = typename Traits::Size;
 
 public:
 	AllocatorDestructor(Allocator & allocator, Size size) noexcept : m_allocator(allocator), m_size(size) {}
@@ -24,6 +25,7 @@ public:
 
 private:
 	Allocator & m_allocator;
+
 	Size m_size;
 };
 

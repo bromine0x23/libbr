@@ -5,10 +5,10 @@
 #include <libbr/type_operate/add_pointer.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/conditional.hpp>
-#include <libbr/type_operate/extent.hpp>
-#include <libbr/type_operate/is_array.hpp>
-#include <libbr/type_operate/is_void.hpp>
 #include <libbr/type_operate/remove_extent.hpp>
+#include <libbr/type_traits/extent.hpp>
+#include <libbr/type_traits/is_array.hpp>
+#include <libbr/type_traits/is_void.hpp>
 #include <libbr/type_traits/pointer_traits.hpp>
 #include <libbr/utility/swap.hpp>
 
