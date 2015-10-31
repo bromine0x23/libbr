@@ -23,22 +23,30 @@ namespace BignumHelper {
 /**
  * @see BignumBasic::positive
  */
-// constexpr static auto positive = BignumBasic::positive;
+constexpr static auto positive() -> decltype(BignumBasic::positive()) {
+	return BignumBasic::positive();
+}
 
 /**
  * @see BignumBasic::negative
  */
-// constexpr static auto negative = BignumBasic::negative;
+constexpr static auto negative() -> decltype(BignumBasic::negative()) {
+	return BignumBasic::negative();
+}
 
 /**
  * @see BignumBasic::absolute
  */
-// constexpr static auto absolute = BignumBasic::absolute;
+constexpr static auto absolute() -> decltype(BignumBasic::absolute()) {
+	return BignumBasic::absolute();
+}
 
 /**
  * @see BignumBasic::complement
  */
-// constexpr static auto complement = BignumBasic::complement;
+constexpr static auto complement() -> decltype(BignumBasic::complement()) {
+	return BignumBasic::complement();
+}
 
 /**
  * @see BignumBasic::value()

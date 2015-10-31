@@ -13,12 +13,12 @@
 #include <libbr/math/detail/bignum_basic.hpp>
 #include <libbr/math/detail/bignum_helper.hpp>
 
+#include <libbr/container/pair.hpp>
 #include <libbr/exception/out_of_range_exception.hpp>
 #include <libbr/math/relation.hpp>
 #include <libbr/math/sign.hpp>
 #include <libbr/utility/current_function.hpp>
 #include <libbr/utility/move.hpp>
-#include <libbr/utility/pair.hpp>
 #include <libbr/utility/swap.hpp>
 
 #include <string>
@@ -42,7 +42,9 @@ private:
 	struct NotAllocate {};
 
 	// constexpr static auto not_allocate = NotAllocate();
-	static NotAllocate const not_allocate;
+	constexpr static NotAllocate not_allocate() {
+		return NotAllocate();
+	}
 
 private:
 	BignumData m_data;
@@ -51,21 +53,21 @@ public:
 	/**
 	 * @brief 默认构造函数，置0
 	 */
-	Bignum() : Bignum(not_allocate) {
+	Bignum() : Bignum(not_allocate()) {
 		BignumAlgorithm::set_zero(m_data);
 	}
 
 	/**
 	 * @brief 复制构造函数
 	 */
-	Bignum(Bignum const & Y) : Bignum(not_allocate) {
+	Bignum(Bignum const & Y) : Bignum(not_allocate()) {
 		BignumAlgorithm::copy(m_data, Y.m_data);
 	}
 
 	/**
 	 * @brief 移动构造函数
 	 */
-	Bignum(Bignum && Y) : Bignum(not_allocate) {
+	Bignum(Bignum && Y) : Bignum(not_allocate()) {
 		BignumAlgorithm::swap(m_data, Y.m_data);
 	}
 
@@ -73,58 +75,58 @@ public:
 	 * @brief 以整型初始化
 	 */
 	//@{
-	explicit Bignum(signed char v) : Bignum(not_allocate) {
+	explicit Bignum(signed char v) : Bignum(not_allocate()) {
 		BignumAlgorithm::set_sint(m_data, v);
 	}
 
-	explicit Bignum(unsigned char v) : Bignum(not_allocate) {
+	explicit Bignum(unsigned char v) : Bignum(not_allocate()) {
 		BignumAlgorithm::set_uint(m_data, v);
 	}
 
-	explicit Bignum(signed short v) : Bignum(not_allocate) {
+	explicit Bignum(signed short v) : Bignum(not_allocate()) {
 		BignumAlgorithm::set_sint(m_data, v);
 	}
 
-	explicit Bignum(unsigned short v) : Bignum(not_allocate) {
+	explicit Bignum(unsigned short v) : Bignum(not_allocate()) {
 		BignumAlgorithm::set_uint(m_data, v);
 	}
 
-	explicit Bignum(signed int v) : Bignum(not_allocate) {
+	explicit Bignum(signed int v) : Bignum(not_allocate()) {
 		BignumAlgorithm::set_sint(m_data, v);
 	}
 
-	explicit Bignum(unsigned int v) : Bignum(not_allocate) {
+	explicit Bignum(unsigned int v) : Bignum(not_allocate()) {
 		BignumAlgorithm::set_uint(m_data, v);
 	}
 
-	explicit Bignum(signed long v) : Bignum(not_allocate) {
+	explicit Bignum(signed long v) : Bignum(not_allocate()) {
 		BignumAlgorithm::set_sint(m_data, v);
 	}
 
-	explicit Bignum(unsigned long v) : Bignum(not_allocate) {
+	explicit Bignum(unsigned long v) : Bignum(not_allocate()) {
 		BignumAlgorithm::set_uint(m_data, v);
 	}
 
-	explicit Bignum(signed long long v) : Bignum(not_allocate) {
+	explicit Bignum(signed long long v) : Bignum(not_allocate()) {
 		BignumAlgorithm::set_sint(m_data, v);
 	}
 
-	explicit Bignum(unsigned long long v) : Bignum(not_allocate) {
+	explicit Bignum(unsigned long long v) : Bignum(not_allocate()) {
 		BignumAlgorithm::set_uint(m_data, v);
 	}
 
 #if defined(BR_HAS_INT128) || defined(BR_DOXYGEN)
-	explicit Bignum(SInt128 v) : Bignum(not_allocate) {
+	explicit Bignum(SInt128 v) : Bignum(not_allocate()) {
 		BignumAlgorithm::set_sint(m_data, v);
 	}
 
-	explicit Bignum(UInt128 v) : Bignum(not_allocate) {
+	explicit Bignum(UInt128 v) : Bignum(not_allocate()) {
 		BignumAlgorithm::set_uint(m_data, v);
 	}
 #endif
 
 	template< Digit v >
-	explicit Bignum(Value<v> _dummy) : Bignum(not_allocate) {
+	explicit Bignum(Value<v> _dummy) : Bignum(not_allocate()) {
 		BignumAlgorithm::set_d(m_data, v);
 	}
 	//@}
@@ -132,7 +134,7 @@ public:
 	/**
 	 * @brief 初始化为2的幂
 	 */
-	Bignum(Power2 p) : Bignum(not_allocate) {
+	Bignum(Power2 p) : Bignum(not_allocate()) {
 		BignumAlgorithm::set_power2(m_data, p.v);
 	}
 
@@ -446,7 +448,7 @@ public:
 	 */
 	Bignum operator+() const {
 		Bignum Z(*this);
-		return Z.operator=(positive);
+		return Z.operator=(positive());
 	}
 
 	/**
@@ -454,7 +456,7 @@ public:
 	 */
 	Bignum operator-() const {
 		Bignum Z(*this);
-		return Z.operator=(negative);
+		return Z.operator=(negative());
 	}
 
 	/**
@@ -462,7 +464,7 @@ public:
 	 */
 	Bignum abs() const {
 		Bignum Z(*this);
-		return Z.operator=(absolute);
+		return Z.operator=(absolute());
 	}
 
 	/**
@@ -470,53 +472,53 @@ public:
 	 */
 	Bignum operator~() const {
 		Bignum Z(*this);
-		return Z.operator=(complement);
+		return Z.operator=(complement());
 	}
 
 public:
 	Bignum operator+(Bignum const & Y) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::add(m_data, Y.m_data, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator-(Bignum const & Y) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::sub(m_data, Y.m_data, Z.m_data);
 		return Z;
 	}
 	Bignum operator*(Bignum const & Y) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::mul(m_data, Y.m_data, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator/(Bignum const & Y) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::div(m_data, Y.m_data, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator%(Bignum const & Y) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::mod(m_data, Y.m_data, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator|(Bignum const & Y) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::bor(m_data, Y.m_data, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator&(Bignum const & Y) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::band(m_data, Y.m_data, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator^(Bignum const & Y) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::bxor(m_data, Y.m_data, Z.m_data);
 		return Z;
 	}
@@ -563,157 +565,157 @@ public:
 
 public:
 	Bignum operator+(UDigit d) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::add_ud(m_data, d, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator+(SDigit d) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::add_sd(m_data, d, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator-(UDigit d) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::sub_ud(m_data, d, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator-(SDigit d) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::sub_sd(m_data, d, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator*(UDigit d) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::mul_ud(m_data, d, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator*(SDigit d) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::mul_sd(m_data, d, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator/(UDigit d) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::div_ud(m_data, d, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator/(SDigit d) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::div_sd(m_data, d, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator|(UDigit d) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::bor_ud(m_data, d, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator|(SDigit d) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::bor_sd(m_data, d, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator&(UDigit d) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::band_ud(m_data, d, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator&(SDigit d) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::band_sd(m_data, d, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator^(UDigit d) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::bxor_ud(m_data, d, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator^(SDigit d) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::bxor_sd(m_data, d, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator<<(UDigit n) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::lsh_ud(m_data, n, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator<<(SDigit n) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::lsh_sd(m_data, n, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator>>(UDigit n) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::rsh_ud(m_data, n, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator>>(SDigit n) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::rsh_sd(m_data, n, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator<<(Bits<UDigit> bn) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::lsh_b_ud(m_data, bn.v, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator<<(Bits<SDigit> bn) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::lsh_b_sd(m_data, bn.v, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator>>(Bits<UDigit> bn) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::rsh_b_ud(m_data, bn.v, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator>>(Bits<SDigit> bn) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::rsh_b_sd(m_data, bn.v, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator<<(Digits<UDigit> dn) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::lsh_d_ud(m_data, dn.v, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator<<(Digits<SDigit> dn) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::lsh_d_sd(m_data, dn.v, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator>>(Digits<UDigit> dn) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::rsh_d_ud(m_data, dn.v, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator>>(Digits<SDigit> dn) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::rsh_d_sd(m_data, dn.v, Z.m_data);
 		return Z;
 	}
@@ -857,13 +859,13 @@ public:
 	}
 
 	Bignum operator*(Value<2> _dummy) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::mul2(m_data, Z.m_data);
 		return Z;
 	}
 
 	Bignum operator/(Value<2> _dummy) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::div2(m_data, Z.m_data);
 		return Z;
 	}
@@ -883,7 +885,7 @@ public:
 	}
 
 	Bignum operator^(Value<2>) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::sqr(m_data, Z.m_data);
 		return Z;
 	}
@@ -894,7 +896,7 @@ public:
 	}
 
 	Bignum operator^(Exponent n) const {
-		Bignum Z(not_allocate);
+		Bignum Z(not_allocate());
 		BignumAlgorithm::power(m_data, n.v, Z.m_data);
 		return Z;
 	}
@@ -912,13 +914,13 @@ public:
 	}
 
 	Pair<Bignum, Digit > div_mod(UDigit d) const {
-		Bignum Q(not_allocate);
+		Bignum Q(not_allocate());
 		auto r = BignumAlgorithm::div_mod_ud(m_data, d, Q.m_data);
 		return make_pair(move(Q), r);
 	}
 
 	Pair<Bignum, Digit > div_mod(SDigit d) const {
-		Bignum Q(not_allocate);
+		Bignum Q(not_allocate());
 		auto r = BignumAlgorithm::div_mod_sd(m_data, d, Q.m_data);
 		return make_pair(move(Q), r);
 	}
@@ -976,7 +978,7 @@ public:
 	}
 
 private:
-	Bignum(decltype(not_allocate)) {
+	Bignum(NotAllocate _dummy) {
 		BignumAlgorithm::init(m_data);
 	}
 

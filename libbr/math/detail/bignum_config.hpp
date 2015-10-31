@@ -62,12 +62,12 @@ public:
 	/**
 	 * @brief \em digit 的位宽
 	 */
-	constexpr static auto BIT_PER_DIGIT = sizeof(Digit) * BIT_PER_BYTE;
+	constexpr static Size BIT_PER_DIGIT = sizeof(Digit) * BIT_PER_BYTE;
 
 	/**
 	 * @brief Bignum 的基数
 	 */
-	constexpr static auto RADIX = DDigit(1) << BIT_PER_DIGIT;
+	constexpr static DDigit RADIX = DDigit(1) << BIT_PER_DIGIT;
 
 protected:
 

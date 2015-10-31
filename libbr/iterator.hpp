@@ -3,7 +3,7 @@
 #include <libbr/config.hpp>
 
 #include <libbr/iterator/category.hpp>
-#include <libbr/iterator/iterator.hpp>
+#include <libbr/iterator/basic_iterator.hpp>
 
 #include <libbr/type_traits/iterator_traits.hpp>
 

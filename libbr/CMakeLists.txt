@@ -28,7 +28,7 @@ if (MSVC_IDE)
 	source_group("Header Files\\config" FILES ${LIBBR_HEADERS_CONFIG})
 endif()
 
-set(LIBBR_COMPONENTS assert container exception iterator math memory type_operate type_traits utility)
+set(LIBBR_COMPONENTS algorithm assert container exception functional iterator math memory type_operate type_traits utility)
 
 foreach(component ${LIBBR_COMPONENTS})
 
@@ -41,8 +41,8 @@ foreach(component ${LIBBR_COMPONENTS})
 	endif()
 
 	if (MSVC_IDE)
-		source_group("Source Files\\${component}" FILES ${LIBBR_SOURCES_${component}})
-		source_group("Header Files\\${component}" FILES ${LIBBR_HEADERS_${component}})
+		source_group("Source Files\\${component}" FILES LIBBR_SOURCES_${component})
+		source_group("Header Files\\${component}" FILES LIBBR_HEADERS_${component})
 	endif()
 endforeach(component)
 

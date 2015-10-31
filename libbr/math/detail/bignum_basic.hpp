@@ -52,28 +52,30 @@ public:
 	/**
 	 * @brief 用于表示一元+操作
 	 */
-	// constexpr static auto positive = Positive();
-	static Positive const positive;
+	constexpr static Positive positive() {
+		return Positive();
+	}
 
 	/**
 	 * @brief 用于表示一元-操作
 	 */
-	// constexpr static auto negative = Negative();
-	static Negative const negative;
+	constexpr static Negative negative() {
+		return Negative();
+	}
 
 	/**
 	 * @brief 用于设置 Bignum 为其绝对值
 	 */
-	// constexpr static auto absolute = Absolute();
-	static Absolute const absolute;
+	constexpr static Absolute absolute() {
+		return Absolute();
+	}
 
 	/**
 	 * @brief 用于设置 Bignum 为其补数
 	 */
-	// constexpr static auto complement = Complement();
-	static Complement complement;
-
-public:
+	constexpr static Complement complement() {
+		return Complement();
+	}
 
 	/**
 	 * @brief 包装编译期常量 \em v 以提示 Bignum

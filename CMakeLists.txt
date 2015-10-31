@@ -34,7 +34,7 @@ set(LIBBR_CXX_FLAGS "")
 #===============================================================================
 
 if (MSVC)
-	# ignore
+	add_definitions(/wd4819)
 else()
 	if (LIBBR_ENABLE_CXX14)
 		set(LIBBR_STD_VERSION c++14)

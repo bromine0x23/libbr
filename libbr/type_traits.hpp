@@ -14,8 +14,8 @@
 #include <libbr/type_traits/cv_traits.hpp>
 #include <libbr/type_traits/integer_traits.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>
+#include <libbr/type_traits/member_pointer_traits.hpp>
 #include <libbr/type_traits/pointer_traits.hpp>
-#include <libbr/type_traits/use_allocator.hpp>
 
 #include <libbr/type_traits/intrinsics.hpp>
 
@@ -23,6 +23,7 @@
 #include <libbr/type_traits/is_array.hpp>
 #include <libbr/type_traits/is_arithmetic.hpp>
 #include <libbr/type_traits/is_base_of.hpp>
+#include <libbr/type_traits/is_callable.hpp>
 #include <libbr/type_traits/is_class.hpp>
 #include <libbr/type_traits/is_compound.hpp>
 #include <libbr/type_traits/is_const.hpp>
@@ -32,7 +33,7 @@
 #include <libbr/type_traits/is_floating_point.hpp>
 #include <libbr/type_traits/is_function.hpp>
 #include <libbr/type_traits/is_fundamental.hpp>
-#include <libbr/type_traits/is_integer.hpp>
+#include <libbr/type_traits/is_integral.hpp>
 #include <libbr/type_traits/is_literal_type.hpp>
 #include <libbr/type_traits/is_lvalue_reference.hpp>
 #include <libbr/type_traits/is_member_function_pointer.hpp>
@@ -112,6 +113,7 @@
 #include <libbr/type_traits/has_operator_bit_or_assign.hpp>
 #include <libbr/type_traits/has_operator_bit_xor.hpp>
 #include <libbr/type_traits/has_operator_bit_xor_assign.hpp>
+#include <libbr/type_traits/has_operator_bit_not.hpp>
 #include <libbr/type_traits/has_operator_left_shift.hpp>
 #include <libbr/type_traits/has_operator_left_shift_assign.hpp>
 #include <libbr/type_traits/has_operator_right_shift.hpp>
@@ -127,7 +129,6 @@
 #include <libbr/type_traits/has_operator_logical_or.hpp>
 #include <libbr/type_traits/has_operator_unary_plus.hpp>
 #include <libbr/type_traits/has_operator_unary_minus.hpp>
-#include <libbr/type_traits/has_operator_complement.hpp>
 #include <libbr/type_traits/has_operator_dereference.hpp>
 #include <libbr/type_traits/has_operator_prefix_increment.hpp>
 #include <libbr/type_traits/has_operator_prefix_decrement.hpp>
@@ -137,3 +138,4 @@
 
 #include <libbr/type_traits/is_swappable.hpp>
 #include <libbr/type_traits/is_nothrow_swappable.hpp>
+#include <libbr/type_traits/is_use_allocator.hpp>

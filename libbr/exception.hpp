@@ -7,6 +7,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
+
 #include <libbr/exception/exception.hpp>
 
 #include <libbr/exception/logic_exception.hpp>
