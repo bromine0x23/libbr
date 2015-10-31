@@ -4,14 +4,18 @@
 
 namespace BR {
 
-struct InputIteratorTag  {};
+struct IteratorTag {};
 
-struct OutputIteratorTag {};
+struct InputIteratorTag : public IteratorTag  {};
 
-struct ForwardIteratorTag : InputIteratorTag {};
+struct OutputIteratorTag : public IteratorTag {};
 
-struct BidirectionalIteratorTag : ForwardIteratorTag {};
+struct ForwardIteratorTag : public InputIteratorTag {};
 
-struct RandomAccessIteratorTag : BidirectionalIteratorTag {};
+struct BidirectionalIteratorTag : public ForwardIteratorTag {};
+
+struct RandomAccessIteratorTag : public BidirectionalIteratorTag {};
+
+struct ContiguousIteratorTag : public RandomAccessIteratorTag {};
 
 } // namespace BR

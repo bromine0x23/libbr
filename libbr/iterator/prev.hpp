@@ -1,21 +1,15 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/iterator/category.hpp>
-#include <libbr/type_traits/iterator_traits.hpp>
 #include <libbr/iterator/advance.hpp>
 #include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/is_base_of.hpp>
 
 namespace BR {
 
-template<
-	typename TIterator,
-	typename = EnableIf< IsBaseOf< BidirectionalIteratorTag, IteratorCategory< TIterator > > >
->
-inline TIterator prev(TIterator current, IteratorDifference< TIterator > step = 1)  {
+template< typename TIterator, typename = EnableIf< typename IteratorTraits<TIterator>::IsBidirectionalIterator > >
+inline auto prev(TIterator current, typename IteratorTraits<TIterator>::Difference step = 1) -> TIterator {
 	advance(current, -step);
-	return step;
+	return current;
 }
 
 } // namespace BR

@@ -10,14 +10,14 @@ namespace Detail {
 namespace Iterator {
 
 template< typename TIterator >
-inline void advance(TIterator & iterator, IteratorDifference< TIterator > step, InputIteratorTag) {
+inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step, InputIteratorTag _dummy) {
 	for (; step > 0; --step) {
 		++iterator;
 	}
 }
 
 template< typename TIterator >
-inline void advance(TIterator & iterator, IteratorDifference< TIterator > step, BidirectionalIteratorTag) {
+inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step, BidirectionalIteratorTag _dummy) {
 	if (step >= 0) {
 		for (; step > 0; --step) {
 			++iterator;
@@ -30,7 +30,7 @@ inline void advance(TIterator & iterator, IteratorDifference< TIterator > step, 
 }
 
 template< typename TIterator >
-inline void advance(TIterator & iterator, IteratorDifference< TIterator > step, RandomAccessIteratorTag) {
+inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step, RandomAccessIteratorTag _dummy) {
 	iterator += step;
 }
 
@@ -38,8 +38,8 @@ inline void advance(TIterator & iterator, IteratorDifference< TIterator > step, 
 } // namespace Detail
 
 template< typename TIterator >
-inline void advance(TIterator & iterator, IteratorDifference< TIterator > step) {
-	Detail::Iterator::advance(iterator, step, IteratorCategory< TIterator >());
+inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step) {
+	Detail::Iterator::advance(iterator, step, IteratorTraits<TIterator>::category());
 }
 
 } // namespace BR

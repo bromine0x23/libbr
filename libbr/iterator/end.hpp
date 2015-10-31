@@ -5,7 +5,7 @@
 namespace BR {
 
 template< typename T, Size S >
-inline BR_CONSTEXPR_AFTER_CXX11 T * end(CArray< T, S > & array) {
+BR_CONSTEXPR_AFTER_CXX11 inline auto end(CArray< T, S > & array) -> T * {
 	return array + S;
 }
 

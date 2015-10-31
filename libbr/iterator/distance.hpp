@@ -10,25 +10,25 @@ namespace Detail {
 namespace Iterator {
 
 template< typename TIterator >
-inline IteratorDifference< TIterator > distance(TIterator & head, TIterator & tail, RandomAccessIteratorTag) {
-	return tail - head;
-}
-
-template< typename TIterator >
-inline IteratorDifference< TIterator > distance(TIterator & head, TIterator & tail, InputIteratorTag) {
-	IteratorDifference< TIterator > result(0);
+inline auto distance(TIterator head, TIterator tail, InputIteratorTag _dummy) -> typename IteratorTraits<TIterator>::Difference {
+	typename IteratorTraits<TIterator>::Difference result(0);
 	for (; head != tail; ++head) {
 		++result;
 	}
 	return result;
 }
 
+template< typename TIterator >
+inline auto distance(TIterator head, TIterator tail, RandomAccessIteratorTag _dummy) -> typename IteratorTraits<TIterator>::Difference {
+	return tail - head;
+}
+
 } // namespace Iterator
 } // namespace Detail
 
 template< typename TIterator >
-inline IteratorDifference< TIterator > distance(TIterator & head, TIterator & tail) {
-	Detail::Iterator::distance(head, tail, IteratorCategory< TIterator >());
+inline auto distance(TIterator head, TIterator tail) -> typename IteratorTraits<TIterator>::Difference {
+	return Detail::Iterator::distance(head, tail, IteratorTraits<TIterator>::category());
 }
 
 } // namespace BR

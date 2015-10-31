@@ -6,7 +6,7 @@
 namespace BR {
 
 template< typename T, Size S >
-inline BR_CONSTEXPR_AFTER_CXX11 T * rend(CArray< T, S > & array) {
+BR_CONSTEXPR_AFTER_CXX11 inline auto rend(CArray< T, S > & array) -> T * {
 	return ReverseIterator< T * >(array);
 }
 

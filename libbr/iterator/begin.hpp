@@ -5,17 +5,17 @@
 namespace BR {
 
 template< typename T, Size S >
-inline BR_CONSTEXPR_AFTER_CXX11 T * begin(CArray< T, S > & array) {
+constexpr inline auto begin(CArray< T, S > & array) -> T * {
 	return array;
 }
 
 template< typename TContainer >
-inline auto begin(TContainer & container) -> decltype(container.begin()) {
+BR_CONSTEXPR_AFTER_CXX11 inline auto begin(TContainer & container) -> decltype(container.begin()) {
 	return container.begin();
 }
 
 template< typename TContainer >
-inline auto begin(TContainer const & container) -> decltype(container.begin()) {
+BR_CONSTEXPR_AFTER_CXX11 inline auto begin(TContainer const & container) -> decltype(container.begin()) {
 	return container.begin();
 }
 

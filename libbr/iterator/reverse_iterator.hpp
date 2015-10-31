@@ -1,140 +1,143 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/iterator/iterator.hpp>
+#include <libbr/iterator/basic_iterator.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>
 #include <libbr/memory/address_of.hpp>
 
 namespace BR {
 
 template< typename TIterator >
-class ReverseIterator : public BR::Iterator<
-	IteratorCategory  < TIterator >,
-	IteratorValue     < TIterator >,
-	IteratorDifference< TIterator >,
-	IteratorPointer   < TIterator >,
-	IteratorReference < TIterator >
-> {
+class ReverseIterator;
+
+template< typename TIterator >
+inline auto make_reverse_iterator(TIterator iterator) -> ReverseIterator<TIterator> {
+	return ReverseIterator<TIterator>(iterator);
+}
+
+template< typename TIterator >
+class ReverseIterator : public BasicIterator {
+public:
+	using Iterator = TIterator;
+
 private:
-	using Base = BR::Iterator<
-		IteratorCategory  < TIterator >,
-		IteratorValue     < TIterator >,
-		IteratorDifference< TIterator >,
-		IteratorPointer   < TIterator >,
-		IteratorReference < TIterator >
-	>;
+	using Traits = IteratorTraits<Iterator>;
 
 public:
-	using Iterator   = TIterator;
-	using Difference = typename Base::Difference;
-	using Pointer    = typename Base::Pointer;
-	using Reference  = typename Base::Reference;
+	using Category = typename Traits::Category;
 
-	ReverseIterator() : m_iterator() {}
+	using Element = typename Traits::Element;
 
-	explicit ReverseIterator(Iterator iterator) : m_iterator(iterator) {}
+	using Pointer = typename Traits::Pointer;
+
+	using Reference = typename Traits::Reference;
+
+	using Difference = typename Traits::Difference;
+
+	ReverseIterator() : m_iterator() {
+	}
+
+	explicit ReverseIterator(Iterator iterator) : m_iterator(iterator) {
+	}
 
 	template< typename TOtherIterator >
-	ReverseIterator(ReverseIterator< TOtherIterator > const & iterator) : m_iterator(iterator.base()) {}
+	ReverseIterator(ReverseIterator<TOtherIterator> const & iterator) : m_iterator(iterator.base()) {
+	}
 
-	Iterator base() const {
+	auto base() const noexcept -> Iterator {
 		return m_iterator;
 	}
 
-	Reference operator*() const {
+	auto operator*() const -> Reference {
 		Iterator current = m_iterator;
 		return *--current;
 	}
 
-	Pointer operator->() const {
+	auto operator->() const -> Pointer {
 		return address_of(operator*());
 	}
 
-	ReverseIterator & operator++() { --m_iterator; return *this; }
-	ReverseIterator & operator--() { ++m_iterator; return *this; }
+	auto operator++() -> ReverseIterator & {
+		--m_iterator;
+		return *this;
+	}
 
-	ReverseIterator operator++(int) { ReverseIterator current(*this); --current; return current; }
-	ReverseIterator operator--(int) { ReverseIterator current(*this); ++current; return current; }
+	auto operator--() -> ReverseIterator & {
+		++m_iterator;
+		return *this;
+	}
 
-	ReverseIterator operator+(Difference n) const { return ReverseIterator(m_iterator - n); }
-	ReverseIterator operator-(Difference n) const { return ReverseIterator(m_iterator + n); }
+	auto operator++(int) -> ReverseIterator {
+		ReverseIterator current(*this);
+		--current;
+		return current;
+	}
 
-	ReverseIterator & operator+=(Difference n) { m_iterator -= n; return *this; }
-	ReverseIterator & operator-=(Difference n) { m_iterator += n; return *this; }
+	auto operator--(int) -> ReverseIterator {
+		ReverseIterator current(*this);
+		++current;
+		return current;
+	}
 
-	Reference operator[](Difference i) const { return m_iterator[-i - 1]; }
+	auto operator+(Difference n) const -> ReverseIterator {
+		return ReverseIterator(m_iterator - n);
+	}
+
+	auto operator-(Difference n) const -> ReverseIterator {
+		return ReverseIterator(m_iterator + n);
+	}
+
+	template< typename TOtherIterator >
+	auto operator-(ReverseIterator<TOtherIterator> y) const -> Difference {
+		return y.base() - base();
+	}
+
+	auto operator+=(Difference n) -> ReverseIterator & {
+		m_iterator -= n;
+		return *this;
+	}
+
+	auto operator-=(Difference n) -> ReverseIterator & {
+		m_iterator += n;
+		return *this;
+	}
+
+	auto operator[](Difference i) const -> Reference {
+		return m_iterator[-i - 1];
+	}
+
+	template< typename TOtherIterator >
+	auto operator==(ReverseIterator<TOtherIterator> const & y) const -> bool {
+		return base() == y.base();
+	}
+
+	template< typename TOtherIterator >
+	auto operator!=(ReverseIterator<TOtherIterator> const & y) const -> bool {
+		return !(*this == y);
+	}
+
+	template< typename TOtherIterator >
+	auto operator<(ReverseIterator<TOtherIterator> const & y) const -> bool {
+		return base() > y.base();
+	}
+
+	template< typename TOtherIterator >
+	auto operator>(ReverseIterator<TOtherIterator> const & y) const -> bool {
+		return y < *this;
+	}
+
+	template< typename TOtherIterator >
+	auto operator<=(ReverseIterator<TOtherIterator> const & y) const -> bool {
+		return !(y < *this);
+	}
+
+	template< typename TOtherIterator >
+	auto operator>=(ReverseIterator<TOtherIterator> const & y) const -> bool {
+		return !(*this < y);
+	}
 
 private:
 	Iterator m_iterator;
-}; // class ReverseIterator< TIterator >
-
-template< typename TIterator0, typename TIterator1 >
-inline bool operator==(
-	ReverseIterator< TIterator0 > const & x,
-	ReverseIterator< TIterator1 > const & y
-) {
-	return x.base() == y.base();
-}
-
-template< typename TIterator0, typename TIterator1 >
-inline bool operator!=(
-	ReverseIterator< TIterator0 > const & x,
-	ReverseIterator< TIterator1 > const & y
-) {
-	return x.base() != y.base();
-}
-
-template< typename TIterator0, typename TIterator1 >
-inline bool operator<(
-	ReverseIterator< TIterator0 > const & x,
-	ReverseIterator< TIterator1 > const & y
-) {
-	return x.base() > y.base();
-}
-
-template< typename TIterator0, typename TIterator1 >
-inline bool operator>(
-	ReverseIterator< TIterator0 > const & x,
-	ReverseIterator< TIterator1 > const & y
-) {
-	return x.base() < y.base();
-}
-
-template< typename TIterator0, typename TIterator1 >
-inline bool operator<=(
-	ReverseIterator< TIterator0 > const & x,
-	ReverseIterator< TIterator1 > const & y
-) {
-	return x.base() >= y.base();
-}
-
-template< typename TIterator0, typename TIterator1 >
-inline bool operator>=(
-	ReverseIterator< TIterator0 > const & x,
-	ReverseIterator< TIterator1 > const & y
-) {
-	return x.base() <= y.base();
-}
-
-template< typename TIterator >
-inline ReverseIterator< TIterator > operator+(
-	IteratorDifference< TIterator > const & n,
-	ReverseIterator< TIterator > const & x
-) {
-	return ReverseIterator< TIterator >(x.base() - n);
-}
-
-template< typename TIterator0, typename TIterator1 >
-inline IteratorDifference< TIterator0 > operator-(
-	ReverseIterator< TIterator0 > const & x,
-	ReverseIterator< TIterator1 > const & y
-) {
-	return y.base() - x.base();
-}
-
-template< typename TIterator >
-inline ReverseIterator< TIterator > make_reverse_iterator(TIterator iterator) {
-	return ReverseIterator< TIterator >(iterator);
-}
+}; // class ReverseIterator<TIterator>
 
 } // namespace BR

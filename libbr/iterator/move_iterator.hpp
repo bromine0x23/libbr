@@ -1,141 +1,174 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/iterator/iterator.hpp>
+#include <libbr/algorithm/copy.hpp>
+#include <libbr/algorithm/copy_backward.hpp>
+#include <libbr/algorithm/move.hpp>
+#include <libbr/algorithm/move_backward.hpp>
+#include <libbr/iterator/basic_iterator.hpp>
 #include <libbr/type_operate/add_rvalue_reference.hpp>
 #include <libbr/type_operate/conditional.hpp>
-#include <libbr/type_operate/is_reference.hpp>
+#include <libbr/type_traits/is_reference.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>
 #include <libbr/utility/move.hpp>
 
 namespace BR {
 
 template< typename TIterator >
-class MoveIterator : public BR::Iterator<
-	IteratorCategory  < TIterator >,
-	IteratorValue     < TIterator >,
-	IteratorDifference< TIterator >,
-	IteratorPointer   < TIterator >,
-	IteratorReference < TIterator >
-> {
-private:
-	using Base = BR::Iterator<
-		IteratorCategory  < TIterator >,
-		IteratorValue     < TIterator >,
-		IteratorDifference< TIterator >,
-		IteratorPointer   < TIterator >,
-		IteratorReference < TIterator >
-	>;
+class MoveIterator;
 
+template< typename TIterator >
+inline auto make_move_iterator(TIterator iterator) -> MoveIterator<TIterator> {
+	return  MoveIterator<TIterator>(iterator);
+}
+
+template< typename TIterator >
+class MoveIterator : public BasicIterator {
 public:
-	using Iterator   = TIterator;
-	using Difference = typename Base::Difference;
-	using Pointer    = typename Base::Pointer;
-	using Reference  = Conditional<
-		IsReference< typename Base::Reference >,
-		typename Base::Reference,
-		AddRValueReference< typename Base::Reference >
-	>;
+	using Iterator = TIterator;
 
 private:
-	Iterator m_iterator;
+	using Traits = IteratorTraits<Iterator>;
 
 public:
-	MoveIterator() : m_iterator() {}
+	using Category = typename Traits::Category;
 
-	explicit MoveIterator(Iterator iterator) : m_iterator(iterator) {}
+	using Element = typename Traits::Element;
+
+	using Pointer = typename Traits::Pointer;
+
+	using Reference = Conditional<
+		IsReference< typename Traits::Reference >,
+		typename Traits::Reference,
+		AddRValueReference< typename Traits::Reference >
+	>;
+
+	using Difference = typename Traits::Difference;
+
+public:
+	MoveIterator() : m_iterator() {
+	}
+
+	explicit MoveIterator(Iterator iterator) : m_iterator(iterator) {
+	}
 
 	template< typename TOtherIterator >
-	MoveIterator(MoveIterator< TOtherIterator > const & iterator) : m_iterator(iterator.base()) {}
+	MoveIterator(MoveIterator<TOtherIterator> const & iterator) : m_iterator(iterator.base()) {
+	}
 
-	Iterator base() const {
+	auto base() const noexcept -> Iterator {
 		return m_iterator;
 	}
 
-	Reference operator*() const {
-		return static_cast< Reference >(*m_iterator);
+	auto operator*() const -> Reference {
+		return static_cast<Reference>(*m_iterator);
 	}
 
-	Pointer operator->() const {
+	auto operator->() const -> Pointer {
 		return &*m_iterator;
 	}
 
-	MoveIterator & operator++() { ++m_iterator; return *this; }
-	MoveIterator & operator--() { --m_iterator; return *this; }
+	auto operator++() -> MoveIterator & {
+		++m_iterator;
+		return *this;
+	}
 
-	MoveIterator operator++(int) { MoveIterator current(*this); ++m_iterator; return current; }
-	MoveIterator operator--(int) { MoveIterator current(*this); --m_iterator; return current; }
+	auto operator--() -> MoveIterator & {
+		--m_iterator;
+		return *this;
+	}
 
-	MoveIterator operator+(Difference n) const { return MoveIterator(m_iterator + n); }
-	MoveIterator operator-(Difference n) const { return MoveIterator(m_iterator - n); }
+	auto operator++(int) -> MoveIterator {
+		MoveIterator current(*this);
+		++m_iterator;
+		return current;
+	}
 
-	MoveIterator & operator+=(Difference n) { m_iterator += n; return *this; }
-	MoveIterator & operator-=(Difference n) { m_iterator -= n; return *this; }
+	auto operator--(int) -> MoveIterator {
+		MoveIterator current(*this);
+		--m_iterator;
+		return current;
+	}
 
-	Reference operator[](Difference i) const { return move(m_iterator[i]); }
-}; // class MoveIterator< TIterator >
+	auto operator+(Difference n) const -> MoveIterator {
+		return MoveIterator(m_iterator + n);
+	}
 
-template< typename TIterator0, typename TIterator1 >
-inline bool operator==(
-	MoveIterator< TIterator0 > const & x,
-	MoveIterator< TIterator1 > const & y
-) {
-	return x.base() == y.base();
+	auto operator-(Difference n) const -> MoveIterator {
+		return MoveIterator(m_iterator - n);
+	}
+
+	template< typename TOtherIterator >
+	auto operator-(MoveIterator<TOtherIterator> y) const -> Difference {
+		return y.base() - base();
+	}
+
+	auto operator+=(Difference n) -> MoveIterator & {
+		m_iterator += n;
+		return *this;
+	}
+
+	auto operator-=(Difference n) -> MoveIterator & {
+		m_iterator -= n;
+		return *this;
+	}
+
+	auto operator[](Difference i) const -> Reference {
+		return move(m_iterator[i]);
+	}
+
+	template< typename TOtherIterator >
+	auto operator==(MoveIterator<TOtherIterator> const & y) const -> bool {
+		return base() == y.base();
+	}
+
+	template< typename TOtherIterator >
+	auto operator!=(MoveIterator<TOtherIterator> const & y) const -> bool {
+		return !(*this == y);
+	}
+
+	template< typename TOtherIterator >
+	auto operator<(MoveIterator<TOtherIterator> const & y) const -> bool {
+		return base() > y.base();
+	}
+
+	template< typename TOtherIterator >
+	auto operator>(MoveIterator<TOtherIterator> const & y) const -> bool {
+		return y < *this;
+	}
+
+	template< typename TOtherIterator >
+	auto operator<=(MoveIterator<TOtherIterator> const & y) const -> bool {
+		return !(y < *this);
+	}
+
+	template< typename TOtherIterator >
+	auto operator>=(MoveIterator<TOtherIterator> const & y) const -> bool {
+		return !(*this < y);
+	}
+
+private:
+	Iterator m_iterator;
+}; // class MoveIterator<TIterator>
+
+template< typename TInputIterator, typename TOutputIterator >
+inline auto copy(MoveIterator<TInputIterator> first, MoveIterator<TInputIterator> last, TOutputIterator result) -> TOutputIterator {
+	return copy(first.base(), last.base(), result);
 }
 
-template< typename TIterator0, typename TIterator1 >
-inline bool operator!=(
-	MoveIterator< TIterator0 > const & x,
-	MoveIterator< TIterator1 > const & y
-) {
-	return x.base() != y.base();
+template< typename TBidirectionalIterator0, typename TBidirectionalIterator1 >
+inline auto copy_backward(MoveIterator<TBidirectionalIterator0> first, MoveIterator<TBidirectionalIterator0> last, TBidirectionalIterator1 result) -> TBidirectionalIterator1 {
+	return copy_backward(first.base(), last.base(), result);
 }
 
-template< typename TIterator0, typename TIterator1 >
-inline bool operator<(
-	MoveIterator< TIterator0 > const & x,
-	MoveIterator< TIterator1 > const & y
-) {
-	return x.base() < y.base();
+template< typename TInputIterator, typename TOutputIterator >
+inline auto move(MoveIterator<TInputIterator> first, MoveIterator<TInputIterator> last, TOutputIterator result) -> TOutputIterator {
+	return move(first.base(), last.base(), result);
 }
 
-template< typename TIterator0, typename TIterator1 >
-inline bool operator>(
-	MoveIterator< TIterator0 > const & x,
-	MoveIterator< TIterator1 > const & y
-) {
-	return x.base() > y.base();
-}
-
-template< typename TIterator0, typename TIterator1 >
-inline bool operator<=(
-	MoveIterator< TIterator0 > const & x,
-	MoveIterator< TIterator1 > const & y
-) {
-	return x.base() <= y.base();
-}
-
-template< typename TIterator0, typename TIterator1 >
-inline bool operator>=(
-	MoveIterator< TIterator0 > const & x,
-	MoveIterator< TIterator1 > const & y
-) {
-	return x.base() >= y.base();
-}
-
-template< typename TIterator >
-inline MoveIterator< TIterator > operator+(IteratorDifference< TIterator > n, MoveIterator< TIterator > const & x) {
-	return MoveIterator< TIterator >(x.base() + n);
-}
-
-template< typename TIterator0, typename TIterator1 >
-inline IteratorDifference< TIterator0 > operator-(MoveIterator< TIterator0 > const & x, MoveIterator< TIterator1 > const & y)  {
-	return x.base() - y.base();
-}
-
-template< typename TIterator >
-inline MoveIterator< TIterator > make_move_iterator(TIterator iterator)  {
-	return  MoveIterator< TIterator >(iterator);
+template< typename TBidirectionalIterator0, typename TBidirectionalIterator1 >
+inline auto move_backward(MoveIterator<TBidirectionalIterator0> first, MoveIterator<TBidirectionalIterator0> last, TBidirectionalIterator1 result) -> TBidirectionalIterator1 {
+	return move_backward(first.base(), last.base(), result);
 }
 
 } // namespace BR
