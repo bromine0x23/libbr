@@ -21,7 +21,7 @@ using ExceptionPointer = std::exception_ptr;
 
 using NestedException = std::nested_exception;
 
-inline TerminateHandler set_terminate(TerminateHandler handler) noexcept {
+inline auto set_terminate(TerminateHandler handler) noexcept -> TerminateHandler {
 	return std::set_terminate(handler);
 }
 
@@ -35,17 +35,17 @@ TerminateHandler get_terminate() noexcept {
 	std::terminate();
 }
 
-inline bool uncaught_exception() noexcept {
+inline auto uncaught_exception() noexcept -> bool {
 	return std::uncaught_exception();
 }
 
 #if defined(BR_CPP17)
-inline int uncaught_exceptions() noexcept {
+inline auto uncaught_exceptions() noexcept -> int {
 	return std::uncaught_exceptions();
 }
 #endif
 
-inline ExceptionPointer current_exception() noexcept {
+inline auto current_exception() noexcept -> ExceptionPointer {
 	return std::current_exception();
 }
 
@@ -54,7 +54,7 @@ inline ExceptionPointer current_exception() noexcept {
 }
 
 template< typename TException >
-inline ExceptionPointer make_exception_pointer(TException exception) noexcept {
+inline auto make_exception_pointer(TException exception) noexcept -> ExceptionPointer {
 	return std::make_exception_ptr(exception);
 }
 
@@ -75,13 +75,12 @@ class Exception : STDException {
 public:
 	using Message = CString<NChar>;
 
-	Exception() noexcept {};
+	Exception() noexcept {
+	};
 
-	virtual ~Exception() noexcept;
+	virtual ~Exception() noexcept override;
 
-	virtual Message message() const noexcept;
-
-	virtual Message what() const noexcept;
+	auto what() const noexcept -> Message override;
 };
 
 } // namespace BR

@@ -20,7 +20,8 @@ class RuntimeException : public Exception {
 public:
 	using BaseException = Exception;
 
-	RuntimeException() : RuntimeException("BR::RuntimeException") {};
+	RuntimeException() : RuntimeException("BR::RuntimeException") {
+	};
 
 	RuntimeException(RuntimeException const & exception) noexcept;
 
@@ -28,11 +29,11 @@ public:
 
 	explicit RuntimeException(CString<NChar> message);
 
-	virtual ~RuntimeException() noexcept;
+	~RuntimeException() noexcept override;
 
-	RuntimeException & operator=(RuntimeException const & exception) noexcept;
+	auto operator=(RuntimeException const & exception) noexcept -> RuntimeException &;
 
-	virtual Message message() const noexcept;
+	auto what() const noexcept -> Message override;
 
 private:
 	std::string m_message;

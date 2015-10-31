@@ -20,7 +20,8 @@ class LogicException : public Exception {
 public:
 	using BaseException = RuntimeException;
 
-	LogicException() : LogicException("BR::LogicException") {}
+	LogicException() : LogicException("BR::LogicException") {
+	}
 
 	LogicException(LogicException const &) noexcept;
 
@@ -28,11 +29,11 @@ public:
 
 	explicit LogicException(CString<NChar> message);
 
-	virtual ~LogicException() noexcept;
+	~LogicException() noexcept override;
 
-	LogicException & operator=(LogicException const &) noexcept;
+	auto operator=(LogicException const &) noexcept -> LogicException &;
 
-	virtual Message message() const noexcept;
+	auto what() const noexcept -> Message override;
 
 private:
 	std::string m_message;

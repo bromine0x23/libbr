@@ -18,13 +18,16 @@ class ArgumentException : public LogicException {
 public:
 	using BaseException = LogicException;
 
-	ArgumentException() : BaseException("BR::ArgumentException") {};
+	ArgumentException() : BaseException("BR::ArgumentException") {
+	};
 
-	explicit ArgumentException(std::string const & message) : BaseException(message) {};
+	explicit ArgumentException(std::string const & message) : BaseException(message) {
+	};
 
-	explicit ArgumentException(CString<NChar> message) : BaseException(message) {};
+	explicit ArgumentException(CString<NChar> message) : BaseException(message) {
+	};
 
-	virtual ~ArgumentException() noexcept;
+	~ArgumentException() noexcept override;
 };
 
 } // namespace BR
