@@ -8,6 +8,12 @@
 
 #include <libbr/config.hpp>
 #include <libbr/type_operate/type.hpp>
+#include <libbr/type_operate/bool.hpp>
+#include <libbr/type_operate/enable_if.hpp>
+#include <libbr/type_operate/remove_reference.hpp>
+#include <libbr/type_traits/is_base_of.hpp>
+#include <libbr/type_traits/is_callable.hpp>
+#include <libbr/type_traits/member_pointer_traits.hpp>
 #include <libbr/utility/make_value.hpp>
 #include <libbr/utility/forward.hpp>
 
@@ -18,77 +24,94 @@ namespace TypeOperate {
 
 struct CallResultTest {
 	template< typename TFunc, typename... TArgs >
-	constexpr static auto test(
-		TFunc && func,
-		TArgs && ... args
-	) -> decltype(forward<TFunc>(func)(forward<TArgs>(args) ...));
+	static auto test(TFunc && func, TArgs && ... args) -> decltype(forward<TFunc>(func)(forward<TArgs>(args) ...));
 
-	template< typename TBase, typename TMemPtr, typename TDerived >
-	constexpr static auto test(
-		TMemPtr TBase::*mem_ptr,
-		TDerived && derived
-	) -> decltype(forward<TDerived>(derived).*mem_ptr);
+	template<
+		typename TMemberPtr,
+		typename TDerived,
+		typename _TDummy = EnableIf<
+			BooleanAnd<
+				typename MemberPointerTraits< RemoveReference<TMemberPtr> >::IsObjectPointer,
+				IsBaseOf< typename MemberPointerTraits< RemoveReference<TMemberPtr> >::Class, RemoveReference<TDerived> >
+			>
+		>
+	>
+	static auto test(TMemberPtr && mem_ptr, TDerived && derived) -> decltype(forward<TDerived>(derived).*mem_ptr);
 
-	template< typename TMemFuncPtr, typename TPtr >
-	constexpr static auto test(
-		TMemFuncPtr && mem_func_ptr,
-		TPtr && ptr
-	) -> decltype((*forward<TPtr>(ptr)).*forward<TMemFuncPtr>(mem_func_ptr));
+	template<
+		typename TMemberPtr,
+		typename TDerived,
+		typename _TDummy = EnableIf<
+			BooleanAnd<
+				typename MemberPointerTraits< RemoveReference<TMemberPtr> >::IsObjectPointer,
+				NotBaseOf< typename MemberPointerTraits< RemoveReference<TMemberPtr> >::Class, RemoveReference<TDerived> >
+			>
+		>
+	>
+	static auto test(TMemberPtr && mem_ptr, TDerived && derived) -> decltype((*forward<TDerived>(derived)).*mem_ptr);
 
-	template< typename TBase, typename TMemPtr, typename TDerived, typename... TArgs >
-	constexpr static auto test(
-		TMemPtr TBase::*mem_ptr,
-		TDerived && derived,
-		TArgs && ... args
-	) -> decltype((forward<TDerived>(derived).*mem_ptr)(forward<TArgs>(args) ...));
+	template<
+		typename TMemberPtr,
+		typename TDerived,
+		typename ... TArgs,
+		typename _TDummy = EnableIf<
+			BooleanAnd<
+				typename MemberPointerTraits< RemoveReference<TMemberPtr> >::IsFunctionPointer,
+				IsBaseOf< typename MemberPointerTraits< RemoveReference<TMemberPtr> >::Class, RemoveReference<TDerived> >
+			>
+		>
+	>
+	static auto test(TMemberPtr && mem_ptr, TDerived && derived, TArgs && ... args) -> decltype((forward<TDerived>(derived).*mem_ptr)(forward<TArgs>(args) ...));
 
-	template< typename TMemFuncPtr, typename TPtr, typename... TArgs >
-	constexpr static auto test(
-		TMemFuncPtr && mem_func_ptr,
-		TPtr && ptr,
-		TArgs && ... args
-	) -> decltype(((*forward<TPtr>(ptr)).*forward<TMemFuncPtr>(mem_func_ptr))(forward<TArgs>(args) ...));
+	template<
+		typename TMemberPtr,
+		typename TDerived,
+		typename ... TArgs,
+		typename _TDummy = EnableIf<
+			BooleanAnd<
+				typename MemberPointerTraits< RemoveReference<TMemberPtr> >::IsFunctionPointer,
+				NotBaseOf< typename MemberPointerTraits< RemoveReference<TMemberPtr> >::Class, RemoveReference<TDerived> >
+			>
+		>
+	>
+	static auto test(TMemberPtr && mem_ptr, TDerived && derived, TArgs && ... args) -> decltype(((*forward<TDerived>(derived)).*mem_ptr)(forward<TArgs>(args) ...));
 };
 
-template< typename TFunc, typename... TArgs >
-using CallResultBasic = decltype(CallResultTest::test(make_rvalue<TFunc>(), make_rvalue<TArgs>() ...));
+template< typename TCallable, typename... TArgs >
+using CallResultBasic = decltype(CallResultTest::test(make_rvalue<TCallable>(), make_rvalue<TArgs>() ...));
+
+template< typename T, bool is_callable = IsCallable<T>::value >
+struct TypeCallResult;
+
+template< typename TCallable >
+struct TypeCallResult< TCallable, true > : TypeWrapper< CallResultBasic< TCallable > > {};
 
 template< typename T >
-struct TypeCallResult {
-	static_assert(sizeof(T *) != sizeof(nullptr), "Type T must be callable.");
+struct TypeCallResult< T, false > {
 };
-
-template< typename TResult, typename... TArgs >
-struct TypeCallResult<TResult(TArgs...)> : TypeWrapper< CallResultBasic< TResult(TArgs...), TArgs... > > {};
-
-template< typename TResult, typename... TArgs >
-struct TypeCallResult<TResult(TArgs..., ...)> : TypeWrapper< CallResultBasic< TResult(TArgs...), TArgs... > > {};
-
-template< typename TResult, typename... TArgs >
-struct TypeCallResult<TResult(*)(TArgs...)> : TypeWrapper< CallResultBasic< TResult(TArgs...), TArgs... > > {};
-
-template< typename TResult, typename... TArgs >
-struct TypeCallResult<TResult(*)(TArgs..., ...)> : TypeWrapper< CallResultBasic< TResult(TArgs...), TArgs... > > {};
 
 } // namespace TypeOperate
 } // namespace Detail
 
 /**
- * @brief 获取函数的调用结果类型
- * @tparam T 需要是可调用对象
+ * @brief 获取调用结果类型
+ * @tparam T 可调用对象
+ * @tparam TArgs 调用参数
  * @see TypeWrapper
  *
  * 包装调用 \em T 类型变量的的返回值类型
  */
-template< typename T >
-struct TypeCallResult : TypeRewrap< Detail::TypeOperate::TypeCallResult<T> > {};
+template< typename TCallable, typename... TArgs >
+struct TypeCallResult : TypeRewrap< Detail::TypeOperate::TypeCallResult< TCallable, TArgs... > > {
+};
 
 /**
  * @brief TypeCallResult 的简写版本
- * @tparam Tn
+ * @tparam T 可调用对象
+ * @tparam TArgs 调用参数
  * @see TypeCallResult
  */
-template< typename T >
-using CallResult = TypeUnwrap< TypeCallResult<T> >;
+template< typename TCallable, typename... TArgs >
+using CallResult = TypeUnwrap< TypeCallResult< TCallable, TArgs... > >;
 
 } // namespace BR

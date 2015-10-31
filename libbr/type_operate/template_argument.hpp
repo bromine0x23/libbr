@@ -2,6 +2,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/type_operate/type.hpp>
+#include <libbr/type_operate/types.hpp>
 
 namespace BR {
 
@@ -11,18 +12,15 @@ struct TypeTemplateArguments {
 };
 
 template< template< typename ... > class TemplateClass, typename... TArgs >
-struct TypeTemplateArguments< TemplateClass< TArgs... > > : TypeWrapper< Types< TArgs... > >  {};
+struct TypeTemplateArguments< TemplateClass< TArgs... > > : TypeWrapper< Types< TArgs... > >  {
+};
 
 template< typename T >
 using TemplateArguments = TypeUnwrap< TypeTemplateArguments<T> >;
 
 template< typename T >
-struct TypeFirstTemplateArgument {
-	static_assert(sizeof(T *) != sizeof(nullptr), "Type must be template class.");
+struct TypeFirstTemplateArgument : TypeWrapper< typename TemplateArguments<T>::template Get<0> > {
 };
-
-template< template< typename, typename... > class TemplateClass, typename TArg0, typename... TArgs >
-struct TypeFirstTemplateArgument< TemplateClass< TArg0, TArgs... > > : TypeWrapper< TArg0 >  {};
 
 template< typename T >
 using FirstTemplateArgument = TypeUnwrap< TypeFirstTemplateArgument<T> >;

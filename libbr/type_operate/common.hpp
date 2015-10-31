@@ -42,8 +42,6 @@ struct TypeCommon< T0, T1, Tn... > : TypeCommon< TypeUnwrap< TypeCommon< T0, T1 
  * @brief 获取能兼容所给各个类型的类型
  * @tparam Tn
  * @see TypeWrapper
- *
- * TODO
  */
 template< typename... Tn >
 struct TypeCommon: TypeRewrap< Detail::TypeOperate::TypeCommon< Tn... > > {};

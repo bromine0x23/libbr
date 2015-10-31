@@ -24,7 +24,7 @@ template< bool condition, typename T = void >
 struct TypeEnableIfByValue;
 
 template< typename T >
-struct TypeEnableIfByValue< true, T > : TypeWrapper< T > {};
+struct TypeEnableIfByValue< true, T > : TypeWrapper<T> {};
 
 template< typename T >
 struct TypeEnableIfByValue< false, T > {};
@@ -45,7 +45,7 @@ template< typename T >
 struct TypeDisableIfValue< true, T > {};
 
 template< typename T >
-struct TypeDisableIfValue< false, T > : TypeWrapper< T > {};
+struct TypeDisableIfValue< false, T > : TypeWrapper<T> {};
 
 /**
  * @brief TypeEnableIfByValue 使用布尔常量包装类的版本

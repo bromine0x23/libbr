@@ -12,7 +12,7 @@
 #include <libbr/type_operate/remove_const_volatile.hpp>
 #include <libbr/type_operate/type.hpp>
 #include <libbr/type_traits/is_enum.hpp>
-#include <libbr/type_traits/is_integer.hpp>
+#include <libbr/type_traits/is_integral.hpp>
 #include <libbr/type_traits/is_same.hpp>
 #include <libbr/type_traits/is_signed.hpp>
 
@@ -22,7 +22,8 @@ namespace Detail {
 namespace TypeOperate {
 
 template< typename T >
-struct TypeMakeSignedInteger : TypeWrapper< T > {};
+struct TypeMakeSignedInteger : TypeWrapper<T> {
+};
 
 template<> struct TypeMakeSignedInteger<          char      > : TypeWrapper< signed char      > {};
 template<> struct TypeMakeSignedInteger< unsigned char      > : TypeWrapper< signed char      > {};
@@ -56,14 +57,14 @@ struct TypeMakeSignedBasic : Conditional<
 	IsSigned<T>,
 	TypeWrapper<T>,
 	Conditional<
-		IsInteger<T>,
+		IsIntegral<T>,
 		TypeMakeSignedInteger<T>,
 		TypeMakeSignedEnum< sizeof(T) >
 	>
 > {
 	static_assert(
 		BooleanAnd<
-			BooleanOr< IsInteger<T>, IsEnum<T> >,
+			BooleanOr< IsIntegral<T>, IsEnum<T> >,
 			NotSame< T, bool >
 		>::value,
 		"Type must be integer type (except bool), or an enumeration type."
@@ -71,7 +72,8 @@ struct TypeMakeSignedBasic : Conditional<
 };
 
 template< typename T >
-struct TypeMakeSigned : TypeMakeSignedBasic< RemoveConstVolatile<T> > {};
+struct TypeMakeSigned : TypeMakeSignedBasic< RemoveConstVolatile<T> > {
+};
 
 } // namespace TypeOperate
 } // namespace Detail
@@ -85,7 +87,8 @@ struct TypeMakeSigned : TypeMakeSignedBasic< RemoveConstVolatile<T> > {};
  * 包装整型类型或枚举类型 \em T 对应的的有符号整型类型
  */
 template< typename T >
-struct TypeMakeSigned : TypeRewrap< Detail::TypeOperate::TypeMakeSigned<T> > {};
+struct TypeMakeSigned : TypeRewrap< Detail::TypeOperate::TypeMakeSigned<T> > {
+};
 
 /**
  * @brief TypeMakeSigned 的简写版本

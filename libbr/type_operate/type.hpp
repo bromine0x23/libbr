@@ -20,6 +20,8 @@ struct TypeWrapper {
 	 * @brief 被包装类型
 	 */
 	using Type = T;
+
+	constexpr TypeWrapper() noexcept = default;
 };
 
 /**
@@ -35,12 +37,5 @@ using TypeUnwrap = typename TWrapper::Type;
  */
 template< typename TWrapper >
 using TypeRewrap = TypeWrapper< TypeUnwrap<TWrapper> >;
-
-/**
- * @brief 包装类型列表
- * @tparam T 被包装类型
- */
-template< typename ... T >
-struct Types {};
 
 } // namespace BR
