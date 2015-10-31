@@ -1,29 +1,39 @@
+/**
+ * @file
+ * @brief ForwardList
+ * @author Bromine0x23
+ * @since 2015/10/26
+ */
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/algorithm/lexicographical_compare.hpp>
+#include <libbr/container/compressed_pair.hpp>
+#include <libbr/container/initializer_list.hpp>
+#include <libbr/functional/equal.hpp>
+#include <libbr/functional/less.hpp>
+#include <libbr/iterator/basic_iterator.hpp>
 #include <libbr/iterator/category.hpp>
 #include <libbr/iterator/move_iterator.hpp>
 #include <libbr/iterator/next.hpp>
 #include <libbr/memory/address_of.hpp>
 #include <libbr/memory/allocator.hpp>
 #include <libbr/memory/allocator_destructor.hpp>
-#include <libbr/memory/scoped_pointer.hpp>
-#include <libbr/type_operate/add_const.hpp>
-#include <libbr/type_operate/add_lvalue_reference.hpp>
-#include <libbr/type_operate/add_pointer.hpp>
+#include <libbr/memory/unique_pointer.hpp>
+#include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/type.hpp>
+#include <libbr/type_operate/remove_const.hpp>
 #include <libbr/type_traits/allocator_traits.hpp>
-#include <libbr/type_traits/integer_traits.hpp>
 #include <libbr/type_traits/has_nothrow_default_constructor.hpp>
-#include "has_nothrow_move_assign.hpp"
-#include "has_nothrow_move_constructor.hpp"
-#include <libbr/type_traits/is_same.hpp>
+#include <libbr/type_traits/has_nothrow_move_assign.hpp>
+#include <libbr/type_traits/has_nothrow_move_constructor.hpp>
+#include <libbr/type_traits/integer_traits.hpp>
+#include <libbr/type_traits/is_nothrow_swappable.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>
 #include <libbr/type_traits/pointer_traits.hpp>
+#include <libbr/utility/enumerator.hpp>
+#include <libbr/utility/forward.hpp>
 #include <libbr/utility/move.hpp>
-#include <libbr/utility/initializer_list.hpp>
-#include <libbr/utility/compressed_pair.hpp>
 
 namespace BR {
 
@@ -31,146 +41,163 @@ template< typename TElement, typename TAllocator >
 class ForwardList;
 
 namespace Detail {
+namespace Container {
 namespace ForwardList {
 
-using namespace Iterator;
-using namespace Memory;
-using namespace TypeOperate;
-using namespace TypeTraits;
-
 template< typename TNodePointer >
-struct BasicNode;
+struct BasicNode {
+	using NodePointer = TNodePointer;
 
-template< typename TElement, class TVoidPointer >
+	BasicNode() : next(nullptr) {
+	}
+
+	NodePointer next;
+};
+
+template< typename TElement, typename TVoidPointer >
 struct Node;
 
-template< typename TNodePointer >
-class Iterator;
+template< typename TElement, typename TVoidPointer >
+using HeadNode = BasicNode< typename PointerTraits<TVoidPointer>::template Rebind< Node<TElement, TVoidPointer> > >;
+
+template< typename TElement, typename TVoidPointer >
+struct Node : public HeadNode< TElement, TVoidPointer > {
+	using Element = TElement;
+
+	Element element;
+};
 
 template< typename TNodeConstPointer >
 class ConstIterator;
 
-template< typename TElement, typename TAllocator >
-class Base;
-
 template< typename TNodePointer >
-struct BasicNode  {
-	using Pointer = TNodePointer;
-
-	HeadNode() : next(nullptr) {}
-
-	Pointer next;
-};
-
-template< typename TElement, class TVoidPointer >
-using HeadNode = BasicNode< PointerTraits<TVoidPointer>::Rebind< Node<TElement, TVoidPointer> > >;
-
-template< typename TElement, class TVoidPointer >
-struct Node : public HeadNode< TElement, TVoidPointer > {
-	using Element = TElement;
-	Element element;
-};
-
-template< typename TNodePointer >
-class Iterator {
+class Iterator : public BasicIterator {
+private:
 	using NodePointer = TNodePointer;
-	using NodePointerTraits = PointerTraits<NodePointer>;
+
+	using PointerTraits = BR::PointerTraits<NodePointer>;
+
+	using Node = typename PointerTraits::Element;
 
 	template< typename TElement, typename TAllocator >
-	friend class ForwardList;
+	friend class BR::ForwardList;
 
-	template< typename >
+	template< typename TNodeConstPointer >
 	friend class ConstIterator;
 
 public:
-	using Category   = ForwardIteratorTag;
-	using Element    = typename NodePointerTraits::Element::Element;
-	using Reference  = Element &;
-	using Difference = typename NodePointerTraits::Difference;
-	using Pointer    = typename NodePointerTraits::Rebind<Element>;
+	using Category = ForwardIteratorTag;
 
-	Iterator() noexcept : m_pointer(nullptr) {}
+	using Element = typename Node::Element;
 
-	Reference operator*() const {
-		return m_pointer->value;
+	using Pointer = typename PointerTraits::template Rebind<Element>;
+
+	using Reference = Element &;
+
+	using Difference = typename PointerTraits::Difference;
+
+	Iterator() noexcept : m_pointer(nullptr) {
 	}
 
-	Pointer operator->() const {
-		return PointerTraits<Pointer>::make_pointer(m_pointer->value);
+	auto operator*() const -> Reference {
+		return m_pointer->element;
 	}
 
-	Iterator & operator++() {
+	auto operator->() const -> Pointer {
+		return PointerTraits::make_pointer(m_pointer->element);
+	}
+
+	auto operator++() -> Iterator & {
 		m_pointer = m_pointer->next;
 		return *this;
 	}
 
-	Iterator & operator++(int) {
+	auto operator++(int) -> Iterator & {
 		Iterator temp(*this);
 		++(*this);
 		return *temp;
 	}
 
-	friend  bool operator==(Iterator const & x, Iterator const & y) {
-		return x.m_pointer == y.m_pointer;
+	auto operator==(Iterator const & y) const -> bool {
+		return m_pointer == y.m_pointer;
 	}
 
-	friend  bool operator!=(Iterator const & x, Iterator const & y) {
-		return !(x == y);
+	auto operator!=(Iterator const & y) const -> bool {
+		return !(*this == y);
 	}
 
 private:
-	explicit Iterator(NodePointer pointer) noexcept : m_pointer(pointer) {}
+	explicit Iterator(NodePointer pointer) noexcept : m_pointer(pointer) {
+	}
 
 private:
 	TNodePointer m_pointer;
 }; // class Iterator<TNodePointer>
 
 template< typename TNodeConstPointer >
-class ConstIterator {
-	using NodeConstPointer       = TNodeConstPointer;
-	using NodeConstPointerTraits = PointerTraits<NodeConstPointer>;
-	using Node                   = RemoveConst< NodeConstPointerTraits::Element >;
-	using NodePointer            = NodeConstPointerTraits::Rebind<Node>;
+class ConstIterator : BasicIterator {
+private:
+	using NodeConstPointer = TNodeConstPointer;
+
+	using PointerTraits = BR::PointerTraits<NodeConstPointer>;
+
+	using Node = RemoveConst< typename PointerTraits::Element >;
+
+	using NodePointer = typename PointerTraits::template Rebind<Node>;
 
 	template< typename TElement, typename TAllocator >
-	friend class ForwardList;
+	friend class BR::ForwardList;
 
 public:
-	using Category   = ForwardIteratorTag;
-	using Element    = typename Node::Element;
-	using Reference  = Element const &;
-	using Difference = typename NodeConstPointerTraits::Difference;
-	using Pointer    = typename NodeConstPointerTraits::Rebind<Element const>;
+	using Category = ForwardIteratorTag;
 
-	ConstIterator() noexcept : m_pointer(nullptr) {}
+	using Element = typename Node::Element;
 
-	ConstIterator(Iterator<NodePointer> iterator) noexcept : m_pointer(iterator.m_pointer) {}
+	using Pointer = typename PointerTraits::template Rebind<Element const>;
 
-	Reference operator*() const {
-		return m_pointer->value;
+	using Reference = Element const &;
+
+	using Difference = typename PointerTraits::Difference;
+
+	ConstIterator() noexcept : m_pointer(nullptr) {
 	}
 
-	Pointer operator->() const {
-		return PointerTraits<Pointer>::make_pointer(m_pointer->value);
+	ConstIterator(Iterator<NodePointer> iterator) noexcept : m_pointer(iterator.m_pointer) {
 	}
 
-	Iterator & operator++() {
+	auto operator*() const -> Reference {
+		return m_pointer->element;
+	}
+
+	auto operator->() const -> Pointer {
+		return PointerTraits::make_pointer(m_pointer->element);
+	}
+
+	auto operator++() -> ConstIterator & {
 		m_pointer = m_pointer->next;
 		return *this;
 	}
 
-	Iterator & operator++(int) {
-		Iterator temp(*this);
+	auto operator++(int) -> ConstIterator & {
+		ConstIterator temp(*this);
 		++(*this);
 		return *temp;
 	}
 
-	friend  bool operator==(ConstIterator const & x, ConstIterator const & y) {
-		return x.m_pointer == y.m_pointer;
+	auto operator==(ConstIterator const & y) const -> bool {
+		return m_pointer == y.m_pointer;
 	}
 
-	friend  bool operator!=(ConstIterator const & x, ConstIterator const & y) {
-		return !(x == y);
+	auto operator!=(ConstIterator const & y) const -> bool {
+		return !(*this == y);
+	}
+
+	auto operator==(Iterator<TNodeConstPointer> const  & y) const -> bool {
+		return m_pointer == y.m_pointer;
+	}
+
+	auto operator!=(Iterator<TNodeConstPointer> const  & y) const -> bool {
+		return !(*this == y);
 	}
 
 private:
@@ -180,42 +207,41 @@ private:
 	NodeConstPointer m_pointer;
 }; // class ConstIterator<TNodeConstPointer>
 
-template< typename TElement >
-inline bool operator==(Iterator<TElement> const  & x, ConstIterator<TElement> const & y) {
-	return x.node == y.node;
-}
-
-template<typename _Tp>
-inline bool operator!=(Iterator<TElement> const  & x, ConstIterator<TElement> const & y) {
-	return x.node != y.node;
-}
-
 template< typename TElement, typename TAllocator >
 class Base {
 protected:
-	using Element   = TElement;
+	using Element = TElement;
+
 	using Allocator = TAllocator;
 
-	using VoidPointer = typename AllocatorTraits<Allocator>::VoidPointer;
+	using AllocatorTraits = BR::AllocatorTraits<Allocator>;
 
-	using Node             = Node< Element , VoidPointer >;
-	using NodeAllocator    = typename AllocatorTraits<Allocator>::Rebind<Node>;
-	using NodeTraits       = AllocatorTraits<NodeAllocator>;
-	using NodePointer      = typename NodeTraits::Pointer;
-	using NodeConstPointer = typename NodeTraits::Pointer;
+	using VoidPointer = typename AllocatorTraits::VoidPointer;
 
-	using HeadNode          = HeadNode< Element, VoidPointer >;
-	using HeadNodeAllocator = typename AllocatorTraits<Allocator>::Rebind<HeadNode>;
-	using HeadNodeTraits    = AllocatorTraits<HeadNodeAllocator>;
-	using HeadNodePointer   = typename HeadNodeTraits::Pointer;
+	using Node = ForwardList::Node< Element, VoidPointer >;
 
-	using Iterator = Iterator<NodePointer>;
-	using ConstIterator = ConstIterator<NodePointer>;
+	using NodeAllocator = typename AllocatorTraits::template Rebind<Node>;
+
+	using NodeAllocatorTraits = BR::AllocatorTraits<NodeAllocator>;
+
+	using NodePointer = typename NodeAllocatorTraits::Pointer;
+
+	using NodeConstPointer = typename NodeAllocatorTraits::Pointer;
+
+	using HeadNode = ForwardList::HeadNode< Element, VoidPointer >;
+
+	using HeadNodeAllocator = typename AllocatorTraits::template Rebind<HeadNode>;
+
+	using HeadNodeAllocatorTraits = BR::AllocatorTraits<HeadNodeAllocator>;
+
+	using HeadNodePointer = typename HeadNodeAllocatorTraits::Pointer;
+
+	using Iterator = ForwardList::Iterator<NodePointer>;
+
+	using ConstIterator = ForwardList::ConstIterator<NodePointer>;
 
 public:
-	Base(Base && list) noexcept(
-		IsNothrowMoveConstructible<NodeAllocator>::value
-	) : m_impl(move(list.m_impl)) {
+	Base(Base && list) noexcept(HasNothrowMoveConstructor<NodeAllocator>()()) : m_impl(move(list.m_impl)) {
 		list.m_head()->next = nullptr;
 	}
 
@@ -231,51 +257,59 @@ public:
 	}
 
 	void swap(Base & list) noexcept(
-		!NodeTraits::IsPropagateOnContainerSwap::value || IsNothrowSwappable<NodeAllocator>::value
+		BooleanOr<
+			BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerSwap >,
+			IsNothrowSwappable<NodeAllocator>
+		>()()
 	) {
+		using BR::swap;
 		m_swap_allocator(m_allocator(), list.m_allocator());
-		using swap;
 		swap(m_head()->next, list.m_head()->next);
 	}
 
 protected:
 
-	Base() noexcept(HasNothrowDefaultConstructor<NodeAllocator>::value) : m_impl(HeadNode()) {}
-
-	Base(Allocator const & allocator) : m_impl(HeadNode(), NodeAllocator(allocator)) {}
-
-	NodePointer m_head() noexcept {
-		return static_cast<NodePointer>(PointerTraits<HeadNodePointer>::pointer_to(m_impl.first()));
+	Base() noexcept(HasNothrowDefaultConstructor<NodeAllocator>()) : m_impl(HeadNode()) {
 	}
 
-	NodeConstPointer m_head() const noexcept {
-		return static_cast<NodeConstPointer>(PointerTraits<HeadNodePointer>::pointer_to(const_cast<HeadNode &>(m_impl.first())));
+	Base(Allocator const & allocator) : m_impl(HeadNode(), NodeAllocator(allocator)) {
 	}
 
-	NodeAllocator & m_allocator() noexcept {
+	auto m_head() noexcept -> NodePointer {
+		return static_cast<NodePointer>(PointerTraits<HeadNodePointer>::make_pointer(m_impl.first()));
+	}
+
+	auto m_head() const noexcept -> NodeConstPointer {
+		return static_cast<NodeConstPointer>(PointerTraits<HeadNodePointer>::make_pointer(const_cast<HeadNode &>(m_impl.first())));
+	}
+
+	auto m_allocator() noexcept -> NodeAllocator & {
 		return m_impl.second();
 	}
 
-	NodeAllocator const & m_allocator() const noexcept {
+	auto m_allocator() const noexcept -> NodeAllocator const & {
 		return m_impl.second();
 	}
 
 	void m_copy_assign_allocate(Base const & list) {
-		m_copy_assign_allocate(list, NodeTraits::IsPropagateOnContainerCopyAssignment());
+		m_copy_assign_allocate(list, NodeAllocatorTraits::IsPropagateOnContainerCopyAssignment());
 	}
 
 	void m_move_assign_allocate(Base & list) noexcept(
-		!NodeTraits::IsPropagateOnContainerMoveAssignment::value || IsNothrowMoveAssignable<NodeAllocator>::value
+		BooleanOr<
+			BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment >,
+			HasNothrowMoveAssign<NodeAllocator>
+		>()
 	) {
-		m_move_assign_allocate(list, NodeTraits::IsPropagateOnContainerMoveAssignment());
+		m_move_assign_allocate(list, NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment());
 	}
 
 	void m_clear() noexcept {
-		NodeAllocator & allocator = m_allocator();
-		for (NodePointer pointer = m_head()->next; pointer != nullptr;) {
-			NodePointer next = pointer->next;
-			NodeTraits::destroy(allocator, address_of(pointer->element));
-			NodeTraits::deallocate(allocator, pointer, 1);
+		auto & allocator = m_allocator();
+		for (auto pointer = m_head()->next; pointer != nullptr;) {
+			auto next = pointer->next;
+			NodeAllocatorTraits::destroy(allocator, address_of(pointer->element));
+			NodeAllocatorTraits::deallocate(allocator, pointer, 1);
 			pointer = next;
 		}
 		m_head()->next = nullptr;
@@ -283,37 +317,40 @@ protected:
 
 private:
 	Base(Base const &) = delete;
-	Base & operator=(Base const &) = delete;
 
-	void m_copy_assign_allocate(Base const & list, BooleanFalse) {}
+	auto operator=(Base const &) -> Base & = delete;
 
-	void m_copy_assign_allocate(Base const & list, BooleanTrue) {
+	void m_copy_assign_allocate(Base const & list, BooleanFalse _dummy) {
+	}
+
+	void m_copy_assign_allocate(Base const & list, BooleanTrue _dummy) {
 		if (m_allocator() != list.m_allocator()) {
 			m_clear();
 		}
 		m_allocator() = list.m_allocator();
 	}
 
-	void m_move_assign_allocate(Base & list, BooleanFalse) noexcept {}
+	void m_move_assign_allocate(Base & list, BooleanFalse _dummy) noexcept {
+	}
 
-	void m_move_assign_allocate(Base & list, BooleanTrue) noexcept(
-		IsNothrowMoveAssignable<NodeAllocator>::value
-	) {
+	void m_move_assign_allocate(Base & list, BooleanTrue _dummy) noexcept(HasNothrowMoveAssign<NodeAllocator>()) {
 		m_allocator() = move(list.m_allocator());
 	}
 
 	static void m_swap_allocator(NodeAllocator & x, NodeAllocator & y) noexcept(
-		!NodeTraits::IsPropagateOnContainerSwap::value || IsNothrowSwappable<NodeAllocator>::value
+		BooleanOr<
+			BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerSwap >,
+			IsNothrowSwappable<NodeAllocator>
+		>()
 	) {
-		swap_allocator(x, y, NodeTraits::IsPropagateOnContainerSwap());
+		swap_allocator(x, y, NodeAllocatorTraits::IsPropagateOnContainerSwap());
 	}
 
-	static void m_swap_allocator(NodeAllocator & x, NodeAllocator & y, BooleanFalse) noexcept {}
+	static void m_swap_allocator(NodeAllocator & x, NodeAllocator & y, BooleanFalse _dummy) noexcept {
+	}
 
-	static void m_swap_allocator(NodeAllocator & x, NodeAllocator & y, BooleanTrue) noexcept(
-		IsNothrowSwappable<NodeAllocator>::value
-	) {
-		using swap;
+	static void m_swap_allocator(NodeAllocator & x, NodeAllocator & y, BooleanTrue _dummy) noexcept(IsNothrowSwappable<NodeAllocator>()) {
+		using BR::swap;
 		swap(x, y);
 	}
 
@@ -323,92 +360,222 @@ protected:
 }; // class Base< TElement, TAllocator >
 
 } // namespace ForwardList
+} // namespace Container
 } // namespace Detail
 
-template< typename TElement, typename TAllocator = Memory::Allocator<TElement> >
-class ForwardList : private Detail::ForwardList::Base< TElement, TAllocator > {
+/**
+ * @brief 单向列表
+ * @tparam TElement 元素类型
+ * @tparam TAllocator 分配器类型
+ */
+template< typename TElement, typename TAllocator = Allocator<TElement> >
+class ForwardList : private Detail::Container::ForwardList::Base< TElement, TAllocator > {
 
 public:
+	/**
+	 * @brief 元素类型
+	 */
 	using Element = TElement;
+
+	/**
+	 * @brief 分配器类型
+	 */
 	using Allocator = TAllocator;
 
 private:
-	using Base = Detail::ForwardList::Base< TElement, TAllocator >;
-	using Node          = typename Base::Node;
+	using Base = Detail::Container::ForwardList::Base< TElement, TAllocator >;
+
+	using AllocatorTraits = BR::AllocatorTraits<Allocator>;
+
+	using Node = typename Base::Node;
+
 	using NodeAllocator = typename Base::NodeAllocator;
-	using NodePointer   = typename Base::NodePointer;
-	using NodeTraits    = typename Base::NodeTraits;
+
+	using NodeAllocatorTraits = typename Base::NodeAllocatorTraits;
+
+	using NodePointer = typename Base::NodePointer;
 
 public:
-	using Reference      = AddLValueReference<Element>;
-	using ConstReference = AddLValueReference< AddConst<Element> >;
-	using Pointer        = typename AllocatorTraits<Allocator>::Pointer;
-	using ConstPointer   = typename AllocatorTraits<Allocator>::ConstPointer;
-	using Difference     = typename AllocatorTraits<Allocator>::Difference;
-	using Size           = typename AllocatorTraits<Allocator>::Size;
-	using Iterator       = typename Base::Iterator;
-	using ConstIterator  = typename Base::ConstIterator;
+	/**
+	 * @brief Reference
+	 */
+	using Reference = Element &;
 
-	ForwardList() noexcept(HasNothrowDefaultConstructor<NodeAllocator>::value) = default;
+	/**
+	 * @brief ConstReference
+	 */
+	using ConstReference = Element const &;
 
-	explicit ForwardList(Allocator const & allocator) : Base(allocator) {};
+	/**
+	 * @brief Pointer
+	 */
+	using Pointer = typename AllocatorTraits::Pointer;
 
-	explicit ForwardList(Size capacity) {
-		m_prepare_after(Base::m_head(), capacity);
+	/**
+	 * @brief ConstPointer
+	 */
+	using ConstPointer = typename AllocatorTraits::ConstPointer;
+
+	/**
+	 * @brief Difference
+	 */
+	using Difference = typename AllocatorTraits::Difference;
+
+	/**
+	 * @brief Size
+	 */
+	using Size = typename AllocatorTraits::Size;
+
+	/**
+	 * @brief Iterator
+	 */
+	using Iterator = typename Base::Iterator;
+
+	/**
+	 * @brief ConstIterator
+	 */
+	using ConstIterator = typename Base::ConstIterator;
+
+	/**
+	 * @name 构造
+	 */
+	///@{
+	/**
+	 * @brief 默认构造函数
+	 */
+	ForwardList() = default;
+
+	/**
+	 * @brief 默认构造函数，指定分配器
+	 * @param[in] allocator 分配器
+	 */
+	explicit ForwardList(Allocator const & allocator) : Base(allocator) {
+	};
+
+	/**
+	 * @brief 复制构造函数
+	 * @param[in] list 源容器
+	 */
+	ForwardList(ForwardList const & list) : Base(Allocator(NodeAllocatorTraits::select_on_container_copy_construction(list.m_allocator()))) {
+		insert_after(chead(), list.each());
 	}
 
-	explicit ForwardList(Size capacity, Allocator const & allocator) : Base(allocator), ForwardList(capacity) {}
-
-	ForwardList(Size size, Element const & element) {
-		insert_after(chead(), size, element);
-	}
-
-	ForwardList(Size size, Element const & element, Allocator const & allocator) : Base(allocator), ForwardList(size, element) {}
-
-	template< typename TInputIterator >
-	ForwardList(
-		TInputIterator first,
-		TInputIterator last,
-		EnableIf<
-			IsSame< IteratorCategory<TInputIterator>, Iterator::InputIteratorTag >
-		> * = nullptr
-	) {
-		insert_after(chead(), first, last);
-	}
-
-	template< typename TInputIterator >
-	ForwardList(
-		TInputIterator first,
-		TInputIterator last,
-		Allocator const & allocator,
-		EnableIf<
-			IsSame< IteratorCategory<TInputIterator>, Iterator::InputIteratorTag >
-		> * = nullptr
-	) : Base(allocator), ForwardList(first, last) {}
-
-	ForwardList(ForwardList const & list) : Base(Allocator(NodeTraits::select_on_container_copy_construction(list.m_allocator()))) {
-		insert_after(chead(), list.begin(), list.end());
-	}
-
+	/**
+	 * @brief 复制构造函数，指定分配器
+	 * @param[in] list 源容器
+	 * @param[in] allocator 分配器
+	 */
 	ForwardList(ForwardList const & list, Allocator const & allocator) : Base(allocator) {
-		insert_after(chead(), list.begin(), list.end());
+		insert_after(chead(), list.each());
 	}
 
-	ForwardList(ForwardList && list) noexcept(is_nothrow_move_constructible<Base>::value) : base(move(list)) {}
+	/**
+	 * @brief 移动构造函数
+	 * @param[in,out] list 源容器
+	 */
+	ForwardList(ForwardList && list) noexcept(HasNothrowMoveConstructor<Base>()) : Base(move(list)) {
+	}
 
+	/**
+	 * @brief 移动构造函数，指定分配器
+	 * @param[in,out] list 源容器
+	 * @param[in] allocator 分配器
+	 */
 	ForwardList(ForwardList && list, Allocator const & allocator) : Base(move(allocator)){
 		if (Base::m_allocator() != list.m_allocator()) {
-			insert_after(chead(), MoveIterator<Iterator>(list.begin()), MoveIterator<Iterator>(list.end()));
+			insert_after(chead(), make_enumerator(make_move_iterator(list.begin()), make_move_iterator(list.end())));
 		}
 	}
 
-	ForwardList(InitializerList<Element> list) {
-		insert_after(chead(), list.begin(), list.end());
+	/**
+	 * @brief 构造具有指定长度的容器，元素以默认值初始化
+	 * @param[in] count 容器大小
+	 */
+	explicit ForwardList(Size count) {
+		m_prepare_after(Base::m_head(), count);
 	}
 
-	ForwardList(InitializerList<Element> list, Allocator const & allocator) : Base(allocator), ForwardList(list) {}
+	/**
+	 * @brief 构造具有指定长度的容器，元素以默认值初始化，指定分配器
+	 * @param[in] count 容器大小
+	 * @param[in] allocator 分配器
+	 */
+	explicit ForwardList(Size count, Allocator const & allocator) : Base(allocator) {
+		m_prepare_after(Base::m_head(), count);
+	}
 
-	ForwardList & operator=(ForwardList const & list) {
+	/**
+	 * @brief 构造具有指定长度的容器，元素以给定值初始化
+	 * @param[in] element 用于初始化的元素
+	 * @param[in] count 容器大小
+	 */
+	ForwardList(Element const & element, Size size) {
+		insert_after(chead(), element, size);
+	}
+
+	/**
+	 * @brief 构造具有指定长度的容器，元素以给定值初始化，指定分配器
+	 * @param[in] element 用于初始化的元素
+	 * @param[in] count 容器大小
+	 * @param[in] allocator 分配器
+	 */
+	ForwardList(Element const & element, Size size, Allocator const & allocator) : Base(allocator) {
+		insert_after(chead(), element, size);
+	}
+
+	/**
+	 * @brief 从给定区间中的值构造
+	 * @tparam TInputIterator 迭代器类型
+	 * @param[in] enumerator 给定区间
+	 */
+	template< typename TInputIterator, typename _TDummy = EnableIf< typename IteratorTraits<TInputIterator>::IsInputIterator > >
+	ForwardList(Enumerator<TInputIterator> enumerator) {
+		insert_after(chead(), enumerator);
+	}
+
+	/**
+	 * @brief 从给定区间中的值构造，指定分配器
+	 * @tparam TInputIterator 迭代器类型
+	 * @param[in] enumerator 给定区间
+	 * @param[in] allocator 分配器
+	 */
+	template< typename TInputIterator, typename _TDummy = EnableIf< typename IteratorTraits<TInputIterator>::IsInputIterator > >
+	ForwardList(Enumerator<TInputIterator> enumerator, Allocator const & allocator) : Base(allocator) {
+		insert_after(chead(), enumerator);
+	}
+
+	/**
+	 * @brief 从初始化列表构造
+	 * @param[in] list 初始化列表
+	 */
+	ForwardList(InitializerList<Element> list) {
+		insert_after(chead(), list.each());
+	}
+
+	/**
+	 * @brief 从初始化列表构造，指定分配器
+	 * @param[in] list 初始化列表
+	 * @param[in] allocator 分配器
+	 */
+	ForwardList(InitializerList<Element> list, Allocator const & allocator) : Base(allocator) {
+		insert_after(chead(), list.each());
+	}
+	///@}
+
+	/**
+	 * @brief 析构函数
+	 */
+	~ForwardList() = default;
+
+	/**
+	 * @name 赋值操作
+	 */
+	///@{
+	/**
+	 * @brief 复制赋值运算
+	 * @param[in] list 源容器
+	 */
+	auto operator=(ForwardList const & list) -> ForwardList & {
 		if (this != &list) {
 			Base::m_copy_assign_allocate(list);
 			assign(list.begin(), list.end());
@@ -416,334 +583,612 @@ public:
 		return *this;
 	}
 
-	ForwardList & operator=(ForwardList && list) noexcept(
+	/**
+	 * @brief 移动赋值运算
+	 * @param[in,out] list 源容器
+	 */
+	auto operator=(ForwardList && list) noexcept(
 		BooleanAnd<
-			NodeTraits::IsPropagateOnContainerMoveAssignment,
-			IsNothrowMoveAssignable<Allocator>
-		>::value
-	) {
-		m_move_assign(list, NodeTraits::IsPropagateOnContainerMoveAssignment());
+			typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment,
+			HasNothrowMoveAssign<Allocator>
+		>()
+	) -> ForwardList & {
+		m_move_assign(list, NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment());
 		return *this;
 	}
 
-	ForwardList & operator=(InitializerList<Element> list) {
-		assign(list.begin(), list.end());
-		return *this;
+	/**
+	 * @brief 以迭代器区间赋值
+	 * @param[in] enumerator 迭代器区间
+	 * @see assign(Enumerator<TInputIterator> enumerator)
+	 */
+	template< typename TInputIterator, typename _TDummy = EnableIf< typename IteratorTraits<TInputIterator>::IsInputIterator > >
+	auto operator=(Enumerator<TInputIterator> enumerator) -> ForwardList & {
+		return assign(enumerator);
 	}
 
-	template< class TInputIterator >
-	EnableIf<
-		IsSame< IteratorCategory<TInputIterator>, Iterator::InputIteratorTag >,
-		ForwardList &
-	> assign(TInputIterator first, TInputIterator last) {
-		Iterator i = head();
-		Iterator ni = next(i);
-		Iterator e = end();
-		for (; ni != e && first != last; ++i, ++ni, ++first) {
-			*ni = *first;
-		}
-		if (ni == e) {
-			insert_after(i, first, last);
-		} else {
-			erase_after(i, e);
-		}
-		return *this;
+	/**
+	 * @brief 以初始化列表赋值
+	 * @param[in] list 初始化列表
+	 * @see assign(InitializerList<Element> list)
+	 */
+	auto operator=(InitializerList<Element> list) -> ForwardList & {
+		return assign(list);
 	}
 
-	ForwardList & assign(Size size, Element const & element) {
-		Iterator i = head();
-		Iterator ni = next(i);
-		Iterator e = end();
-		for (; ni != e && size > 0; --size, ++i, ++ni) {
-			*ni = element;
-		}
-		if (ni == e) {
-			insert_after(i, size, element);
-		} else {
-			erase_after(i, e);
-		}
-		return *this;
-	}
+	/**
+	 * @brief 设置容器内容为 count 个给定元素的副本
+	 * @param[in] element 迭代器区间
+	 * @param[in] count 迭代器区间
+	 */
+	auto assign(Element const & element, Size count) -> ForwardList &;
 
-	ForwardList & assign(InitializerList<Element> list) {
-		return assign(list.begin(), list.end());
-	}
+	/**
+	 * @brief 以迭代器区间赋值
+	 * @param[in] enumerator 迭代器区间
+	 */
+	template< typename TInputIterator, typename _TDummy = EnableIf< typename IteratorTraits<TInputIterator>::IsInputIterator > >
+	auto assign(Enumerator<TInputIterator> enumerator) -> ForwardList &;
 
-	Allocator get_allocator() const noexcept {
+	/**
+	 * @brief 以初始化列表赋值
+	 * @param[in] list 初始化列表
+	 */
+	auto assign(InitializerList<Element> list) -> ForwardList & {
+		return assign(list.each());
+	}
+	///@}
+
+	auto get_allocator() const noexcept -> Allocator {
 		return Allocator(Base::m_allocator());
 	}
 
-	Iterator begin() noexcept {
+	/**
+	 * @name 迭代器
+	 */
+	///@{
+	/**
+	 * @brief begin
+	 */
+	auto begin() noexcept -> Iterator {
 		return Iterator(Base::m_head()->next);
 	}
 
-	ConstIterator begin() const noexcept {
+	/**
+	 * @brief begin
+	 */
+	auto begin() const noexcept -> ConstIterator {
 		return ConstIterator(Base::m_head()->next);
 	}
 
-	Iterator end() noexcept {
+	/**
+	 * @brief end
+	 */
+	auto end() noexcept -> Iterator {
 		return Iterator(nullptr);
 	}
 
-	ConstIterator end() const noexcept {
+	/**
+	 * @brief end
+	 */
+	auto end() const noexcept -> ConstIterator {
 		return ConstIterator(nullptr);
 	}
 
-	ConstIterator cbegin() const noexcept {
-		return ConstIterator(Base::m_head()->next);
+	/**
+	 * @brief const begin
+	 */
+	auto cbegin() const noexcept -> ConstIterator {
+		return begin();
 	}
 
-	ConstIterator cend() const noexcept {
-		return ConstIterator(nullptr);
+	/**
+	 * @brief const end
+	 */
+	auto cend() const noexcept -> ConstIterator {
+		return end();
 	}
 
-	Iterator head() noexcept {
+	/**
+	 * @brief iterator before begin
+	 */
+	auto head() noexcept -> Iterator {
 		return Iterator(Base::m_head());
 	}
 
-	ConstIterator head() const noexcept {
+	/**
+	 * @brief iterator before begin
+	 */
+	auto head() const noexcept -> ConstIterator {
 		return ConstIterator(Base::m_head());
 	}
 
-	ConstIterator chead() const noexcept {
-		return ConstIterator(Base::m_head());
+	/**
+	 * @brief const head
+	 */
+	auto chead() const noexcept -> ConstIterator {
+		return head();
 	}
 
-	bool is_empty() const noexcept {
+	/**
+	 * @brief each
+	*/
+	auto each() noexcept -> Enumerator<Iterator> {
+		return make_enumerator(begin(), end());
+	}
+
+	template< typename TFunctor >
+	auto each(TFunctor functor) noexcept -> ForwardList {
+		each().each(functor);
+		return *this;
+	}
+
+	/**
+	 * @brief each
+	*/
+	auto each() const noexcept -> Enumerator<ConstIterator > {
+		return make_enumerator(begin(), end());
+	}
+
+	template< typename TFunctor >
+	auto each(TFunctor functor) const noexcept -> ForwardList {
+		each().each(functor);
+		return *this;
+	}
+
+	///@}
+
+	/**
+	 * @name 容量
+	 */
+	///@{
+	/**
+	 * @brief begin
+	 */
+	/**
+	 * @brief is empty
+	 */
+	auto is_empty() const noexcept -> bool {
 		return Base::m_head()->next == nullptr;
 	}
 
-	Size max_size() const noexcept {
-		return TypeTraits::IntegerTraits<Size>::max();
+	/**
+	 * @brief max size
+	 */
+	auto max_size() const noexcept -> Size {
+		return IntegerTraits<Size>::max();
 	}
+	///@}
 
-	Reference front() {
+	auto front() -> Reference {
 		return Base::m_head()->next->value;
 	}
 
-	ConstReference front() const {
+	auto front() const -> ConstReference {
 		return Base::m_head()->next->value;
 	}
 
 	template< typename ... TArgs >
-	void emplace_front(TArgs && ... args) {
-		using Deleter = Memory::AllocatorDestructor<NodeAllocator>;
-		NodeAllocator & allocator = Base::m_allocator();
-		Memory::ScopedPointer< Node, Deleter > node(NodeTraits::allocate(allocator, 1), Deleter(allocator, 1));
-		NodeTraits::construct(allocator, Memory::address_of(node->element), forward<TArgs>(args)...);
-		node->next = Base::head->next;
-		Base::head()->next = node.release();
+	auto emplace_first(TArgs && ... args) -> ForwardList &;
+
+	auto add_first(Element const & element) -> ForwardList & {
+		return emplace_first(element);
 	}
 
-	void push_front(Element const & element) {
-		emplace_front(element);
+	auto add_first(Element && element) -> ForwardList & {
+		return emplace_first(move(element));
 	}
 
-	void push_front(Element && element) {
-		emplace_front(move(element));
-	}
-
-	void pop_front() {
-		NodeAllocator & allocator = Base::m_allocator();
-		NodePointer pointer = Base::m_head()->next;
-		Base::m_head()->next = pointer->next;
-		NodeTraits::destroy(allocator, Memory::address_of(pointer->element));
-		NodeTraits::deallocate(allocator, pointer, 1);
-	}
+	auto remove_first() -> ForwardList &;
 
 	template< typename ... TArgs >
-	Iterator emplace_after(ConstIterator position, TArgs && ... args) {
-		using Deleter = Memory::AllocatorDestructor<NodeAllocator>;
-		NodeAllocator & allocator = Base::m_allocator();
-		Memory::ScopedPointer< Node, Deleter > node(NodeTraits::allocate(allocator, 1), Deleter(allocator, 1));
-		NodeTraits::construct(allocator, Memory::address_of(node->element), forward<TArgs>(args)...);
-		NodePointer const pos = position.m_pointer;
-		node->next = pos->next;
-		pos->next = node.release();
-		return Iterator(pos->next);
-	}
+	auto emplace_after(ConstIterator position, TArgs && ... args) -> Iterator ;
 
-	Iterator insert_after(ConstIterator position, Element const & element) {
+	auto insert_after(ConstIterator position, Element const & element) -> Iterator {
 		return emplace_after(position, element);
 	}
 
-	Iterator insert_after(ConstIterator position, Element && element) {
+	auto insert_after(ConstIterator position, Element && element) -> Iterator {
 		return emplace_after(position, move(element));
 	}
 
-	Iterator insert_after(ConstIterator position, Size size, Element const & element) {
-		NodePointer pos = position.m_pointer;
-		if (size > 0) {
-			using Deleter = Memory::AllocatorDestructor<NodeAllocator>;
-			NodeAllocator & allocator = Base::m_allocator();
-			Memory::ScopedPointer< Node, Deleter > node(NodeTraits::allocate(allocator, 1), Deleter(allocator, 1));
-			NodeTraits::construct(allocator, Memory::address_of(node->element), element);
-			NodePointer first = node.release();
-			NodePointer last = first;
-			try {
-				for (; size-- > 0; last = last->next) {
-					node.reset(NodeTraits::allocate(allocator, 1));
-					NodeTraits::construct(allocator, Memory::address_of(node->element), element);
-					last->next = node.release();
-				}
-			} catch (...) {
-				while (first != nullptr) {
-					NodePointer next = first->next;
-					NodeTraits::destroy(allocator, Memory::address_of((first->element)));
-					NodeTraits::deallocate(allocator, frist, 1);
-					first = next;
-				}
-				throw;
-			}
-			last->next = pos->next;
-			pos->next = first;
-			pos = last;
-		}
-		return Iterator(pos);
-	}
+	auto insert_after(ConstIterator position, Element const & element, Size size) -> Iterator;
 
-	template< typename TInputIterator >
-	EnableIf<
-		IsSame< IteratorCategory<TInputIterator>, Iterator::InputIteratorTag >,
-		TInputIterator
-	> insert_after(ConstIterator position, TInputIterator first, TInputIterator last) {
-		NodePointer pos = position.m_pointer;
-		if (first != last) {
-			using Deleter = Memory::AllocatorDestructor<NodeAllocator>;
-			NodeAllocator & allocator = Base::m_allocator();
-			Memory::ScopedPointer< Node, Deleter > node(NodeTraits::allocate(allocator, 1), Deleter(allocator, 1));
-			NodeTraits::construct(allocator, Memory::address_of(node->element), *first);
-			NodePointer first = node.release();
-			NodePointer last = first;
-			try {
-				for (++first; first != last; ++first, last = last->next) {
-					node.reset(NodeTraits::allocate(allocator, 1));
-					NodeTraits::construct(allocator, Memory::address_of(node->element), element);
-					last->next = node.release();
-				}
-			} catch (...) {
-				while (first != nullptr) {
-					NodePointer next = first->next;
-					NodeTraits::destroy(allocator, Memory::address_of((first->element)));
-					NodeTraits::deallocate(allocator, frist, 1);
-					first = next;
-				}
-				throw;
-			}
-			last->next = pos->next;
-			pos->next = first;
-			pos = last;
-		}
-		return Iterator(pos);
-	}
+	template< typename TInputIterator, typename _TDummy = EnableIf< typename IteratorTraits<TInputIterator>::IsInputIterator > >
+	auto insert_after(ConstIterator position, Enumerator<TInputIterator> enumerator) -> Iterator;
 
-	iterator insert_after(ConstIterator pos, InitializerList<Element> list) {
-		return insert_after(pos, list.begin(), list.end());
-	}
+	auto erase_after(ConstIterator position) -> Iterator;
 
-	Iterator erase_after(ConstIterator position) {
-		NodePointer p = position.m_pointer;
-		NodePointer n = p->next;
-		p->next = n->next;
-		NodeAllocator & allocator = Base::m_allocator();
-		NodeTraits::destroy(allocator, Memory::address_of((n->element)));
-		NodeTraits::deallocate(allocator, n, 1);
-		return Iterator(p->next);
-	}
+	auto erase_after(Enumerator<ConstIterator> enumerator) -> Iterator;
 
-	Iterator erase_after(ConstIterator first, ConstIterator last) {
-		NodePointer e = last.m_pointer;
-		if (first != last) {
-			NodePointer p = first.m_pointer;
-			NodePointer n = p->next;
-			if (n != e) {
-				p->next = e;
-				NodeAllocator & allocator = Base::m_allocator();
-				do {
-					p = n->next;
-					NodeTraits::destroy(allocator, Memory::address_of((n->element)));
-					NodeTraits::deallocate(allocator, n, 1);
-					n = p;
-				} while (n != e);
-			}
-		}
-		return Iterator(e);
-	}
-
-	ForwardList & swap(ForwardList & list) noexcept(noexcept(Base::swap(list))) {
+	void swap(ForwardList & list) noexcept(noexcept(Base::swap(list))) {
 		Base::swap(list);
 	}
 
-	ForwardList & resize(Size size) {
-		Size c = 0;
-		Iterator i = head();
-		Iterator ni = begin();
-		Iterator e = end();
-		for (; ni != e && c < size; ++i, ++ni, ++c) {}
-		if (ni != e) {
-			erase_after(i, e);
-		} else {
-			m_prepare_after(i.m_pointer, size - c);
-		}
-	}
+	auto resize(Size size) -> ForwardList &;
 
-	ForwardList & resize(Size size, Element const & element) {
-		Size c = 0;
-		Iterator i = head();
-		Iterator ni = begin();
-		Iterator e = end();
-		for (; ni != e && c < size; ++i, ++ni, ++c) {}
-		if (ni != e) {
-			erase_after(i, e);
-		} else {
-			size -= c;
-			if (size > 0) {
-				using Deleter = Memory::AllocatorDestructor<NodeAllocator>;
-				NodeAllocator & allocator = Base::m_allocator();
-				Memory::ScopedPointer< Node, Deleter > node(nullptr, Deleter(allocator, 1));
-				for (NodePointer pointer = i.m_pointer; size > 0; --size, pointer = pointer->next) {
-					node.reset(NodeTraits::allocate(allocator, 1));
-					NodeTraits::construct(allocator, Memory::address_of(node->element), element);
-					node->next = nullptr;
-					pointer->next = node.release();
-				}
-			}
-		}
-	}
+	auto resize(Size size, Element const & element) -> ForwardList &;
 
-	ForwardList & clear() noexcept {
+	auto clear() noexcept -> ForwardList & {
 		Base::clear();
+		return *this;
 	}
 
-	void splice_after(ConstIterator p, ForwardList & list) {
-		if (!list.is_empty()) {
-			if (insert_position.m_pointer->next != nullptr) {
-				ConstIterator i = list.head();
-				while (i.m_pointer->next != nullptr) {
-					++i;
-				}
-				i.m_pointer->next = p.m_pointer->next;
-			}
-			p.m_pointer->next = list.m_head()->next;
+	void splice_after(ConstIterator p, ForwardList & list);
+
+	void splice_after(ConstIterator p, ForwardList & list, ConstIterator i);
+
+	void splice_after(ConstIterator p, ForwardList & list, Enumerator<ConstIterator> e);
+
+	void splice_after(ConstIterator p, ForwardList && list) {
+		splice_after(p, list);
+	}
+
+	void splice_after(ConstIterator p, ForwardList && list, ConstIterator i) {
+		splice_after(p, list, i);
+	}
+
+	void splice_after(ConstIterator p, ForwardList && list, Enumerator<ConstIterator> e) {
+		splice_after(p, list, e);
+	}
+
+	void remove(Element const & element) {
+		remove_if(Equal<Element>());
+	}
+
+	template< typename TUnaryPredicate >
+	void remove_if(TUnaryPredicate predicate);
+
+	void unique() {
+		unique(Equal<Element>());
+	}
+
+	template< typename TBinaryPredicate >
+	void unique(TBinaryPredicate predicate);
+
+	auto merge(ForwardList & list) -> ForwardList & {
+		return merge(list, Less<Element>());
+	}
+
+	template< typename TComparator >
+	auto merge(ForwardList & list, TComparator comparator) -> ForwardList & {
+		if (this != &list) {
+			Base::m_head()->next = m_merge(Base::m_head()->next, list.m_head()->next, comparator);
 			list.m_head()->next = nullptr;
 		}
+		return *this;
 	}
 
-	void splice_after(ConstIterator p, ForwardList & list, ConstIterator e) {
-		ConstIterator i = Iterator::next(e);
-		if (p != e && p != i) {
-			e.m_pointer->next = i.m_pointer->next;
-			i.m_pointer->next = p.m_pointer->next;
-			p.m_pointer->next = i.m_pointer;
+	auto merge(ForwardList && list) -> ForwardList & {
+		return merge(list, Less<Element>());
+	}
+
+	template< typename TComparator >
+	auto merge(ForwardList && list, TComparator comparator) -> ForwardList & {
+		return merge(list, move(comparator));
+	}
+
+	auto sort() -> ForwardList & {
+		return sort(Less<Element>());
+	}
+
+	template< typename TComparator >
+	auto sort(TComparator comparator) -> ForwardList & {
+		Base::m_head()->next = m_sort(Base::m_head()->next, distance(begin(), end()), comparator);
+		return *this;
+	}
+
+	auto reverse() noexcept -> ForwardList & {
+		auto p = Base::m_head()->next;
+		if (p != nullptr) {
+			auto f = p->next;
+			for (p->next = nullptr; f != nullptr;) {
+				auto t = f->next;
+				f->next = p;
+				p = f;
+				f = t;
+			}
+			Base::m_head()->next = p;
+		}
+		return *this;
+	}
+
+	auto operator==(ForwardList const & y) const -> bool {
+		auto ix = begin(), ex = end(), iy = y.begin(), ey = y.end();
+		for (; ix != ex && iy != ey; ++ix, ++iy) {
+			if (!(*ix == *iy)) {
+				return false;
+			}
+		}
+		return (ix == ex) == (iy == ey);
+	}
+
+	auto operator!=(ForwardList const & y) const -> bool {
+		return !(*this == y);
+	}
+
+	inline auto operator<(ForwardList const & y) const -> bool {
+		return lexicographical_compare(each(), y.each());
+	}
+
+	inline auto operator>(ForwardList const & y) const -> bool {
+		return y < *this;
+	}
+
+	inline auto operator>=(ForwardList const & y) const -> bool {
+		return !(*this < y);
+	}
+
+	inline auto operator<=(ForwardList const & y) const -> bool {
+		return !(y < *this);
+	}
+
+private:
+	void m_prepare_after(NodePointer position, Size size) {
+		if (size > 0) {
+			using Deleter = AllocatorDestructor<NodeAllocator>;
+			auto & allocator = Base::m_allocator();
+			UniquePointer< Node, Deleter > node(nullptr, Deleter(allocator, 1));
+			for (auto pointer = position; size > 0; --size, pointer = pointer->next) {
+				node.reset(NodeAllocatorTraits::allocate(allocator, 1));
+				NodeAllocatorTraits::construct(allocator, address_of(node->element));
+				node->next = nullptr;
+				pointer->next = node.release();
+			}
 		}
 	}
 
-	void splice_after(ConstIterator p, ForwardList & list, ConstIterator f, ConstIterator l) {
-		if (f != l && p != f) {
-			ConstIterator i = f;
-			while (i.m_pointer->next != l.m_pointer) {
-				++i;
+	void m_move_assign(ForwardList & list, BooleanTrue _dummy) noexcept(HasNothrowMoveAssign<Allocator>()) {
+		clear();
+		Base::m_move_assign_allocate(list);
+		Base::m_head()->next = list.m_head()->next;
+		list.m_head()->next = nullptr;
+	}
+
+	void m_move_assign(ForwardList & list, BooleanFalse _dummy) {
+		if (Base::m_allocator() == list.m_allocator()) {
+			m_move_assign(list, BooleanTrue());
+		} else {
+			assign(make_move_iterator(list.begin()), make_move_iterator(list.end()));
+		}
+	}
+
+	template< typename TComparator >
+	static auto m_merge(NodePointer f1, NodePointer f2, TComparator & comparator) -> NodePointer;
+
+	template< typename TComparator >
+	static auto m_sort(NodePointer f1, Difference size, TComparator & comparator) -> NodePointer;
+
+}; // class ForwardList< TElement, TAllocator >
+
+template< typename TElement, typename TAllocator >
+auto ForwardList< TElement, TAllocator >::assign(Element const & element, Size count) -> ForwardList & {
+	auto i = head(), j = next(i), e = end();
+	for (; j != e && count > 0; --count, ++i, ++j) {
+		*j = element;
+	}
+	if (j == e) {
+		insert_after(i, count, element);
+	} else {
+		erase_after(i, e);
+	}
+	return *this;
+}
+
+template< typename TElement, typename TAllocator >
+template< typename TInputIterator, typename _TDummy >
+auto ForwardList< TElement, TAllocator >::assign(Enumerator<TInputIterator> enumerator) -> ForwardList & {
+	auto f = enumerator.begin(), l = enumerator.end();
+	auto i = head(), j = next(i), e = end();
+	for (; j != e && f != l; ++i, (void)++j, ++f) {
+		*j = *f;
+	}
+	if (j == e) {
+		insert_after(i, make_enumerator(f, l));
+	} else {
+		erase_after(i, e);
+	}
+	return *this;
+}
+
+template< typename TElement, typename TAllocator >
+template< typename ... TArgs >
+auto ForwardList< TElement, TAllocator >::emplace_first(TArgs && ... args) -> ForwardList & {
+	using Deleter = AllocatorDestructor<NodeAllocator>;
+	auto & allocator = Base::m_allocator();
+	UniquePointer< Node, Deleter > node(NodeAllocatorTraits::allocate(allocator, 1), Deleter(allocator, 1));
+	NodeAllocatorTraits::construct(allocator, address_of(node->element), forward<TArgs>(args)...);
+	node->next = Base::m_head()->next;
+	Base::m_head()->next = node.release();
+	return *this;
+}
+
+template< typename TElement, typename TAllocator >
+auto ForwardList< TElement, TAllocator >::remove_first() -> ForwardList & {
+	auto & allocator = Base::m_allocator();
+	auto pointer = Base::m_head()->next;
+	Base::m_head()->next = pointer->next;
+	NodeAllocatorTraits::destroy(allocator, address_of(pointer->element));
+	NodeAllocatorTraits::deallocate(allocator, pointer, 1);
+	return *this;
+}
+
+template< typename TElement, typename TAllocator >
+template< typename ... TArgs >
+auto ForwardList< TElement, TAllocator >::emplace_after(ConstIterator position, TArgs && ... args) -> Iterator {
+	using Deleter = AllocatorDestructor<NodeAllocator>;
+	auto & allocator = Base::m_allocator();
+	UniquePointer< Node, Deleter > node(NodeAllocatorTraits::allocate(allocator, 1), Deleter(allocator, 1));
+	NodeAllocatorTraits::construct(allocator, address_of(node->element), forward<TArgs>(args)...);
+	auto const pointer = position.m_pointer;
+	node->next = pointer->next;
+	pointer->next = node.release();
+	return Iterator(pointer->next);
+}
+
+template< typename TElement, typename TAllocator >
+auto ForwardList< TElement, TAllocator >::insert_after(ConstIterator position, Element const & element, Size size) -> Iterator {
+	auto r = position.m_pointer;
+	if (size > 0) {
+		using Deleter = AllocatorDestructor<NodeAllocator>;
+		auto & allocator = Base::m_allocator();
+		UniquePointer< Node, Deleter > node(NodeAllocatorTraits::allocate(allocator, 1), Deleter(allocator, 1));
+		NodeAllocatorTraits::construct(allocator, address_of(node->element), element);
+		auto first = node.release();
+		auto last = first;
+		try {
+			for (; size-- > 0; last = last->next) {
+				node.reset(NodeAllocatorTraits::allocate(allocator, 1));
+				NodeAllocatorTraits::construct(allocator, address_of(node->element), element);
+				last->next = node.release();
 			}
+		} catch (...) {
+			while (first != nullptr) {
+				auto next = first->next;
+				NodeAllocatorTraits::destroy(allocator, address_of((first->element)));
+				NodeAllocatorTraits::deallocate(allocator, first, 1);
+				first = next;
+			}
+			throw;
+		}
+		last->next = r->next;
+		r->next = first;
+		r = last;
+	}
+	return Iterator(r);
+}
+
+template< typename TElement, typename TAllocator >
+template< typename TInputIterator, typename _TDummy >
+auto ForwardList< TElement, TAllocator >::insert_after(ConstIterator p, Enumerator<TInputIterator> enumerator) -> Iterator {
+	auto r = p.m_pointer;
+	auto f = enumerator.begin(), l = enumerator.end();
+	if (f != l) {
+		using Deleter = AllocatorDestructor<NodeAllocator>;
+		auto & allocator = Base::m_allocator();
+		UniquePointer< Node, Deleter > node(NodeAllocatorTraits::allocate(allocator, 1), Deleter(allocator, 1));
+		NodeAllocatorTraits::construct(allocator, address_of(node->element), *f);
+		auto first = node.release(), last = first;
+		try {
+			for (++f; f != l; ++f, (void)(last = last->next)) {
+				node.reset(NodeAllocatorTraits::allocate(allocator, 1));
+				NodeAllocatorTraits::construct(allocator, address_of(node->element), *f);
+				last->next = node.release();
+			}
+		} catch (...) {
+			while (first != nullptr) {
+				auto next = first->next;
+				NodeAllocatorTraits::destroy(allocator, address_of((first->element)));
+				NodeAllocatorTraits::deallocate(allocator, first, 1);
+				first = next;
+			}
+			throw;
+		}
+		last->next = r->next;
+		r->next = first;
+		r = last;
+	}
+	return Iterator(r);
+};
+
+template< typename TElement, typename TAllocator >
+auto ForwardList< TElement, TAllocator >::erase_after(ConstIterator position) -> Iterator {
+	auto p = position.m_pointer;
+	auto n = p->next;
+	p->next = n->next;
+	auto & allocator = Base::m_allocator();
+	NodeAllocatorTraits::destroy(allocator, address_of((n->element)));
+	NodeAllocatorTraits::deallocate(allocator, n, 1);
+	return Iterator(p->next);
+}
+
+template< typename TElement, typename TAllocator >
+auto ForwardList< TElement, TAllocator >::erase_after(Enumerator<ConstIterator> enumerator) -> Iterator {
+	auto f = enumerator.begin(), l = enumerator.end();
+	auto e = l.m_pointer;
+	if (f != l) {
+		auto p = f.m_pointer, n = p->next;
+		if (n != e) {
+			p->next = e;
+			auto & allocator = Base::m_allocator();
+			do {
+				p = n->next;
+				NodeAllocatorTraits::destroy(allocator, address_of((n->element)));
+				NodeAllocatorTraits::deallocate(allocator, n, 1);
+				n = p;
+			} while (n != e);
+		}
+	}
+	return Iterator(e);
+}
+
+template< typename TElement, typename TAllocator >
+auto ForwardList< TElement, TAllocator >::resize(Size count) -> ForwardList & {
+	Size c = 0;
+	auto p = head(), i = begin(), e = end();
+	for (; i != e && c < count; ++p, ++i, ++c) {}
+	if (i != e) {
+		erase_after(p, e);
+	} else {
+		m_prepare_after(i.m_pointer, count - c);
+	}
+	return *this;
+}
+
+template< typename TElement, typename TAllocator >
+auto ForwardList< TElement, TAllocator >::resize(Size size, Element const & element) -> ForwardList & {
+	Size c = 0;
+	auto p = head(), i = begin(), e = end();
+	for (; i != e && c < size; ++p, ++i, ++c) {}
+	if (i != e) {
+		erase_after(p, e);
+	} else {
+		size -= c;
+		if (size > 0) {
+			using Deleter = AllocatorDestructor<NodeAllocator>;
+			auto & allocator = Base::m_allocator();
+			UniquePointer< Node, Deleter > node(nullptr, Deleter(allocator, 1));
+			for (auto pointer = i.m_pointer; size > 0; --size, pointer = pointer->next) {
+				node.reset(NodeAllocatorTraits::allocate(allocator, 1));
+				NodeAllocatorTraits::construct(allocator, address_of(node->element), element);
+				node->next = nullptr;
+				pointer->next = node.release();
+			}
+		}
+	}
+	return *this;
+}
+
+template< typename TElement, typename TAllocator >
+void ForwardList< TElement, TAllocator >::splice_after(ConstIterator p, ForwardList & list) {
+	if (!list.is_empty()) {
+		if (p.m_pointer->next != nullptr) {
+			auto i = list.chead();
+			for (; i.m_pointer->next != nullptr; ++i) {}
+			i.m_pointer->next = p.m_pointer->next;
+		}
+		p.m_pointer->next = list.m_head()->next;
+		list.m_head()->next = nullptr;
+	}
+};
+
+template< typename TElement, typename TAllocator >
+void ForwardList< TElement, TAllocator >::splice_after(ConstIterator p, ForwardList & list, ConstIterator i) {
+	auto j = next(i);
+	if (p != i && p != j) {
+		i.m_pointer->next = j.m_pointer->next;
+		j.m_pointer->next = p.m_pointer->next;
+		p.m_pointer->next = j.m_pointer;
+	}
+};
+
+template< typename TElement, typename TAllocator >
+void ForwardList< TElement, TAllocator >::splice_after(ConstIterator p, ForwardList & list, Enumerator<ConstIterator> e) {
+	if (!e.is_empty()) {
+		auto f = e.begin(), l = e.end();
+		if (p != f) {
+			auto i = f;
+			for (; i.m_pointer->next != l.m_pointer; ++i) {}
 			if (f != i) {
 				i.m_pointer->next = p.m_pointer->next;
 				p.m_pointer->next = f.m_pointer->next;
@@ -751,243 +1196,103 @@ public:
 			}
 		}
 	}
+};
 
-	void splice_after(ConstIterator p, ForwardList && list) {
-		splice_after(p, list);
-	}
-
-	void splice_after(ConstIterator p, ForwardList && list, ConstIterator e) {
-		splice_after(p, list, e);
-	}
-
-	void splice_after(ConstIterator p, ForwardList && list, ConstIterator f, ConstIterator l) {
-		splice_after(p, x, f, l);
-	}
-
-	void remove(Element const & element) {
-		// TODO: remove(equal<Element>());
-	}
-
-	template< typename TUnaryPredicate>
-	void remove_if(TUnaryPredicate unary_predicate) {
-		Iterator e = end();
-		for (Iterator i = head(); i.m_pointer->next != nullptr;) {
-			if (unary_predicate(i.m_pointer->next->element)) {
-				Iterator j = Iterator::next(i, 2);
-				for (; j != e && unary_predicate(*j); ++j) {}
-				erase_after(i, j);
-				if (j == e) {
-					break;
-				}
-				i = j;
-			}
-			else {
-				++i;
-			}
-		}
-	}
-
-	template< typename TBinaryPredicate>
-	void unique(TBinaryPredicate binary_predicate) {
-		for (Iterator i = begin(), e = end(); i != e;) {
-			Iterator j = Iterator::next(i);
-			for (; j != e && binary_predicate(*i, *j); ++j) {}
-			if (i.m_pointer->next != j.m_pointer) {
-				erase_after(i, j);
+template< typename TElement, typename TAllocator >
+template< typename TUnaryPredicate>
+void ForwardList< TElement, TAllocator >::remove_if(TUnaryPredicate predicate) {
+	for (auto i = head(), e = end(); i.m_pointer->next != nullptr;) {
+		if (predicate(i.m_pointer->next->element)) {
+			auto j = next(i, 2);
+			for (; j != e && predicate(*j); ++j) {}
+			erase_after(i, j);
+			if (j == e) {
+				break;
 			}
 			i = j;
-		}
-	}
-
-	void unique() {
-		// TODO: unique(__equal_to<Element>());
-	}
-
-	template< typename TComparator >
-	void merge(ForwardList & list, TComparator comparator) {
-		if (this != &list) {
-			Base::m_head()->next = m_merge(Base::m_head()->next, list.m_head()->next, comparator);
-			list.m_head()->next = nullptr;
-		}
-	}
-
-	void merge(ForwardList & list) {
-		// TODO: merge(list, __less<Element>());
-	}
-
-	template< typename TComparator >
-	void merge(ForwardList && list, TComparator comparator) {
-		merge(list, move(comparator));
-	}
-
-	void merge(ForwardList && list) {
-		// TODO: merge(list, __less<Element>());
-	}
-
-	template< typename TComparator >
-	void sort(Comparator comparator) {
-		Base::m_head()->next = m_sort(base::m_head()->next, Iterator::distance(begin(), end()), comparator);
-	}
-
-	void sort() {
-		// TODO: sort(__less<Element>());
-	}
-
-	void reverse() noexcept {
-		NodePointer p = Base::m_head()->next;
-		if (p != nullptr) {
-			NodePointer f = p->next;
-			p->next_ = nullptr;
-			while (f != nullptr) {
-				NodePointer t = f->next;
-				f->next = p;
-				p = f;
-				f = t;
-			}
-			Base::m_head()->next = p;
-		}
-	}
-
-private:
-	void m_prepare_after(NodePointer position, Size size) {
-		if (size > 0) {
-			using Deleter = Memory::AllocatorDestructor<NodeAllocator>;
-			NodeAllocator & allocator = Base::m_allocator();
-			Memory::ScopedPointer< Node, Deleter > node(nullptr, Deleter(allocator, 1));
-			for (NodePointer pointer = position; size > 0; --size, pointer = pointer->next) {
-				node.reset(NodeTraits::allocate(allocator, 1));
-				NodeTraits::construct(allocator, Memory::address_of(node->element));
-				node->next = nullptr;
-				pointer->next = node.release();
-			}
-		}
-	}
-
-	void m_move_assign(ForwardList & list, TypeOperate::BooleanTrue) noexcept(
-		TypeOperate::IsNothrowMoveAssignable<Allocator>::value
-	) {
-		clear();
-		Base::m_move_assign_allocate(list);
-		Base::m_head()->next = list.m_head()->next;
-		list.m_head()->next = nullptr;
-	}
-
-
-	void m_move_assign(ForwardList & list, TypeOperate::BooleanFalse ) {
-		if (Base::m_allocator() == list.m_allocator()) {
-			__move_assign(__x, true_type());
 		} else {
-			assign(Iterator::MoveIterator<Iterator>(list.begin()), Iterator::MoveIterator<Iterator>(list.end()));
+			++i;
 		}
 	}
+}
 
-	template< typename TComparator >
-	static NodePointer m_merge(NodePointer f1, NodePointer f2, TComparator & comparator) {
-		if (f1 == nullptr) {
-			return f2;
+template< typename TElement, typename TAllocator >
+template< typename TBinaryPredicate>
+void ForwardList< TElement, TAllocator >::unique(TBinaryPredicate predicate) {
+	for (auto i = begin(), e = end(); i != e;) {
+		auto j = next(i);
+		for (; j != e && predicate(*i, *j); ++j) {}
+		if (i.m_pointer->next != j.m_pointer) {
+			erase_after(i, j);
 		}
-		if (f2 == nullptr) {
-			return f1;
-		}
-		NodePointer r;
+		i = j;
+	}
+}
+
+template< typename TElement, typename TAllocator >
+template< typename TComparator >
+auto ForwardList< TElement, TAllocator >::m_merge(NodePointer f1, NodePointer f2, TComparator & comparator) -> NodePointer {
+	if (f1 == nullptr) {
+		return f2;
+	}
+	if (f2 == nullptr) {
+		return f1;
+	}
+	NodePointer r;
+	if (comparator(f2->element, f1->element)) {
+		auto t = f2;
+		for (; t->next != nullptr && comparator(t->next->element, f1->element); t = t->next) {}
+		r = f2;
+		f2 = t->next;
+		t->next = f1;
+	} else {
+		r = f1;
+	}
+	auto p = f1;
+	for (f1 = f1->next; f1 != nullptr && f2 != nullptr; f1 = f1->next) {
 		if (comparator(f2->element, f1->element)) {
 			NodePointer t = f2;
 			for (; t->next != nullptr && comparator(t->next->element, f1->element); t = t->next) {}
-			r = f2;
+			p->next = f2;
 			f2 = t->next;
 			t->next = f1;
-		} else {
-			r = f1;
 		}
-		NodePointer p = f1;
-		f1 = f1->next;
-		while (f1 != nullptr && f2 != nullptr) {
-			if (comparator(f2->element, f1->element)) {
-				NodePointer t = f2;
-				for (; t->next != nullptr && comparator(t->next->element, f1->element); t = t->next) {}
-				p->next = f2;
-				f2 = t->next;
+		p = f1;
+	}
+	if (f2 != nullptr) {
+		p->next = f2;
+	}
+	return r;
+}
+
+template< typename TElement, typename TAllocator >
+template< typename TComparator >
+auto ForwardList< TElement, TAllocator >::m_sort(NodePointer f1, Difference size, TComparator & comparator) -> NodePointer {
+	switch (size) {
+		case 0:
+		case 1:
+			return f1;
+		case 2:
+			if (comparator(f1->next->element, f1->element)) {
+				NodePointer t = f1->next;
 				t->next = f1;
+				f1->next = nullptr;
+				f1 = t;
 			}
-			p = f1;
-			f1 = f1->next;
-		}
-		if (f2 != nullptr) {
-			p->next = f2;
-		}
-		return r;
+			return f1;
+		default:
+			break;
 	}
-
-	template< typename TComparator >
-	static NodePointer m_sort(NodePointer f, Difference size, TComparator & comparator) {
-		switch (size) {
-			case 0:
-			case 1:
-				return f1;
-			case 2:
-				if (comparator(f1->next->element, f1->element)) {
-					NodePointer t = f1->next;
-					t->next = f1;
-					f1->next = nullptr;
-					f1 = t;
-				}
-				return f1;
-		}
-		Difference sz1 = size / 2;
-		Difference sz2 = size - sz1;
-		NodePointer t = Iterator::next(Iterator(f1), sz1 - 1).m_pointer;
-		NodePointer f2 = t->next;
-		t->next = nullptr;
-		return m_merge(m_sort(f1, sz1, comparator), m_sort(f2, sz2, comparator), comparator);
-	}
-
-}; // class ForwardList< TElement, TAllocator >
-
-template< typename TElement, typename TAllocator >
-bool operator==(ForwardList< TElement, TAllocator > const & x, ForwardList< TElement, TAllocator > const & y) {
-	using I = typename ForwardList< TElement, TAllocator >::ConstIterator;
-	I ix = x.begin();
-	I ex = x.end();
-	I iy = y.begin();
-	I ey = y.end();
-	for (; ix != ex && iy != ey; ++ix, ++iy) {
-		if (!(*ix == *iy)) {
-			return false;
-		}
-	}
-	return (ix == ex) == (iy == ey);
+	auto sz1 = size / 2;
+	auto sz2 = size - sz1;
+	auto t = next(Iterator(f1), sz1 - 1).m_pointer;
+	NodePointer f2 = t->next;
+	t->next = nullptr;
+	return m_merge(m_sort(f1, sz1, comparator), m_sort(f2, sz2, comparator), comparator);
 }
 
 template< typename TElement, typename TAllocator >
-inline bool operator!=(ForwardList< TElement, TAllocator > const & x, ForwardList< TElement, TAllocator > const & y) {
-	return !(x == y);
-}
-
-template< typename TElement, typename TAllocator >
-inline bool operator<(ForwardList< TElement, TAllocator > const & x, ForwardList< TElement, TAllocator > const & y) {
-	// return lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
-}
-
-template< typename TElement, typename TAllocator >
-inline bool operator>(ForwardList< TElement, TAllocator > const & x, ForwardList< TElement, TAllocator > const & y) {
-	return y < x;
-}
-
-template< typename TElement, typename TAllocator >
-inline bool operator>=(ForwardList< TElement, TAllocator > const & x, ForwardList< TElement, TAllocator > const & y) {
-	return !(x < y);
-}
-
-template< typename TElement, typename TAllocator >
-inline bool operator<=(ForwardList< TElement, TAllocator > const & x, ForwardList< TElement, TAllocator > const & y) {
-	return !(y < x);
-}
-
-template< typename TElement, typename TAllocator >
-inline void swap(
-	ForwardList< TElement, TAllocator > const & x,
-	ForwardList< TElement, TAllocator > const & y
-) noexcept(noexcept(x.swap(y)))  {
+inline void swap(ForwardList< TElement, TAllocator> & x, ForwardList< TElement, TAllocator > & y) noexcept(noexcept(x.swap(y)))  {
 	x.swap(y);
 }
 
