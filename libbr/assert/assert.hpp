@@ -19,7 +19,7 @@ namespace BR {
 
 } // namespace BR
 
-#define BR_ASSERT(expr) ((expr) ? (void)0 : BR::__assert__(BR_STRINGIZE(expr), __FILE__, __LINE__, __func__))
+#define BR_ASSERT(expr) ((expr) ? (void)0 : BR::__assert__(BR_STRINGIFY(expr), __FILE__, __LINE__, __func__))
 
 #endif // NDEBUG
 
