@@ -11,15 +11,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeOperate {
-
-template< typename T >
-struct TypeAddVolatile : TypeWrapper< T volatile > {};
-
-} // namespace TypeOperate
-} // namespace Detail
-
 /**
  * @brief 添加 \em volatile 修饰
  * @tparam T
@@ -29,7 +20,7 @@ struct TypeAddVolatile : TypeWrapper< T volatile > {};
  * 包装 \em T 添加 \em volatile 修饰后的类型
  */
 template< typename T >
-struct TypeAddVolatile : TypeRewrap< Detail::TypeOperate::TypeAddVolatile<T> > {};
+struct TypeAddVolatile;
 
 /**
  * @brief TypeAddVolatile 的简写版本
@@ -38,5 +29,19 @@ struct TypeAddVolatile : TypeRewrap< Detail::TypeOperate::TypeAddVolatile<T> > {
  */
 template< typename T >
 using AddVolatile = TypeUnwrap< TypeAddVolatile<T> >;
+
+namespace Detail {
+namespace TypeOperate {
+
+template< typename T >
+struct TypeAddVolatile : public TypeWrapper< T volatile > {
+};
+
+} // namespace TypeOperate
+} // namespace Detail
+
+template< typename T >
+struct TypeAddVolatile : public TypeRewrap< Detail::TypeOperate::TypeAddVolatile<T> > {
+};
 
 } // namespace BR

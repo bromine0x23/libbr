@@ -8,5 +8,6 @@
 
 #include <libbr/config.hpp>
 #include <libbr/math/bignum.hpp>
+#include <libbr/math/float.hpp>
 #include <libbr/math/relation.hpp>
 // #include <libbr/math/uint.hpp>

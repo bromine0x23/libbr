@@ -13,10 +13,7 @@ namespace Utility {
 
 template< typename T >
 inline void swap(T & a, T & b) noexcept(
-	BooleanAnd<
-		HasNothrowMoveAssign< T >,
-		HasNothrowMoveConstructor< T >
-	>::value
+	BooleanAnd< HasNothrowMoveAssign<T>, HasNothrowMoveConstructor<T> >::value
 ) {
 	T t = move(a);
 	a = move(b);
@@ -26,7 +23,7 @@ inline void swap(T & a, T & b) noexcept(
 template< typename T, Size S >
 inline void swap(T (&lhs)[S], T (&rhs)[S]) noexcept(noexcept(swap(*lhs, *rhs))) {
 	for (Size i = 0; i < S; ++i) {
-		swap_imp(lhs[i], rhs[i]);
+		swap(lhs[i], rhs[i]);
 	}
 }
 

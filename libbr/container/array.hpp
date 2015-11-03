@@ -29,6 +29,38 @@ namespace BR {
 template< typename TElement, Size S >
 class Array;
 
+template< typename T >
+struct TypeTupleSize;
+
+template< typename T, Size S >
+struct TypeTupleSize< Array< T, S > > : IntegerConstant< Size, S > {
+};
+
+template< Size I, typename T >
+struct TypeTupleElement;
+
+template< Size I, typename T, Size S >
+struct TypeTupleElement< I, Array< T, S > > : TypeWrapper<T> {
+};
+
+template< Size I, typename T, Size S >
+constexpr inline auto get(Array< T, S > & A) noexcept -> T & {
+	static_assert(I < S, "Index out of bounds.");
+	return A[I];
+}
+
+template< Size I, typename T, Size S >
+constexpr inline auto get(Array< T, S > const & A) noexcept -> T const & {
+	static_assert(I < S, "Index out of bounds.");
+	return A[I];
+}
+
+template< Size I, typename T, Size S >
+constexpr inline auto get(Array< T, S > && A) noexcept -> T && {
+	static_assert(I < S, "Index out of bounds.");
+	return move(A[I]);
+}
+
 template< typename TElement, Size S >
 class Array {
 public:
@@ -232,7 +264,7 @@ public:
 	}
 
 	auto operator==(Array const & y) const -> bool {
-		return equal(each(), y.begin());
+		return equal(begin(), end(), y.begin(), y.end());
 	}
 
 	auto operator!=(Array const & y) const -> bool {
@@ -240,7 +272,7 @@ public:
 	}
 
 	auto operator<(Array const & y) const -> bool {
-		return lexicographical_compare(each(), y.each());
+		return lexicographical_compare(begin(), end(), y.begin(), y.end());
 	}
 
 	auto operator>(Array const & y) const -> bool {
@@ -262,36 +294,6 @@ private:
 template< typename T, Size S>
 void swap(Array< T, S > & x, Array< T, S > & y) noexcept(noexcept(x.swap(y))) {
 	x.swap(y);
-}
-
-template< typename T >
-struct TypeTupleSize;
-
-template< typename T, Size S >
-struct TypeTupleSize< Array< T, S > > : IntegerConstant< Size, S > {};
-
-template< Size I, typename T >
-struct TypeTupleElement;
-
-template< Size I, typename T, Size S >
-struct TypeTupleElement< I, Array< T, S > > : TypeWrapper<T> {};
-
-template< Size I, typename T, Size S >
-BR_CONSTEXPR_AFTER_CXX11 inline auto get(Array< T, S > & A) noexcept -> T & {
-	static_assert(I < S, "Index out of bounds.");
-	return A[I];
-}
-
-template< Size I, typename T, Size S >
-BR_CONSTEXPR_AFTER_CXX11 inline auto get(Array< T, S > const & A) noexcept -> T const & {
-	static_assert(I < S, "Index out of bounds.");
-	return A[I];
-}
-
-template< Size I, typename T, Size S >
-BR_CONSTEXPR_AFTER_CXX11 inline auto get(Array< T, S > && A) noexcept -> T && {
-	static_assert(I < S, "Index out of bounds.");
-	return move(A[I]);
 }
 
 } // namespace BR

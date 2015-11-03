@@ -15,7 +15,8 @@ namespace BR {
  * @brief 布尔常量封装类否定
  */
 template< typename TB >
-using BooleanNot = BooleanRewrapNegative<TB>;
+struct BooleanNot : BooleanRewrapNegative<TB> {
+};
 
 /**
  * @brief 布尔常量封装类逻辑与
@@ -24,13 +25,16 @@ template< typename... >
 struct BooleanAnd;
 
 template<>
-struct BooleanAnd<> : BooleanTrue {};
+struct BooleanAnd<> : public BooleanTrue {
+};
 
 template< typename TB0 >
-struct BooleanAnd<TB0> : BooleanRewrapPositive<TB0> {};
+struct BooleanAnd<TB0> : public BooleanRewrapPositive<TB0> {
+};
 
 template< typename TB0, typename TB1, typename... TBn >
-struct BooleanAnd< TB0, TB1, TBn... > : Conditional< TB0, BooleanAnd< TB1, TBn... >, BooleanFalse > {};
+struct BooleanAnd< TB0, TB1, TBn... > : public Conditional< TB0, BooleanAnd< TB1, TBn... >, BooleanFalse > {
+};
 
 /**
  * @brief 布尔常量封装类逻辑或
@@ -39,19 +43,16 @@ template< typename... >
 struct BooleanOr;
 
 template<>
-struct BooleanOr<> : BooleanFalse {};
+struct BooleanOr<> : public BooleanFalse {
+};
 
 template< typename TB0 >
-struct BooleanOr<TB0> : BooleanRewrapPositive<TB0> {};
+struct BooleanOr<TB0> : public BooleanRewrapPositive<TB0> {
+};
 
 template< typename TB0, typename TB1, typename... TBn >
-struct BooleanOr< TB0, TB1, TBn... > : Conditional< TB0, BooleanTrue, BooleanOr< TB1, TBn... > > {};
-
-/**
- * @brief 封装布尔常量列表
- */
-template< bool... TBn >
-using Booleans = Integers< bool, TBn... >;
+struct BooleanOr< TB0, TB1, TBn... > : public Conditional< TB0, BooleanTrue, BooleanOr< TB1, TBn... > > {
+};
 
 /**
  * @brief 布尔常量逻辑与
@@ -60,13 +61,16 @@ template< bool... >
 struct BooleanAndByValue;
 
 template<>
-struct BooleanAndByValue<> : BooleanTrue {};
+struct BooleanAndByValue<> : public BooleanTrue {
+};
 
 template< bool... TBn >
-struct BooleanAndByValue< true, TBn... > : BooleanConstant< BooleanAndByValue< TBn... >::value > {};
+struct BooleanAndByValue< true, TBn... > : public BooleanConstant< BooleanAndByValue< TBn... >::value > {
+};
 
 template< bool... TBn >
-struct BooleanAndByValue< false, TBn... > : BooleanFalse {};
+struct BooleanAndByValue< false, TBn... > : public BooleanFalse {
+};
 
 /**
  * @brief 布尔常量逻辑或
@@ -75,12 +79,15 @@ template< bool... >
 struct BooleanOrByValue;
 
 template<>
-struct BooleanOrByValue<> : BooleanFalse {};
+struct BooleanOrByValue<> : public BooleanFalse {
+};
 
 template< bool... TBn >
-struct BooleanOrByValue< true, TBn... > : BooleanTrue {};
+struct BooleanOrByValue< true, TBn... > : public BooleanTrue {
+};
 
 template< bool... TBn >
-struct BooleanOrByValue< false, TBn... > : BooleanConstant< BooleanOrByValue< TBn... >::value > {};
+struct BooleanOrByValue< false, TBn... > : public BooleanConstant< BooleanOrByValue< TBn... >::value > {
+};
 
 } // namespace BR

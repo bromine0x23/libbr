@@ -18,7 +18,7 @@ struct CharTraits {
 	// TODO: using State = std::mbstate_t;
 
 	static constexpr bool eq(Char c0, Char c1) noexcept { return c0 == c1; }
-	static constexpr bool lt(Char c0, Char c1) noexcept { return c0 <  c1; }
+	static constexpr bool lt(Char c0, Char c1) noexcept { return c0 < c1; }
 	static constexpr bool eq_int(Int i0, Int i1) noexcept { return i0 == i1; }
 
 	static Size length(CString<Char> s) {

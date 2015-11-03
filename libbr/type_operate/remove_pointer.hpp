@@ -8,24 +8,8 @@
 
 #include <libbr/config.hpp>
 #include <libbr/type_operate/type.hpp>
-#include <libbr/type_operate/remove_const_volatile.hpp>
 
 namespace BR {
-
-namespace Detail {
-namespace TypeOperate {
-
-template< typename T >
-struct TypeRemovePointerBasic : TypeWrapper<T> {};
-
-template< typename T >
-struct TypeRemovePointerBasic< T * > : TypeWrapper<T> {};
-
-template< typename T >
-using TypeRemovePointer = TypeRemovePointerBasic< RemoveConstVolatile<T> >;
-
-} // namespace TypeOperate
-} // namespace Detail
 
 /**
  * @brief 移除指针修饰
@@ -36,7 +20,7 @@ using TypeRemovePointer = TypeRemovePointerBasic< RemoveConstVolatile<T> >;
  * 包装 \em T 顶层指针修饰(如果存在)后的类型
  */
 template< typename T >
-struct TypeRemovePointer : TypeRewrap< Detail::TypeOperate::TypeRemovePointer<T> > {};
+struct TypeRemovePointer;
 
 /**
  * @brief TypeRemovePointer 的简写版本
@@ -45,6 +29,36 @@ struct TypeRemovePointer : TypeRewrap< Detail::TypeOperate::TypeRemovePointer<T>
  */
 template< typename T >
 using RemovePointer = TypeUnwrap< TypeRemovePointer<T> >;
+
+namespace Detail {
+namespace TypeOperate {
+
+template< typename T >
+struct TypeRemovePointer : public TypeWrapper<T> {
+};
+
+template< typename T >
+struct TypeRemovePointer< T * > : public TypeWrapper<T> {
+};
+
+template< typename T >
+struct TypeRemovePointer< T * const > : public TypeWrapper<T> {
+};
+
+template< typename T >
+struct TypeRemovePointer< T * volatile > : public TypeWrapper<T> {
+};
+
+template< typename T >
+struct TypeRemovePointer< T * const volatile > : public TypeWrapper<T> {
+};
+
+} // namespace TypeOperate
+} // namespace Detail
+
+template< typename T >
+struct TypeRemovePointer : public TypeRewrap< Detail::TypeOperate::TypeRemovePointer<T> > {
+};
 
 } // namespace BR
 

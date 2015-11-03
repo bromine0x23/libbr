@@ -15,6 +15,7 @@
 #include <libbr/type_operate/conditional.hpp>
 #include <libbr/type_operate/decay.hpp>
 #include <libbr/type_operate/enable_if.hpp>
+#include <libbr/type_operate/make_integer_sequence.hpp>
 #include <libbr/type_operate/map_qualifier.hpp>
 #include <libbr/type_operate/remove_reference.hpp>
 #include <libbr/type_operate/type.hpp>
@@ -39,6 +40,7 @@
 #include <libbr/type_traits/is_use_allocator.hpp>
 #include <libbr/utility/forward.hpp>
 #include <libbr/utility/integer_constant.hpp>
+#include <libbr/utility/integer_sequence.hpp>
 #include <libbr/utility/move.hpp>
 #include <libbr/utility/wrapped_reference.hpp>
 
@@ -56,6 +58,11 @@ struct TypeTupleElement;
 template< Size I, typename T >
 using TupleElement = TypeUnwrap< TypeTupleElement< I, T > >;
 
+template< typename ... TElement >
+void swap(Tuple< TElement ... > & lhs, Tuple< TElement ... > & rhs) noexcept(noexcept(lhs.swap(rhs))) {
+	lhs.swap(rhs);
+}
+
 template< Size I, typename ... Tn >
 BR_CONSTEXPR_AFTER_CXX11 auto get(Tuple< Tn ... > & tuple) noexcept -> TupleElement< I, Tuple< Tn ... > > &;
 
@@ -65,22 +72,29 @@ BR_CONSTEXPR_AFTER_CXX11 auto get(Tuple< Tn ... > const & tuple) noexcept -> Tup
 template< Size I, typename ... Tn >
 BR_CONSTEXPR_AFTER_CXX11 auto get(Tuple< Tn ... > && tuple) noexcept -> TupleElement< I, Tuple< Tn ... > > &&;
 
-template< typename ... T >
-BR_CONSTEXPR_AFTER_CXX11 auto tie(T & ... t) noexcept -> Tuple< T & ... >;
+template< typename ... Tn >
+BR_CONSTEXPR_AFTER_CXX11 inline auto tie(Tn & ... t) noexcept -> Tuple< Tn & ... > {
+	return Tuple< Tn & ... >(t ...);
+}
 
-struct IgnoreTag {
-	template< typename TT >
-	auto operator=(TT && _dummy) const -> IgnoreTag const & {
-		return *this;
-	}
+template< typename ... T >
+BR_CONSTEXPR_AFTER_CXX11 inline auto forward_as_tuple(T && ... t) noexcept -> Tuple< T && ... > {
+	return Tuple< T && ... >(forward<T>(t)...);
+}
+
+template< typename T, typename TAllocator >
+struct IsUseAllocator;
+
+template< typename ... T, typename TAllocator >
+struct IsUseAllocator< Tuple< T ... >, TAllocator > : BooleanTrue {
 };
 
-constexpr auto ignore = IgnoreTag();
+template< typename T, typename TAllocator >
+struct NotUseAllocator;
 
-template< typename ... T >
-inline BR_CONSTEXPR_AFTER_CXX11 auto forward_as_tuple(T && ... t) noexcept -> Tuple< T && ... > {
-	return Tuple< T && ... >(forward<T>(t) ...);
-}
+template< typename ... T, typename TAllocator >
+struct NotUseAllocator< Tuple< T ... >, TAllocator > : BooleanFalse {
+};
 
 #if defined(BR_CXX14)
 
@@ -91,10 +105,6 @@ constexpr auto tuple_size = integer_constant< TupleSize<T> >;
 
 namespace Detail {
 namespace Container {
-
-template< Size ... indices >
-struct TupleIndices : Integers< Size, indices ... > {
-};
 
 template< typename ... TTypes >
 struct TupleTypes : Types< TTypes ... > {
@@ -172,20 +182,6 @@ struct IsTupleLike< Tuple< TTypes ... > > : BooleanTrue {
 template< typename ... TTypes >
 struct IsTupleLike< TupleTypes< TTypes ... > > : BooleanTrue {
 };
-
-template< Size from, Size to, Size ... indices >
-struct TypeMakeTupleIndices;
-
-template< Size from, Size to, Size ... indices >
-struct TypeMakeTupleIndices : TypeMakeTupleIndices< from + 1, to, indices ..., from > {
-};
-
-template< Size to, Size ... indices >
-struct TypeMakeTupleIndices< to, to, indices ... > : TypeWrapper< TupleIndices< indices ... > > {
-};
-
-template< Size from, Size to >
-using MakeTupleIndices = TypeUnwrap< TypeMakeTupleIndices< from, to > >;
 
 template< Size I, typename T >
 using MakeTupleType = Conditional< IsLValueReference<T>, AddLValueReference< TupleElement< I, T > >, TupleElement< I, T > >;
@@ -454,7 +450,7 @@ template< typename I, typename ... TTypes >
 class TupleImp;
 
 template< Size ... I, typename ... T >
-class TupleImp< TupleIndices< I ... >, T ... > : public TupleLeaf< I, T > ... {
+class TupleImp< IndexSequence< I ... >, T ... > : public TupleLeaf< I, T > ... {
 public:
 	BR_CONSTEXPR_AFTER_CXX11 TupleImp() noexcept(BooleanAnd< HasNothrowDefaultConstructor<T> ... >()) {
 	}
@@ -464,8 +460,8 @@ public:
 	TupleImp(TupleImp && tuple) = default;
 
 	template< Size ... IHead, typename ... THead, Size ... ITail, typename ... TTail, typename ... TValue >
-	explicit BR_CONSTEXPR_AFTER_CXX11 TupleImp(
-		TupleIndices< IHead... > _ih, TupleTypes< THead... > _th, TupleIndices< ITail... > _it, TupleTypes< TTail... > _tt, TValue && ... value
+	BR_CONSTEXPR_AFTER_CXX11 explicit TupleImp(
+		IndexSequence< IHead... > _ih, TupleTypes< THead... > _th, IndexSequence< ITail... > _it, TupleTypes< TTail... > _tt, TValue && ... value
 	) noexcept(
 		BooleanAnd< IsNothrowConstructible< THead, TValue >..., HasNothrowDefaultConstructor<TTail>... >()
 	) : TupleLeaf< IHead, THead >(forward<TValue>(value))..., TupleLeaf< ITail, TTail >()... {
@@ -473,7 +469,7 @@ public:
 
 	template< typename TAllocator, Size ... IHead, typename ... THead, Size ... ITail, typename ... TTail, typename ... TValue >
 	explicit TupleImp(
-		AllocatorArgumentTag _dummy, TAllocator const & allocator, TupleIndices< IHead ... > _ih, TupleTypes< THead ... > _th, TupleIndices< ITail ... > _it, TupleTypes< TTail ... > _tt, TValue && ... value
+		AllocatorArgumentTag _dummy, TAllocator const & allocator, IndexSequence< IHead ... > _ih, TupleTypes< THead ... > _th, IndexSequence< ITail ... > _it, TupleTypes< TTail ... > _tt, TValue && ... value
 	) : TupleLeaf< IHead, THead >(AllocatorConstructorUsage< THead, TAllocator, TValue >(), allocator, forward<TValue>(value)) ...,  TupleLeaf< ITail, TTail >(AllocatorConstructorUsage< TTail, TAllocator >(), allocator) ... {
 	}
 
@@ -521,7 +517,7 @@ public:
 		return static_cast< TupleLeaf< P, TupleElement< P, TupleTypes< T ... > > > const & >(*this).get();
 	}
 
-}; // class TupleImp< TupleIndices< I ... >, T ... >
+}; // class TupleImp< IndexSequence< I ... >, T ... >
 
 } // namespace Container
 } // namespace Detail
@@ -529,7 +525,7 @@ public:
 template < typename ... TElement >
 class Tuple {
 public:
-	using Imp = Detail::Container::TupleImp< Detail::Container::MakeTupleIndices< 0, sizeof...(TElement) >, TElement ... >;
+	using Imp = Detail::Container::TupleImp< MakeIndexSequence< 0, sizeof...(TElement) >, TElement ... >;
 
 public:
 	/**
@@ -554,7 +550,7 @@ public:
 	 */
 	explicit BR_CONSTEXPR_AFTER_CXX11 Tuple(TElement const & ... elements) noexcept(
 		BooleanAnd< HasNothrowCopyConstructor<TElement> ... >()
-	) : m_imp(Detail::Container::MakeTupleIndices< 0, sizeof...(TElement) >(), Detail::Container::MakeTupleTypes< Tuple, 0, sizeof...(TElement) >(), Detail::Container::MakeTupleIndices< 0, 0 >(), Detail::Container::MakeTupleTypes< Tuple, 0, 0 >(), elements ...) {
+	) : m_imp(MakeIndexSequence< 0, sizeof...(TElement) >(), Detail::Container::MakeTupleTypes< Tuple, 0, sizeof...(TElement) >(), MakeIndexSequence< 0, 0 >(), Detail::Container::MakeTupleTypes< Tuple, 0, 0 >(), elements ...) {
 	}
 
 	/**
@@ -574,16 +570,16 @@ public:
 	BR_CONSTEXPR_AFTER_CXX11 Tuple(TValue && ... value) noexcept(
 		IsNothrowConstructible<
 			Imp,
-			Detail::Container::MakeTupleIndices< 0, sizeof...(TValue) >,
+			MakeIndexSequence< 0, sizeof...(TValue) >,
 			Detail::Container::MakeTupleTypes< Tuple, 0, sizeof...(TValue) >,
-			Detail::Container::MakeTupleIndices< sizeof...(TValue), sizeof...(TElement) >,
+			MakeIndexSequence< sizeof...(TValue), sizeof...(TElement) >,
 			Detail::Container::MakeTupleTypes< Tuple, sizeof...(TValue), sizeof...(TElement) >,
 			TValue ...
 		>()
 	) : m_imp(
-		Detail::Container::MakeTupleIndices< 0, sizeof...(TValue) >(),
+		MakeIndexSequence< 0, sizeof...(TValue) >(),
 		Detail::Container::MakeTupleTypes< Tuple, 0, sizeof...(TValue) >(),
-		Detail::Container::MakeTupleIndices< sizeof...(TValue), sizeof...(TElement) >(),
+		MakeIndexSequence< sizeof...(TValue), sizeof...(TElement) >(),
 		Detail::Container::MakeTupleTypes< Tuple, sizeof...(TValue), sizeof...(TElement) >(),
 		forward<TValue>(value) ...
 	) {
@@ -604,16 +600,16 @@ public:
 	explicit BR_CONSTEXPR_AFTER_CXX11 Tuple(TValue && ... value) noexcept(
 		IsNothrowConstructible<
 			Imp,
-			Detail::Container::MakeTupleIndices< 0, sizeof...(TValue) >,
+			MakeIndexSequence< 0, sizeof...(TValue) >,
 			Detail::Container::MakeTupleTypes< Tuple, 0, sizeof...(TValue) >,
-			Detail::Container::MakeTupleIndices< sizeof...(TValue), sizeof...(TElement) >,
+			MakeIndexSequence< sizeof...(TValue), sizeof...(TElement) >,
 			Detail::Container::MakeTupleTypes< Tuple, sizeof...(TValue), sizeof...(TElement) >,
 			TValue ...
 		>()
 	) : m_imp(
-		Detail::Container::MakeTupleIndices< 0, sizeof...(TValue) >(),
+		MakeIndexSequence< 0, sizeof...(TValue) >(),
 		Detail::Container::MakeTupleTypes< Tuple, 0, sizeof...(TValue) >(),
-		Detail::Container::MakeTupleIndices< sizeof...(TValue), sizeof...(TElement) >(),
+		MakeIndexSequence< sizeof...(TValue), sizeof...(TElement) >(),
 		Detail::Container::MakeTupleTypes< Tuple, sizeof...(TValue), sizeof...(TElement) >(),
 		forward<TValue>(value) ...
 	) {
@@ -653,9 +649,9 @@ public:
 	Tuple(AllocatorArgumentTag _dummy, TAllocator const & allocator, TElement const & ... element) : m_imp(
 		allocator_argument_tag,
 		allocator,
-		Detail::Container::MakeTupleIndices< 0, sizeof...(TElement) >(),
+		MakeIndexSequence< 0, sizeof...(TElement) >(),
 		Detail::Container::MakeTupleTypes< Tuple, 0, sizeof...(TElement) >(),
-		Detail::Container::MakeTupleIndices< 0, 0 >(),
+		MakeIndexSequence< 0, 0 >(),
 		Detail::Container::MakeTupleTypes< Tuple, 0, 0 >(),
 		element ...
 	) {}
@@ -678,9 +674,9 @@ public:
 	Tuple(AllocatorArgumentTag _dummy, TAllocator const & allocator, TValue && ... value) : m_imp(
 		allocator_argument_tag,
 		allocator,
-		Detail::Container::MakeTupleIndices<  0, sizeof...(TValue) >(),
+		MakeIndexSequence<  0, sizeof...(TValue) >(),
 		Detail::Container::MakeTupleTypes< Tuple, 0, sizeof...(TValue) >(),
-		Detail::Container::MakeTupleIndices< sizeof...(TValue), sizeof...(TElement) >(),
+		MakeIndexSequence< sizeof...(TValue), sizeof...(TElement) >(),
 		Detail::Container::MakeTupleTypes< Tuple, sizeof...(TValue), sizeof...(TElement) >(),
 		forward<TValue>(value) ...
 	) {}
@@ -763,11 +759,6 @@ template< Size I, typename T >
 struct TypeTupleElement : TypeRewrap< Detail::Container::TypeTupleElement< I, T > > {
 };
 
-template< typename ... TElement >
-void swap(Tuple< TElement ... > & lhs, Tuple< TElement ... > & rhs) noexcept(noexcept(lhs.swap(rhs))) {
-	lhs.swap(rhs);
-}
-
 template< Size I, typename ... Tn >
 BR_CONSTEXPR_AFTER_CXX11 inline  auto get(Tuple< Tn ... > & tuple) noexcept -> TupleElement< I, Tuple< Tn ... > > & {
 	return tuple.get<I>();
@@ -782,11 +773,6 @@ template< Size I, typename ... Tn >
 BR_CONSTEXPR_AFTER_CXX11 inline  auto get(Tuple< Tn ... > && tuple) noexcept -> TupleElement< I, Tuple< Tn ... > > && {
 	return move(tuple.get< I >());
 };
-
-template< typename ... Tn >
-BR_CONSTEXPR_AFTER_CXX11 inline auto tie(Tn & ... t) noexcept -> Tuple< Tn & ... > {
-	return Tuple< Tn & ... >(t ...);
-}
 
 namespace Detail {
 namespace Container {
@@ -803,13 +789,22 @@ struct TypeMakeTupleReturn : TypeMakeTupleReturnBasic< Decay<T> > {};
 template< typename T >
 using MakeTupleReturn = TypeUnwrap< TypeMakeTupleReturn<T> >;
 
+struct IgnoreTag {
+	template< typename TT >
+	auto operator=(TT && _dummy) const -> IgnoreTag const & {
+		return *this;
+	}
+};
+
 } // namespace Container
 } // namespace Detail
 
 template< typename ... T >
-inline BR_CONSTEXPR_AFTER_CXX11 auto make_tuple(T && ... t) -> Tuple< Detail::Container::MakeTupleReturn< T > ... > {
-	return Tuple< Detail::Container::MakeTupleReturn< T > ... >(forward<T>(t) ...);
+BR_CONSTEXPR_AFTER_CXX11 inline auto make_tuple(T && ... t) -> Tuple< Detail::Container::MakeTupleReturn<T> ... > {
+	return Tuple< Detail::Container::MakeTupleReturn<T> ... >(forward<T>(t) ...);
 }
+
+constexpr auto ignore_tag = Detail::Container::IgnoreTag();
 
 namespace Detail {
 namespace Container {
@@ -916,19 +911,19 @@ template< typename TResult, typename TIndices, typename TTuple0, typename ... TT
 struct TypeTupleCatResultReferenceBasic;
 
 template< typename ... T, Size ... I, typename TTuple >
-struct TypeTupleCatResultReferenceBasic< Tuple< T ... >, TupleIndices< I ... >, TTuple > : TypeWrapper<
+struct TypeTupleCatResultReferenceBasic< Tuple< T ... >, IndexSequence< I ... >, TTuple > : TypeWrapper<
 	Tuple< T ..., MapQualifier< TTuple, TupleElement< I, RemoveReference<TTuple> > > && ... >
 > {
 };
 
 template< typename ... T, Size ... I, typename TTuple0, typename TTuple1, typename ... TTuple >
-struct TypeTupleCatResultReferenceBasic< Tuple< T ... >, TupleIndices< I ... >, TTuple0, TTuple1, TTuple ... > : TypeTupleCatResultReferenceBasic<
-	Tuple< T ..., MapQualifier< TTuple0, TupleElement< I, RemoveReference<TTuple0> > > && ... >, MakeTupleIndices< 0, TupleSize< RemoveReference<TTuple1> >::value >, TTuple1, TTuple ...
+struct TypeTupleCatResultReferenceBasic< Tuple< T ... >, IndexSequence< I ... >, TTuple0, TTuple1, TTuple ... > : TypeTupleCatResultReferenceBasic<
+	Tuple< T ..., MapQualifier< TTuple0, TupleElement< I, RemoveReference<TTuple0> > > && ... >, MakeIndexSequence< 0, TupleSize< RemoveReference<TTuple1> >::value >, TTuple1, TTuple ...
 > {
 };
 
 template< typename TTuple0, typename ... TTuple >
-struct TypeTupleCatResultReference : TypeTupleCatResultReferenceBasic< Tuple<>, MakeTupleIndices< 0, TupleSize< RemoveReference<TTuple0> >::value >, TTuple0, TTuple ... > {
+struct TypeTupleCatResultReference : TypeTupleCatResultReferenceBasic< Tuple<>, MakeIndexSequence< 0, TupleSize< RemoveReference<TTuple0> >::value >, TTuple0, TTuple ... > {
 };
 
 template< typename ... TTuple >
@@ -938,7 +933,7 @@ template< typename TResult, typename TIHead, typename TITail >
 struct TupleCat;
 
 template< typename ... T, Size ... IHead, Size ... ITail >
-struct TupleCat< Tuple<  T ... >, TupleIndices< IHead ... >, TupleIndices< ITail ... > > {
+struct TupleCat< Tuple<  T ... >, IndexSequence< IHead ... >, IndexSequence< ITail ... > > {
 	template< typename TTuple >
 	BR_CONSTEXPR_AFTER_CXX11 auto operator()(Tuple< T ... > head, TTuple && tail) -> TupleCatResultReference< Tuple< T ... > &&, TTuple && > {
 		return forward_as_tuple(forward<T>(get<IHead>(head)) ..., get<ITail>(forward<TTuple>(tail)) ...);
@@ -948,7 +943,7 @@ struct TupleCat< Tuple<  T ... >, TupleIndices< IHead ... >, TupleIndices< ITail
 	BR_CONSTEXPR_AFTER_CXX11 auto operator()(Tuple< T ... > head, TTuple0 && tail0, TTuple1 && tail1, TTuples && ... tails) -> TupleCatResultReference< Tuple< T ... > &&, TTuple0 &&, TTuple1 &&, TTuples && ... > {
 		using NoRefTuple0 = RemoveReference<TTuple0>;
 		return TupleCat<
-			Tuple< T ..., MapQualifier< TTuple0, TupleElement< ITail, NoRefTuple0 > > && ... >, MakeTupleIndices< 0, sizeof...(T) + TupleSize< NoRefTuple0 >::value >, MakeTupleIndices< 0, TupleSize< RemoveReference<TTuple1> >::value >
+			Tuple< T ..., MapQualifier< TTuple0, TupleElement< ITail, NoRefTuple0 > > && ... >, MakeIndexSequence< 0, sizeof...(T) + TupleSize< NoRefTuple0 >::value >, MakeIndexSequence< 0, TupleSize< RemoveReference<TTuple1> >::value >
 		>()(
 			forward_as_tuple(forward<T>(get<IHead>(head)) ..., get<ITail>(forward<TTuple0>(tail0)) ...), forward<TTuple1>(tail1), forward<TTuples>(tails) ...
 		);
@@ -965,26 +960,10 @@ BR_CONSTEXPR_AFTER_CXX11 inline  auto tuple_cat() -> Tuple<> {
 template< typename TTuple0, typename ... TTuples >
 BR_CONSTEXPR_AFTER_CXX11 inline auto tuple_cat(TTuple0 && tuple0, TTuples ... tuples) -> Detail::Container::TupleCatResult< TTuple0, TTuples ... > {
 	return Detail::Container::TupleCat<
-		Tuple<>, Detail::Container::TupleIndices<>, Detail::Container::MakeTupleIndices< 0, TupleSize< RemoveReference<TTuple0> >::value >
+		Tuple<>, IndexSequence<>, MakeIndexSequence< 0, TupleSize< RemoveReference<TTuple0> >::value >
 	>()(
 		Tuple<>(), forward<TTuple0>(tuple0), forward<TTuples>(tuples) ...
 	);
 }
-
-template< typename T, typename TAllocator >
-struct IsUseAllocator;
-
-
-template< typename ... T, typename TAllocator >
-struct IsUseAllocator< Tuple< T ... >, TAllocator > : BooleanTrue {
-};
-
-template< typename T, typename TAllocator >
-struct NotUseAllocator;
-
-template< typename ... T, typename TAllocator >
-struct NotUseAllocator< Tuple< T ... >, TAllocator > : BooleanFalse {
-};
-
 
 } // namespace BR

@@ -3,6 +3,7 @@
 #include <libbr/config.hpp>
 #include <libbr/container/tuple.hpp>
 #include <libbr/type_operate/bool.hpp>
+#include <libbr/type_operate/make_integer_sequence.hpp>
 #include <libbr/type_operate/remove_reference.hpp>
 #include <libbr/type_traits/has_nothrow_copy_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_move_constructor.hpp>
@@ -10,6 +11,7 @@
 #include <libbr/type_traits/is_final.hpp>
 #include <libbr/type_traits/is_nothrow_swappable.hpp>
 #include <libbr/utility/forward.hpp>
+#include <libbr/utility/integer_sequence.hpp>
 #include <libbr/utility/piecewise_construct_tag.hpp>
 
 namespace BR {
@@ -58,7 +60,7 @@ public:
 
 	template< typename... T0, typename... T1, Size... I0, Size... I1 >
 	CompressedPairBasic(
-		PiecewiseConstructTag _tag, Tuple<T0...> t0, Tuple<T1...> t1, TupleIndices<I0...> _i0, TupleIndices<I1...> _i1
+		PiecewiseConstructTag _tag, Tuple<T0...> t0, Tuple<T1...> t1, IndexSequence<I0...> _i0, IndexSequence<I1...> _i1
 	) : m_first(forward<T0>(get<I0>(t0))...), m_second(forward<T0>(get<I1>(t1))...) {
 	}
 
@@ -129,7 +131,7 @@ public:
 
 	template< typename... T0, typename... T1, Size... I0, Size... I1 >
 	CompressedPairBasic(
-		PiecewiseConstructTag _tag, Tuple<T0...> t0, Tuple<T1...> t1, TupleIndices<I0...> _i0, TupleIndices<I1...> _i1
+		PiecewiseConstructTag _tag, Tuple<T0...> t0, Tuple<T1...> t1, IndexSequence<I0...> _i0, IndexSequence<I1...> _i1
 	) : First(forward<T0>(get<I0>(t0))...), m_second(forward<T0>(get<I1>(t1))...) {
 	}
 
@@ -199,7 +201,7 @@ public:
 
 	template< typename... T0, typename... T1, Size... I0, Size... I1 >
 	CompressedPairBasic(
-		PiecewiseConstructTag _tag, Tuple<T0...> t0, Tuple<T1...> t1, TupleIndices<I0...> _i0, TupleIndices<I1...> _i1
+		PiecewiseConstructTag _tag, Tuple<T0...> t0, Tuple<T1...> t1, IndexSequence<I0...> _i0, IndexSequence<I1...> _i1
 	) : Second(forward<T0>(get<I1>(t1))...), m_first(forward<T0>(get<I0>(t0))...) {
 	}
 
@@ -268,7 +270,7 @@ public:
 
 	template< typename... T0, typename... T1, Size... I0, Size... I1 >
 	CompressedPairBasic(
-		PiecewiseConstructTag _tag, Tuple<T0...> t0, Tuple<T1...> t1, TupleIndices<I0...> _i0, TupleIndices<I1...> _i1
+		PiecewiseConstructTag _tag, Tuple<T0...> t0, Tuple<T1...> t1, IndexSequence<I0...> _i0, IndexSequence<I1...> _i1
 	) : First(forward<T0>(get<I0>(t0))...), Second(forward<T0>(get<I1>(t1))...) {
 	}
 
@@ -342,7 +344,7 @@ public:
 	CompressedPair(
 		PiecewiseConstructTag _tag, Tuple<TArgs0...> args0, Tuple<TArgs1...> args1
 	) : Base(
-		piecewise_construct_tag, move(args0), move(args1), Detail::Container::MakeTupleIndices< 0, sizeof...(TArgs0) >(), Detail::Container::MakeTupleIndices< 0, sizeof...(TArgs1) >()
+		piecewise_construct_tag, move(args0), move(args1), MakeIndexSequence< 0, sizeof...(TArgs0) >(), MakeIndexSequence< 0, sizeof...(TArgs1) >()
 	) {
 	}
 

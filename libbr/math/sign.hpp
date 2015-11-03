@@ -6,7 +6,6 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/assert/assert.hpp>
 
 namespace BR {
 
@@ -17,7 +16,8 @@ namespace BR {
  */
 enum class Sign {
 	NEG = false,  ///< 负
-	ZPOS = true, ///< 0或正
+	POS = true, ///< 0或正
+	ZPOS = POS
 };
 
 /**
@@ -25,8 +25,8 @@ enum class Sign {
  *
  * \em s 为 Sign::ZPOS时返回 Sign::NEG \n 否则返回 Sign::ZPOS
  */
-constexpr Sign operator~(Sign s) {
-	return s == Sign::ZPOS ?  Sign::NEG : Sign::ZPOS;
+constexpr auto operator~(Sign s) -> Sign {
+	return s == Sign::POS ?  Sign::NEG : Sign::POS;
 }
 
 /**
@@ -34,8 +34,8 @@ constexpr Sign operator~(Sign s) {
  *
  * 仅当 \em x 和 \em y 均为 Sign::ZPOS 时返回 Sign::ZPOS \n 否则返回 Sign::NEG
  */
-constexpr Sign operator|(Sign x, Sign y) {
-	return (x == Sign::ZPOS && y == Sign::ZPOS) ? Sign::ZPOS : Sign::NEG;
+constexpr auto operator|(Sign x, Sign y) -> Sign {
+	return (x == Sign::POS && y == Sign::POS) ? Sign::POS : Sign::NEG;
 }
 
 /**
@@ -43,8 +43,8 @@ constexpr Sign operator|(Sign x, Sign y) {
  *
  * 仅当 \em x 和 \em y 均不为 Sign::ZPOS 时返回 Sign::ZPOS \n 否则返回 Sign::NEG
  */
-constexpr Sign operator&(Sign x, Sign y) {
-	return (x != Sign::ZPOS && y != Sign::ZPOS) ? Sign::ZPOS : Sign::NEG;
+constexpr auto operator&(Sign x, Sign y) -> Sign {
+	return (x != Sign::POS && y != Sign::POS) ? Sign::POS : Sign::NEG;
 }
 
 /**
@@ -52,8 +52,8 @@ constexpr Sign operator&(Sign x, Sign y) {
  *
  * 仅当 \em x 和 \em y 相同时返回 Sign::ZPOS \n 否则返回 Sign::NEG
  */
-constexpr Sign operator^(Sign x, Sign y) {
-	return (x == y) ? Sign::ZPOS : Sign::NEG;
+constexpr auto operator^(Sign x, Sign y) -> Sign {
+	return (x == y) ? Sign::POS : Sign::NEG;
 }
 
 /**
@@ -61,7 +61,7 @@ constexpr Sign operator^(Sign x, Sign y) {
  *
  * 返回原值
  */
-constexpr Sign operator+(Sign s) {
+constexpr auto operator+(Sign s) -> Sign {
 	return s;
 }
 
@@ -70,7 +70,7 @@ constexpr Sign operator+(Sign s) {
  *
  * 返回补值
  */
-constexpr Sign operator-(Sign s) {
+constexpr auto operator-(Sign s) -> Sign {
 	return ~s;
 }
 
@@ -79,7 +79,7 @@ constexpr Sign operator-(Sign s) {
  *
  * 返回异或结果
  */
-constexpr Sign operator*(Sign x, Sign y) {
+constexpr auto operator*(Sign x, Sign y) -> Sign {
 	return x ^ y;
 }
 
@@ -88,7 +88,7 @@ constexpr Sign operator*(Sign x, Sign y) {
  *
  * 返回异或结果
  */
-constexpr Sign operator/(Sign x, Sign y) {
+constexpr auto operator/(Sign x, Sign y) -> Sign {
 	return x ^ y;
 }
 
@@ -97,8 +97,8 @@ constexpr Sign operator/(Sign x, Sign y) {
  *
  * Sign::ZPOS 对应 '+' \n Sign::NEG 对应 '-'
  */
-constexpr NChar sign_to_nchar(Sign s) {
-	return s == Sign::ZPOS ? '+' : '-';
+constexpr auto sign_to_nchar(Sign s) -> NChar {
+	return s == Sign::POS ? '+' : '-';
 }
 
 /**
@@ -106,8 +106,8 @@ constexpr NChar sign_to_nchar(Sign s) {
  *
  * Sign::ZPOS 对应 L'+' \n Sign::NEG 对应 L'-'
  */
-constexpr WChar sign_to_wchar(Sign s) {
-	return s == Sign::ZPOS ? L'+' : L'-';
+constexpr auto sign_to_wchar(Sign s) -> WChar {
+	return s == Sign::POS ? L'+' : L'-';
 }
 
 } // namespace BR

@@ -15,7 +15,7 @@ namespace BR {
  * @brief 布尔常量封装类
  */
 template< bool value >
-using BooleanConstant = IntegerConstant< bool, value >;;
+using BooleanConstant = IntegerConstant< bool, value >;
 
 /**
  * @brief 封装布尔常量true
@@ -28,7 +28,10 @@ using BooleanTrue = BooleanConstant<true>;
 using BooleanFalse = BooleanConstant<false>;
 
 template< typename TB >
-using BooleanRewrapPositive = BooleanConstant< TB::value >;
+using BooleanRewrap = BooleanConstant< TB::value >;
+
+template< typename TB >
+using BooleanRewrapPositive = BooleanRewrap<TB>;
 
 template< typename TB >
 using BooleanRewrapNegative = BooleanConstant< !TB::value >;

@@ -11,18 +11,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeOperate {
-
-template< typename T >
-struct TypeAddRValueReference : TypeWrapper< T && > {};
-
-template<>
-struct TypeAddRValueReference<void > : TypeWrapper<void> {};
-
-} // namespace TypeOperate
-} // namespace Detail
-
 /**
  * @brief 添加右值引用修饰
  * @tparam T
@@ -32,7 +20,7 @@ struct TypeAddRValueReference<void > : TypeWrapper<void> {};
  * 包装 \em T 添加右值引用修饰(<tt>T &&</tt>)后的类型
  */
 template< typename T >
-struct TypeAddRValueReference : TypeRewrap< Detail::TypeOperate::TypeAddRValueReference<T> > {};
+struct TypeAddRValueReference;
 
 /**
  * @brief TypeAddRValueReference 的简写版本
@@ -41,5 +29,35 @@ struct TypeAddRValueReference : TypeRewrap< Detail::TypeOperate::TypeAddRValueRe
  */
 template< typename T >
 using AddRValueReference = TypeUnwrap< TypeAddRValueReference<T> >;
+
+namespace Detail {
+namespace TypeOperate {
+
+template< typename T >
+struct TypeAddRValueReference : public TypeWrapper< T && > {
+};
+
+template<>
+struct TypeAddRValueReference< void > : public TypeWrapper< void > {
+};
+
+template<>
+struct TypeAddRValueReference< void const > : public TypeWrapper< void const > {
+};
+
+template<>
+struct TypeAddRValueReference< void volatile > : public TypeWrapper< void volatile > {
+};
+
+template<>
+struct TypeAddRValueReference< void const volatile > : public TypeWrapper< void const volatile > {
+};
+
+} // namespace TypeOperate
+} // namespace Detail
+
+template< typename T >
+struct TypeAddRValueReference : public TypeRewrap< Detail::TypeOperate::TypeAddRValueReference<T> > {
+};
 
 } // namespace BR

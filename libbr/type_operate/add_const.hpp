@@ -11,15 +11,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeOperate {
-
-template< typename T >
-struct TypeAddConst : TypeWrapper< T const > {};
-
-} // namespace TypeOperate
-} // namespace Detail
-
 /**
  * @brief 添加 \em const 修饰
  * @tparam T
@@ -29,7 +20,7 @@ struct TypeAddConst : TypeWrapper< T const > {};
  * 包装 \em T 添加 \em const 修饰后的类型
  */
 template< typename T >
-struct TypeAddConst : TypeRewrap< Detail::TypeOperate::TypeAddConst<T> > {};
+struct TypeAddConst;
 
 /**
  * @brief TypeAddConst 的简写版本
@@ -38,5 +29,19 @@ struct TypeAddConst : TypeRewrap< Detail::TypeOperate::TypeAddConst<T> > {};
  */
 template< typename T >
 using AddConst = TypeUnwrap< TypeAddConst<T> >;
+
+namespace Detail {
+namespace TypeOperate {
+
+template< typename T >
+struct TypeAddConst : public TypeWrapper< T const > {
+};
+
+} // namespace TypeOperate
+} // namespace Detail
+
+template< typename T >
+struct TypeAddConst : public TypeWrapper< Detail::TypeOperate::TypeAddConst<T> > {
+};
 
 } // namespace BR

@@ -11,21 +11,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeOperate {
-
-template< typename T >
-struct TypeRemoveReference : TypeWrapper<T> {};
-
-template< typename T >
-struct TypeRemoveReference< T & > : TypeWrapper<T> {};
-
-template< typename T >
-struct TypeRemoveReference< T && > : TypeWrapper<T> {};
-
-} // namespace TypeOperate
-} // namespace Detail
-
 /**
  * @brief 移除引用修饰
  * @tparam T
@@ -35,7 +20,7 @@ struct TypeRemoveReference< T && > : TypeWrapper<T> {};
  * 包装 \em T 顶层引用修饰(如果存在)后的类型
  */
 template< typename T >
-struct TypeRemoveReference : TypeRewrap< Detail::TypeOperate::TypeRemoveReference<T> > {};
+struct TypeRemoveReference;
 
 /**
  * @brief TypeRemoveReference 的简写版本
@@ -43,6 +28,28 @@ struct TypeRemoveReference : TypeRewrap< Detail::TypeOperate::TypeRemoveReferenc
  * @see TypeRemoveReference
  */
 template< typename T >
-using RemoveReference = TypeUnwrap< TypeRemoveReference< T > >;
+using RemoveReference = TypeUnwrap< TypeRemoveReference<T> >;
+
+namespace Detail {
+namespace TypeOperate {
+
+template< typename T >
+struct TypeRemoveReference : public TypeWrapper<T> {
+};
+
+template< typename T >
+struct TypeRemoveReference< T & > : public TypeWrapper<T> {
+};
+
+template< typename T >
+struct TypeRemoveReference< T && > : public TypeWrapper<T> {
+};
+
+} // namespace TypeOperate
+} // namespace Detail
+
+template< typename T >
+struct TypeRemoveReference : public TypeRewrap< Detail::TypeOperate::TypeRemoveReference<T> > {
+};
 
 } // namespace BR

@@ -1,70 +1,88 @@
 #pragma once
 
 #include <libbr/config.hpp>
-// #include <libbr/function/less.hpp>
 #include <libbr/utility/current_function.hpp>
 
 #if defined(BR_NO_STD_TYPEINFO)
+
+#include <libbr/functional/less.hpp>
 
 namespace BR {
 
 class TypeInfo {
 
-	TypeInfo(TypeInfo const &) = delete;
-	TypeInfo & operator=(TypeInfo const &) = delete;
-
 public:
 
-	explicit TypeInfo(char const * name): m_name(name) {}
+	explicit TypeInfo(CString<NChar> name): m_name(name) {
+	}
 
-	bool operator==(TypeInfo const & rhs) const { return this == &rhs; }
-	bool operator!=(TypeInfo const & rhs) const { return this != &rhs; }
+	auto operator==(TypeInfo const & rhs) const -> bool {
+		return this == &rhs;
+	}
 
-	// TODO
-	/*bool before(TypeInfo const & rhs) const {
+	auto operator!=(TypeInfo const & rhs) const -> bool {
+		return this != &rhs;
+	}
+
+
+	auto before(TypeInfo const & rhs) const -> bool {
 		return Less< TypeInfo const * >()(this, &rhs);
-	}*/
+	}
 
-	char const * name() const {
+	auto name() const -> CString<NChar> {
 		return m_name;
 	}
 
 private:
-	char const * m_name;
+	TypeInfo(TypeInfo const & info) = delete;
+
+	auto operator=(TypeInfo const & info) -> TypeInfo & = delete;
+
+private:
+	CString<NChar> m_name;
 };
 
 namespace Detail {
+namespace Utility {
 
 template< typename T >
-struct _TypeID_ {
+struct TypeID;
 
-	static TypeInfo s_type_info;
+template< typename T >
+struct TypeID< T & > : TypeID< T > {
+};
 
-	static char const * name() {
+template< typename T >
+struct TypeID< T const >: TypeID< T > {
+};
+
+template< typename T >
+struct TypeID< T volatile >: TypeID< T > {
+};
+
+template< typename T >
+struct TypeID< T const volatile >: TypeID< T > {
+};
+
+template< typename T >
+struct TypeID {
+
+	static TypeInfo type_info;
+
+	static auto name() -> CString<NChar> {
 		return BR_CURRENT_FUNCTION;
 	}
 };
 
 template< typename T >
-TypeInfo _TypeID_< T >::s_type_info(_TypeID_< T >::name());
+TypeInfo TypeID<T>::type_info(TypeID<T>::name());
 
-template< typename T >
-struct _TypeID_< T & > : T< T > {};
-
-template< typename T >
-struct _TypeID_< T const >: _TypeID_< T > {};
-
-template< typename T >
-struct _TypeID_< T volatile >: _TypeID_< T > {};
-
-template< typename T >
-struct _TypeID_< T const volatile >: _TypeID_< T > {};
-
+} // namespace Utility
 } // namespace Detail
 
 } // namespace BR
 
-#define BR_TYPE_ID(T) (BR::Detail::_TypeID_<decltype(T)>::s_type_info)
+#define BR_TYPE_ID(T) (BR::Detail::TypeID<decltype(T)>::type_info)
 
 #else
 

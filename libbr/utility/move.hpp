@@ -23,10 +23,7 @@ constexpr auto move(T && t) noexcept -> RemoveReference<T> && {
 }
 
 template< typename T >
-constexpr auto move_if_noexcept(T & t) noexcept -> Conditional<
-	BooleanAnd< NoNothrowMoveConstructor<T>, HasCopyConstructor<T> >,
-	T const &, T &&
-> {
+constexpr auto move_if_noexcept(T & t) noexcept -> Conditional< BooleanAnd< NoNothrowMoveConstructor<T>, HasCopyConstructor<T> >, T const &, T && > {
 	return move(t);
 }
 

@@ -16,7 +16,7 @@ namespace BR {
  * @brief 完美转发
  */
 template< typename T >
-BR_CONSTEXPR_AFTER_CXX11 auto forward(RemoveReference<T> & t) noexcept -> T && {
+constexpr auto forward(RemoveReference<T> & t) noexcept -> T && {
 	return static_cast< T && >(t);
 }
 
@@ -24,7 +24,7 @@ BR_CONSTEXPR_AFTER_CXX11 auto forward(RemoveReference<T> & t) noexcept -> T && {
  * @brief 完美转发
  */
 template< typename T >
-BR_CONSTEXPR_AFTER_CXX11 auto forward(RemoveReference<T> && t) noexcept -> T && {
+constexpr auto forward(RemoveReference<T> && t) noexcept -> T && {
 	static_assert(NotLValueReference<T>::value, "Template argument substituting type is an lvalue reference type.");
 	return static_cast< T && >(t);
 }

@@ -12,15 +12,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeOperate {
-
-template< typename T >
-struct TypeAddPointer : TypeWrapper< RemoveReference<T> * > {};
-
-} // namespace TypeOperate
-} // namespace Detail
-
 /**
  * @brief 添加指针修饰
  * @tparam T
@@ -30,7 +21,7 @@ struct TypeAddPointer : TypeWrapper< RemoveReference<T> * > {};
  * 包装 \em T 添加指针修饰(<tt>T *</tt>)后的类型
  */
 template< typename T >
-struct TypeAddPointer : TypeRewrap< Detail::TypeOperate::TypeAddPointer<T> > {};
+struct TypeAddPointer;
 
 /**
  * @brief TypeAddPointer 的简写版本
@@ -39,5 +30,19 @@ struct TypeAddPointer : TypeRewrap< Detail::TypeOperate::TypeAddPointer<T> > {};
  */
 template< typename T >
 using AddPointer = TypeUnwrap< TypeAddPointer<T> >;
+
+namespace Detail {
+namespace TypeOperate {
+
+template< typename T >
+struct TypeAddPointer : public TypeWrapper< RemoveReference<T> * > {
+};
+
+} // namespace TypeOperate
+} // namespace Detail
+
+template< typename T >
+struct TypeAddPointer : public TypeRewrap< Detail::TypeOperate::TypeAddPointer<T> > {
+};
 
 } // namespace BR

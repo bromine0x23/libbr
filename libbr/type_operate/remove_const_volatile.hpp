@@ -11,24 +11,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeOperate {
-
-template< typename T >
-struct TypeRemoveConstVolatile : TypeWrapper<T> {};
-
-template< typename T >
-struct TypeRemoveConstVolatile< T const > : TypeWrapper<T> {};
-
-template< typename T >
-struct TypeRemoveConstVolatile< T volatile > : TypeWrapper<T> {};
-
-template< typename T >
-struct TypeRemoveConstVolatile< T const volatile > : TypeWrapper<T> {};
-
-} // namespace TypeOperate
-} // namespace Detail
-
 /**
  * @brief 移除 \em const 和 \em volatile 修饰
  * @tparam T
@@ -38,7 +20,7 @@ struct TypeRemoveConstVolatile< T const volatile > : TypeWrapper<T> {};
  * 包装 \em T 移除顶层的 \em const 和 \em volatile 修饰(如果存在)后的类型
  */
 template< typename T >
-struct TypeRemoveConstVolatile : TypeRewrap< Detail::TypeOperate::TypeRemoveConstVolatile<T> > {};
+struct TypeRemoveConstVolatile;
 
 /**
  * @brief TypeRemoveConstVolatile 的简写版本
@@ -47,5 +29,31 @@ struct TypeRemoveConstVolatile : TypeRewrap< Detail::TypeOperate::TypeRemoveCons
  */
 template< typename T >
 using RemoveConstVolatile = TypeUnwrap< TypeRemoveConstVolatile<T> >;
+
+namespace Detail {
+namespace TypeOperate {
+
+template< typename T >
+struct TypeRemoveConstVolatile : public TypeWrapper<T> {
+};
+
+template< typename T >
+struct TypeRemoveConstVolatile< T const > : public TypeWrapper<T> {
+};
+
+template< typename T >
+struct TypeRemoveConstVolatile< T volatile > : public TypeWrapper<T> {
+};
+
+template< typename T >
+struct TypeRemoveConstVolatile< T const volatile > : public TypeWrapper<T> {
+};
+
+} // namespace TypeOperate
+} // namespace Detail
+
+template< typename T >
+struct TypeRemoveConstVolatile : public TypeRewrap< Detail::TypeOperate::TypeRemoveConstVolatile<T> > {
+};
 
 } // namespace BR

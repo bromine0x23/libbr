@@ -39,3 +39,5 @@
 #include <libbr/functional/bad_call_exception.hpp>
 #include <libbr/functional/invoke.hpp>
 #include <libbr/functional/function.hpp>
+#include <libbr/functional/member_pointer.hpp>
+#include <libbr/functional/bind.hpp>

@@ -23,12 +23,6 @@ namespace BR {
 template< bool condition, typename T = void >
 struct TypeEnableIfByValue;
 
-template< typename T >
-struct TypeEnableIfByValue< true, T > : TypeWrapper<T> {};
-
-template< typename T >
-struct TypeEnableIfByValue< false, T > {};
-
 /**
  * @brief 选择性禁用一种函数重载或模板特化
  * @tparam condition 开关布尔常量
@@ -40,12 +34,6 @@ struct TypeEnableIfByValue< false, T > {};
  */
 template< bool condition, typename T = void >
 struct TypeDisableIfValue;
-
-template< typename T >
-struct TypeDisableIfValue< true, T > {};
-
-template< typename T >
-struct TypeDisableIfValue< false, T > : TypeWrapper<T> {};
 
 /**
  * @brief TypeEnableIfByValue 使用布尔常量包装类的版本
@@ -100,5 +88,22 @@ using EnableIf = TypeUnwrap< TypeEnableIf< TCondition, T > >;
  */
 template< typename TCondition, typename T = void >
 using DisableIf = TypeUnwrap< TypeDisableIf< TCondition, T > >;
+
+
+template< typename T >
+struct TypeEnableIfByValue< true, T > : public TypeWrapper<T> {
+};
+
+template< typename T >
+struct TypeEnableIfByValue< false, T > {
+};
+
+template< typename T >
+struct TypeDisableIfValue< true, T > {
+};
+
+template< typename T >
+struct TypeDisableIfValue< false, T > : public TypeWrapper<T> {
+};
 
 } // namespace BR

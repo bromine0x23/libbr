@@ -22,12 +22,6 @@ namespace BR {
 template< bool condition, typename TWhenTrue, typename TWhenFalse = void >
 struct TypeConditionalByValue;
 
-template< typename TWhenTrue, typename TWhenFalse >
-struct TypeConditionalByValue< true, TWhenTrue, TWhenFalse > : TypeWrapper<TWhenTrue> {};
-
-template< typename TWhenTrue, typename TWhenFalse >
-struct TypeConditionalByValue< false, TWhenTrue, TWhenFalse > : TypeWrapper<TWhenFalse> {};
-
 /**
  * @brief TypeConditionalByValue 的简写版本
  * @tparam condition 条件
@@ -46,7 +40,7 @@ using ConditionalByValue = TypeUnwrap< TypeConditionalByValue< condition, TWhenT
  * @see TypeConditionalByValue
  */
 template< typename TCondition, typename TWhenTrue, typename TWhenFalse = void >
-struct TypeConditional : TypeWrapper< ConditionalByValue< TCondition::value, TWhenTrue, TWhenFalse > > {};
+using TypeConditional = TypeConditionalByValue< TCondition::value, TWhenTrue, TWhenFalse >;
 
 /**
  * @brief TypeConditional 的简写版本
@@ -57,5 +51,13 @@ struct TypeConditional : TypeWrapper< ConditionalByValue< TCondition::value, TWh
  */
 template< typename TCondition, typename TWhenTrue, typename TWhenFalse = void >
 using Conditional = TypeUnwrap< TypeConditional< TCondition, TWhenTrue, TWhenFalse > >;
+
+template< typename TWhenTrue, typename TWhenFalse >
+struct TypeConditionalByValue< true, TWhenTrue, TWhenFalse > : public TypeWrapper<TWhenTrue> {
+};
+
+template< typename TWhenTrue, typename TWhenFalse >
+struct TypeConditionalByValue< false, TWhenTrue, TWhenFalse > : public TypeWrapper<TWhenFalse> {
+};
 
 } // namespace BR

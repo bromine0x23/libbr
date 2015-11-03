@@ -14,15 +14,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-struct IsMemberObjectPointer : BooleanAnd< IsMemberPointer<T>, NotMemberFunctionPointer<T> > {};
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否是成员函数指针
  * @tparam T 待检查类型
@@ -32,7 +23,7 @@ struct IsMemberObjectPointer : BooleanAnd< IsMemberPointer<T>, NotMemberFunction
  * 如果 \em T 是指向非静态成员变量的指针类型，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsMemberObjectPointer : BooleanRewrapPositive< Detail::TypeTraits::IsMemberObjectPointer<T> > {};
+struct IsMemberObjectPointer;
 
 /**
  * @brief IsMemberObjectPointer 的否定
@@ -40,7 +31,7 @@ struct IsMemberObjectPointer : BooleanRewrapPositive< Detail::TypeTraits::IsMemb
  * @see IsMemberObjectPointer
  */
 template< typename T >
-struct NotMemberObjectPointer : BooleanRewrapNegative< Detail::TypeTraits::IsMemberObjectPointer<T> > {};
+using NotMemberObjectPointer = BooleanNot< IsMemberObjectPointer<T> >;
 
 #if defined(BR_CXX14)
 
@@ -63,5 +54,20 @@ template< typename T >
 constexpr auto not_member_object_pointer = NotMemberObjectPointer<T>::value;
 
 #endif // defined(BR_CXX14)
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+struct IsMemberObjectPointer : public BooleanAnd< IsMemberPointer<T>, NotMemberFunctionPointer<T> > {
+};
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsMemberObjectPointer : public BooleanRewrap< Detail::TypeTraits::IsMemberObjectPointer<T> > {
+};
+
 
 } // namespace BR

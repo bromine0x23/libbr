@@ -30,9 +30,9 @@ enum class Relation {
  * (x = 0) => Relation::EQ \n
  * (x > 0) => Relation::GT
  */
-template< typename TInt >
-constexpr Relation to_relation(TInt const & x) {
-	return x != TInt(0) ? (x < TInt(0) ? Relation::LT : Relation::GT) : Relation::EQ;
+template< typename TIntegral >
+constexpr auto to_relation(TIntegral const & x) -> Relation {
+	return x != TIntegral(0) ? (x < TIntegral(0) ? Relation::LT : Relation::GT) : Relation::EQ;
 }
 
 } // namespace BR

@@ -18,66 +18,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeOperate {
-
-template< typename T >
-struct TypeMakeSignedInteger : TypeWrapper<T> {
-};
-
-template<> struct TypeMakeSignedInteger<          char      > : TypeWrapper< signed char      > {};
-template<> struct TypeMakeSignedInteger< unsigned char      > : TypeWrapper< signed char      > {};
-template<> struct TypeMakeSignedInteger< unsigned short     > : TypeWrapper< signed short     > {};
-template<> struct TypeMakeSignedInteger< unsigned int       > : TypeWrapper< signed int       > {};
-template<> struct TypeMakeSignedInteger< unsigned long      > : TypeWrapper< signed long      > {};
-template<> struct TypeMakeSignedInteger< unsigned long long > : TypeWrapper< signed long long > {};
-
-#if defined(BR_HAS_INT128)
-
-template<> struct TypeMakeSignedInteger<UInt128> : TypeWrapper<SInt128> {};
-
-template< Size size >
-struct TypeMakeSignedEnum : TypeWrapper<SInt128> {};
-
-template<> struct TypeMakeSignedEnum< sizeof(SInt64) > : TypeWrapper<SInt64> {};
-
-#else
-
-template< Size size >
-struct TypeMakeSignedEnum : TypeWrapper<SInt64> {};
-
-#endif // defined(BR_HAS_INT128)
-
-template<> struct TypeMakeSignedEnum< sizeof(SInt8) > : TypeWrapper<SInt8> {};
-template<> struct TypeMakeSignedEnum< sizeof(SInt16) > : TypeWrapper<SInt16> {};
-template<> struct TypeMakeSignedEnum< sizeof(SInt32) > : TypeWrapper<SInt32> {};
-
-template< typename T >
-struct TypeMakeSignedBasic : Conditional<
-	IsSigned<T>,
-	TypeWrapper<T>,
-	Conditional<
-		IsIntegral<T>,
-		TypeMakeSignedInteger<T>,
-		TypeMakeSignedEnum< sizeof(T) >
-	>
-> {
-	static_assert(
-		BooleanAnd<
-			BooleanOr< IsIntegral<T>, IsEnum<T> >,
-			NotSame< T, bool >
-		>::value,
-		"Type must be integer type (except bool), or an enumeration type."
-	);
-};
-
-template< typename T >
-struct TypeMakeSigned : TypeMakeSignedBasic< RemoveConstVolatile<T> > {
-};
-
-} // namespace TypeOperate
-} // namespace Detail
-
 /**
  * @brief 将 \em T 转换成对应的有符号整数类型
  * @tparam T
@@ -87,8 +27,7 @@ struct TypeMakeSigned : TypeMakeSignedBasic< RemoveConstVolatile<T> > {
  * 包装整型类型或枚举类型 \em T 对应的的有符号整型类型
  */
 template< typename T >
-struct TypeMakeSigned : TypeRewrap< Detail::TypeOperate::TypeMakeSigned<T> > {
-};
+struct TypeMakeSigned;
 
 /**
  * @brief TypeMakeSigned 的简写版本
@@ -97,5 +36,91 @@ struct TypeMakeSigned : TypeRewrap< Detail::TypeOperate::TypeMakeSigned<T> > {
  */
 template< typename T >
 using MakeSigned = TypeUnwrap< TypeMakeSigned<T> >;
+
+namespace Detail {
+namespace TypeOperate {
+
+template< typename T >
+struct TypeMakeSignedInteger : public TypeWrapper<T> {
+};
+
+template<>
+struct TypeMakeSignedInteger< char > : public TypeWrapper< signed char > {
+};
+
+template<>
+struct TypeMakeSignedInteger< unsigned char > : public TypeWrapper< signed char > {
+};
+
+template<>
+struct TypeMakeSignedInteger< unsigned short > : public TypeWrapper< signed short > {
+};
+
+template<>
+struct TypeMakeSignedInteger< unsigned int > : public TypeWrapper< signed int > {
+};
+
+template<>
+struct TypeMakeSignedInteger< unsigned long > : public TypeWrapper< signed long > {
+};
+
+template<>
+struct TypeMakeSignedInteger< unsigned long long > : public TypeWrapper< signed long long > {
+};
+
+#if defined(BR_HAS_INT128)
+
+template<>
+struct TypeMakeSignedInteger<UInt128> : public TypeWrapper<SInt128> {
+};
+
+template< Size size >
+struct TypeMakeSignedEnum : public TypeWrapper<SInt128> {
+};
+
+template<>
+struct TypeMakeSignedEnum< sizeof(SInt64) > : TypeWrapper<SInt64> {
+};
+
+#else
+
+template< Size size >
+struct TypeMakeSignedEnum : public TypeWrapper<SInt64> {
+};
+
+#endif // defined(BR_HAS_INT128)
+
+template<> struct TypeMakeSignedEnum< sizeof(SInt8) > : public TypeWrapper<SInt8> {
+};
+
+template<> struct TypeMakeSignedEnum< sizeof(SInt16) > : public TypeWrapper<SInt16> {
+};
+
+template<> struct TypeMakeSignedEnum< sizeof(SInt32) > : public TypeWrapper<SInt32> {
+};
+
+template< typename T >
+struct TypeMakeSignedBasic : public Conditional<
+	IsSigned<T>,
+	TypeWrapper<T>,
+	Conditional<
+		IsIntegral<T>,
+		TypeMakeSignedInteger<T>,
+		TypeMakeSignedEnum< sizeof(T) >
+	>
+> {
+	static_assert(!BooleanAnd< NotIntegral<T>, NotEnum<T>, IsSame< T, bool > >::value, "Type must be integer type (except bool), or an enumeration type.");
+};
+
+template< typename T >
+struct TypeMakeSigned : public TypeMakeSignedBasic< RemoveConstVolatile<T> > {
+};
+
+} // namespace TypeOperate
+} // namespace Detail
+
+template< typename T >
+struct TypeMakeSigned : public TypeRewrap< Detail::TypeOperate::TypeMakeSigned<T> > {
+};
 
 } // namespace BR

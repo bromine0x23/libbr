@@ -17,26 +17,37 @@ namespace Detail {
 namespace TypeTraits {
 
 template< typename TResult, typename... TArgs >
-BooleanTrue is_function_pointer_tester(TResult(*)(TArgs...));
+auto is_function_pointer_tester(TResult(* pointer)(TArgs...)) -> BooleanTrue;
+
+template< typename TResult, typename... TArgs >
+auto is_function_pointer_tester(TResult(* pointer)(TArgs..., ...)) -> BooleanTrue;
 
 #if defined(BR_MSVC) || defined(BR_WIN32)
 
 template< typename TResult, typename... TArgs >
-BooleanTrue is_function_pointer_tester(TResult(__stdcall *)(TArgs...));
+auto is_function_pointer_tester(TResult(__stdcall * pointer)(TArgs...)) -> BooleanTrue;
 
 template< typename TResult, typename... TArgs >
-BooleanTrue is_function_pointer_tester(TResult(__fastcall *)(TArgs...));
+auto is_function_pointer_tester(TResult(__stdcall * pointer)(TArgs..., ...)) -> BooleanTrue;
 
 template< typename TResult, typename... TArgs >
-BooleanTrue is_function_pointer_tester(TResult(__cdecl *)(TArgs...));
+auto is_function_pointer_tester(TResult(__fastcall * pointer)(TArgs...)) -> BooleanTrue;
+
+template< typename TResult, typename... TArgs >
+auto is_function_pointer_tester(TResult(__fastcall * pointer)(TArgs..., ...)) -> BooleanTrue;
+
+template< typename TResult, typename... TArgs >
+auto is_function_pointer_tester(TResult(__cdecl * pointer)(TArgs...)) -> BooleanTrue;
+
+template< typename TResult, typename... TArgs >
+auto is_function_pointer_tester(TResult(__cdecl * pointer)(TArgs..., ...)) -> BooleanTrue;
 
 #endif // defined(BR_MSVC) || defined(BR_WIN32)
 
-BooleanFalse is_function_pointer_tester(...);
+auto is_function_pointer_tester(...) -> BooleanFalse;
 
 template< typename T >
-struct IsFunctionBasic : decltype(is_function_pointer_tester(static_cast< T * >(nullptr))) {
-};
+using IsFunctionBasic = decltype(is_function_pointer_tester(static_cast< T * >(nullptr)));
 
 template< typename T >
 using IsFunction = BooleanAnd< NotReference<T>, IsFunctionBasic<T> >;

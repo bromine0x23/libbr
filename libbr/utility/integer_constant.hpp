@@ -34,38 +34,23 @@ struct IntegerConstant : public TypeWrapper< IntegerConstant< TValue, v > > {
 	/**
 	 * @brief 返回整型常量值
 	 */
-	constexpr operator TValue() const {
+	constexpr operator TValue() const noexcept {
 		return value;
 	}
 
 	/**
 	 * @brief 返回整型常量值
 	 */
-	constexpr auto operator()() const -> TValue {
+	constexpr auto operator()() const noexcept -> TValue {
 		return value;
-	}
-};
-
-/**
- * @brief 封装整型常量列表
- * @tparam TValue 整型类型
- * @tparam values 常量值
- */
-template< typename TValue, TValue... values >
-struct Integers {
-	constexpr static Size size = sizeof...(values);
-
-	constexpr operator Size() const {
-		return size;
-	}
-
-	constexpr auto operator()() const -> TValue {
-		return size;
 	}
 };
 
 template< typename TI >
 using IntegerRewrap = IntegerConstant< typename TI::Value, TI::value >;
+
+template< Size index >
+using IndexConstant = IntegerConstant< Size, index >;
 
 #if defined(BR_CXX14)
 

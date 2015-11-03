@@ -8,21 +8,9 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/bool_constant.hpp>
-#include <libbr/type_traits/is_member_function_pointer.hpp>
+#include <libbr/type_operate/remove_const_volatile.hpp>
 
 namespace BR {
-
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-struct IsMemberPointer : IsMemberFunctionPointer<T> {};
-
-template< typename TClass, typename TMember >
-struct IsMemberPointer< TMember TClass::* > : BooleanTrue {};
-
-} // namespace TypeTraits
-} // namespace Detail
 
 /**
  * @brief 检查 \em T 是否是成员指针
@@ -35,7 +23,7 @@ struct IsMemberPointer< TMember TClass::* > : BooleanTrue {};
  * 如果 \em T 是指向非静态成员的指针类型，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsMemberPointer : BooleanRewrapPositive< Detail::TypeTraits::IsMemberPointer<T> > {};
+struct IsMemberPointer;
 
 /**
  * @brief IsMemberPointer 的否定
@@ -43,7 +31,7 @@ struct IsMemberPointer : BooleanRewrapPositive< Detail::TypeTraits::IsMemberPoin
  * @see IsMemberPointer
  */
 template< typename T >
-struct NotMemberPointer : BooleanRewrapNegative< Detail::TypeTraits::IsMemberPointer<T> > {};
+using NotMemberPointer = BooleanNot< IsMemberPointer<T> >;
 
 #if defined(BR_CXX14)
 
@@ -66,5 +54,26 @@ template< typename T >
 constexpr auto not_member_pointer = bool_constant< NotMemberPointer<T> >;
 
 #endif // defined(BR_CXX14)
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+struct IsMemberPointerBasic : public BooleanFalse {
+};
+
+template< typename TClass, typename TMember >
+struct IsMemberPointerBasic< TMember TClass::* > : public BooleanTrue {
+};
+
+template< typename T >
+using IsMemberPointer = IsMemberPointerBasic< RemoveConstVolatile<T> >;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsMemberPointer : public BooleanRewrap< Detail::TypeTraits::IsMemberPointer<T> > {
+};
 
 } // namespace BR
