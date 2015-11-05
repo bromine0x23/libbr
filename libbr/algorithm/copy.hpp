@@ -30,7 +30,7 @@ inline auto copy(TInputIterator first, TInputIterator last, TOutputIterator resu
 template< typename TInputValue, typename TOutputValue, typename _TDummy = EnableIf< BooleanAnd< IsSame< RemoveConst<TInputValue>, TOutputValue >, HasTrivialCopyAssign<TOutputValue> > > >
 inline auto copy(TInputValue * first, TInputValue * last, TOutputValue * result) -> TOutputValue * {
 	auto n = static_cast<Size>(last - first);
-	memory_move(first, n * sizeof(TOutputValue), result);
+	memory_move(result, first, n * sizeof(TOutputValue));
 	return result + n;
 }
 

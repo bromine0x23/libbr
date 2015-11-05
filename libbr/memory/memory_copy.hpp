@@ -10,7 +10,13 @@
 
 namespace BR {
 
-void memory_copy(void const * S, Size n, void * D);
+/**
+ * @brief like C STL memcpy
+ * @param[out] D
+ * @param[in] S
+ * @param[in] n
+ */
+void memory_copy(void * D, void const * S, Size n);
 
 } // namespace BR
 

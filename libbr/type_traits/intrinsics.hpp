@@ -186,6 +186,9 @@
 #  if __has_feature(is_final)
 #    define BR_IS_FINAL(T) __is_final(T)
 #  endif
+#  if __has_feature(__is_literal_type)
+#    define BR_IS_LITERAL_TYPE(T) __is_literal_type(T)
+#  endif
 #  if __has_feature(is_pod)
 #    define BR_IS_POD(T) __is_pod(T)
 #  endif

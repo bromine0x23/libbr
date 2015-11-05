@@ -13,10 +13,11 @@
 
 #define BR_GCC_FULL_VER (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 
-#define BR_LIKELY(x) __builtin_expect(x, 1)
-#define BR_UNLIKELY(x) __builtin_expect(x, 0)
+#define BR_EXCEPT(x, y) __builtin_expect(x, y)
+#define BR_LIKELY(x) BR_EXCEPT(x, true)
+#define BR_UNLIKELY(x) BR_EXCEPT(x, false)
 #define BR_NOINLINE __attribute__ ((__noinline__))
-#define BR_FORCEINLINE inline __attribute__ ((__always_inline__))
+#define BR_FORCE_INLINE inline __attribute__ ((__always_inline__))
 
 #define BR_SYMBOL_VISIBLE __attribute__((__visibility__("default")))
 

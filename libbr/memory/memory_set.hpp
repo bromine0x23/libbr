@@ -10,7 +10,13 @@
 
 namespace BR {
 
-auto memory_set(void * D, Size n, Byte v) -> void *;
+/**
+ * @brief like C STL memset
+ * @param[out] D
+ * @param[in] v
+ * @param[in] n
+ */
+auto memory_set(void * D, Byte v, Size n) -> void *;
 
 } // namespace BR
 

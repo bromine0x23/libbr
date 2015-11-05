@@ -31,7 +31,7 @@ template< typename TInputValue, typename TOutputValue, typename _TDummy = Enable
 inline auto copy_backward(TInputValue * first, TInputValue * last, TOutputValue * result) -> TOutputValue * {
 	auto n = static_cast<Size>(last - first);
 	result -= n;
-	memory_move(first, n * sizeof(TOutputValue), result);
+	memory_move(result, first, n * sizeof(TOutputValue));
 	return result;
 }
 

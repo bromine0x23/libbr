@@ -49,12 +49,16 @@
 #  define BR_NOINLINE
 #endif
 
+#if !defined(BR_EXCEPT)
+#  define BR_EXCEPT(x, y) (x == y)
+#endif
+
 #if !defined(BR_LIKELY)
-#  define BR_LIKELY(x) x
+#  define BR_LIKELY(x) (x)
 #endif
 
 #if !defined(BR_UNLIKELY)
-#  define BR_UNLIKELY(x) x
+#  define BR_UNLIKELY(x) (x)
 #endif
 
 #define BR_EMPTY_ARG

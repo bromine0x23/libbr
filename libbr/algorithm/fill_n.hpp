@@ -28,7 +28,7 @@ inline auto fill_n(TOutputIterator first, TSize n, TValue const & value) -> TOut
 template< typename TOutputValue, typename TValue, typename TSize, typename _TDummy = EnableIf< BooleanAnd< IsIntegral<TOutputValue>, BooleanConstant< sizeof(TOutputValue) == 1 >, NotSame< TOutputValue, bool >, IsIntegral<TValue>, BooleanConstant< sizeof(TValue) == 1 > > > >
 inline auto fill_n(TOutputValue * first, TSize n, TValue const & value) -> TOutputValue * {
 	if (n > 0) {
-		memory_set(first, n, value);
+		memory_set(first, value, n);
 	}
 	return first;
 }

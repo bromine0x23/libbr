@@ -10,7 +10,13 @@
 
 namespace BR {
 
-void memory_move(void const * S, Size n, void * D);
+/**
+ * @brief like C STL memmove
+ * @param[out] D
+ * @param[in] S
+ * @param[in] n
+ */
+void memory_move(void * D, void const * S, Size n);
 
 } // namespace BR
 

@@ -6,8 +6,9 @@
  */
 #pragma once
 
-#include <exception>
 #include <libbr/config.hpp>
+
+#include <exception>
 
 namespace BR {
 
@@ -15,34 +16,26 @@ using STDException = std::exception;
 
 using BadException = std::bad_exception;
 
-using TerminateHandler = std::terminate_handler;
+using TerminateHandler = void(*)();
 
 using ExceptionPointer = std::exception_ptr;
 
 using NestedException = std::nested_exception;
 
-inline auto set_terminate(TerminateHandler handler) noexcept -> TerminateHandler {
-	return std::set_terminate(handler);
-}
+auto set_terminate(TerminateHandler handler) noexcept -> TerminateHandler;
 
 /*
-TerminateHandler get_terminate() noexcept {
+auto get_terminate() noexcept -> TerminateHandler {
 	return std::get_terminate();
 }
 */
 
-[[noreturn]] inline void terminate() noexcept {
-	std::terminate();
-}
+[[noreturn]] void terminate() noexcept;
 
-inline auto uncaught_exception() noexcept -> bool {
-	return std::uncaught_exception();
-}
+auto uncaught_exception() noexcept -> bool;
 
 #if defined(BR_CPP17)
-inline auto uncaught_exceptions() noexcept -> int {
-	return std::uncaught_exceptions();
-}
+auto uncaught_exceptions() noexcept -> int;
 #endif
 
 inline auto current_exception() noexcept -> ExceptionPointer {

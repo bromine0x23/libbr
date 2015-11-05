@@ -7,8 +7,12 @@
 namespace BR {
 
 template< typename T >
-inline auto address_of(T & t) noexcept -> T * {
+constexpr auto address_of(T & t) noexcept -> T * {
+#if defined(BR_CLANG) && defined(__has_builtin) && defined(__builtin_addressof)
+	return __builtin_addressof(t);
+#else
 	return reinterpret_cast< T * >(&const_cast< char & >(reinterpret_cast< char const volatile & >(t)));
+#endif
 }
 
 template< typename T >

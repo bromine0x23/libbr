@@ -7,7 +7,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/exception/runtime_exception.hpp>
+#include <libbr/exception/exception.hpp>
 
 #include <string>
 
@@ -18,7 +18,7 @@ namespace BR {
  */
 class LogicException : public Exception {
 public:
-	using BaseException = RuntimeException;
+	using BaseException = Exception;
 
 	LogicException() : LogicException("BR::LogicException") {
 	}
