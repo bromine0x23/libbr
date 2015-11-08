@@ -39,9 +39,9 @@
 # define BR_SYMBOL_VISIBLE
 #endif
 
-#if !defined(BR_FORCEINLINE)
-#  define BR_NO_FORCEINLINE
-#  define BR_FORCEINLINE inline
+#if !defined(BR_FORCE_INLINE)
+#  define BR_NO_FORCE_INLINE
+#  define BR_FORCE_INLINE inline
 #endif
 
 #if !defined(BR_NOINLINE)
@@ -49,8 +49,8 @@
 #  define BR_NOINLINE
 #endif
 
-#if !defined(BR_EXCEPT)
-#  define BR_EXCEPT(x, y) (x == y)
+#if !defined(BR_EXPECT)
+#  define BR_EXPECT(x, y) (x == y)
 #endif
 
 #if !defined(BR_LIKELY)

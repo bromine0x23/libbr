@@ -108,11 +108,11 @@ public:
 	static Pointer make_pointer(Conditional< IsVoid<Element>, NAT, Element > & reference) {
 		return Pointer::make_pointer(reference);
 	}
-/*
-	static auto to_raw(Pointer pointer) -> decltype(pointer.operator->()) {
-		return pointer.operator->();
+
+	static auto to_raw(Pointer pointer) -> Element * {
+		using Traits = PointerTraits< decltype(pointer.operator->()) >;
+		return Traits::to_raw(pointer.operator->());
 	}
- */
 };
 
 /**
@@ -135,11 +135,11 @@ public:
 	static Pointer make_pointer(Conditional< IsVoid<Element>, NAT, Element > & reference) {
 		return address_of(reference);
 	}
-/*
+
 	static auto to_raw(Pointer pointer) -> Pointer {
 		return pointer;
 	}
- */
+
 };
 
 } // namespace BR

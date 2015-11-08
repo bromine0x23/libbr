@@ -8,18 +8,35 @@
 
 #include <libbr/config.hpp>
 
-namespace BR {
+extern "C" {
 
-//@{
 /**
  * @brief like C STL memchr
  * @param[out] D
- * @param[in] S
+ * @param[in] b
  * @param[in] n
  */
-auto memory_search(void const * D, UInt8 b, Size n) -> void const *;
+auto libbr_memory_search(void * D, BR::UInt8 b, BR::Size n) -> void *;
 
-auto memory_search(void * D, UInt8 b, Size n) -> void *;
+}
+
+namespace BR {
+
+/**
+ * @brief like C STL memchr
+ * @param[out] D
+ * @param[in] b
+ * @param[in] n
+ * @see libbr_memory_search
+ */
+//@{
+inline auto memory_search(void const * D, UInt8 b, Size n) -> void const * {
+	return const_cast<void const *>(libbr_memory_search(const_cast<void *>(D), b, n));
+}
+
+inline auto memory_search(void * D, UInt8 b, Size n) -> void * {
+	return libbr_memory_search(D, b, n);
+}
 //@}
 
 } // namespace BR

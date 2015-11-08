@@ -1,17 +1,7 @@
-#include <cstdio>
-#include <iostream>
-#include <iomanip>
-#include <libbr.hpp>
+#include <gtest/gtest.h>
+#include <libbr/libbr.hpp>
 
-#include "math/test_math.hpp"
-
-int main() {
-	
-	puts(BR_COMPILER);
-	puts(BR_PLATFORM);
-	puts(BR_BYTE_ORDER);
-
-	test_float();
-
-	return 0;
+int main(int argc, char **argv) {
+	::testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 }

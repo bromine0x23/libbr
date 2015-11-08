@@ -48,5 +48,11 @@
 #  include BR_PLATFORM_CONFIG
 #endif
 
+#if !defined(BR_BYTE_ORDER)
+#  pragma message("unknown byte order, set to little endian")
+#  define BR_BYTE_ORDER "little endian"
+#  define BR_LITTLE_ENDIAN
+#endif
+
 #include <libbr/config/macros.hpp>
 #include <libbr/config/types.hpp>

@@ -14,7 +14,7 @@
 #include <libbr/math/detail/bignum_helper.hpp>
 
 #include <libbr/container/pair.hpp>
-#include <libbr/exception/out_of_range_exception.hpp>
+#include <libbr/exception/index_exception.hpp>
 #include <libbr/math/relation.hpp>
 #include <libbr/math/sign.hpp>
 #include <libbr/utility/current_function.hpp>
@@ -286,7 +286,7 @@ public:
 	Digit digit(Index index) const noexcept(false) {
 		auto fixed_index = m_fix_index(index);
 		if (fixed_index >= length()) {
-			throw OutOfRangeException(BR_CURRENT_FUNCTION);
+			throw IndexException(BR_CURRENT_FUNCTION);
 		}
 		return operator()(index);
 	}
@@ -307,7 +307,7 @@ public:
 	Digit bit(Index index) const noexcept(false) {
 		auto fixed_index = m_fix_index(index);
 		if (fixed_index >= bit_length()) {
-			throw OutOfRangeException(BR_CURRENT_FUNCTION);
+			throw IndexException(BR_CURRENT_FUNCTION);
 		}
 		return operator[](index);
 	}

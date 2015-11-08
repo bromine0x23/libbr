@@ -1,359 +1,354 @@
 #pragma once
 
 #include <cstdio>
-#include <cstring>
 #include <cwchar>
 #include <libbr/config.hpp>
 #include <libbr/assert.hpp>
 #include <libbr/math/relation.hpp>
+#include <libbr/string/cstring.hpp>
 
 namespace BR {
 
 template< typename TChar >
 struct CharTraits {
 	using Char = TChar;
-	using Int = UInt64;
-	// TODO: using Offset = std::streamoff;
-	// TODO: using Position = std::streampos;
-	// TODO: using State = std::mbstate_t;
 
-	static constexpr bool eq(Char c0, Char c1) noexcept { return c0 == c1; }
-	static constexpr bool lt(Char c0, Char c1) noexcept { return c0 < c1; }
-	static constexpr bool eq_int(Int i0, Int i1) noexcept { return i0 == i1; }
-
-	static Size length(CString<Char> s) {
-		Size result = 0;
-		for (; !eq(*s, Char(0)); ++s) {
-			++result;
-		}
-		return result;
+	static constexpr auto equal(Char x, Char y) noexcept -> bool {
+		return x == y;
 	}
 
-	static Relation compare(CString<Char> s0, CString<Char> s1, Size size) noexcept {
-		for (; size > 0; --size, ++s0, ++s1) {
-			if (lt(*s0, *s1)) { return Relation::LT; }
-			if (lt(*s1, *s0)) { return Relation::GT; }
+	static constexpr auto less(Char x, Char y) noexcept -> bool {
+		return x < y;
+	}
+
+	static void assign(Char & d, Char const & s) {
+		s = d;
+	}
+
+	static auto compare(CString<Char> X, CString<Char> Y, Size n) noexcept -> Relation {
+		for (; n > 0; --n, ++X, ++Y) {
+			if (less(*X, *Y)) {
+				return Relation::LT;
+			}
+			if (less(*Y, *X)) {
+				return Relation::GT;
+			}
 		}
 		return Relation::EQ;
 	}
 
-	static Char const * find(Char const * s, Size size, Char const & c) {
-		for (; size-- > 0; ++s) {
-			if (eq(*s, c)) {
-				return s;
+	static auto copy(Char * D, CString<Char> S, Size n) -> Char * {
+		BR_ASSERT(S < D || S >= D + n);
+		Char * R = D;
+		for (; n > 0; --n) {
+			assign(*D++, *S++);
+		}
+		return D;
+	}
+
+	static constexpr auto eof() noexcept -> Char {
+		return Char(EOF);
+	}
+
+	static auto fill(Char * D, Size n, Char c) -> Char * {
+		Char * R = D;
+		for (; n > 0; --n) {
+			assign(*D++, c);
+		}
+		return R;
+	}
+
+	static auto find(Char const * S, Char const & c, Size n) -> Char const * {
+		for (; n-- > 0; ++S) {
+			if (equal(*S, c)) {
+				return S;
 			}
 		}
 		return nullptr;
 	}
 
-	static void assign(Char & c0, Char const & c1) noexcept {
-		c0 = c1;
-	}
-
-	static Char * assign(Char * s, Size size, Char c) {
-		Char * result = s;
-		for (; size > 0; --size) {
-			assign(*s++, c);
+	static auto length(CString<Char> S) -> Size {
+		Size l = 0;
+		for (; !equal(*S, Char(0)); ++S) {
+			++l;
 		}
-		return result;
+		return l;
 	}
 
-	static Char * move(Char * s0, CString<Char> s1, Size size) {
-		Char * result = s0;
-		if (s0 < s1) {
-			for (; size > 0; --size) {
-				assign(*s0++, *s1++);
+	static auto move(Char * D, CString<Char> S, Size n) -> Char * {
+		Char * R = D;
+		if (D < S) {
+			for (; n > 0; --n) {
+				assign(*D++, *S++);
 			}
-		} else if (s1 < s0) {
-			s0 += size;
-			s1 += size;
-			for (; size > 0; --size) {
-				assign(*--s0, *--s1);
+		} else if (S < D) {
+			D += n;
+			S += n;
+			for (; n > 0; --n) {
+				assign(*--D, *--S);
 			}
 		}
-		return result;
+		return R;
 	}
-
-	static Char * copy(Char * s0, CString<Char> s1, Size size) {
-		BR_ASSERT(s1 < s0 || s1 >= s0 + size);
-		Char * result = s0;
-		for (; size > 0; --size) {
-			assign(*s0++, *s1++);
-		}
-		return result;
-	}
-
-	static constexpr Char to_char(Int  i) noexcept { return Char(i); }
-	static constexpr Int  to_int (Char c) noexcept { return Int (c); }
-
-	static constexpr Int eof() noexcept { return Int(EOF); }
-
-	static constexpr Int not_eof(Int i) noexcept { return eq_int(i, eof()) ? ~eof() : i; }
 }; // struct CharTraits<TChar>
 
-template <>
+template<>
 struct CharTraits<NChar> {
 	using Char = NChar;
-	using Int = UInt32;
-	// TODO: using Offset = std::streamoff;
-	// TODO: using Position = std::streampos;
-	// TODO: using State = std::mbstate_t;
 
-	static constexpr bool eq(Char c0, Char c1) noexcept { return c0 == c1; }
-	static constexpr bool lt(Char c0, Char c1) noexcept { return UInt8(c0) < UInt8(c1); }
-
-	static Size length(CString<Char> s) {
-		return std::strlen(s);
+	static constexpr auto equal(Char x, Char y) noexcept -> bool {
+		return x == y;
 	}
 
-	static constexpr Relation compare(CString<Char> s0, CString<Char> s1, Size size) noexcept {
-		return to_relation(std::memcmp(s0, s1, size));
+	static constexpr auto less(Char x, Char y) noexcept -> bool {
+		return UInt8(x) < UInt8(y);
 	}
 
-	static Char const * find(Char const * s, Size size, Char const & c) {
-		return reinterpret_cast< Char const * >(std::memchr(s, to_int(c), size));
+	static void assign(Char & d, Char const & s) noexcept {
+		d = s;
 	}
 
-	static void assign(Char & c0, Char const & c1) noexcept {
-		c0 = c1;
+	static auto compare(CString<Char> X, CString<Char> Y, Size n) noexcept -> Relation {
+		return string_compare(X, Y, n);
 	}
 
-	static Char * assign(Char * s, Size size, Char c) {
-		return reinterpret_cast< Char * >(std::memset(s, to_int(c), size));
+	static auto copy(Char * D, CString<Char> S, Size n) -> Char * {
+		BR_ASSERT(S < D || S >= D + n);
+		return string_copy(D, S, n);
 	}
 
-	static Char * move(Char * s0, CString<Char> s1, Size size) {
-		return reinterpret_cast< Char * >(std::memmove(s0, s1, size));
+	static constexpr auto eof() noexcept -> Char {
+		return Char(EOF);
 	}
 
-	static Char * copy(Char * s0, CString<Char> s1, Size size) {
-		BR_ASSERT(s1 < s0 || s1 >= s0 + size);
-		return reinterpret_cast< Char * >(std::memcpy(s0, s1, size));
+	static auto fill(Char * D, Size n, Char c) -> Char * {
+		return string_fill(D, c, n);
 	}
 
-	static constexpr Char to_char(Int i) noexcept { return Char(i); }
+	static auto find(Char const * S, Char const & c, Size n) -> Char const * {
+		return string_find(S, c, n);
+	}
 
-	static constexpr Int to_int(Char c) noexcept { return Int(UInt8(c)); }
+	static auto length(CString<Char> S) -> Size {
+		return string_length(S);
+	}
 
-	static constexpr bool eq_int(Int i0, Int i1) noexcept { return i0 == i1; }
-
-	static constexpr Int eof() noexcept { return Int(EOF); }
-
-	static constexpr Int not_eof(Int i) noexcept { return eq_int(i, eof()) ? ~eof() : i; }
+	static auto move(Char * D, CString<Char> S, Size n) -> Char * {
+		return string_move(D, S, n);
+	}
 }; // struct CharTraits<NChar>
 
-template <>
+template<>
 struct CharTraits<WChar> {
 	using Char = WChar;
-	using Int = UInt32;
-	// TODO: using Offset = std::streamoff;
-	// TODO: using Position = std::streampos;
-	// TODO: using State = std::mbstate_t;
 
-	static constexpr bool eq(Char c0, Char c1) noexcept { return c0 == c1; }
-	static constexpr bool lt(Char c0, Char c1) noexcept { return c0 <  c1; }
-	static constexpr bool eq_int(Int i0, Int i1) noexcept { return i0 == i1; }
-
-	static Size length(CString<Char> s) {
-		return std::wcslen(s);
+	static constexpr auto equal(Char x, Char y) noexcept -> bool {
+		return x == y;
 	}
 
-	static Relation compare(CString<Char> s0, CString<Char> s1, Size size) noexcept {
-		return to_relation(std::wmemcmp(s0, s1, size));
+	static constexpr auto less(Char x, Char y) noexcept -> bool {
+		return x < y;
 	}
 
-	static Char const * find(Char const * s, Size size, Char const & c) {
-		return reinterpret_cast< Char const * >(std::wmemchr(s, c, size));
+	static void assign(Char & d, Char const & s) noexcept {
+		d = s;
 	}
 
-	static void assign(Char & c0, Char const & c1) noexcept {
-		c0 = c1;
+	static auto compare(CString<Char> X, CString<Char> Y, Size n) noexcept -> Relation {
+		return string_compare(X, Y, n);
 	}
 
-	static Char * assign(Char * s, Size size, Char c) {
-		return reinterpret_cast< Char * >(std::wmemset(s, c, size));
+	static auto copy(Char * D, CString<Char> S, Size n) -> Char * {
+		BR_ASSERT(S < D || S >= D + n);
+		return string_copy(D, S, n);
 	}
 
-	static Char * move(Char * s0, CString<Char> s1, Size size) {
-		return reinterpret_cast< Char * >(std::wmemmove(s0, s1, size));
+	static constexpr auto eof() noexcept -> Char {
+		return Char(EOF);
 	}
 
-	static Char * copy(Char * s0, CString<Char> s1, Size size) {
-		BR_ASSERT(s1 < s0 || s1 >= s0 + size);
-		return reinterpret_cast< Char * >(std::wmemcpy(s0, s1, size));
+	static auto fill(Char * D, Size n, Char c) -> Char * {
+		return string_fill(D, c, n);
 	}
 
-	static constexpr Char to_char(Int  i) noexcept { return Char(i); }
-	static constexpr Int  to_int (Char c) noexcept { return Int (c); }
+	static auto find(Char const * S, Char const & c, Size n) -> Char const * {
+		return string_find(S, c, n);
+	}
 
-	static constexpr Int eof() noexcept { return Int(WEOF); }
+	static auto length(CString<Char> S) -> Size {
+		return string_length(S);
+	}
 
-	static constexpr Int not_eof(Int i) noexcept { return eq_int(i, eof()) ? ~eof() : i; }
-}; // struct CharTraits<WChar>
+	static auto move(Char * D, CString<Char> S, Size n) -> Char * {
+		return string_move(D, S, n);
+	}
+}; // struct CharTraits<NChar>
 
 template <>
 struct CharTraits<Char16> {
 	using Char = Char16;
-	using Int = UInt16;
-	// TODO: using Offset = std::streamoff;
-	// TODO: using Position = std::u16streampos;
-	// TODO: using State = std::mbstate_t;
 
-	static constexpr bool eq(Char c0, Char c1) noexcept { return c0 == c1; }
-	static constexpr bool lt(Char c0, Char c1) noexcept { return c0 <  c1; }
-	static constexpr bool eq_int(Int i0, Int i1) noexcept { return i0 == i1; }
-
-	static Size length(CString<Char> s) {
-		Size result = 0;
-		for (; !eq(*s, Char(0)); ++s) {
-			++result;
-		}
-		return result;
+	static constexpr auto equal(Char c0, Char c1) noexcept -> bool {
+		return c0 == c1;
 	}
 
-	static Relation compare(CString<Char> s0, CString<Char> s1, Size size) noexcept {
-		for (; size > 0; --size, ++s0, ++s1) {
-			if (lt(*s0, *s1)) { return Relation::LT; }
-			if (lt(*s1, *s0)) { return Relation::GT; }
-		}
-		return Relation::EQ;
-	}
-
-	static Char const * find(Char const * s, Size size, Char const & c) {
-		for (; size-- > 0; ++s) {
-			if (eq(*s, c)) {
-				return s;
-			}
-		}
-		return nullptr;
+	static constexpr auto less(Char c0, Char c1) noexcept -> bool {
+		return c0 <  c1;
 	}
 
 	static void assign(Char & c0, Char const & c1) noexcept {
 		c0 = c1;
 	}
 
-	static Char * assign(Char * s, Size size, Char c) {
-		Char * result = s;
-		for (; size > 0; --size) {
-			assign(*s++, c);
-		}
-		return result;
-	}
-
-	static Char * move(Char * s0, CString<Char> s1, Size size) {
-		Char * result = s0;
-		if (s0 < s1) {
-			for (; size > 0; --size) {
-				assign(*s0++, *s1++);
+	static auto compare(CString<Char> s0, CString<Char> s1, Size size) noexcept -> Relation {
+		for (; size > 0; --size, ++s0, ++s1) {
+			if (less(*s0, *s1)) {
+				return Relation::LT;
 			}
-		} else if (s1 < s0) {
-			s0 += size;
-			s1 += size;
-			for (; size > 0; --size) {
-				assign(*--s0, *--s1);
+			if (less(*s1, *s0)) {
+				return Relation::GT;
 			}
 		}
-		return result;
+		return Relation::EQ;
 	}
 
-	static Char * copy(Char * s0, CString<Char> s1, Size size) {
-		BR_ASSERT(s1 < s0 || s1 >= s0 + size);
-		Char * result = s0;
-		for (; size > 0; --size) {
-			assign(*s0++, *s1++);
+	static auto copy(Char * D, CString<Char> S, Size n) -> Char * {
+		BR_ASSERT(S < D || S >= D + n);
+		Char * R = D;
+		for (; n > 0; --n) {
+			assign(*D++, *S++);
 		}
-		return result;
+		return D;
 	}
 
-	static constexpr Char to_char(Int  i) noexcept { return Char(i); }
-	static constexpr Int  to_int (Char c) noexcept { return Int (c); }
+	static constexpr auto eof() noexcept -> Char {
+		return Char(0xDFFF);
+	}
 
-	static constexpr Int eof() noexcept { return Int(0xDFFF); }
+	static auto fill(Char * D, Size n, Char c) -> Char * {
+		Char * R = D;
+		for (; n > 0; --n) {
+			assign(*D++, c);
+		}
+		return R;
+	}
 
-	static constexpr Int not_eof(Int i) noexcept { return eq_int(i, eof()) ? ~eof() : i; }
+	static auto find(Char const * S, Char const & c, Size n) -> Char const * {
+		for (; n-- > 0; ++S) {
+			if (equal(*S, c)) {
+				return S;
+			}
+		}
+		return nullptr;
+	}
+
+	static auto length(CString<Char> S) -> Size {
+		Size l = 0;
+		for (; !equal(*S, Char(0)); ++S) {
+			++l;
+		}
+		return l;
+	}
+
+	static auto move(Char * D, CString<Char> S, Size n) -> Char * {
+		Char * R = D;
+		if (D < S) {
+			for (; n > 0; --n) {
+				assign(*D++, *S++);
+			}
+		} else if (S < D) {
+			D += n;
+			S += n;
+			for (; n > 0; --n) {
+				assign(*--D, *--S);
+			}
+		}
+		return R;
+	}
 }; // struct CharTraits<Char16>
 
 template <>
 struct CharTraits<Char32> {
 	using Char = Char32;
-	using Int = UInt32;
-	// TODO: using Offset = std::streamoff;
-	// TODO: using Position = std::u32streampos;
-	// TODO: using State = std::mbstate_t;
 
-	static constexpr bool eq(Char c0, Char c1) noexcept { return c0 == c1; }
-	static constexpr bool lt(Char c0, Char c1) noexcept { return c0 <  c1; }
-	static constexpr bool eq_int(Int i0, Int i1) noexcept { return i0 == i1; }
-
-	static Size length(CString<Char> s) {
-		Size result = 0;
-		for (; !eq(*s, Char(0)); ++s) {
-			++result;
-		}
-		return result;
+	static constexpr auto equal(Char c0, Char c1) noexcept -> bool {
+		return c0 == c1;
 	}
 
-	static Relation compare(CString<Char> s0, CString<Char> s1, Size size) noexcept {
-		for (; size > 0; --size, ++s0, ++s1) {
-			if (lt(*s0, *s1)) { return Relation::LT; }
-			if (lt(*s1, *s0)) { return Relation::GT; }
-		}
-		return Relation::EQ;
-	}
-
-	static Char const * find(Char const * s, Size size, Char const & c) {
-		for (; size-- > 0; ++s) {
-			if (eq(*s, c)) {
-				return s;
-			}
-		}
-		return nullptr;
+	static constexpr auto less(Char c0, Char c1) noexcept -> bool {
+		return c0 <  c1;
 	}
 
 	static void assign(Char & c0, Char const & c1) noexcept {
 		c0 = c1;
 	}
 
-	static Char * assign(Char * s, Size size, Char c) {
-		Char * result = s;
-		for (; size > 0; --size) {
-			assign(*s++, c);
-		}
-		return result;
-	}
-
-	static Char * move(Char * s0, CString<Char> s1, Size size) {
-		Char * result = s0;
-		if (s0 < s1) {
-			for (; size > 0; --size) {
-				assign(*s0++, *s1++);
+	static auto compare(CString<Char> s0, CString<Char> s1, Size size) noexcept -> Relation {
+		for (; size > 0; --size, ++s0, ++s1) {
+			if (less(*s0, *s1)) {
+				return Relation::LT;
 			}
-		} else if (s1 < s0) {
-			s0 += size;
-			s1 += size;
-			for (; size > 0; --size) {
-				assign(*--s0, *--s1);
+			if (less(*s1, *s0)) {
+				return Relation::GT;
 			}
 		}
-		return result;
+		return Relation::EQ;
 	}
 
-	static Char * copy(Char * s0, CString<Char> s1, Size size) {
-		BR_ASSERT(s1 < s0 || s1 >= s0 + size);
-		Char * result = s0;
-		for (; size > 0; --size) {
-			assign(*s0++, *s1++);
+	static auto copy(Char * D, CString<Char> S, Size n) -> Char * {
+		BR_ASSERT(S < D || S >= D + n);
+		Char * R = D;
+		for (; n > 0; --n) {
+			assign(*D++, *S++);
 		}
-		return result;
+		return D;
 	}
 
-	static constexpr Char to_char(Int  i) noexcept { return Char(i); }
-	static constexpr Int  to_int (Char c) noexcept { return Int (c); }
+	static constexpr auto eof() noexcept -> Char {
+		return Char(0xFFFFFFFF);
+	}
 
-	static constexpr Int eof() noexcept { return Int(0xFFFFFFFF); }
+	static auto fill(Char * D, Size n, Char c) -> Char * {
+		Char * R = D;
+		for (; n > 0; --n) {
+			assign(*D++, c);
+		}
+		return R;
+	}
 
-	static constexpr Int not_eof(Int i) noexcept { return eq_int(i, eof()) ? ~eof() : i; }
-}; // struct CharTraits<Char32>
+	static auto find(Char const * S, Char const & c, Size n) -> Char const * {
+		for (; n-- > 0; ++S) {
+			if (equal(*S, c)) {
+				return S;
+			}
+		}
+		return nullptr;
+	}
+
+	static auto length(CString<Char> S) -> Size {
+		Size l = 0;
+		for (; !equal(*S, Char(0)); ++S) {
+			++l;
+		}
+		return l;
+	}
+
+	static auto move(Char * D, CString<Char> S, Size n) -> Char * {
+		Char * R = D;
+		if (D < S) {
+			for (; n > 0; --n) {
+				assign(*D++, *S++);
+			}
+		} else if (S < D) {
+			D += n;
+			S += n;
+			for (; n > 0; --n) {
+				assign(*--D, *--S);
+			}
+		}
+		return R;
+	}
+}; // struct CharTraits<Char16>
 
 } // namespace BR
 

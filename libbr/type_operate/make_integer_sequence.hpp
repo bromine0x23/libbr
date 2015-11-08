@@ -31,7 +31,7 @@ template< typename TValue, TValue from, TValue to, TValue ... values >
 struct TypeMakeIntegerSequence;
 
 template< typename TValue, TValue from, TValue to, TValue ... values >
-struct TypeMakeIntegerSequence : public TypeMakeIntegerSequence< TValue, from + 1, to, values ..., from > {
+struct TypeMakeIntegerSequence : public TypeRewrap< TypeMakeIntegerSequence< TValue, from + 1, to, values ..., from > > {
 };
 
 template< typename TValue, TValue to, TValue ... values >

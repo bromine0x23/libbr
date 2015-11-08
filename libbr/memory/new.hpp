@@ -21,7 +21,9 @@ inline void deallocate(void *pointer) {
 
 using BadAllocateException = std::bad_alloc;
 
-using NewHandler = std::new_handler;
+// using BadArrayNewLengthException = std::bad_array_new_length;
+
+using NewHandler = void(*)();
 
 using NothrowTag = std::nothrow_t;
 

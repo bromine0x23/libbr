@@ -21,7 +21,7 @@ public:
 	ArgumentException() : BaseException("BR::ArgumentException") {
 	};
 
-	explicit ArgumentException(std::string const & message) : BaseException(message) {
+	explicit ArgumentException(String<NChar> const & message) : BaseException(message) {
 	};
 
 	explicit ArgumentException(CString<NChar> message) : BaseException(message) {

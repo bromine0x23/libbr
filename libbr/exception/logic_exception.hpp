@@ -8,8 +8,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/exception/exception.hpp>
-
-#include <string>
+#include <libbr/string/string.hpp>
 
 namespace BR {
 
@@ -25,7 +24,7 @@ public:
 
 	LogicException(LogicException const &) noexcept;
 
-	explicit LogicException(std::string const & message);
+	explicit LogicException(String<NChar> const & message);
 
 	explicit LogicException(CString<NChar> message);
 
@@ -36,7 +35,7 @@ public:
 	auto what() const noexcept -> Message override;
 
 private:
-	std::string m_message;
+	String<NChar> m_message;
 };
 
 } // namespace BR

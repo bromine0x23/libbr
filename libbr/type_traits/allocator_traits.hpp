@@ -427,7 +427,7 @@ struct AllocatorTraits {
 	}
 
 	static Allocator select_on_container_copy_construction(Allocator const & allocator) noexcept {
-		Detail::TypeTraits::AllocatorTraits::SelectOnContainerCopyConstruction<Allocator>::call(allocator);
+		return Detail::TypeTraits::AllocatorTraits::SelectOnContainerCopyConstruction<Allocator>::call(allocator);
 	}
 };
 

@@ -18,9 +18,6 @@ enum class Relation {
 	LT = -1, ///< 小于
 	EQ =  0, ///< 等于
 	GT =  1, ///< 大于
-	LESS_THAN    = LT, ///< 小于
-	EQUAL        = EQ, ///< 等于
-	GREATER_THAN = GT, ///< 大于
 };
 
 /**

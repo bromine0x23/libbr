@@ -507,7 +507,7 @@ public:
 	/**
 	 * @brief 构造具有指定长度的容器，元素以给定值初始化
 	 * @param[in] element 用于初始化的元素
-	 * @param[in] count 容器大小
+	 * @param[in] size 容器大小
 	 */
 	ForwardList(Element const & element, Size size) {
 		insert_after(chead(), element, size);
@@ -516,7 +516,7 @@ public:
 	/**
 	 * @brief 构造具有指定长度的容器，元素以给定值初始化，指定分配器
 	 * @param[in] element 用于初始化的元素
-	 * @param[in] count 容器大小
+	 * @param[in] size 容器大小
 	 * @param[in] allocator 分配器
 	 */
 	ForwardList(Element const & element, Size size, Allocator const & allocator) : Base(allocator) {

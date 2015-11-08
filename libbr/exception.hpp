@@ -12,6 +12,6 @@
 
 #include <libbr/exception/logic_exception.hpp>
 #include <libbr/exception/argument_exception.hpp>
-#include <libbr/exception/out_of_range_exception.hpp>
+#include <libbr/exception/index_exception.hpp>
 
 #include <libbr/exception/runtime_exception.hpp>

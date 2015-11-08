@@ -55,7 +55,6 @@ inline auto sort3(TForwardIterator a, TForwardIterator b, TForwardIterator c, TC
 	} else {
 		// abc
 	}
-	BR_ASSERT(comparator(*a, *b) && comparator(*b, *c));
 	return swap_count;
 }
 
@@ -74,7 +73,6 @@ inline auto sort4(TForwardIterator a, TForwardIterator b, TForwardIterator c, TF
 			}
 		}
 	}
-	BR_ASSERT(comparator(*a, *b) && comparator(*b, *c) && comparator(*c, *d));
 	return swap_count;
 }
 
@@ -97,7 +95,6 @@ inline auto sort5(TForwardIterator a, TForwardIterator b, TForwardIterator c, TF
 			}
 		}
 	}
-	BR_ASSERT(comparator(*a, *b) && comparator(*b, *c) && comparator(*c, *d) && comparator(*d, *e));
 	return swap_count;
 }
 
@@ -162,7 +159,7 @@ template< typename TRandomAccessIterator, typename TComparator >
 void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator & comparator) {
 	using Difference = typename IteratorTraits<TRandomAccessIterator>::Difference;
 	using Element = typename IteratorTraits<TRandomAccessIterator>::Element;
-	constexpr Difference insertion_sort_threshold = HasTrivialCopyConstructor<Element>() && HasTrivialCopyAssign<Element>() ? 30 : 6;
+	constexpr Difference insertion_sort_threshold = (HasTrivialCopyConstructor<Element>() && HasTrivialCopyAssign<Element>()) ? 30 : 6;
 	constexpr Difference pivot_select_threshold = 1000;
 	for (;;) {
 		RESTART:
@@ -289,43 +286,52 @@ void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator &
 	}
 }
 
-extern template void sort(NChar * first, NChar * last, Less<NChar> & comparator);
-
-extern template void sort(WChar * first, WChar * last, Less<WChar> & comparator);
-
-extern template void sort(SInt8 * first, SInt8 * last, Less<SInt8> & comparator);
-
-extern template void sort(UInt8 * first, UInt8 * last, Less<UInt8> & comparator);
-
-extern template void sort(SInt16 * first, SInt16 * last, Less<SInt16> & comparator);
-
-extern template void sort(UInt16 * first, UInt16 * last, Less<UInt16> & comparator);
-
-extern template void sort(SInt32 * first, SInt32 * last, Less<SInt32> & comparator);
-
-extern template void sort(UInt32 * first, UInt32 * last, Less<UInt32> & comparator);
-
-extern template void sort(SInt64 * first, SInt64 * last, Less<SInt64> & comparator);
-
-extern template void sort(UInt64 * first, UInt64 * last, Less<UInt64> & comparator);
-
-extern template void sort(SFloat * first, SFloat * last, Less<SFloat> & comparator);
-
-extern template void sort(DFloat * first, DFloat * last, Less<DFloat> & comparator);
-
-extern template void sort(QFloat * first, QFloat * last, Less<QFloat> & comparator);
-
 } // namespace Algorithm
 } // namespace Detail
 
+/**
+ * @brief 排序算法
+ * @param[in,out] first,last 待排序区间
+ * @param[in] comparator 比较器
+ */
 template< typename TRandomAccessIterator, typename TComparator >
 inline void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) {
 	Detail::Algorithm::sort(first, last, comparator);
 }
 
+/**
+ * @brief 排序算法(使用BR::Less<>作比较器)
+ * @param[in,out] first,last 待排序区间
+ */
 template< typename TRandomAccessIterator >
 inline void sort(TRandomAccessIterator first, TRandomAccessIterator last)  {
 	sort(first, last, Less<>());
 }
+
+extern template void sort(NChar * first, NChar * last, Less<NChar> && comparator);
+
+extern template void sort(WChar * first, WChar * last, Less<WChar> && comparator);
+
+extern template void sort(SInt8 * first, SInt8 * last, Less<SInt8> && comparator);
+
+extern template void sort(UInt8 * first, UInt8 * last, Less<UInt8> && comparator);
+
+extern template void sort(SInt16 * first, SInt16 * last, Less<SInt16> && comparator);
+
+extern template void sort(UInt16 * first, UInt16 * last, Less<UInt16> && comparator);
+
+extern template void sort(SInt32 * first, SInt32 * last, Less<SInt32> && comparator);
+
+extern template void sort(UInt32 * first, UInt32 * last, Less<UInt32> && comparator);
+
+extern template void sort(SInt64 * first, SInt64 * last, Less<SInt64> && comparator);
+
+extern template void sort(UInt64 * first, UInt64 * last, Less<UInt64> && comparator);
+
+extern template void sort(SFloat * first, SFloat * last, Less<SFloat> && comparator);
+
+extern template void sort(DFloat * first, DFloat * last, Less<DFloat> && comparator);
+
+extern template void sort(QFloat * first, QFloat * last, Less<QFloat> && comparator);
 
 } // namespace BR

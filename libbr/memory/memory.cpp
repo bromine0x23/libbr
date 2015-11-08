@@ -2,40 +2,37 @@
 #include <libbr/memory/memory_compare.hpp>
 #include <libbr/memory/memory_copy.hpp>
 #include <libbr/memory/memory_move.hpp>
+#include <libbr/memory/memory_search.hpp>
 #include <libbr/memory/memory_set.hpp>
 #include <cstring>
+
+auto libbr_memory_compare(void const * X, void const * Y, BR::Size n) -> BR::Relation {
+	return BR::to_relation(std::memcmp(X, Y, n));
+}
+
+void libbr_memory_copy(void * D, void const * S, BR::Size n) {
+	std::memcpy(D, S, n);
+}
+
+void libbr_memory_move(void * D, void const * S, BR::Size n) {
+	std::memmove(D, S, n);
+}
+
+auto libbr_memory_search(void * D, BR::UInt8 b, BR::Size n) -> void * {
+	return memchr(D, b, n);
+}
+
+auto libbr_memory_set(void * D, BR::Byte v, BR::Size n) -> void * {
+	return std::memset(D, v, n);
+}
 
 namespace BR {
 
 BadWeakPointer::~BadWeakPointer() noexcept {
 }
 
-auto memory_compare(void const * X, void const * Y, Size n) -> Relation {
-	return to_relation(std::memcmp(X, Y, n));
-}
-
 auto BadWeakPointer::what() const noexcept -> Message {
 	return "BadWeakPointer";
-}
-
-void memory_copy(void * D, void const * S, Size n) {
-	std::memcpy(D, S, n);
-}
-
-void memory_move(void * D, void const * S, Size n) {
-	std::memmove(D, S, n);
-}
-
-auto memory_search(void const * D, UInt8 b, Size n) -> void const * {
-	return memchr(D, b, n);
-}
-
-auto memory_search(void * D, UInt8 b, Size n) -> void * {
-	return memchr(D, b, n);
-}
-
-auto memory_set(void * D, Byte v, Size n) -> void * {
-	return std::memset(D, v, n);
 }
 
 } // namespace BR

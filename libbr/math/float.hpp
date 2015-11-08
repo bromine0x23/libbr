@@ -175,7 +175,7 @@ constexpr auto infinity32(Sign sign) -> Float32;
 
 constexpr auto infinity64() -> Float64;
 
-constexpr auto infinity64(Sign sign) -> Float32;
+constexpr auto infinity64(Sign sign) -> Float64;
 
 constexpr auto infinity(TypeWrapper<Float32> _dummy) -> Float32;
 
@@ -283,7 +283,7 @@ constexpr auto infinity64() -> Float64 {
 	return Detail::Math::to_float64(0x7FF0000000000000LL);
 }
 
-constexpr auto infinity64(Sign sign) -> Float32 {
+constexpr auto infinity64(Sign sign) -> Float64 {
 	return sign == Sign::POS ? Detail::Math::to_float64(0x7FF0000000000000LL) : Detail::Math::to_float64(0xFFF0000000000000LL);
 }
 
@@ -346,7 +346,7 @@ BR_CONSTEXPR_AFTER_CXX11 inline auto classify(Float64 f) -> FloatCategory {
 	FloatCategory category = FloatCategory::normal;
 	SInt32 high = Detail::Math::get_high_part(f);
 	UInt32 low = Detail::Math::get_low_part(f);
-	UInt32 t = low | high & 0x000FFFFF;
+	UInt32 t = low | (high & 0x000FFFFFU);
 	UInt32 u = high & 0x7FF00000U;
 	if ((t | u) == 0x00000000U) {
 		category = FloatCategory::zero;
@@ -355,7 +355,7 @@ BR_CONSTEXPR_AFTER_CXX11 inline auto classify(Float64 f) -> FloatCategory {
 	} else if (u == 0x7FF00000U) {
 		category = (t != 0x00000000U ? FloatCategory::nan : FloatCategory::infinite);
 	}
-	return FloatCategory::normal;
+	return category;
 }
 
 BR_CONSTEXPR_AFTER_CXX11 inline auto is_normal(Float32 f) -> bool {

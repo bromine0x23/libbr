@@ -9,7 +9,7 @@
 #include <libbr/config.hpp>
 #include <libbr/math/relation.hpp>
 
-namespace BR {
+extern "C" {
 
 /**
  * @brief like C STL memcmp
@@ -17,7 +17,22 @@ namespace BR {
  * @param[in] Y
  * @param[in] n
  */
-auto memory_compare(void const * X, void const * Y, Size n) -> Relation;
+auto libbr_memory_compare(void const * X, void const * Y, BR::Size n) -> BR::Relation;
+
+}
+
+namespace BR {
+
+/**
+ * @brief like C STL memcmp
+ * @param[in] X
+ * @param[in] Y
+ * @param[in] n
+ * @see libbr_memory_compare
+ */
+inline auto memory_compare(void const * X, void const * Y, Size n) -> Relation {
+	return libbr_memory_compare(X, Y, n);
+}
 
 } // namespace BR
 

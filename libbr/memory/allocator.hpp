@@ -37,12 +37,12 @@ public:
 	constexpr Allocator() noexcept = default;
 
 	template< typename TOtherValue >
-	inline auto operator==(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
+	BR_FORCE_INLINE auto operator==(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
 		return true;
 	}
 
 	template< typename TOtherValue >
-	inline auto operator!=(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
+	BR_FORCE_INLINE auto operator!=(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
 		return false;
 	}
 
@@ -63,12 +63,12 @@ public:
 	constexpr Allocator() noexcept = default;
 
 	template< typename TOtherValue >
-	inline auto operator==(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
+	BR_FORCE_INLINE auto operator==(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
 		return true;
 	}
 
 	template< typename TOtherValue >
-	inline auto operator!=(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
+	BR_FORCE_INLINE auto operator!=(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
 		return false;
 	}
 
@@ -96,49 +96,49 @@ public:
 	template< typename TOtherValue >
 	using Rebind = Allocator<TOtherValue>;
 
-	constexpr Allocator() noexcept {
+	BR_FORCE_INLINE constexpr Allocator() noexcept {
 	}
 
 	template< typename TOtherValue >
-	constexpr Allocator(Allocator<TOtherValue> const & _dummy) noexcept {
+	BR_FORCE_INLINE constexpr Allocator(Allocator<TOtherValue> const & _dummy) noexcept {
 	}
 
-	auto address(Reference reference) noexcept -> Pointer {
+	BR_FORCE_INLINE auto address(Reference reference) noexcept -> Pointer {
 		return address_of(reference);
 	}
 
-	auto address(ConstReference reference) const noexcept -> ConstPointer {
+	BR_FORCE_INLINE auto address(ConstReference reference) const noexcept -> ConstPointer {
 		return address_of(reference);
 	}
 
-	auto allocate(Size size, Allocator<void>::ConstPointer _dummy = nullptr) -> Pointer {
+	BR_FORCE_INLINE auto allocate(Size size, Allocator<void>::ConstPointer _dummy = nullptr) -> Pointer {
 		return static_cast<Pointer>(Detail::Memory::allocate(size * sizeof(Value)));
 	}
 
-	void deallocate(Pointer pointer, Size) noexcept {
+	BR_FORCE_INLINE void deallocate(Pointer pointer, Size) noexcept {
 		return Detail::Memory::deallocate(reinterpret_cast< void * >(pointer));
 	}
 
-	auto maxSize() const noexcept -> Size {
+	BR_FORCE_INLINE auto maxSize() const noexcept -> Size {
 		return Size(~0) / sizeof(Value);
 	}
 
 	template< typename TOtherValue, typename ... TArgs >
-	void construct(TOtherValue * pointer, TArgs && ... args) {
+	BR_FORCE_INLINE void construct(TOtherValue * pointer, TArgs && ... args) {
 		::new(reinterpret_cast< void * >(pointer)) TOtherValue(forward<TArgs>(args) ...);
 	}
 
-	void destroy(Pointer pointer) {
+	BR_FORCE_INLINE void destroy(Pointer pointer) {
 		pointer->~Value();
 	}
 
 	template< typename TOtherValue >
-	inline auto operator==(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
+	BR_FORCE_INLINE auto operator==(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
 		return true;
 	}
 
 	template< typename TOtherValue >
-	inline auto operator!=(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
+	BR_FORCE_INLINE auto operator!=(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
 		return false;
 	}
 
@@ -166,45 +166,45 @@ public:
 	template< typename TOtherValue >
 	using Rebind = Allocator<TOtherValue>;
 
-	constexpr Allocator() noexcept {
+	BR_FORCE_INLINE constexpr Allocator() noexcept {
 	}
 
 	template< typename TOtherValue >
-	Allocator(Allocator<TOtherValue> const & _dummy) noexcept {
+	BR_FORCE_INLINE constexpr Allocator(Allocator<TOtherValue> const & _dummy) noexcept {
 	}
 
-	auto address(ConstReference reference) const noexcept -> ConstPointer {
+	BR_FORCE_INLINE auto address(ConstReference reference) const noexcept -> ConstPointer {
 		return address_of(reference);
 	}
 
-	auto allocate(Size size, Allocator<void>::ConstPointer _dummy = nullptr) -> Pointer {
+	BR_FORCE_INLINE auto allocate(Size size, Allocator<void>::ConstPointer _dummy = nullptr) -> Pointer {
 		return static_cast< Pointer >(Detail::Memory::allocate(size * sizeof(Value)));
 	}
 
-	void deallocate(Pointer pointer, Size) noexcept {
+	BR_FORCE_INLINE void deallocate(Pointer pointer, Size) noexcept {
 		return Detail::Memory::allocate(reinterpret_cast< void * >(pointer));
 	}
 
-	auto maxSize() const noexcept -> Size {
+	BR_FORCE_INLINE auto maxSize() const noexcept -> Size {
 		return Size(~0) / sizeof(Value);
 	}
 
 	template< typename TOtherValue, typename ... TArguments >
-	void construct(TOtherValue * pointer, TArguments && ... arguments) {
+	BR_FORCE_INLINE void construct(TOtherValue * pointer, TArguments && ... arguments) {
 		::new(reinterpret_cast< void * >(pointer)) TOtherValue(forward<TArguments>(arguments) ...);
 	}
 
-	void destroy(Pointer pointer) {
+	BR_FORCE_INLINE void destroy(Pointer pointer) {
 		pointer->~Value();
 	}
 
 	template< typename TOtherValue >
-	inline auto operator==(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
+	BR_FORCE_INLINE auto operator==(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
 		return true;
 	}
 
 	template< typename TOtherValue >
-	inline auto operator!=(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
+	BR_FORCE_INLINE auto operator!=(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
 		return false;
 	}
 

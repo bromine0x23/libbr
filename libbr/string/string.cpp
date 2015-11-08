@@ -1,95 +1,115 @@
 #include <libbr/string/cstring.hpp>
+#include <libbr/string/string.hpp>
 #include <cstring>
 #include <cwchar>
 
-namespace BR {
+#if defined(BR_MSVC)
+#pragma warning(disable: 4996)
+#endif
 
-auto string_compare(CString<NChar> X, CString<NChar> Y) -> Relation {
-	return to_relation(std::strcmp(X, Y));
-}
-
-auto string_compare(CString<WChar> X, CString<WChar> Y) -> Relation {
-	return to_relation(std::wcscmp(X, Y));
-}
-
-auto string_compare(CString<NChar> X, CString<NChar> Y, Size n) -> Relation {
-	return to_relation(std::strncmp(X, Y, n));
-}
-
-auto string_compare(CString<WChar> X, CString<WChar> Y, Size n) -> Relation {
-	return to_relation(std::wcsncmp(X, Y, n));
-}
-
-auto string_concat(NChar * D, CString<NChar> S) -> NChar * {
+auto libbr_nstring_append(BR::NChar * D, BR::CString<BR::NChar> S) -> BR::NChar * {
 	return std::strcat(D, S);
 }
 
-auto string_concat(WChar * D, CString<WChar> S) -> WChar * {
+auto libbr_wstring_append(BR::WChar * D, BR::CString<BR::WChar> S) -> BR::WChar * {
 	return std::wcscat(D, S);
 }
 
-auto string_concat(NChar * D, CString<NChar> S, Size n) -> NChar * {
+auto libbr_nstring_append_n(BR::NChar * D, BR::CString<BR::NChar> S, BR::Size n) -> BR::NChar * {
 	return std::strncat(D, S, n);
 }
 
-auto string_concat(WChar * D, CString<WChar> S, Size n) -> WChar * {
+auto libbr_wstring_append_n(BR::WChar * D, BR::CString<BR::WChar> S, BR::Size n) -> BR::WChar * {
 	return std::wcsncat(D, S, n);
 }
 
-auto string_copy(NChar * D, CString<NChar> S) -> NChar * {
+auto libbr_nstring_compare(BR::CString<BR::NChar> X, BR::CString<BR::NChar> Y) -> BR::Relation {
+	return BR::to_relation(std::strcmp(X, Y));
+}
+
+auto libbr_wstring_compare(BR::CString<BR::WChar> X, BR::CString<BR::WChar> Y) -> BR::Relation {
+	return BR::to_relation(std::wcscmp(X, Y));
+}
+
+auto libbr_nstring_compare_n(BR::CString<BR::NChar> X, BR::CString<BR::NChar> Y, BR::Size n) -> BR::Relation {
+	return BR::to_relation(std::strncmp(X, Y, n));
+}
+
+auto libbr_wstring_compare_n(BR::CString<BR::WChar> X, BR::CString<BR::WChar> Y, BR::Size n) -> BR::Relation {
+	return BR::to_relation(std::wcsncmp(X, Y, n));
+}
+
+auto libbr_nstring_copy(BR::NChar * D, BR::CString<BR::NChar> S) -> BR::NChar * {
 	return std::strcpy(D, S);
 }
 
-auto string_copy(WChar * D, CString<WChar> S) -> WChar * {
+auto libbr_wstring_copy(BR::WChar * D, BR::CString<BR::WChar> S) -> BR::WChar * {
 	return std::wcscpy(D, S);
 }
 
-auto string_copy(NChar * D, CString<NChar> S, Size n) -> NChar * {
+auto libbr_nstring_copy_n(BR::NChar * D, BR::CString<BR::NChar> S, BR::Size n) -> BR::NChar * {
 	return std::strncpy(D, S, n);
 }
 
-auto string_copy(WChar * D, CString<WChar> S, Size n) -> WChar * {
+auto libbr_wstring_copy_n(BR::WChar * D, BR::CString<BR::WChar> S, BR::Size n) -> BR::WChar * {
 	return std::wcsncpy(D, S, n);
 }
 
-auto string_find(NChar const * S, NChar c) -> NChar const * {
+auto libbr_nstring_find(BR::NChar * S, BR::NChar c) -> BR::NChar * {
 	return std::strchr(S, c);
 }
 
-auto string_find(WChar const * S, WChar c) -> WChar const * {
+auto libbr_wstring_find(BR::WChar * S, BR::WChar c) -> BR::WChar * {
 	return std::wcschr(S, c);
 }
 
-auto string_find(NChar * S, NChar c) -> NChar * {
-	return std::strchr(S, c);
+auto libbr_nstring_find_n(BR::NChar * S, BR::NChar c, BR::Size n) -> BR::NChar * {
+	return reinterpret_cast<BR::NChar *>(std::memchr(S, c, n));
 }
 
-auto string_find(WChar * S, WChar c) -> WChar * {
-	return std::wcschr(S, c);
+auto libbr_wstring_find_n(BR::WChar * S, BR::WChar c, BR::Size n) -> BR::WChar * {
+	return std::wmemchr(S, c, n);
 }
 
-auto string_length(CString<NChar> X) -> Size {
-	return std::strlen(X);
+auto libbr_nstring_fill(BR::NChar * D, BR::NChar c, BR::Size n) -> BR::NChar * {
+	return reinterpret_cast<BR::NChar *>(std::memset(D, c, n));
 }
 
-auto string_length(CString<WChar> X) -> Size {
-	return std::wcslen(X);
+auto libbr_wstring_fill(BR::WChar * D, BR::WChar c, BR::Size n) -> BR::WChar * {
+	return std::wmemset(D, c, n);
 }
 
-auto string_search(NChar const * S, CString<NChar> K) -> NChar const * {
+auto libbr_nstring_length(BR::CString<BR::NChar> S) -> BR::Size {
+	return std::strlen(S);
+}
+
+auto libbr_wstring_length(BR::CString<BR::WChar> S) -> BR::Size {
+	return std::wcslen(S);
+}
+auto libbr_nstring_move(BR::NChar * D, BR::CString<BR::NChar> S, BR::Size n) -> BR::NChar * {
+	return reinterpret_cast<BR::NChar *>(std::memmove(D, S, n));
+}
+
+auto libbr_wstring_move(BR::WChar * D, BR::CString<BR::WChar> S, BR::Size n) -> BR::WChar * {
+	return std::wmemmove(D, S, n);
+}
+
+auto libbr_nstring_search(BR::NChar * S, BR::CString<BR::NChar> K) -> BR::NChar * {
 	return std::strstr(S, K);
 }
 
-auto string_search(WChar const * S, CString<WChar> K) -> WChar const * {
+auto libbr_wstring_search(BR::WChar * S, BR::CString<BR::WChar> K) -> BR::WChar * {
 	return std::wcsstr(S, K);
 }
 
-auto string_search(NChar * S, CString<NChar> K) -> NChar * {
-	return std::strstr(S, K);
-}
+namespace BR {
 
-auto string_search(WChar * S, CString<WChar> K) -> WChar * {
-	return std::wcsstr(S, K);
-}
+template class String<NChar>;
+
+template class String<WChar>;
+
+template class String<Char16>;
+
+template class String<Char32>;
 
 } // namespace BR

@@ -9,7 +9,6 @@
 #include <libbr/config.hpp>
 #include <libbr/exception/exception.hpp>
 
-
 namespace BR {
 
 class BadWeakPointer : public Exception {

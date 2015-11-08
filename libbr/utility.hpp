@@ -6,7 +6,8 @@
  */
 #pragma once
 
-#include <libbr/utility/any.hpp>
+#include <libbr/utility/aligned_storage.hpp>
+#include <libbr/utility/aligned_union.hpp>
 #include <libbr/utility/bit_math.hpp>
 #include <libbr/utility/bool_constant.hpp>
 #include <libbr/utility/current_function.hpp>

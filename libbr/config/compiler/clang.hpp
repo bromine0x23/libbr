@@ -17,9 +17,9 @@
 
 #if defined(__has_builtin)
 #  if __has_builtin(__builtin_expect)
-#    define BR_EXCEPT(x, y) __builtin_expect(x, y)
-#    define BR_LIKELY(x) BR_EXCEPT(x, true)
-#    define BR_UNLIKELY(x) BR_EXCEPT(x, false)
+#    define BR_EXPECT(x, y) __builtin_expect(x, y)
+#    define BR_LIKELY(x) BR_EXPECT(x, true)
+#    define BR_UNLIKELY(x) BR_EXPECT(x, false)
 #  endif
 #endif
 

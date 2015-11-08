@@ -7,6 +7,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/container/array.hpp>
 #include <libbr/memory/allocator_argument_tag.hpp>
 #include <libbr/type_operate/add_const.hpp>
 #include <libbr/type_operate/add_const_volatile.hpp>
@@ -46,9 +47,17 @@
 
 namespace BR {
 
-template< typename ... types >
+/**
+ * @brief 元组
+ * @tparam TTypes 各个内容类型
+ */
+template< typename ... TTypes >
 class Tuple;
 
+/**
+ * @brief 获取(类)元组类型的长度
+ * @tparam T (类)元组类型
+ */
 template< typename T >
 struct TupleSize;
 
@@ -190,7 +199,7 @@ template< typename T, Size from, Size to, typename ... TTypes >
 struct TypeMakeTupleTypes;
 
 template< typename T, Size from, Size to, typename ... TTypes >
-struct TypeMakeTupleTypes : TypeMakeTupleTypes< T, from + 1, to, TTypes ..., MakeTupleType< from, RemoveReference<T> > > {
+struct TypeMakeTupleTypes : TypeRewrap< TypeMakeTupleTypes< T, from + 1, to, TTypes ..., MakeTupleType< from, RemoveReference<T> > > > {
 	static_assert(from <= to, "MakeTupleTypes input error");
 };
 

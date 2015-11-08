@@ -10,7 +10,6 @@
 #include <libbr/algorithm/equal.hpp>
 #include <libbr/algorithm/fill_n.hpp>
 #include <libbr/algorithm/lexicographical_compare.hpp>
-#include <libbr/exception/out_of_range_exception.hpp>
 #include <libbr/iterator/reverse_iterator.hpp>
 #include <libbr/type_traits/is_nothrow_swappable.hpp>
 #include <libbr/utility/current_function.hpp>
@@ -24,10 +23,14 @@ namespace BR {
 /**
  * @brief C风格数组包装
  * @tparam TElement 数组元素类型
- * @tparam Size 数组长度
+ * @tparam S 数组长度
+ *
+ * 是类元组类型
  */
 template< typename TElement, Size S >
 class Array;
+
+class IndexException;
 
 template< typename T >
 struct TypeTupleSize;
@@ -87,12 +90,28 @@ public:
 	using ConstReverseIterator = BR::ReverseIterator<ConstIterator>;
 
 public:
+	/**
+	 * @brief 默认构造
+	 */
 	constexpr Array() noexcept = default;
 
+	/**
+	 * @brief 复制构造
+	 */
 	Array(Array const & _dummy) noexcept = default;
 
+	/**
+	 * @brief 移动构造
+	 */
 	Array(Array && _dummy) noexcept = default;
 
+	/**
+	 * @brief 逐元素初始化
+	 * @tparam TFunctor 初始化函数类型
+	 * @param functor 初始化函数，返回值用于初始化元素
+	 *
+	 * 对每个元素下标 i ，调用 functor(i) ，返回值用作下标对应的元素的初始值
+	 */
 	template< typename TFunctor >
 	Array(TFunctor functor) {
 		for (Size i = 0; i < S; ++i) {
@@ -101,17 +120,33 @@ public:
 		}
 	}
 
+	/**
+	 * @brief 析构
+	 */
 	~Array() noexcept = default;
 
+	/**
+	 * @brief 复制赋值
+	 */
 	auto operator=(Array const & _dummy) noexcept -> Array & = default;
 
+	/**
+	 * @brief 移动赋值
+	 */
 	auto operator=(Array && _dummy) noexcept -> Array & = default;
 
+	/**
+	 * @brief 填充数组
+	 * @param element 填充值
+	 */
 	auto fill(Element const & element) -> Array & {
 		fill_n(m_elements, S, element);
 		return *this;
 	}
 
+	/**
+	 * @brief 交换
+	 */
 	void swap(Array & array) noexcept(IsNothrowSwappable< Element [S] >::value) {
 		using BR::swap;
 		swap(m_elements, array.m_elements);
@@ -187,14 +222,14 @@ public:
 
 	auto at(Size i) -> Reference {
 		if (i >= S) {
-			throw OutOfRangeException(BR_CURRENT_FUNCTION);
+			throw IndexException(BR_CURRENT_FUNCTION);
 		}
 		return operator[](i);
 	}
 
 	BR_CONSTEXPR_AFTER_CXX11 auto at(Size i) const -> ConstReference {
 		if (i >= S) {
-			throw OutOfRangeException(BR_CURRENT_FUNCTION);
+			throw IndexException(BR_CURRENT_FUNCTION);
 		}
 		return operator[](i);
 	}

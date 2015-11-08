@@ -18,4 +18,4 @@
 #endif // _MSC_FULL_VER <= 100000000
 
 #define BR_NOINLINE __declspec(noinline)
-#define BR_FORCEINLINE __forceinline
+#define BR_FORCE_INLINE __forceinline

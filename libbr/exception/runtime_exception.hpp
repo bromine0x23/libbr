@@ -8,8 +8,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/exception/exception.hpp>
-
-#include <string>
+#include <libbr/string/string.hpp>
 
 namespace BR {
 
@@ -25,7 +24,7 @@ public:
 
 	RuntimeException(RuntimeException const & exception) noexcept;
 
-	explicit RuntimeException(std::string const & message);
+	explicit RuntimeException(String<NChar> const & message);
 
 	explicit RuntimeException(CString<NChar> message);
 
@@ -36,7 +35,7 @@ public:
 	auto what() const noexcept -> Message override;
 
 private:
-	std::string m_message;
+	String<NChar> m_message;
 };
 
 } // namespace BR

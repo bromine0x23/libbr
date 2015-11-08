@@ -2,7 +2,6 @@
 
 #include <libbr/config.hpp>
 #include <libbr/assert/assert.hpp>
-#include <libbr/utility/enumerator.hpp>
 
 namespace BR {
 

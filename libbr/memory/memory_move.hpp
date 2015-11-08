@@ -8,7 +8,7 @@
 
 #include <libbr/config.hpp>
 
-namespace BR {
+extern "C" {
 
 /**
  * @brief like C STL memmove
@@ -16,7 +16,22 @@ namespace BR {
  * @param[in] S
  * @param[in] n
  */
-void memory_move(void * D, void const * S, Size n);
+void libbr_memory_move(void * D, void const * S, BR::Size n);
+
+}
+
+namespace BR {
+
+/**
+ * @brief like C STL memmove
+ * @param[out] D
+ * @param[in] S
+ * @param[in] n
+ * @see libbr_memory_move
+ */
+inline void memory_move(void * D, void const * S, Size n) {
+	return libbr_memory_move(D, S, n);
+}
 
 } // namespace BR
 
