@@ -1,3 +1,4 @@
+#include <libbr/exception/std_exception.hpp>
 #include <libbr/exception/exception.hpp>
 #include <libbr/exception/runtime_exception.hpp>
 #include <libbr/exception/logic_exception.hpp>
@@ -8,24 +9,6 @@
 #include <libbr/exception/throw.hpp>
 
 namespace BR {
-
-auto set_terminate(TerminateHandler handler) noexcept -> TerminateHandler {
-	return std::set_terminate(handler);
-}
-
-[[noreturn]] void terminate() noexcept {
-	std::terminate();
-}
-
-auto uncaught_exception() noexcept -> bool {
-	return std::uncaught_exception();
-}
-
-#if defined(BR_CPP17)
-auto uncaught_exceptions() noexcept -> int {
-	return std::uncaught_exceptions();
-}
-#endif
 
 Exception::~Exception() noexcept {
 }

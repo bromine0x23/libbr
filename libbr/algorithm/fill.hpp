@@ -18,14 +18,14 @@ namespace Detail {
 namespace Algorithm {
 
 template< typename TForwardIterator, typename TValue >
-inline void fill(TForwardIterator first, TForwardIterator last, TValue const & value, ForwardIteratorTag _dummy) {
+inline void fill(TForwardIterator first, TForwardIterator last, TValue const & value, ForwardTraversalTag) {
 	for (; first != last; ++first) {
 		*first = value;
 	}
 }
 
 template< typename TRandomAccessIterator, typename TValue >
-inline void fill(TRandomAccessIterator first, TRandomAccessIterator last, TValue const & value, RandomAccessIteratorTag _dummy) {
+inline void fill(TRandomAccessIterator first, TRandomAccessIterator last, TValue const & value, RandomAccessTraversalTag) {
 	fill_n(first, last - first, value);
 }
 

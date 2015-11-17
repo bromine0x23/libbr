@@ -7,7 +7,7 @@
 
 namespace BR {
 
-template< typename TIterator, typename _TDummy = EnableIf< typename IteratorTraits<TIterator>::IsForwardIterator > >
+template< typename TIterator, typename = EnableIf< typename IteratorTraits<TIterator>::IsForwardIterator > >
 inline auto next(TIterator current, typename IteratorTraits<TIterator>::Difference step = 1) -> TIterator {
 	advance(current, step);
 	return current;

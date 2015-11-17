@@ -102,18 +102,6 @@ public:
 
 	using Difference = TypeUnwrap< TypeDifference<Iterator> >;
 
-	using IsInputIterator = IsConvertible< Category, InputIteratorTag >;
-
-	using IsOutputIterator = IsConvertible< Category, OutputIteratorTag >;
-
-	using IsForwardIterator = IsConvertible< Category, ForwardIteratorTag >;
-
-	using IsBidirectionalIterator = IsConvertible< Category, BidirectionalIteratorTag >;
-
-	using IsRandomAccessIterator = IsConvertible< Category, RandomAccessIteratorTag >;
-
-	using IsContiguousIterator = IsConvertible< Category, ContiguousIteratorTag >;
-
 	static auto category() -> Category {
 		return Category();
 	}
@@ -154,7 +142,7 @@ public:
 	/**
 	 * @brief 迭代器类别
 	 */
-	using Category = RandomAccessIteratorTag;
+	using Category = MutableRandomAccessIteratorTag;
 
 	/**
 	 * @brief 迭代元素
@@ -175,18 +163,6 @@ public:
 	 * @brief 求差结果
 	 */
 	using Difference = PointerDifference;
-
-	using IsInputIterator = BooleanTrue;
-
-	using IsOutputIterator = BooleanFalse;
-
-	using IsForwardIterator = BooleanTrue;
-
-	using IsBidirectionalIterator = BooleanTrue;
-
-	using IsRandomAccessIterator = BooleanTrue;
-
-	using IsContiguousIterator = BooleanFalse;
 
 	static auto category() -> Category {
 		return Category();

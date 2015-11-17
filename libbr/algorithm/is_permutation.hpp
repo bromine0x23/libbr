@@ -63,7 +63,7 @@ NOT_DONE:;
 }
 
 template< typename TForwardIterator0, typename TForwardIterator1, typename TBinaryPredicate >
-auto is_permutation(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1, TBinaryPredicate && predicate, ForwardIteratorTag _dummy) -> bool {
+auto is_permutation(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1, TBinaryPredicate && predicate, ForwardTraversalTag) -> bool {
 	using Difference0 = typename IteratorTraits<TForwardIterator0>::Difference;
 	using Difference1 = typename IteratorTraits<TForwardIterator1>::Difference;
 	for (; first0 != last0 && first1 != last1; ++first0, (void)++first1) {
@@ -111,7 +111,7 @@ NOT_DONE:;
 }
 
 template< typename TRandomAccessIteratorTag0, typename TRandomAccessIteratorTag1, typename TBinaryPredicate >
-inline auto is_permutation(TRandomAccessIteratorTag0 first0, TRandomAccessIteratorTag0 last0, TRandomAccessIteratorTag1 first1, TRandomAccessIteratorTag1 last1, TBinaryPredicate && predicate, RandomAccessIteratorTag _dummy) -> bool {
+inline auto is_permutation(TRandomAccessIteratorTag0 first0, TRandomAccessIteratorTag0 last0, TRandomAccessIteratorTag1 first1, TRandomAccessIteratorTag1 last1, TBinaryPredicate && predicate, RandomAccessTraversalTag) -> bool {
 	if (last0 - first0 != last1 - first1) {
 		return false;
 	}

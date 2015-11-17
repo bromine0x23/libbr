@@ -17,7 +17,7 @@ namespace Detail {
 namespace Algorithm {
 
 template< typename TBidirectionalIterator >
-inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last, BidirectionalIteratorTag _dummy) {
+inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last, BidirectionalTraversalTag) {
 	for (; first != last; ++first) {
 		if (first == --last) {
 			break;
@@ -28,7 +28,7 @@ inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last, B
 
 
 template< typename TRandomAccessIterator >
-inline void reverse(TRandomAccessIterator first, TRandomAccessIterator last, RandomAccessIteratorTag _dummy) {
+inline void reverse(TRandomAccessIterator first, TRandomAccessIterator last, RandomAccessTraversalTag) {
 	if (first != last) {
 		for (; first < --last; ++first) {
 			swap(*first, *last);

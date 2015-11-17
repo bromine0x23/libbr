@@ -23,7 +23,7 @@ namespace Detail {
 namespace Algorithm {
 
 template< typename TForwardIterator, typename TDistance, typename TUnaryPredicate >
-auto partition_stably(TForwardIterator first, TForwardIterator last, TDistance length, TUnaryPredicate & predicate, ForwardIteratorTag _dummy) -> TForwardIterator {
+auto partition_stably(TForwardIterator first, TForwardIterator last, TDistance length, TUnaryPredicate & predicate, ForwardTraversalTag) -> TForwardIterator {
 	BR_ASSERT(!predicate(*first));
 	BR_ASSERT(length >= 1);
 
@@ -44,7 +44,7 @@ auto partition_stably(TForwardIterator first, TForwardIterator last, TDistance l
 			auto const middle = next(first, half_length);
 
 			auto first_end = middle;
-			auto first_false = partition_stably(first, first_end, half_length, predicate, ForwardIteratorTag());
+			auto first_false = partition_stably(first, first_end, half_length, predicate, ForwardTraversalTag());
 
 			TDistance second_length = length - half_length;
 			auto second_start = first_end;
@@ -55,7 +55,7 @@ auto partition_stably(TForwardIterator first, TForwardIterator last, TDistance l
 				}
 				--second_length;
 			}
-			second_false = partition_stably(second_start, last, second_length, predicate, ForwardIteratorTag());
+			second_false = partition_stably(second_start, last, second_length, predicate, ForwardTraversalTag());
 			SECOND_HALF_DONE:
 
 			return BR::rotate(first_false, middle, second_false);
@@ -66,7 +66,7 @@ auto partition_stably(TForwardIterator first, TForwardIterator last, TDistance l
 }
 
 template< typename TForwardIterator, typename TUnaryPredicate >
-auto partition_stably(TForwardIterator first, TForwardIterator last, TUnaryPredicate & predicate, ForwardIteratorTag _dummy) -> TForwardIterator {
+auto partition_stably(TForwardIterator first, TForwardIterator last, TUnaryPredicate & predicate, ForwardTraversalTag) -> TForwardIterator {
 	for (;; ++first) {
 		if (first == last) {
 			return first;
@@ -75,11 +75,11 @@ auto partition_stably(TForwardIterator first, TForwardIterator last, TUnaryPredi
 			break;
 		}
 	}
-	return partition_stably(first, last, distance(first, last), predicate, ForwardIteratorTag());
+	return partition_stably(first, last, distance(first, last), predicate, ForwardTraversalTag());
 }
 
 template< typename TBidirectionalIterator, typename TDistance, typename TUnaryPredicate >
-auto partition_stably(TBidirectionalIterator first, TBidirectionalIterator last, TDistance length, TUnaryPredicate & predicate, BidirectionalIteratorTag _dummy) -> TBidirectionalIterator {
+auto partition_stably(TBidirectionalIterator first, TBidirectionalIterator last, TDistance length, TUnaryPredicate & predicate, BidirectionalTraversalTag) -> TBidirectionalIterator {
 	BR_ASSERT(!predicate(*first));
 	BR_ASSERT(predicate(*last));
 	BR_ASSERT(length >= 1);
@@ -113,7 +113,7 @@ auto partition_stably(TBidirectionalIterator first, TBidirectionalIterator last,
 				}
 				--first_length;
 			}
-			first_false = partition_stably(first, first_end, first_length, predicate, BidirectionalIteratorTag());
+			first_false = partition_stably(first, first_end, first_length, predicate, BidirectionalTraversalTag());
 			FIRST_HALF_DONE:
 
 			auto second_start = middle;
@@ -126,7 +126,7 @@ auto partition_stably(TBidirectionalIterator first, TBidirectionalIterator last,
 				}
 				--second_length;
 			}
-			second_false = partition_stably(second_start, last, second_length, predicate, BidirectionalIteratorTag());
+			second_false = partition_stably(second_start, last, second_length, predicate, BidirectionalTraversalTag());
 			SECOND_HALF_DONE:
 
 			return BR::rotate(first_false, middle, second_false);
@@ -137,7 +137,7 @@ auto partition_stably(TBidirectionalIterator first, TBidirectionalIterator last,
 }
 
 template< typename TBidirectionalIterator, typename TUnaryPredicate >
-auto partition_stably(TBidirectionalIterator first, TBidirectionalIterator last, TUnaryPredicate & predicate, BidirectionalIteratorTag _dummy) -> TBidirectionalIterator {
+auto partition_stably(TBidirectionalIterator first, TBidirectionalIterator last, TUnaryPredicate & predicate, BidirectionalTraversalTag) -> TBidirectionalIterator {
 	for (;; ++first) {
 		if (first == last) {
 			return first;
@@ -151,7 +151,7 @@ auto partition_stably(TBidirectionalIterator first, TBidirectionalIterator last,
 			return first;
 		}
 	} while (!predicate(*last));
-	return partition_stably(first, last, distance(first, last) + 1, predicate, BidirectionalIteratorTag());
+	return partition_stably(first, last, distance(first, last) + 1, predicate, BidirectionalTraversalTag());
 }
 
 } // namespace Algorithm

@@ -17,7 +17,7 @@ namespace Detail {
 namespace Algorithm {
 
 template< typename TForwardIterator, typename TSize, typename TValue, typename TBinaryPredicate >
-auto search_n(TForwardIterator first, TForwardIterator last, TSize count, TValue const & value, TBinaryPredicate & predicate, ForwardIteratorTag _dummy) -> TForwardIterator {
+auto search_n(TForwardIterator first, TForwardIterator last, TSize count, TValue const & value, TBinaryPredicate & predicate, ForwardTraversalTag) -> TForwardIterator {
 	if (count <= 0) {
 		return first;
 	}
@@ -48,7 +48,7 @@ auto search_n(TForwardIterator first, TForwardIterator last, TSize count, TValue
 }
 
 template< typename TForwardIterator, typename TSize, typename TValue, typename TBinaryPredicate >
-auto search_n(TForwardIterator first, TForwardIterator last, TSize count, TValue const & value, TBinaryPredicate & predicate, RandomAccessIteratorTag _dummy) -> TForwardIterator {
+auto search_n(TForwardIterator first, TForwardIterator last, TSize count, TValue const & value, TBinaryPredicate & predicate, RandomAccessTraversalTag) -> TForwardIterator {
 	if (count <= 0) {
 		return first;
 	}

@@ -28,7 +28,21 @@ if (MSVC_IDE)
 	source_group("Header Files\\config" FILES ${LIBBR_HEADERS_CONFIG})
 endif()
 
-set(LIBBR_COMPONENTS algorithm assert container exception functional iterator math memory string type_operate type_traits utility)
+set(LIBBR_COMPONENTS
+	algorithm
+	assert
+	container
+	exception
+	functional
+	iterator
+	math
+	memory
+	optional
+	string
+	type_operate
+	type_traits
+	utility
+)
 
 foreach(component ${LIBBR_COMPONENTS})
 

@@ -10,7 +10,7 @@ namespace Detail {
 namespace Iterator {
 
 template< typename TIterator >
-inline auto distance(TIterator head, TIterator tail, InputIteratorTag _dummy) -> typename IteratorTraits<TIterator>::Difference {
+inline auto distance(TIterator head, TIterator tail, SinglePassTraversalTag) -> typename IteratorTraits<TIterator>::Difference {
 	typename IteratorTraits<TIterator>::Difference result(0);
 	for (; head != tail; ++head) {
 		++result;
@@ -19,7 +19,7 @@ inline auto distance(TIterator head, TIterator tail, InputIteratorTag _dummy) ->
 }
 
 template< typename TIterator >
-inline auto distance(TIterator head, TIterator tail, RandomAccessIteratorTag _dummy) -> typename IteratorTraits<TIterator>::Difference {
+inline auto distance(TIterator head, TIterator tail, RandomAccessTraversalTag) -> typename IteratorTraits<TIterator>::Difference {
 	return tail - head;
 }
 

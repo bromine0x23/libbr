@@ -19,7 +19,7 @@ namespace Detail {
 namespace Algorithm {
 
 template< typename TInputIterator, typename TOutputIterator, typename TBinaryPredicate >
-auto unique_copy(TInputIterator first, TInputIterator last, TOutputIterator result, TBinaryPredicate & predicate, InputIteratorTag _dummy0, OutputIteratorTag _dummy1) -> TOutputIterator {
+auto unique_copy(TInputIterator first, TInputIterator last, TOutputIterator result, TBinaryPredicate & predicate, SinglePassTraversalTag, IncrementableTraversalTag) -> TOutputIterator {
 	if (first != last) {
 		auto t = *first;
 		*result = t;
@@ -36,7 +36,7 @@ auto unique_copy(TInputIterator first, TInputIterator last, TOutputIterator resu
 }
 
 template< typename TForwardIterator, typename TOutputIterator, typename TBinaryPredicate >
-auto unique_copy(TForwardIterator first, TForwardIterator last, TOutputIterator result, TBinaryPredicate & predicate, ForwardIteratorTag _dummy0, OutputIteratorTag _dummy1) -> TOutputIterator {
+auto unique_copy(TForwardIterator first, TForwardIterator last, TOutputIterator result, TBinaryPredicate & predicate, ForwardTraversalTag, IncrementableTraversalTag) -> TOutputIterator {
 	if (first != last) {
 		auto i = first;
 		*result = *i;
@@ -53,7 +53,7 @@ auto unique_copy(TForwardIterator first, TForwardIterator last, TOutputIterator 
 }
 
 template< typename TInputIterator, typename TForwardIterator, typename TBinaryPredicate >
-auto unique_copy(TInputIterator first, TInputIterator last, TForwardIterator result, TBinaryPredicate & predicate, InputIteratorTag _dummy0, ForwardIteratorTag _dummy1) -> TForwardIterator {
+auto unique_copy(TInputIterator first, TInputIterator last, TForwardIterator result, TBinaryPredicate & predicate, SinglePassTraversalTag, ForwardTraversalTag) -> TForwardIterator {
 	if (first != last) {
 		for (*result = *first; ++first != last; ) {
 			if (!predicate(*result, *first)) {

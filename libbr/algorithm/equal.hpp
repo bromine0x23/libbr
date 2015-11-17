@@ -18,7 +18,7 @@ namespace Detail {
 namespace Algorithm {
 
 template< typename TInputIterator0, typename TInputIterator1, typename TBinaryPredicate >
-inline auto equal(TInputIterator0 first0, TInputIterator0 last0, TInputIterator1 first1, TInputIterator1 last1, TBinaryPredicate & predicate, InputIteratorTag _dummy0, InputIteratorTag _dummy1) -> bool {
+inline auto equal(TInputIterator0 first0, TInputIterator0 last0, TInputIterator1 first1, TInputIterator1 last1, TBinaryPredicate & predicate, SinglePassTraversalTag, SinglePassTraversalTag) -> bool {
 	for (; first0 != last0 && first1 != last1; ++first0, (void)++first1) {
 		if (!predicate(*first0, *first1)) {
 			return false;
@@ -28,7 +28,7 @@ inline auto equal(TInputIterator0 first0, TInputIterator0 last0, TInputIterator1
 }
 
 template< typename TRandomAccessIterator0, typename TRandomAccessIterator1, typename TBinaryPredicate >
-inline auto equal(TRandomAccessIterator0 first0, TRandomAccessIterator0 last0, TRandomAccessIterator1 first1, TRandomAccessIterator1 last1, TBinaryPredicate & predicate, RandomAccessIteratorTag _dummy0, RandomAccessIteratorTag _dummy1) -> bool {
+inline auto equal(TRandomAccessIterator0 first0, TRandomAccessIterator0 last0, TRandomAccessIterator1 first1, TRandomAccessIterator1 last1, TBinaryPredicate & predicate, RandomAccessTraversalTag, RandomAccessTraversalTag) -> bool {
 	if (distance(first0, last0) != distance(first1, last1)) {
 		return false;
 	}

@@ -50,7 +50,7 @@ struct CharTraits {
 		return Char(EOF);
 	}
 
-	static auto fill(Char * D, Size n, Char c) -> Char * {
+	static auto fill(Char * D, Char c, Size n) -> Char * {
 		Char * R = D;
 		for (; n > 0; --n) {
 			assign(*D++, c);
@@ -121,7 +121,7 @@ struct CharTraits<NChar> {
 		return Char(EOF);
 	}
 
-	static auto fill(Char * D, Size n, Char c) -> Char * {
+	static auto fill(Char * D, Char c, Size n) -> Char * {
 		return string_fill(D, c, n);
 	}
 
@@ -167,7 +167,7 @@ struct CharTraits<WChar> {
 		return Char(EOF);
 	}
 
-	static auto fill(Char * D, Size n, Char c) -> Char * {
+	static auto fill(Char * D, Char c, Size n) -> Char * {
 		return string_fill(D, c, n);
 	}
 
@@ -225,7 +225,7 @@ struct CharTraits<Char16> {
 		return Char(0xDFFF);
 	}
 
-	static auto fill(Char * D, Size n, Char c) -> Char * {
+	static auto fill(Char * D, Char c, Size n) -> Char * {
 		Char * R = D;
 		for (; n > 0; --n) {
 			assign(*D++, c);
@@ -308,7 +308,7 @@ struct CharTraits<Char32> {
 		return Char(0xFFFFFFFF);
 	}
 
-	static auto fill(Char * D, Size n, Char c) -> Char * {
+	static auto fill(Char * D, Char c, Size n) -> Char * {
 		Char * R = D;
 		for (; n > 0; --n) {
 			assign(*D++, c);

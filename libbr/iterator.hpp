@@ -26,3 +26,5 @@
 #include <libbr/iterator/rend.hpp>
 #include <libbr/iterator/crbegin.hpp>
 #include <libbr/iterator/crend.hpp>
+
+#include <libbr/iterator/iterator_range.hpp>

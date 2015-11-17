@@ -8,7 +8,6 @@
 
 #include <libbr/config.hpp>
 #include <libbr/assert/assert.hpp>
-#include <libbr/iterator/category.hpp>
 #include <libbr/iterator/advance.hpp>
 #include <libbr/functional/less.hpp>
 #include <libbr/type_operate/bool.hpp>
@@ -159,7 +158,7 @@ template< typename TRandomAccessIterator, typename TComparator >
 void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator & comparator) {
 	using Difference = typename IteratorTraits<TRandomAccessIterator>::Difference;
 	using Element = typename IteratorTraits<TRandomAccessIterator>::Element;
-	constexpr Difference insertion_sort_threshold = (HasTrivialCopyConstructor<Element>() && HasTrivialCopyAssign<Element>()) ? 30 : 6;
+	constexpr Difference insertion_sort_threshold = BooleanAnd< HasTrivialCopyConstructor<Element>, HasTrivialCopyAssign<Element> >() ? 30 : 6;
 	constexpr Difference pivot_select_threshold = 1000;
 	for (;;) {
 		RESTART:

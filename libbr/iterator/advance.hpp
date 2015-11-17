@@ -10,14 +10,14 @@ namespace Detail {
 namespace Iterator {
 
 template< typename TIterator >
-inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step, InputIteratorTag _dummy) {
+inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step, IncrementableTraversalTag) {
 	for (; step > 0; --step) {
 		++iterator;
 	}
 }
 
 template< typename TIterator >
-inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step, BidirectionalIteratorTag _dummy) {
+inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step, BidirectionalTraversalTag) {
 	if (step >= 0) {
 		for (; step > 0; --step) {
 			++iterator;

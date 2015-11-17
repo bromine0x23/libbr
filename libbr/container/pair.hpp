@@ -83,7 +83,7 @@ constexpr auto get(Pair< T1, T0 > && P) noexcept -> T0 && {
 	return get<1>(move(P));
 }
 
-template< typename TFirst, typename TSecond >
+template< typename TFirst, typename TSecond = TFirst >
 class Pair {
 public:
 	using First = TFirst;

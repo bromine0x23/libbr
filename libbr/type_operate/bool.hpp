@@ -15,8 +15,7 @@ namespace BR {
  * @brief 布尔常量封装类否定
  */
 template< typename TB >
-struct BooleanNot : BooleanRewrapNegative<TB> {
-};
+using BooleanNot = BooleanRewrapNegative<TB>;
 
 /**
  * @brief 布尔常量封装类逻辑与

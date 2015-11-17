@@ -17,7 +17,7 @@ namespace Detail {
 namespace Algorithm {
 
 template< typename TInputIterator, typename TSize, typename TOutputIterator >
-auto copy_n(TInputIterator first, TSize n, TOutputIterator result, InputIteratorTag _dummy) -> TOutputIterator {
+auto copy_n(TInputIterator first, TSize n, TOutputIterator result, SinglePassTraversalTag) -> TOutputIterator {
 	if (n > 0) {
 		*result = *first;
 		++result;
@@ -30,7 +30,7 @@ auto copy_n(TInputIterator first, TSize n, TOutputIterator result, InputIterator
 }
 
 template< typename TInputIterator, typename TSize, typename TOutputIterator >
-inline auto copy_n(TInputIterator first, TSize n, TOutputIterator result, RandomAccessIteratorTag _dummy) -> TOutputIterator {
+inline auto copy_n(TInputIterator first, TSize n, TOutputIterator result, RandomAccessTraversalTag) -> TOutputIterator {
 	return copy(first, first + n, result);
 }
 

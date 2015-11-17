@@ -8,18 +8,24 @@
 
 #include <libbr/config.hpp>
 #include <libbr/algorithm/copy_n.hpp>
+#include <libbr/algorithm/find_end.hpp>
+#include <libbr/algorithm/find_first_of.hpp>
 #include <libbr/algorithm/max.hpp>
 #include <libbr/algorithm/min.hpp>
 #include <libbr/algorithm/rotate.hpp>
+#include <libbr/algorithm/search.hpp>
 #include <libbr/assert/assert.hpp>
 #include <libbr/container/compressed_pair.hpp>
 #include <libbr/container/initializer_list.hpp>
+#include <libbr/container/pair.hpp>
 #include <libbr/exception/throw.hpp>
 #include <libbr/iterator/category.hpp>
 #include <libbr/iterator/distance.hpp>
+#include <libbr/iterator/iterator_range.hpp>
 #include <libbr/iterator/reverse_iterator.hpp>
 #include <libbr/math/relation.hpp>
 #include <libbr/memory/allocator.hpp>
+#include <libbr/optional/optional.hpp>
 #include <libbr/type_operate/enable_if.hpp>
 #include <libbr/type_traits/allocator_traits.hpp>
 #include <libbr/type_traits/char_traits.hpp>
@@ -40,7 +46,7 @@ namespace BR {
  * @tparam TCharTraits 字符类型 TChar 的特性类
  * @tparam TAllocator 分配器类
  */
-template< typename TChar, typename TCharTraits = CharTraits<TChar>, typename TAllocator = Allocator<TChar> >
+template<typename TChar, typename TCharTraits = CharTraits<TChar>, typename TAllocator = Allocator<TChar> >
 class String;
 
 /**
@@ -50,22 +56,22 @@ class String;
  *
  * 提供一个无关存储管理的字符串界面，以在其上进行非修改性操作，或用作其他字符串修改性操作的参数
  */
-template< typename TChar, typename TCharTraits = CharTraits<TChar> >
+template<typename TChar, typename TCharTraits = CharTraits<TChar> >
 class StringView;
 
-template< typename TChar, typename TCharTraits = CharTraits<TChar> >
-BR_CONSTEXPR_AFTER_CXX11 auto make_string_view(CString<TChar> string) -> StringView< TChar, TCharTraits > {
+template<typename TChar, typename TCharTraits = CharTraits<TChar> >
+BR_CONSTEXPR_AFTER_CXX11 auto make_string_view(CString<TChar> string) -> StringView<TChar, TCharTraits> {
 	BR_ASSERT(string != nullptr);
-	return StringView< TChar, TCharTraits >(string);
+	return StringView<TChar, TCharTraits>(string);
 };
 
-template< typename TChar, typename TCharTraits = CharTraits<TChar> >
-BR_CONSTEXPR_AFTER_CXX11 auto make_string_view(CString<TChar> string, Size count) -> StringView< TChar, TCharTraits > {
+template<typename TChar, typename TCharTraits = CharTraits<TChar> >
+BR_CONSTEXPR_AFTER_CXX11 auto make_string_view(CString<TChar> string, Size count) -> StringView<TChar, TCharTraits> {
 	BR_ASSERT(string != nullptr || count == 0);
-	return StringView< TChar, TCharTraits >(string, count);
+	return StringView<TChar, TCharTraits>(string, count);
 };
 
-template< typename TChar, typename TCharTraits >
+template<typename TChar, typename TCharTraits>
 class StringView {
 public:
 	static_assert(IsPOD<TChar>::value, "TChar must be a POD.");
@@ -74,7 +80,7 @@ public:
 
 	using Char = typename CharTraits::Char;
 
-	static_assert(IsSame< Char, TChar >::value, "CharTraits::Char must be same type as TChar.");
+	static_assert(IsSame<Char, TChar>::value, "CharTraits::Char must be same type as TChar.");
 
 	using Reference = Char const &;
 
@@ -99,16 +105,17 @@ public:
 	constexpr StringView() noexcept : m_data(nullptr), m_size(0) {
 	}
 
-	constexpr StringView(StringView const & view) noexcept = default;
+	constexpr StringView(StringView const &) noexcept = default;
 
-	template< typename TAllocator >
-	constexpr StringView(String< Char, CharTraits, TAllocator > const & string) noexcept : m_data(string.data()), m_size(string.size()) {
+	template<typename TAllocator>
+	constexpr StringView(String<Char, CharTraits, TAllocator> const & string) noexcept : m_data(string.data()), m_size(
+		string.size()) {
 	}
 
-	constexpr StringView(CString<Char> string, Size size) : m_data(string), m_size(size) {
+	constexpr StringView(Char const * string, Size size) : m_data(string), m_size(size) {
 	}
 
-	StringView(CString<Char> string) : m_data(string), m_size(CharTraits::length(string)) {
+	StringView(Char const * string) : m_data(string), m_size(CharTraits::length(string)) {
 	}
 
 	auto operator=(StringView const &) noexcept -> StringView & = default;
@@ -201,14 +208,14 @@ public:
 		return *this;
 	}
 
-	template< typename TAllocator >
-	explicit operator String< Char, CharTraits , TAllocator>() const {
-		return String< Char, CharTraits , TAllocator>(begin(), end());
+	template<typename TAllocator>
+	explicit operator String<Char, CharTraits, TAllocator>() const {
+		return String<Char, CharTraits, TAllocator>(begin(), end());
 	}
 
-	template< typename TAllocator = Allocator<Char> >
-	auto to_string(TAllocator const & allocator = TAllocator()) const -> String< Char, CharTraits , TAllocator> {
-		return String< Char, CharTraits , TAllocator>(begin(), end(), allocator);
+	template<typename TAllocator = Allocator<Char> >
+	auto to_string(TAllocator const & allocator = TAllocator()) const -> String<Char, CharTraits, TAllocator> {
+		return String<Char, CharTraits, TAllocator>(begin(), end(), allocator);
 	}
 
 	auto copy(Char * S, Size length, Size position = 0) const -> Size {
@@ -243,20 +250,177 @@ public:
 		return relation;
 	}
 
-	BR_CONSTEXPR_AFTER_CXX11 auto compare(CString<Char> string) const -> Relation {
-		return compare(StringView(string));
-	}
+	auto index(StringView view, Size offset = 0) const noexcept -> Optional<Size>;
 
-	BR_CONSTEXPR_AFTER_CXX11 auto compare(CString<Char> string, Size size) const -> Relation {
-		return compare(StringView(string, size));
-	}
+	auto index(Char c, Size offset = 0) const noexcept -> Optional<Size>;
+
+	auto rindex(StringView view, Size offset = 0) const noexcept -> Optional<Size>;
+
+	auto rindex(Char c, Size offset = 0) const noexcept -> Optional<Size>;
+
+	auto first(StringView view, Size offset = 0) const noexcept -> Optional<Size>;
+
+	auto first_not(StringView view, Size offset = 0) const noexcept -> Optional<Size>;
+
+	auto first_not(Char c, Size offset = 0) const noexcept -> Optional<Size>;
+
+	auto last(StringView view, Size offset = 0) const noexcept -> Optional<Size>;
+
+	auto last_not(StringView view, Size offset = 0) const noexcept -> Optional<Size>;
+
+	auto last_not(Char c, Size offset = 0) const noexcept -> Optional<Size>;
 
 private:
 	Char const * m_data;
 	Size m_size;
 }; // StringView< TChar, TCharTraits >
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
+template<typename TChar, typename TCharTraits>
+auto StringView<TChar, TCharTraits>::index(StringView view, Size offset) const noexcept -> Optional<Size> {
+	if (offset > m_size || m_size - offset < view.size()) {
+		return null_optional;
+	}
+	if (view.size() == 0) {
+		return null_optional;
+	}
+	auto result = search(m_data + offset, m_data + m_size, view.begin(), view.end(), CharTraits::equal);
+	if (result == m_data + m_size) {
+		return null_optional;
+	}
+	return static_cast<Size>(result - m_data);
+};
+
+template<typename TChar, typename TCharTraits>
+auto StringView<TChar, TCharTraits>::index(Char c, Size offset) const noexcept -> Optional<Size> {
+	if (offset >= m_size) {
+		return null_optional;
+	}
+	auto result = CharTraits::find(m_data + offset, c, m_size - offset);
+	if (result == nullptr) {
+		return null_optional;
+	}
+	return static_cast<Size>(result - m_data);
+};
+
+template<typename TChar, typename TCharTraits>
+auto StringView<TChar, TCharTraits>::rindex(StringView view, Size offset) const noexcept -> Optional<Size> {
+	offset = min(offset, m_size);
+	if (view.size() < m_size - offset) {
+		offset += view.size();
+	} else {
+		offset = view.size();
+	}
+	auto result = find_end(m_data, m_data + offset, view.begin(), view.end(), CharTraits::equal);
+	if (view.size() > 0 && result == m_data + offset) {
+		return null_optional;
+	}
+	return static_cast<Size>(result - m_data);
+};
+
+template<typename TChar, typename TCharTraits>
+auto StringView<TChar, TCharTraits>::rindex(Char c, Size offset) const noexcept -> Optional<Size> {
+	if (m_size < 1) {
+		return null_optional;
+	}
+	if (offset < m_size) {
+		++offset;
+	} else {
+		offset = m_size;
+	}
+	for (auto p = m_data + offset; p != m_data;) {
+		if (CharTraits::equal(*--p, c)) {
+			return static_cast<Size>(p - m_data);
+		}
+	}
+	return null_optional;
+};
+
+template<typename TChar, typename TCharTraits>
+auto StringView<TChar, TCharTraits>::first(StringView view, Size offset) const noexcept -> Optional<Size> {
+	if (offset >= m_size || view.size() == 0) {
+		return null_optional;
+	}
+	auto result = find_first_of(m_data + offset, m_data + m_size, view.begin(), view.end(), CharTraits::equal);
+	if (result == m_data + m_size) {
+		return null_optional;
+	}
+	return static_cast<Size>(result - m_data);
+};
+
+template<typename TChar, typename TCharTraits>
+auto StringView<TChar, TCharTraits>::first_not(StringView view, Size offset) const noexcept -> Optional<Size> {
+	if (offset < m_size) {
+		auto e = m_data + m_size;
+		for (auto p = m_data + offset; p != e; ++p) {
+			if (CharTraits::find(view.data(), view.size(), *p) == nullptr) {
+				return static_cast<Size>(p - m_data);
+			}
+		}
+	}
+	return null_optional;
+};
+
+template<typename TChar, typename TCharTraits>
+auto StringView<TChar, TCharTraits>::first_not(Char c, Size offset) const noexcept -> Optional<Size> {
+	if (offset < m_size) {
+		auto e = m_data + m_size;
+		for (auto p = m_data + offset; p != e; ++p) {
+			if (CharTraits::equal(*p, c)) {
+				return static_cast<Size>(p - m_data);
+			}
+		}
+	}
+	return null_optional;
+};
+
+template<typename TChar, typename TCharTraits>
+auto StringView<TChar, TCharTraits>::last(StringView view, Size offset) const noexcept -> Optional<Size> {
+	if (view.size() != 0) {
+		if (offset < m_size) {
+			++offset;
+		} else {
+			offset = m_size;
+		}
+		for (auto p = m_data + offset; p != m_data;) {
+			if (CharTraits::find(view.data(), view.size(), *--p) != nullptr) {
+				return static_cast<Size>(p - m_data);
+			}
+		}
+	}
+	return null_optional;
+};
+
+template<typename TChar, typename TCharTraits>
+auto StringView<TChar, TCharTraits>::last_not(StringView view, Size offset) const noexcept -> Optional<Size> {
+	if (offset < m_size) {
+		++offset;
+	} else {
+		offset = m_size;
+	}
+	for (auto p = m_data + offset; p != m_data;) {
+		if (CharTraits::find(view.data(), view.size(), *--p) == nullptr) {
+			return static_cast<Size>(p - m_data);
+		}
+	}
+	return null_optional;
+};
+
+template<typename TChar, typename TCharTraits>
+auto StringView<TChar, TCharTraits>::last_not(Char c, Size offset) const noexcept -> Optional<Size> {
+	if (offset < m_size) {
+		++offset;
+	} else {
+		offset = m_size;
+	}
+	for (auto p = m_data + offset; p != m_data;) {
+		if (!CharTraits::equal(*p, c)) {
+			return static_cast<Size>(p - m_data);
+		}
+	}
+	return null_optional;
+};
+
+template<typename TChar, typename TCharTraits, typename TAllocator>
 class String {
 
 public:
@@ -273,7 +437,7 @@ public:
 	 */
 	using Char = typename CharTraits::Char;
 
-	static_assert(IsSame< Char, TChar >::value, "CharTraits::Char must be same type as TChar.");
+	static_assert(IsSame<Char, TChar>::value, "CharTraits::Char must be same type as TChar.");
 
 	/**
 	 * @brief 分配器类
@@ -291,7 +455,7 @@ public:
 	 */
 	using Value = typename AllocatorTraits::Value;
 
-	static_assert(IsSame< Value, TChar >::value, "AllocatorTraits<Allocator>::Value must be same type as TChar.");
+	static_assert(IsSame<Value, TChar>::value, "AllocatorTraits<Allocator>::Value must be same type as TChar.");
 
 	/**
 	 * @brief AllocatorTraits<Allocator>::Size
@@ -351,111 +515,7 @@ public:
 	 */
 	using ConstReverseIterator = BR::ReverseIterator<ConstIterator>;
 
-	using View = StringView< Char, CharTraits >;
-
 private:
-	friend class Location;
-
-	/**
-	 * @brief 包装字符串中的一个位置
-	 */
-	class Location {
-
-	public:
-		constexpr Location(String & string, Size index) noexcept : m_string(string), m_index(index) {
-		}
-
-		auto operator=(Char c) -> Reference {
-			return m_string.m_char(m_index) = c;
-		}
-
-		auto operator<<(String const & string) -> String & {
-			return m_string.m_insert(m_index, string.to_view());
-		}
-
-		auto operator<<(CString<Char> string) -> String & {
-			return m_string.m_insert(m_index, make_string_view(string));
-		}
-
-		auto operator<<(View const & view) -> String & {
-			return m_string.m_insert(m_index, view);
-		}
-
-		auto operator<<(Char c) -> String & {
-			return m_string.m_insert(m_index, c);
-		}
-
-		operator Reference() const {
-			return m_string[m_index];
-		}
-
-	private:
-		friend class String;
-
-		constexpr Location() noexcept = default;
-
-		constexpr Location(Location const & location) noexcept = default;
-
-		constexpr Location(Location && location) noexcept = default;
-
-		auto operator=(Location const & location) noexcept -> Location & = default;
-
-		auto operator=(Location && location) noexcept -> Location & = default;
-
-	private:
-		String & m_string;
-		Size m_index;
-	};
-
-	friend class SubString;
-
-	/**
-	 * @brief 提供字符串的子串界面
-	 */
-	class SubString {
-	public:
-		constexpr SubString(String & string, Size index, Size count) noexcept : m_string(string), m_index(index), m_count(count) {
-		}
-
-		auto operator=(String const & string) -> String & {
-			return m_string.m_replace(m_index, m_count, string.to_view());
-		}
-
-		auto operator=(CString<Char> string) -> String & {
-			return m_string.m_replace(m_index, m_count, make_string_view(string));
-		}
-
-		auto operator=(View const & view) -> String & {
-			return m_string.m_replace(m_index, m_count, view);
-		}
-
-		auto operator=(NullPointer _pointer) -> String & {
-			return m_string.m_erase(m_index, m_count);
-		}
-
-		BR_CONSTEXPR_AFTER_CXX11 operator View() const {
-			return make_string_view(m_string.data() + m_index, m_count);
-		}
-
-	private:
-		friend class String;
-
-		constexpr SubString() noexcept = default;
-
-		constexpr SubString(SubString const & string) noexcept = default;
-
-		constexpr SubString(SubString && string) noexcept = default;
-
-		auto operator=(SubString const & string) noexcept -> SubString & = default;
-
-		auto operator=(SubString && string) noexcept -> SubString & = default;
-
-	private:
-		String & m_string;
-		Size m_index;
-		Size m_count;
-	};
-
 	struct Storage {
 		Size capacity;
 		Size size;
@@ -489,7 +549,8 @@ public:
 	 * @brief 复制构造函数
 	 * @param[in] string 源字符串
 	 */
-	String(String const & string) : m_pair(AllocatorTraits::select_on_container_copy_construction(string.m_allocator())) {
+	String(String const & string) :
+		m_pair(AllocatorTraits::select_on_container_copy_construction(string.m_allocator())) {
 		m_construct(string.m_get_pointer(), string.m_get_size());
 	}
 
@@ -534,9 +595,14 @@ public:
 	 * @param[in] string 源字符串
 	 * @param[in] allocator 分配器
 	 */
-	String(CString<Char> string, Allocator const & allocator = Allocator()) : m_pair(allocator) {
+	String(Char const * string, Allocator const & allocator = Allocator()) : m_pair(allocator) {
 		BR_ASSERT(string != nullptr);
 		m_construct(string, CharTraits::length(string));
+	}
+
+	String(Char const * string, Size length, Allocator const & allocator = Allocator()) : m_pair(allocator) {
+		BR_ASSERT(string != nullptr);
+		m_construct(string, length);
 	}
 
 	/**
@@ -544,7 +610,7 @@ public:
 	 * @param[in] view 字符串视图
 	 * @param[in] allocator 分配器
 	 */
-	String(View const & view, Allocator const & allocator = Allocator()) : m_pair(allocator) {
+	String(StringView<Char, CharTraits> const & view, Allocator const & allocator = Allocator()) : m_pair(allocator) {
 		m_construct(view.data(), view.size());
 	}
 
@@ -553,7 +619,7 @@ public:
 	 * @param[in] first, last 区间\f$[first, last)\f$
 	 * @param[in] allocator 分配器
 	 */
-	template< typename TInputIterator >
+	template<typename TInputIterator>
 	String(TInputIterator first, TInputIterator last, Allocator const & allocator = Allocator()) : m_pair(allocator) {
 		m_construct(first, last, IteratorTraits<TInputIterator>::category());
 	}
@@ -563,7 +629,8 @@ public:
 	 * @param[in] list 初始化列表
 	 * @param[in] allocator 分配器
 	 */
-	String(InitializerList<Char> list, Allocator const & allocator = Allocator()) : String(list.begin(), list.end(), allocator) {
+	String(InitializerList<Char> list, Allocator const & allocator = Allocator()) :
+		String(list.begin(), list.end(), allocator) {
 	}
 	///@}
 
@@ -806,30 +873,19 @@ public:
 	 * @name 切片
 	 */
 	///@{
-	auto to_view() const noexcept -> View {
-		return View(data(), size());
+	constexpr auto to_view() const noexcept -> StringView<Char, CharTraits> {
+		return StringView<Char, CharTraits>(data(), size());
 	}
 
-	BR_CONSTEXPR_AFTER_CXX11 auto operator()(Size index) -> Location {
-		if (index > size()) {
-			throw_index_exception("String::operator(Size index)");
-		}
-		return Location(*this, index);
+	constexpr operator StringView<Char, CharTraits>() noexcept {
+		return StringView<Char, CharTraits>(data(), size());
+	};
+
+	BR_CONSTEXPR_AFTER_CXX11 auto operator()(Size index) const -> StringView<Char, CharTraits> {
+		return to_view().slice(index);
 	}
 
-	BR_CONSTEXPR_AFTER_CXX11 auto operator()(Size index) const -> ConstReference {
-		return m_char(index);
-	}
-
-	BR_CONSTEXPR_AFTER_CXX11 auto operator()(Size index, Size count) -> SubString {
-		auto size = m_get_size();
-		if (index > size) {
-			throw_index_exception("String::operator(Size index, Size count)");
-		}
-		return SubString(*this, index, min(count, size - index));
-	}
-
-	BR_CONSTEXPR_AFTER_CXX11 auto operator()(Size index, Size count) const -> View {
+	BR_CONSTEXPR_AFTER_CXX11 auto operator()(Size index, Size count) const -> StringView<Char, CharTraits> {
 		return to_view().slice(index, count);
 	}
 	///@}
@@ -838,86 +894,30 @@ public:
 	 * @name 比较操作
 	 */
 	///@{
-	auto compare(String const & y) const noexcept -> Relation {
-		return compare(y.to_view());
-	}
+	auto compare(StringView<Char, CharTraits> const & view) const noexcept -> Relation;
 
-	auto compare(CString<Char> y) const -> Relation {
-		return compare(make_string_view(y));
-	}
-
-	auto compare(View const & view) const noexcept -> Relation;
-
-	auto operator==(String const & y) const noexcept -> bool {
+	auto operator==(StringView<Char, CharTraits> const & y) const noexcept -> bool {
 		return compare(y) == Relation::EQ;
 	}
 
-	auto operator==(CString<Char> y) const -> bool {
-		return compare(y) == Relation::EQ;
+	auto operator!=(StringView<Char, CharTraits> const & y) const noexcept -> bool {
+		return !operator==(y);
 	}
 
-	auto operator==(View const & y) const noexcept -> bool {
-		return compare(y) == Relation::EQ;
-	}
-
-	auto operator!=(String const & y) const noexcept -> bool {
-		return compare(y) != Relation::EQ;
-	}
-
-	auto operator!=(CString<Char> y) const -> bool {
-		return compare(y) != Relation::EQ;
-	}
-
-	auto operator!=(View const & y) const noexcept -> bool {
-		return compare(y) != Relation::EQ;
-	}
-
-	auto operator<(String const & y) const noexcept -> bool {
+	auto operator<(StringView<Char, CharTraits> const & y) const noexcept -> bool {
 		return compare(y) == Relation::LT;
 	}
 
-	auto operator<(CString<Char> y) const -> bool {
-		return compare(y) == Relation::LT;
-	}
-
-	auto operator<(View const & y) const noexcept -> bool {
-		return compare(y) == Relation::LT;
-	}
-
-	auto operator>(String const & y) const noexcept -> bool {
+	auto operator>(StringView<Char, CharTraits> const & y) const noexcept -> bool {
 		return compare(y) == Relation::GT;
 	}
 
-	auto operator>(CString<Char> y) const -> bool {
-		return compare(y) == Relation::GT;
+	auto operator<=(StringView<Char, CharTraits> const & y) const noexcept -> bool {
+		return !operator>(y);
 	}
 
-	auto operator>(View const & y) const noexcept -> bool {
-		return compare(y) == Relation::GT;
-	}
-
-	auto operator<=(String const & y) const noexcept -> bool {
-		return compare(y) != Relation::GT;
-	}
-
-	auto operator<=(CString<Char> y) const -> bool {
-		return compare(y) != Relation::GT;
-	}
-
-	auto operator<=(View const & y) const noexcept -> bool {
-		return compare(y) != Relation::GT;
-	}
-
-	auto operator>=(String const & y) const noexcept -> bool {
-		return compare(y) != Relation::LT;
-	}
-
-	auto operator>=(CString<Char> y) const -> bool {
-		return compare(y) != Relation::LT;
-	}
-
-	auto operator>=(View const & y) const noexcept -> bool {
-		return compare(y) != Relation::LT;
+	auto operator>=(StringView<Char, CharTraits> const & y) const noexcept -> bool {
+		return !operator<(y);
 	}
 	///@}
 
@@ -947,19 +947,10 @@ public:
 	}
 
 	/**
-	 * @brief 从C风格字符串复制
-	 * @param[in] string 源字符串
-	 * @see CString
-	 */
-	auto operator=(CString<Char> string) -> String & {
-		return *this = make_string_view(string);
-	}
-
-	/**
 	 * @brief 从字符串视图赋值
 	 * @param[in] view 字符串视图
 	 */
-	auto operator=(View const & view) -> String &;
+	auto operator=(StringView<Char, CharTraits> const & view) -> String &;
 
 	/**
 	 * @brief 从初始化列表复制
@@ -967,25 +958,26 @@ public:
 	 * @see InitializerList
 	 */
 	auto operator=(InitializerList<Char> list) -> String & {
-		return assign(list.begin(), list.end());
+		return operator=(make_iterator_range(list.begin(), list.end()));
 	}
 
 	/**
 	 * @brief 从迭代器区间复制
 	 * @param[in] first, last 区间\f$[first, last)\f$
 	 */
-	template< typename TInputIterator >
-	auto assign(TInputIterator first, TInputIterator last) -> String & {
-		m_assign(first, last, IteratorTraits<TInputIterator>::category());
+	template<typename TSinglePassIterator>
+	auto operator=(IteratorRange<TSinglePassIterator> range) -> String & {
+		m_assign(range.begin(), range.end(), IteratorTraits<TSinglePassIterator>::category());
 		return *this;
 	}
 
 	/**
 	 * @brief 设置为空串
 	 */
-	void clear() {
+	auto clear() -> String & {
 		CharTraits::assign(*m_get_pointer(), Char());
 		m_set_size(0);
+		return *this;
 	}
 	///@}
 
@@ -994,26 +986,10 @@ public:
 	 */
 	///@{
 	/**
-	 * @brief 追加
-	 * @param[in] string 追加内容
-	 */
-	auto operator<<(String const & string) -> String & {
-		return *this << string.to_view();
-	}
-
-	/**
-	 * @brief 追加(C风格字符串版本)
-	 * @param[in] string 追加内容
-	 */
-	auto operator<<(CString<Char> string) -> String & {
-		return *this << make_string_view(string);
-	}
-
-	/**
 	 * @brief 追加(字符串视图版本)
 	 * @param[in] view 追加内容
 	 */
-	auto operator<<(View const & view) -> String &;
+	auto operator<<(StringView<Char, CharTraits> const & view) -> String &;
 
 	/**
 	 * @brief 追加字符
@@ -1022,56 +998,79 @@ public:
 	auto operator<<(Char c) -> String &;
 
 	/**
+	 * @brief 追加迭代器区间中的内容
+	 * @param[in] first, last 区间\f$[first, last)\f$
+	 */
+	template<typename TSinglePassIterator>
+	auto operator<<(IteratorRange<TSinglePassIterator> range) -> String & {
+		m_append(range.begin(), range.end(), IteratorTraits<TSinglePassIterator>::category());
+		return *this;
+	}
+
+	/**
 	 * @brief 追加(初始化列表版本)
 	 * @param[in] list 追加内容
 	 */
 	auto operator<<(InitializerList<Char> list) -> String & {
-		return append(list.begin(), list.end());
+		return operator<<(make_iterator_range(list.begin(), list.end()));
 	}
 
 	/**
 	 * @brief 追加重复字符
-	 * @param[in] c 字符
-	 * @param[in] count 重复次数
+	 * @param[in] chars 字符及其重复次数
 	 */
-	auto append(Char c, Size count) -> String &;
+	auto operator<<(Pair<Char, Size> const & chars) -> String &;
+	///@}
 
 	/**
-	 * @brief 追加迭代器区间中的内容
-	 * @param[in] first, last 区间\f$[first, last)\f$
+	 * @name 连接操作
 	 */
-	template< typename TInputIterator >
-	auto append(TInputIterator first, TInputIterator last) -> String & {
-		m_append(first, last, IteratorTraits<TInputIterator>::category());
-		return *this;
-	}
+	///@{
+	auto operator+(StringView<Char, CharTraits> const & string) -> String;
+
+	auto operator+(Char string) -> String;
+
+	auto operator+(Pair<Char, Size> const & chars) -> String;
 	///@}
 
 	/**
 	 * @name 插入操作
 	 */
 	///@{
-	auto insert(Size index, Char ch, Size count) -> String &;
+	auto insert(Size index, StringView<Char, CharTraits> const & view) -> String &;
 
-	auto insert(ConstIterator position, Char ch) -> Iterator {
-		auto index = position - begin();
-		(*this)(index) << ch;
+	auto insert(Size index, Char c) -> String &;
+
+	auto insert(Size index, Pair<Char, Size> const & chars) -> String &;
+
+	auto insert(ConstIterator position, Char c) -> Iterator {
+		auto const index = position - begin();
+		insert(index, c);
 		return begin() + index;
 	}
 
-	auto insert(ConstIterator position, Char ch, Size count) -> Iterator {
-		auto index = position - begin();
-		insert(static_cast<Size>(index), ch, count);
+	auto insert(ConstIterator position, Pair<Char, Size> chars) -> Iterator {
+		auto const index = position - begin();
+		insert(index, chars);
 		return begin() + index;
+	}
+
+	template<typename TSinglePassTraversalIterator>
+	auto insert(ConstIterator position, IteratorRange<TSinglePassTraversalIterator> range) -> Iterator {
+		return insert(position, range.begin(), range.end());
 	}
 
 	auto insert(ConstIterator position, InitializerList<Char> list) -> Iterator {
 		return insert(position, list.begin(), list.end());
 	}
 
-	template< typename TInputIterator >
-	auto insert(ConstIterator position, TInputIterator first, TInputIterator last) -> Iterator {
-		return m_insert(position, first, last, IteratorTraits<TInputIterator>::category());
+	template<typename TSinglePassTraversalIterator>
+	auto insert(
+		ConstIterator position,
+		TSinglePassTraversalIterator first,
+		TSinglePassTraversalIterator last
+	) -> Iterator {
+		return m_insert(position, first, last, IteratorTraits<TSinglePassTraversalIterator>::category());
 	}
 	///@}
 
@@ -1079,48 +1078,39 @@ public:
 	 * @name 替换操作
 	 */
 	///@{
-	auto replace(Size index, Size length, Char c, Size count) -> String &;
+	auto replace(Size index, Size count, StringView<Char, CharTraits> const & view) -> String &;
 
-	auto replace(ConstIterator first, ConstIterator last, String const & string) -> String & {
-		return operator()(static_cast<Size>(first - begin()), static_cast<Size>(last - first)) = string;
-	}
-
-	auto replace(ConstIterator first, ConstIterator last, CString<Char> string) -> String & {
-		return operator()(static_cast<Size>(first - begin()), static_cast<Size>(last - first)) = string;
-	}
-
-	auto replace(ConstIterator first, ConstIterator last, View const & view) -> String & {
-		return operator()(static_cast<Size>(first - begin()), static_cast<Size>(last - first)) = view;
-	}
+	auto replace(Size index, Size length, Pair<Char, Size> const & chars) -> String &;
 
 	auto replace(ConstIterator first, ConstIterator last, InitializerList<Char> list) -> String & {
 		return replace(first, last, list.begin(), list.end());
 	}
 
-	auto replace(ConstIterator first, ConstIterator last, Char c, Size count) -> String & {
-		return replace(static_cast<Size>(first - begin()), static_cast<Size>(last - first), c, count);
-	}
-
-	template< typename TInputIterator >
-	auto replace(ConstIterator first0, ConstIterator last0, TInputIterator first1, TInputIterator last1) -> String &;
+	template<typename TSinglePassTraversalIterator>
+	auto replace(
+		ConstIterator first0,
+		ConstIterator last0,
+		TSinglePassTraversalIterator first1,
+		TSinglePassTraversalIterator last1
+	) -> String &;
 	///@}
 
 	/**
 	 * @name 删除操作
 	 */
 	///@{
-	auto erase(ConstIterator position) -> Iterator {
-		auto b = begin();
-		auto length = static_cast<Size>(position - b);
-		operator()(length, 1) = nullptr;
-		return b + static_cast<Difference>(length);
+	auto remove(Size index, Size count) -> String &;
+
+	auto remove(ConstIterator position) -> Iterator {
+		auto index = position - begin();
+		remove(static_cast<Size>(index), 1);
+		return begin() + index;
 	}
 
-	auto erase(ConstIterator first, ConstIterator last)-> Iterator {
-		auto b = begin();
-		auto length = static_cast<Size>(first - b);
-		operator()(length, static_cast<Size>(last - first)) = nullptr;
-		return b + static_cast<Difference>(length);
+	auto remove(ConstIterator first, ConstIterator last) -> Iterator {
+		auto index = first - begin();
+		remove(static_cast<Size>(index), static_cast<Size>(last - first));
+		return begin() + index;
 	}
 	///@}
 
@@ -1175,11 +1165,11 @@ private:
 		m_storage().pointer = pointer;
 	}
 
-	auto m_char(Size index) -> Char & {
+	auto m_char(Size index) noexcept -> Char & {
 		return m_get_pointer()[index];
 	}
 
-	auto m_char(Size index) const -> Char const & {
+	auto m_char(Size index) const noexcept -> Char const & {
 		return m_get_pointer()[index];
 	}
 
@@ -1187,26 +1177,28 @@ private:
 
 	void m_prepare(Size size);
 
-	void m_construct(CString<Char> string, Size size);
+	void m_construct(Char const * string, Size size) {
+		m_construct(string, size, size);
+	}
 
-	void m_construct(CString<Char> string, Size size, Size reserve);
+	void m_construct(Char const * string, Size size, Size reserve);
 
 	void m_construct(Char ch, Size size);
 
-	template< typename TInputIterator >
-	void m_construct(TInputIterator first, TInputIterator last, InputIteratorTag _dummy);
+	template<typename TInputIterator>
+	void m_construct(TInputIterator first, TInputIterator last, SinglePassTraversalTag);
 
-	template< typename TForwardIterator >
-	void m_construct(TForwardIterator first, TForwardIterator last, ForwardIteratorTag _dummy);
+	template<typename TForwardIterator>
+	void m_construct(TForwardIterator first, TForwardIterator last, ForwardTraversalTag);
 
 	void m_destruct() {
 		AllocatorTraits::deallocate(m_allocator(), m_get_pointer(), m_get_capacity());
 	}
 
-	void m_copy_assign_allocator(String const & string, BooleanTrue _dummy) noexcept {
+	void m_copy_assign_allocator(String const & string, BooleanTrue) noexcept {
 	}
 
-	void m_copy_assign_allocator(String const & string, BooleanFalse _dummy) {
+	void m_copy_assign_allocator(String const & string, BooleanFalse) {
 		if (m_allocator() != string.m_allocator()) {
 			clear();
 			clamp();
@@ -1214,15 +1206,15 @@ private:
 		m_allocator() = string.m_allocator();
 	}
 
-	void m_move_assign(String & string, BooleanTrue _dummy) noexcept(HasNothrowMoveAssign<Allocator>::value) {
+	void m_move_assign(String & string, BooleanTrue) noexcept(HasNothrowMoveAssign<Allocator>::value) {
 		clear();
 		clamp();
-		m_storage()= string.m_storage();
+		m_storage() = string.m_storage();
 		m_allocator() = move(string.m_allocator());
 		string.m_zeroize();
 	}
 
-	void m_move_assign(String & string, BooleanFalse _dummy) {
+	void m_move_assign(String & string, BooleanFalse) {
 		if (m_allocator() != string.m_allocator()) {
 			*this = string;
 		} else {
@@ -1233,50 +1225,61 @@ private:
 		}
 	}
 
-	void m_grow_and_replace(Size old_capacity, Size delta_capacity, Size old_size, Size copy_count, Size delete_count, Size add_count, CString<Char> string);
+	void m_grow_and_replace(Size old_capacity, Size delta_capacity, Size old_size, Size copy_count, Size delete_count, Size add_count, Char const * string);
 
 	void m_grow(Size old_capacity, Size delta_capacity, Size old_size, Size copy_count, Size delete_count, Size add_count = 0);
 
-	template< typename TInputIterator >
-	void m_assign(TInputIterator first, TInputIterator last, InputIteratorTag _dummy);
+	template<typename TSinglePassTraversalIterator>
+	void m_assign(TSinglePassTraversalIterator first, TSinglePassTraversalIterator last, SinglePassTraversalTag) {
+		clear();
+		for (; first != last; ++first) {
+			*this << *first;
+		}
+	}
 
-	template< typename TForwardIterator >
-	void m_assign(TForwardIterator first, TForwardIterator last, ForwardIteratorTag _dummy);
+	template<typename TForwardTraversalIterator>
+	void m_assign(TForwardTraversalIterator first, TForwardTraversalIterator last, ForwardTraversalTag);
 
-	template< typename TInputIterator >
-	void m_append(TInputIterator first, TInputIterator last, InputIteratorTag _dummy);
+	template<typename TSinglePassTraversalIterator>
+	void m_append(TSinglePassTraversalIterator first, TSinglePassTraversalIterator last, SinglePassTraversalTag) {
+		for (; first != last; ++first) {
+			*this << *first;
+		}
+	}
 
-	template< typename TForwardIterator >
-	void m_append(TForwardIterator first, TForwardIterator last, ForwardIteratorTag _dummy);
+	template<typename TForwardTraversalIterator>
+	void m_append(TForwardTraversalIterator first, TForwardTraversalIterator last, ForwardTraversalTag);
 
-	auto m_insert(Size index, View const & view) -> String &;
+	template<typename TSinglePassTraversalIterator>
+	auto m_insert(
+		ConstIterator position,
+		TSinglePassTraversalIterator first,
+		TSinglePassTraversalIterator last,
+		SinglePassTraversalTag
+	) -> Iterator;
 
-	auto m_insert(Size index, Char c) -> String &;
-
-	template< typename TInputIterator >
-	auto m_insert(ConstIterator position, TInputIterator first, TInputIterator last, InputIteratorTag _dummy) -> Iterator;
-
-	template< typename TForwardIterator >
-	auto m_insert(ConstIterator position, TForwardIterator first, TForwardIterator last, ForwardIteratorTag _dummy) -> Iterator;
-
-	auto m_replace(Size index, Size count, View const & view) -> String &;
-
-	auto m_erase(Size index, Size count) -> String &;
+	template<typename TForwardTraversalIterator>
+	auto m_insert(
+		ConstIterator position,
+		TForwardTraversalIterator first,
+		TForwardTraversalIterator last,
+		ForwardTraversalTag
+	) -> Iterator;
 
 private:
-	CompressedPair< Storage, Allocator > m_pair;
+	CompressedPair<Storage, Allocator> m_pair;
 
 }; // class String< TChar, TCharTraits, TAllocator >
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-void String< TChar, TCharTraits, TAllocator >::m_zeroize() {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+void String<TChar, TCharTraits, TAllocator>::m_zeroize() {
 	m_set_capacity(0);
 	m_set_size(0);
 	m_set_pointer(nullptr);
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-void String< TChar, TCharTraits, TAllocator >::m_prepare(Size size) {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+void String<TChar, TCharTraits, TAllocator>::m_prepare(Size size) {
 	if (size > max_size()) {
 		throw_length_exception("String::m_prepare");
 	}
@@ -1285,36 +1288,27 @@ void String< TChar, TCharTraits, TAllocator >::m_prepare(Size size) {
 	m_set_capacity(capacity);
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-void String< TChar, TCharTraits, TAllocator >::m_construct(CString<Char> S, Size size) {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+void String<TChar, TCharTraits, TAllocator>::m_construct(Char const * S, Size size, Size reserve) {
+	m_prepare(reserve + 1);
+	auto pointer = m_get_pointer();
+	CharTraits::copy(PointerTraits::to_raw(pointer), S, size);
+	CharTraits::assign(pointer[size], Char());
+	m_set_size(size);
+}
+
+template<typename TChar, typename TCharTraits, typename TAllocator>
+void String<TChar, TCharTraits, TAllocator>::m_construct(Char c, Size size) {
 	m_prepare(size + 1);
 	auto pointer = m_get_pointer();
-	CharTraits::copy(PointerTraits::to_raw(pointer), S, size);
+	CharTraits::fill(PointerTraits::to_raw(pointer), c, size);
 	CharTraits::assign(pointer[size], Char());
 	m_set_size(size);
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-void String< TChar, TCharTraits, TAllocator >::m_construct(CString<Char> S, Size size, Size reserve) {
-	m_prepare(reserve);
-	auto pointer = m_get_pointer();
-	CharTraits::copy(PointerTraits::to_raw(pointer), S, size);
-	CharTraits::assign(pointer[size], Char());
-	m_set_size(size);
-}
-
-template< typename TChar, typename TCharTraits, typename TAllocator >
-void String< TChar, TCharTraits, TAllocator >::m_construct(Char c, Size size) {
-	m_prepare(size);
-	auto pointer = m_get_pointer();
-	CharTraits::fill(PointerTraits::to_raw(pointer), size, c);
-	CharTraits::assign(pointer[size], Char());
-	m_set_size(size);
-}
-
-template< typename TChar, typename TCharTraits, typename TAllocator >
-template< typename TInputIterator >
-void String< TChar, TCharTraits, TAllocator >::m_construct(TInputIterator first, TInputIterator last, InputIteratorTag) {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+template<typename TinglePassTraversalIterator>
+void String<TChar, TCharTraits, TAllocator>::m_construct(TinglePassTraversalIterator first, TinglePassTraversalIterator last, SinglePassTraversalTag) {
 	m_zeroize();
 	try {
 		for (; first != last; ++first) {
@@ -1326,11 +1320,11 @@ void String< TChar, TCharTraits, TAllocator >::m_construct(TInputIterator first,
 	}
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-template< typename TForwardIterator >
-void String< TChar, TCharTraits, TAllocator >::m_construct(TForwardIterator first, TForwardIterator last, ForwardIteratorTag) {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+template<typename TForwardTraversalIterator>
+void String<TChar, TCharTraits, TAllocator>::m_construct(TForwardTraversalIterator first, TForwardTraversalIterator last, ForwardTraversalTag) {
 	auto size = static_cast<Size>(distance(first, last));
-	m_prepare(size);
+	m_prepare(size + 1);
 	auto pointer = m_get_pointer();
 	for (; first != last; ++first, ++pointer) {
 		CharTraits::assign(*pointer, *first);
@@ -1339,8 +1333,8 @@ void String< TChar, TCharTraits, TAllocator >::m_construct(TForwardIterator firs
 	m_set_size(size);
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-void String< TChar, TCharTraits, TAllocator >::m_grow_and_replace(Size old_capacity, Size delta_capacity, Size old_size, Size copy_count, Size delete_count, Size add_count, CString<Char> string) {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+void String<TChar, TCharTraits, TAllocator>::m_grow_and_replace(Size old_capacity, Size delta_capacity, Size old_size, Size copy_count, Size delete_count, Size add_count, Char const * string) {
 	auto const MAX_SIZE = max_size();
 	if (delta_capacity > MAX_SIZE - old_capacity - 1) {
 		throw_length_exception("String::m_grow_and_replace");
@@ -1358,7 +1352,11 @@ void String< TChar, TCharTraits, TAllocator >::m_grow_and_replace(Size old_capac
 	}
 	auto const second_copy_count = old_size - delete_count - copy_count;
 	if (second_copy_count != 0) {
-		CharTraits::copy(PointerTraits::to_raw(new_pointer) + copy_count + add_count, PointerTraits::to_raw(old_pointer) + copy_count + delete_count, second_copy_count);
+		CharTraits::copy(
+			PointerTraits::to_raw(new_pointer) + copy_count + add_count,
+			PointerTraits::to_raw(old_pointer) + copy_count + delete_count,
+			second_copy_count
+		);
 	}
 	m_set_pointer(new_pointer);
 	m_set_capacity(new_capacity);
@@ -1368,8 +1366,15 @@ void String< TChar, TCharTraits, TAllocator >::m_grow_and_replace(Size old_capac
 }
 
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-void String< TChar, TCharTraits, TAllocator >::m_grow(Size old_capacity, Size delta_capacity, Size old_size, Size copy_count, Size delete_count, Size add_count) {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+void String<TChar, TCharTraits, TAllocator>::m_grow(
+	Size old_capacity,
+	Size delta_capacity,
+	Size old_size,
+	Size copy_count,
+	Size delete_count,
+	Size add_count
+) {
 	auto const MAX_SIZE = max_size();
 	if (delta_capacity > MAX_SIZE - old_capacity) {
 		throw_length_exception("String::m_grow");
@@ -1382,16 +1387,20 @@ void String< TChar, TCharTraits, TAllocator >::m_grow(Size old_capacity, Size de
 	if (copy_count != 0) {
 		CharTraits::copy(PointerTraits::to_raw(new_pointer), PointerTraits::to_raw(old_pointer), copy_count);
 	}
-	auto const second_copy_count  = old_size - delete_count - copy_count;
+	auto const second_copy_count = old_size - delete_count - copy_count;
 	if (second_copy_count != 0) {
-		CharTraits::copy(PointerTraits::to_raw(new_pointer) + copy_count + add_count, PointerTraits::to_raw(old_pointer) + copy_count + delete_count, second_copy_count);
+		CharTraits::copy(
+			PointerTraits::to_raw(new_pointer) + copy_count + add_count,
+			PointerTraits::to_raw(old_pointer) + copy_count + delete_count,
+			second_copy_count
+		);
 	}
 	m_set_pointer(new_pointer);
 	m_set_capacity(new_capacity);
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-auto String< TChar, TCharTraits, TAllocator >::compare(View const & view) const noexcept -> Relation {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+auto String<TChar, TCharTraits, TAllocator>::compare(StringView<Char, CharTraits> const & view) const noexcept -> Relation {
 	Size lhs_size = m_get_size();
 	Size rhs_size = view.size();
 	auto result = CharTraits::compare(data(), view.data(), min(lhs_size, rhs_size));
@@ -1407,49 +1416,8 @@ auto String< TChar, TCharTraits, TAllocator >::compare(View const & view) const 
 	return Relation::EQ;
 };
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-auto String< TChar, TCharTraits, TAllocator >::operator=(View const & view) -> String & {
-	auto capacity = m_get_capacity();
-	if (m_get_capacity() >= view.size()) {
-		auto pointer = m_get_pointer();
-		CharTraits::move(PointerTraits::to_raw(pointer), view.data(), view.size());
-		CharTraits::assign(pointer[view.size()], Char());
-		m_set_size(view.size());
-	} else {
-		auto size = m_get_size();
-		m_grow_and_replace(capacity, view.size() - capacity, size, 0, size, view.size(), view.data());
-	}
-	return *this;
-}
-
-template< typename TChar, typename TCharTraits, typename TAllocator >
-template< typename TInputIterator >
-void String< TChar, TCharTraits, TAllocator >::m_assign(TInputIterator first, TInputIterator last, InputIteratorTag) {
-	clear();
-	for (; first != last; ++first) {
-		*this << *first;
-	}
-}
-
-template< typename TChar, typename TCharTraits, typename TAllocator >
-template< typename TForwardIterator >
-void String< TChar, TCharTraits, TAllocator >::m_assign(TForwardIterator first, TForwardIterator last, ForwardIteratorTag) {
-	auto count = static_cast<Size>(distance(first, last));
-	auto capacity = m_get_capacity();
-	if (capacity < count) {
-		auto const size = m_get_size();
-		m_grow(capacity, count - capacity, size, 0, size);
-	}
-	auto pointer = m_get_pointer();
-	for (; first != last; ++first, ++pointer) {
-		CharTraits::assign(*pointer, *first);
-	}
-	CharTraits::assign(*pointer, Char());
-	m_set_size(count);
-}
-
-template< typename TChar, typename TCharTraits, typename TAllocator >
-auto String< TChar, TCharTraits, TAllocator >::reserve(Size count) -> String & {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+auto String<TChar, TCharTraits, TAllocator>::reserve(Size count) -> String & {
 	if (count > max_size()) {
 		throw_length_exception("String::reserve");
 	}
@@ -1475,8 +1443,8 @@ auto String< TChar, TCharTraits, TAllocator >::reserve(Size count) -> String & {
 	return *this;
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-auto String< TChar, TCharTraits, TAllocator >::clamp() -> String & {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+auto String<TChar, TCharTraits, TAllocator>::clamp() -> String & {
 	auto old_capacity = m_get_capacity();
 	auto size = m_get_size();
 	auto new_capacity = m_allocate_size(size + 1);
@@ -1495,8 +1463,44 @@ auto String< TChar, TCharTraits, TAllocator >::clamp() -> String & {
 	return *this;
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-auto String< TChar, TCharTraits, TAllocator >::operator<<(View const & view) -> String & {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+auto String<TChar, TCharTraits, TAllocator>::operator=(StringView<Char, CharTraits> const & view) -> String & {
+	auto capacity = m_get_capacity();
+	if (m_get_capacity() >= view.size()) {
+		auto pointer = m_get_pointer();
+		CharTraits::move(PointerTraits::to_raw(pointer), view.data(), view.size());
+		CharTraits::assign(pointer[view.size()], Char());
+		m_set_size(view.size());
+	} else {
+		auto size = m_get_size();
+		m_grow_and_replace(capacity, view.size() - capacity, size, 0, size, view.size(), view.data());
+	}
+	return *this;
+}
+
+template<typename TChar, typename TCharTraits, typename TAllocator>
+template<typename TForwardTraversalIterator>
+void String<TChar, TCharTraits, TAllocator>::m_assign(
+	TForwardTraversalIterator first,
+	TForwardTraversalIterator last,
+	ForwardTraversalTag
+) {
+	auto count = static_cast<Size>(distance(first, last));
+	auto capacity = m_get_capacity();
+	if (capacity < count) {
+		auto const size = m_get_size();
+		m_grow(capacity, count - capacity, size, 0, size);
+	}
+	auto pointer = m_get_pointer();
+	for (; first != last; ++first, ++pointer) {
+		CharTraits::assign(*pointer, *first);
+	}
+	CharTraits::assign(*pointer, Char());
+	m_set_size(count);
+}
+
+template<typename TChar, typename TCharTraits, typename TAllocator>
+auto String<TChar, TCharTraits, TAllocator>::operator<<(StringView<Char, CharTraits> const & view) -> String & {
 	auto capacity = m_get_capacity();
 	auto old_size = m_get_size();
 	if (capacity - old_size >= view.size()) {
@@ -1508,13 +1512,20 @@ auto String< TChar, TCharTraits, TAllocator >::operator<<(View const & view) -> 
 			m_set_size(new_size);
 		}
 	} else {
-		m_grow_and_replace(capacity, old_size + view.size() - capacity, old_size, old_size, 0, view.size(), view.data());
+		m_grow_and_replace(
+			capacity,
+			old_size + view.size() - capacity,
+			old_size,
+			old_size,
+			0,
+			view.size(),
+			view.data());
 	}
 	return *this;
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-auto String< TChar, TCharTraits, TAllocator >::operator<<(Char ch) -> String & {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+auto String<TChar, TCharTraits, TAllocator>::operator<<(Char ch) -> String & {
 	auto capacity = m_get_capacity();
 	auto old_size = m_get_size();
 	auto new_size = old_size + 1;
@@ -1528,8 +1539,9 @@ auto String< TChar, TCharTraits, TAllocator >::operator<<(Char ch) -> String & {
 	return *this;
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-auto String< TChar, TCharTraits, TAllocator >::append(Char c, Size count) -> String & {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+auto String<TChar, TCharTraits, TAllocator>::operator<<(Pair<Char, Size> const & chars) -> String & {
+	auto count = chars.second;
 	if (count > 0) {
 		auto capacity = m_get_capacity();
 		auto old_size = m_get_size();
@@ -1538,24 +1550,20 @@ auto String< TChar, TCharTraits, TAllocator >::append(Char c, Size count) -> Str
 			m_grow(capacity, new_size - capacity, old_size, old_size, 0);
 		}
 		auto pointer = m_get_pointer();
-		CharTraits::fill(PointerTraits::to_raw(pointer) + old_size, count, c);
+		CharTraits::fill(PointerTraits::to_raw(pointer) + old_size, chars.first, count);
 		CharTraits::assign(pointer[new_size], Char());
 		m_set_size(new_size);
 	}
 	return *this;
 };
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-template< typename TInputIterator >
-void String< TChar, TCharTraits, TAllocator >::m_append(TInputIterator first, TInputIterator last, InputIteratorTag) {
-	for (; first != last; ++first) {
-		*this << *first;
-	}
-}
-
-template< typename TChar, typename TCharTraits, typename TAllocator >
-template< typename TForwardIterator >
-void String< TChar, TCharTraits, TAllocator >::m_append(TForwardIterator first, TForwardIterator last, ForwardIteratorTag) {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+template<typename TForwardTraversalIterator>
+void String<TChar, TCharTraits, TAllocator>::m_append(
+	TForwardTraversalIterator first,
+	TForwardTraversalIterator last,
+	ForwardTraversalTag
+) {
 	auto size = m_get_size();
 	auto capacity = m_get_capacity();
 	auto count = static_cast<Size>(distance(first, last));
@@ -1572,8 +1580,35 @@ void String< TChar, TCharTraits, TAllocator >::m_append(TForwardIterator first, 
 	}
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-auto String< TChar, TCharTraits, TAllocator >::m_insert(Size index, View const & view) -> String & {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+auto String<TChar, TCharTraits, TAllocator>::operator+(StringView<Char, CharTraits> const & y) -> String {
+	String result(get_allocator());
+	auto size_x = m_get_size();
+	result.m_construct(m_get_pointer(), size_x, size_x + y.size());
+	result << y;
+	return result;
+};
+
+template<typename TChar, typename TCharTraits, typename TAllocator>
+auto String<TChar, TCharTraits, TAllocator>::operator+(Char y) -> String {
+	String result(get_allocator());
+	auto size_x = m_get_size();
+	result.m_construct(m_get_pointer(), size_x, size_x + 1);
+	result << y;
+	return result;
+};
+
+template<typename TChar, typename TCharTraits, typename TAllocator>
+auto String<TChar, TCharTraits, TAllocator>::operator+(Pair<Char, Size> const & y) -> String {
+	String result(get_allocator());
+	auto size_x = m_get_size();
+	result.m_construct(m_get_pointer(), size_x, size_x + y.second);
+	result << y;
+	return result;
+};
+
+template<typename TChar, typename TCharTraits, typename TAllocator>
+auto String<TChar, TCharTraits, TAllocator>::insert(Size index, StringView<Char, CharTraits> const & view) -> String & {
 	auto old_size = m_get_size();
 	if (index > old_size) {
 		throw_index_exception("BR::m_insert");
@@ -1602,8 +1637,8 @@ auto String< TChar, TCharTraits, TAllocator >::m_insert(Size index, View const &
 	return *this;
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-auto String< TChar, TCharTraits, TAllocator >::m_insert(Size index, Char ch) -> String & {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+auto String<TChar, TCharTraits, TAllocator>::insert(Size index, Char ch) -> String & {
 	auto old_size = m_get_size();
 	auto new_size = old_size + 1;
 	auto capacity = m_get_capacity();
@@ -1624,12 +1659,13 @@ auto String< TChar, TCharTraits, TAllocator >::m_insert(Size index, Char ch) -> 
 	return *this;
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-auto String< TChar, TCharTraits, TAllocator >::insert(Size index, Char ch, Size count) -> String & {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+auto String<TChar, TCharTraits, TAllocator>::insert(Size index, Pair<Char, Size> const & chars) -> String & {
 	auto old_size = m_get_size();
 	if (index > old_size) {
 		throw_index_exception("BR::insert");
 	}
+	auto count = chars.second;
 	if (count > 0) {
 		auto capacity = m_get_capacity();
 		auto new_size = old_size + count;
@@ -1644,30 +1680,40 @@ auto String< TChar, TCharTraits, TAllocator >::insert(Size index, Char ch, Size 
 			m_grow(capacity, new_size - capacity, old_size, index, 0, count);
 			pointer = PointerTraits::to_raw(m_get_pointer());
 		}
-		CharTraits::fill(pointer + index, count, ch);
+		CharTraits::fill(pointer + index, chars.first, count);
 		CharTraits::assign(pointer[new_size], Char());
 		m_set_size(new_size);
 	}
 	return *this;
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-template< typename TInputIterator >
-auto String< TChar, TCharTraits, TAllocator >::m_insert(ConstIterator position, TInputIterator first, TInputIterator last, InputIteratorTag) -> Iterator {
-	auto old_size = m_get_size();
+template<typename TChar, typename TCharTraits, typename TAllocator>
+template<typename TSinglePassTraversalIterator>
+auto String<TChar, TCharTraits, TAllocator>::m_insert(
+	ConstIterator position,
+	TSinglePassTraversalIterator first,
+	TSinglePassTraversalIterator last,
+	SinglePassTraversalTag
+) -> Iterator {
 	auto index = position - begin();
+	auto old_size = m_get_size();
 	for (; first != last; ++first) {
 		*this << *first;
 	}
 	auto pointer = m_get_pointer();
 	rotate(pointer + index, pointer + old_size, pointer + size());
-	return Iterator(pointer + index);
+	return begin() + index;
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-template< typename TForwardIterator >
-auto String< TChar, TCharTraits, TAllocator >::m_insert(ConstIterator position, TForwardIterator first, TForwardIterator last, ForwardIteratorTag) -> Iterator {
-	auto index = static_cast<Size>(position - begin());
+template<typename TChar, typename TCharTraits, typename TAllocator>
+template<typename TForwardTraversalIterator>
+auto String<TChar, TCharTraits, TAllocator>::m_insert(
+	ConstIterator position,
+	TForwardTraversalIterator first,
+	TForwardTraversalIterator last,
+	ForwardTraversalTag
+) -> Iterator {
+	auto index = position - begin();
 	auto old_size = m_get_size();
 	auto capacity = m_get_capacity();
 	Size count = static_cast<Size>(distance(first, last));
@@ -1686,15 +1732,19 @@ auto String< TChar, TCharTraits, TAllocator >::m_insert(ConstIterator position, 
 		}
 		CharTraits::assign(pointer[new_size], Char());
 		m_set_size(new_size);
-		for (pointer += index; first != last; ++pointer, (void)++first) {
+		for (pointer += index; first != last; ++pointer, (void) ++first) {
 			CharTraits::assign(*pointer, *first);
 		}
 	}
 	return begin() + index;
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-auto String< TChar, TCharTraits, TAllocator >::m_replace(Size index, Size count, View const & view) -> String & {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+auto String<TChar, TCharTraits, TAllocator>::replace(
+	Size index,
+	Size count,
+	StringView<Char, CharTraits> const & view
+) -> String & {
 	auto old_size = m_get_size();
 	auto capacity = m_get_capacity();
 	auto source_data = view.data();
@@ -1712,7 +1762,7 @@ auto String< TChar, TCharTraits, TAllocator >::m_replace(Size index, Size count,
 					if (pointer + index < source_data && source_data < pointer + source_count) {
 						if (pointer + index + count <= source_data) {
 							source_data += source_count - count;
-						} else  {
+						} else {
 							CharTraits::move(pointer + index, source_data, count);
 							index += count;
 							source_data += source_count;
@@ -1729,19 +1779,32 @@ auto String< TChar, TCharTraits, TAllocator >::m_replace(Size index, Size count,
 		CharTraits::assign(pointer[new_size], Char());
 		m_set_size(new_size);
 	} else {
-		m_grow_and_replace(capacity, old_size - source_count + count - capacity, old_size, index, count, source_count, source_data);
+		m_grow_and_replace(
+			capacity,
+			old_size - source_count + count - capacity,
+			old_size,
+			index,
+			count,
+			source_count,
+			source_data
+		);
 	}
 	return *this;
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-auto String< TChar, TCharTraits, TAllocator >::replace(Size index, Size length, Char c, Size count) -> String & {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+auto String<TChar, TCharTraits, TAllocator>::replace(
+	Size index,
+	Size length,
+	Pair<Char, Size> const & chars
+) -> String & {
 	auto old_size = m_get_size();
 	if (index > old_size) {
 		throw_index_exception("String::replace");
 	}
 	length = min(length, old_size - index);
 	auto capacity = m_get_capacity();
+	auto count = chars.second;
 	Char * pointer = nullptr;
 	auto new_size = old_size - length + count;
 	if (capacity - old_size + length >= count) {
@@ -1756,33 +1819,39 @@ auto String< TChar, TCharTraits, TAllocator >::replace(Size index, Size length, 
 		m_grow(capacity, new_size - capacity, old_size, index, length, count);
 		pointer = PointerTraits::to_raw(m_get_pointer());
 	}
-	CharTraits::fill(pointer + index, count, c);
+	CharTraits::fill(pointer + index, chars.first, count);
 	CharTraits::assign(pointer[new_size], Char());
 	m_set_size(new_size);
 	return *this;
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-template< typename TInputIterator >
-auto String< TChar, TCharTraits, TAllocator >::replace(ConstIterator first0, ConstIterator last0, TInputIterator first1, TInputIterator last1) -> String & {
-	for (;; ++first0, (void)++first1) {
-		if (first0 == first1) {
-			if (last0 != last1) {
-				insert(first0, last0, last1);
+template<typename TChar, typename TCharTraits, typename TAllocator>
+template<typename TSinglePassTraversalIterator>
+auto String<TChar, TCharTraits, TAllocator>::replace(
+	ConstIterator first0,
+	ConstIterator last0,
+	TSinglePassTraversalIterator first1,
+	TSinglePassTraversalIterator last1
+) -> String & {
+	for (; ; ++first0, (void) ++first1) {
+		if (first0 == last0) {
+			if (first1 != last1) {
+				insert(first0, first1, last1);
 			}
 			break;
 		}
-		if (last0 == last1) {
-			erase(first0, first1);
+		if (first1 == last1) {
+			remove(first0, last0);
+
 			break;
 		}
-		CharTraits::assign(const_cast<Char & >(*first0), *last0);
+		CharTraits::assign(const_cast<Char & >(*first0), *first1);
 	}
 	return *this;
 }
 
-template< typename TChar, typename TCharTraits, typename TAllocator >
-auto String< TChar, TCharTraits, TAllocator >::m_erase(Size index, Size count) -> String & {
+template<typename TChar, typename TCharTraits, typename TAllocator>
+auto String<TChar, TCharTraits, TAllocator>::remove(Size index, Size count) -> String & {
 	auto old_size = m_get_size();
 	if (count > 0) {
 		auto new_size = old_size - count;
@@ -1797,12 +1866,36 @@ auto String< TChar, TCharTraits, TAllocator >::m_erase(Size index, Size count) -
 	return *this;
 };
 
-extern template class String<NChar>;
+extern template
+class String<NChar>;
 
-extern template class String<WChar>;
+extern template
+class String<WChar>;
 
-extern template class String<Char16>;
+extern template
+class String<Char16>;
 
-extern template class String<Char32>;
+extern template
+class String<Char32>;
+
+inline namespace Literal {
+
+inline auto operator "" _S(NChar const  * string, Size length) -> String<NChar> {
+	return String<NChar>(string, length);
+}
+
+inline auto operator "" _S(WChar const  * string, Size length) -> String<WChar> {
+	return String<WChar>(string, length);
+}
+
+inline auto operator "" _S(Char16 const  * string, Size length) -> String<Char16> {
+	return String<Char16>(string, length);
+}
+
+inline auto operator "" _S(Char32 const  * string, Size length) -> String<Char32> {
+	return String<Char32>(string, length);
+}
+
+} // inline namespace Literal
 
 } // namespace BR

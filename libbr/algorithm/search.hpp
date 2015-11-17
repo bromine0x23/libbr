@@ -17,7 +17,7 @@ namespace Detail {
 namespace Algorithm {
 
 template< typename TForwardIterator0, typename TForwardIterator1, typename TBinaryPredicate >
-auto search(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1, TBinaryPredicate & predicate, ForwardIteratorTag _dummy0, ForwardIteratorTag _dummy1) -> TForwardIterator0 {
+auto search(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1, TBinaryPredicate & predicate, ForwardTraversalTag, ForwardTraversalTag) -> TForwardIterator0 {
 	if (first1 == last1) {
 		return first0;
 	}
@@ -48,7 +48,7 @@ auto search(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1
 }
 
 template< typename TRandomAccessIterator0, typename TRandomAccessIterator1, typename TBinaryPredicate >
-auto search(TRandomAccessIterator0 first0, TRandomAccessIterator0 last0, TRandomAccessIterator1 first1, TRandomAccessIterator1 last1, TBinaryPredicate & predicate, RandomAccessIteratorTag _dummy0, RandomAccessIteratorTag _dummy1) -> TRandomAccessIterator0 {
+auto search(TRandomAccessIterator0 first0, TRandomAccessIterator0 last0, TRandomAccessIterator1 first1, TRandomAccessIterator1 last1, TBinaryPredicate & predicate, RandomAccessTraversalTag, RandomAccessTraversalTag) -> TRandomAccessIterator0 {
 	auto const length1 = last1 - first1;
 	if (length1 == 0) {
 		return first0;
