@@ -21,6 +21,9 @@
 
 namespace BR {
 
+template< typename TForwardIterator >
+inline auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIterator last) -> TForwardIterator;
+
 namespace Detail {
 namespace Algorithm {
 
@@ -140,7 +143,7 @@ inline auto rotate(TRandomAccessIterator first, TRandomAccessIterator middle, TR
 } // namespace Detail
 
 template< typename TForwardIterator >
-inline auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIterator last) -> TForwardIterator {
+auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIterator last) -> TForwardIterator {
 	if (first == middle) {
 		return last;
 	}

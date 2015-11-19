@@ -13,6 +13,9 @@
 
 namespace BR {
 
+template< typename TBidirectionalIterator >
+inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last);
+
 namespace Detail {
 namespace Algorithm {
 
@@ -40,7 +43,7 @@ inline void reverse(TRandomAccessIterator first, TRandomAccessIterator last, Ran
 } // namespace Detail
 
 template< typename TBidirectionalIterator >
-inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last) {
+void reverse(TBidirectionalIterator first, TBidirectionalIterator last) {
 	return Detail::Algorithm::reverse(first, last, IteratorTraits<TBidirectionalIterator>::category());
 }
 

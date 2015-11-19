@@ -12,6 +12,14 @@
 
 namespace BR {
 
+template< typename TForwardIterator, typename TComparator >
+inline auto min_max_element(TForwardIterator first, TForwardIterator last, TComparator && comparator) -> Pair< TForwardIterator, TForwardIterator >;
+
+template< typename TForwardIterator >
+inline auto min_max_element(TForwardIterator first, TForwardIterator last) -> Pair< TForwardIterator, TForwardIterator > {
+	return min_max_element(first, last, Less<>());
+}
+
 namespace Detail {
 namespace Algorithm {
 
@@ -62,13 +70,8 @@ auto min_max_element(TForwardIterator first, TForwardIterator last, TComparator 
 } // namespace Detail
 
 template< typename TForwardIterator, typename TComparator >
-inline auto min_max_element(TForwardIterator first, TForwardIterator last, TComparator && comparator) -> Pair< TForwardIterator, TForwardIterator > {
+auto min_max_element(TForwardIterator first, TForwardIterator last, TComparator && comparator) -> Pair< TForwardIterator, TForwardIterator > {
 	return Detail::Algorithm::min_max_element(first, last, comparator);
-}
-
-template< typename TForwardIterator >
-inline auto min_max_element(TForwardIterator first, TForwardIterator last) -> Pair< TForwardIterator, TForwardIterator > {
-	return min_max_element(first, last, Less<>());
 }
 
 } // namespace BR

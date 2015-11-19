@@ -2,13 +2,15 @@
 
 #include <libbr/config.hpp>
 #include <libbr/iterator/advance.hpp>
+#include <libbr/iterator/category.hpp>
+#include <libbr/iterator/iterator_traits.hpp>
 #include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_traits/iterator_traits.hpp>
+#include <libbr/type_traits/is_convertible.hpp>
 
 namespace BR {
 
-template< typename TIterator, typename = EnableIf< typename IteratorTraits<TIterator>::IsForwardIterator > >
-inline auto next(TIterator current, typename IteratorTraits<TIterator>::Difference step = 1) -> TIterator {
+template< typename TIterator >
+inline auto next(TIterator current, typename IteratorTraits<TIterator>::Difference step = 1) -> EnableIf< IsConvertible< typename IteratorTraits<TIterator>::Category, ForwardTraversalTag >, TIterator > {
 	advance(current, step);
 	return current;
 }

@@ -12,6 +12,14 @@
 
 namespace BR {
 
+template< typename TRandomAccessIterator, typename TComparator >
+inline auto is_heap_until(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) -> TRandomAccessIterator;
+
+template< typename TRandomAccessIterator >
+inline auto is_heap_until(TRandomAccessIterator first, TRandomAccessIterator last) -> TRandomAccessIterator {
+	return is_heap_until(first, last, Less<>());
+}
+
 namespace Detail {
 namespace Algorithm {
 
@@ -46,13 +54,8 @@ auto is_heap_until(TRandomAccessIterator first, TRandomAccessIterator last, TCom
 } // namespace Detail
 
 template< typename TRandomAccessIterator, typename TComparator >
-inline auto is_heap_until(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) -> TRandomAccessIterator {
+auto is_heap_until(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) -> TRandomAccessIterator {
 	return Detail::Algorithm::is_heap_until(first, last, comparator);
-}
-
-template< typename TRandomAccessIterator >
-inline auto is_heap_until(TRandomAccessIterator first, TRandomAccessIterator last) -> TRandomAccessIterator {
-	return is_heap_until(first, last, Less<>());
 }
 
 } // namespace BR

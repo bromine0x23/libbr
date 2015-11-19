@@ -15,6 +15,14 @@
 
 namespace BR {
 
+template< typename TRandomAccessIterator, typename TComparator >
+inline void sort_stably(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator);
+
+template< typename TRandomAccessIterator >
+inline void sort_stably(TRandomAccessIterator first, TRandomAccessIterator last) {
+	return sort_stably(first, last, Less<>());
+}
+
 namespace Detail {
 namespace Algorithm {
 
@@ -64,13 +72,8 @@ void sort_stably(TRandomAccessIterator first, TRandomAccessIterator last, TDiffe
 } // namespace Detail
 
 template< typename TRandomAccessIterator, typename TComparator >
-inline void sort_stably(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) {
+void sort_stably(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) {
 	Detail::Algorithm::sort_stably(first, last, last - first, comparator);
-}
-
-template< typename TRandomAccessIterator >
-inline void sort_stably(TRandomAccessIterator first, TRandomAccessIterator last) {
-	return sort_stably(first, last, Less<>());
 }
 
 } // namespace BR

@@ -13,6 +13,14 @@
 
 namespace BR {
 
+template< typename TBidirectionalIterator, typename TComparator >
+inline auto next_permutation(TBidirectionalIterator first, TBidirectionalIterator last, TComparator && comparator) -> bool;
+
+template< typename TBidirectionalIterator >
+inline auto next_permutation(TBidirectionalIterator first, TBidirectionalIterator last) -> bool {
+	return next_permutation(first, last, Less<void>());
+}
+
 namespace Detail {
 namespace Algorithm {
 
@@ -44,11 +52,6 @@ auto next_permutation(TBidirectionalIterator first, TBidirectionalIterator last,
 template< typename TBidirectionalIterator, typename TComparator >
 inline auto next_permutation(TBidirectionalIterator first, TBidirectionalIterator last, TComparator && comparator) -> bool {
 	return Detail::Algorithm::next_permutation(first, last, comparator);
-}
-
-template< typename TBidirectionalIterator >
-inline auto next_permutation(TBidirectionalIterator first, TBidirectionalIterator last) -> bool {
-	return next_permutation(first, last, Less<void>());
 }
 
 } // namespace BR

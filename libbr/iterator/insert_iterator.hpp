@@ -8,6 +8,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/iterator/basic_iterator.hpp>
+#include <libbr/iterator/category.hpp>
 #include <libbr/memory/address_of.hpp>
 #include <libbr/utility/move.hpp>
 
@@ -24,7 +25,8 @@ inline auto make_insert_iterator(TContainer & container, typename TContainer::It
 template< typename TContainer >
 class InsertIterator : public BasicIterator {
 public:
-	using Category = OutputIteratorTag;
+	struct Category : public IteratorTag, public WritableTag, public IncrementableTraversalTag {
+	};
 
 	using Element = void;
 

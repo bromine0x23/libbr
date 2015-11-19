@@ -13,11 +13,14 @@
 
 namespace BR {
 
+template< typename TInputIterator, typename TSize, typename TOutputIterator >
+inline auto copy_n(TInputIterator first, TSize n, TOutputIterator result) -> TOutputIterator;
+
 namespace Detail {
 namespace Algorithm {
 
-template< typename TInputIterator, typename TSize, typename TOutputIterator >
-auto copy_n(TInputIterator first, TSize n, TOutputIterator result, SinglePassTraversalTag) -> TOutputIterator {
+template< typename TSinglePassIterator, typename TSize, typename TOutputIterator >
+auto copy_n(TSinglePassIterator first, TSize n, TOutputIterator result, SinglePassTraversalTag) -> TOutputIterator {
 	if (n > 0) {
 		*result = *first;
 		++result;
@@ -29,8 +32,8 @@ auto copy_n(TInputIterator first, TSize n, TOutputIterator result, SinglePassTra
 	return result;
 }
 
-template< typename TInputIterator, typename TSize, typename TOutputIterator >
-inline auto copy_n(TInputIterator first, TSize n, TOutputIterator result, RandomAccessTraversalTag) -> TOutputIterator {
+template< typename TRandomAccessIterator, typename TSize, typename TOutputIterator >
+inline auto copy_n(TRandomAccessIterator first, TSize n, TOutputIterator result, RandomAccessTraversalTag) -> TOutputIterator {
 	return copy(first, first + n, result);
 }
 
@@ -38,7 +41,7 @@ inline auto copy_n(TInputIterator first, TSize n, TOutputIterator result, Random
 } // namespace Detail
 
 template< typename TInputIterator, typename TSize, typename TOutputIterator >
-inline auto copy_n(TInputIterator first, TSize n, TOutputIterator result) -> TOutputIterator {
+auto copy_n(TInputIterator first, TSize n, TOutputIterator result) -> TOutputIterator {
 	return Detail::Algorithm::copy_n(first, n, result, IteratorTraits<TInputIterator>::category());
 }
 

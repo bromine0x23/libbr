@@ -13,6 +13,14 @@
 
 namespace BR {
 
+template< typename TForwardIterator, typename TSize, typename TValue, typename TBinaryPredicate >
+inline auto search_n(TForwardIterator first, TForwardIterator last, TSize count, TValue const & value, TBinaryPredicate && predicate) -> TForwardIterator;
+
+template< typename TForwardIterator, typename TSize, typename TValue >
+inline auto search_n(TForwardIterator first, TForwardIterator last, TSize count, TValue const & value) -> TForwardIterator {
+	return search_n(first, last, count, value, Equal<>());
+}
+
 namespace Detail {
 namespace Algorithm {
 
@@ -84,13 +92,8 @@ auto search_n(TForwardIterator first, TForwardIterator last, TSize count, TValue
 } // namespace Detail
 
 template< typename TForwardIterator, typename TSize, typename TValue, typename TBinaryPredicate >
-inline auto search_n(TForwardIterator first, TForwardIterator last, TSize count, TValue const & value, TBinaryPredicate && predicate) -> TForwardIterator {
+auto search_n(TForwardIterator first, TForwardIterator last, TSize count, TValue const & value, TBinaryPredicate && predicate) -> TForwardIterator {
 	return Detail::Algorithm::search_n(first, last, count, value, predicate, IteratorTraits<TForwardIterator>::category());
-}
-
-template< typename TForwardIterator, typename TSize, typename TValue >
-inline auto search_n(TForwardIterator first, TForwardIterator last, TSize count, TValue const & value) -> TForwardIterator {
-	return search_n(first, last, count, value, Equal<void>());
 }
 
 } // namespace BR

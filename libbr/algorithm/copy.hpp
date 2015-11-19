@@ -16,6 +16,9 @@
 
 namespace BR {
 
+template< typename TInputIterator, typename TOutputIterator >
+inline auto copy(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator;
+
 namespace Detail {
 namespace Algorithm {
 
@@ -38,7 +41,7 @@ inline auto copy(TInputValue * first, TInputValue * last, TOutputValue * result)
 } // namespace Detail
 
 template< typename TInputIterator, typename TOutputIterator >
-inline auto copy(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator {
+auto copy(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator {
 	return Detail::Algorithm::copy(first, last, result);
 }
 

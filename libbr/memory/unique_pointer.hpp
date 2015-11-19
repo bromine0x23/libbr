@@ -42,6 +42,11 @@ inline auto make_unique_pointer(Size count) -> EnableIf< IsArrayUnknownBounds<TE
 template< typename TElement, typename... TArgs >
 inline auto make_unique_pointer(TArgs &&... args) -> EnableIf< IsArrayKnownBounds<TElement> > = delete;
 
+template< typename TElement, typename TDeleter >
+inline void swap(UniquePointer< TElement, TDeleter > & x, UniquePointer< TElement, TDeleter > & y) noexcept {
+	x.swap(y);
+}
+
 namespace Detail {
 namespace Memory {
 namespace UniquePointer {
@@ -107,7 +112,7 @@ public:
 		static_assert(NotPointer<Deleter>(), "UniquePointer constructed with null function pointer deleter");
 	}
 
-	constexpr UniquePointer(NullPointer _dummy) noexcept : m_impl(Pointer()){
+	constexpr UniquePointer(NullPointer) noexcept : m_impl(Pointer()){
 		static_assert(NotPointer<Deleter>(), "UniquePointer constructed with null function pointer deleter");
 	}
 
@@ -125,8 +130,8 @@ public:
 	UniquePointer(UniquePointer && p) noexcept : m_impl(p.release(), forward<Deleter>(p.get_deleter())) {
 	}
 
-	template< typename TOtherElement, typename TOtherDeleter, typename _TDummy = EnableIf< IsConstructible< TOtherElement, TOtherDeleter > > >
-	UniquePointer(UniquePointer< TOtherElement, TOtherDeleter > && p) noexcept : m_impl(p.release(), forward<TOtherDeleter>(p.get_deleter())) {
+	template< typename TOtherElement, typename TOtherDeleter >
+	UniquePointer(UniquePointer< TOtherElement, TOtherDeleter > && p, EnableIf< IsConstructible< TOtherElement, TOtherDeleter > > * = nullptr ) noexcept : m_impl(p.release(), forward<TOtherDeleter>(p.get_deleter())) {
 	}
 
 	~UniquePointer() {
@@ -139,14 +144,14 @@ public:
 		return *this;
 	}
 
-	template< typename TOtherElement, typename TOtherDeleter, typename _TDummy = EnableIf< IsAssignable< TOtherElement, TOtherDeleter > > >
-	auto operator=(UniquePointer< TOtherElement, TOtherDeleter > && p) noexcept -> UniquePointer & {
+	template< typename TOtherElement, typename TOtherDeleter >
+	auto operator=(UniquePointer< TOtherElement, TOtherDeleter > && p) noexcept -> EnableIf< IsAssignable< TOtherElement, TOtherDeleter >, UniquePointer & > {
 		reset(p.release());
 		m_impl.second() = forward<TOtherDeleter>(p.get_deleter());
 		return *this;
 	}
 
-	auto operator=(NullPointer _dummy) noexcept -> UniquePointer & {
+	auto operator=(NullPointer) noexcept -> UniquePointer & {
 		reset();
 		return *this;
 	}
@@ -184,7 +189,7 @@ public:
 	void reset(Pointer p = Pointer()) noexcept {
 		auto t = m_impl.first();
 		m_impl.first() = p;
-		if (t) {
+		if (t != nullptr) {
 			m_impl.second()(t);
 		}
 	}
@@ -200,51 +205,51 @@ public:
 
 	template< typename TOtherElement, typename TOtherDeleter >
 	auto operator!=(UniquePointer< TOtherElement, TOtherDeleter > const & y) const -> bool {
-		return !(*this == y);
+		return !operator==(y);
 	}
 
 	template< typename TOtherElement, typename TOtherDeleter >
 	auto operator<(UniquePointer< TOtherElement, TOtherDeleter > const & y) const -> bool {
-		return Less<void>()(get(), y.get());
+		return Less<>()(get(), y.get());
 	}
 
 	template< typename TOtherElement, typename TOtherDeleter >
 	auto operator>(UniquePointer< TOtherElement, TOtherDeleter > const & y) const -> bool {
-		return y < *this;
+		return y.operator<(*this);
 	}
 
 	template< typename TOtherElement, typename TOtherDeleter >
 	auto operator<=(UniquePointer< TOtherElement, TOtherDeleter > const & y) const -> bool {
-		return !(y < *this);
+		return !y.operator<(*this);
 	}
 
 	template< typename TOtherElement, typename TOtherDeleter >
 	auto operator>=(UniquePointer< TOtherElement, TOtherDeleter > const & y) const -> bool {
-		return !(*this < y);
+		return !operator<(y);
 	}
 
-	auto operator==(NullPointer _dummy) const -> bool {
-		return !(*this);
+	auto operator==(NullPointer) const -> bool {
+		return !operator bool();
 	}
 
-	auto operator!=(NullPointer _dummy) const -> bool {
-		return static_cast<bool>(*this);
+	auto operator!=(NullPointer) const -> bool {
+		return operator bool();
 	}
 
-	auto operator<(NullPointer _dummy) const -> bool {
-		return Less<void>()(get(), nullptr);
+	auto operator<(NullPointer) const -> bool {
+		return Less<>()(get(), nullptr);
 	}
 
-	auto operator>(NullPointer _dummy) const -> bool {
-		return nullptr < *this;
+	auto operator>(NullPointer) const -> bool {
+		return Less<>()(nullptr, get());
 	}
 
-	auto operator<=(NullPointer _dummy) const -> bool {
-		return !(nullptr < *this);
+	auto operator<=(NullPointer) const -> bool {
+		return !operator>(nullptr);
 	}
 
-	auto operator>=(NullPointer _dummy) const -> bool {
-		return !(*this < nullptr);
+	auto operator>=(NullPointer) const -> bool {
+		return !operator<(nullptr);
 	}
 
 private:
@@ -304,20 +309,20 @@ public:
 		static_assert(NotPointer<TDeleter>(), "UniquePointer constructed with null function pointer deleter");
 	}
 
-	template< typename TOtherPointer, typename _TDummy = EnableIf< IsCompatible<TOtherPointer> > >
-	UniquePointer(TOtherPointer p, Detail::Memory::UniquePointer::DeleterLValue<Deleter> d) noexcept : m_impl(p, d) {
+	template< typename TOtherPointer >
+	UniquePointer(TOtherPointer p, Detail::Memory::UniquePointer::DeleterLValue<Deleter> d, EnableIf< IsCompatible<TOtherPointer> > * = nullptr) noexcept : m_impl(p, d) {
 	}
 
-	template< typename TOtherPointer, typename _TDummy = EnableIf< IsCompatible<TOtherPointer> > >
-	UniquePointer(TOtherPointer p, Detail::Memory::UniquePointer::DeleterRValue<Deleter> d) noexcept : m_impl(p, move(d)) {
+	template< typename TOtherPointer >
+	UniquePointer(TOtherPointer p, Detail::Memory::UniquePointer::DeleterRValue<Deleter> d, EnableIf< IsCompatible<TOtherPointer> > * = nullptr) noexcept : m_impl(p, move(d)) {
 		static_assert(NotReference<TDeleter>(), "rvalue deleter bound to reference");
 	}
 
 	UniquePointer(UniquePointer && p) noexcept : m_impl(p.release(), forward<Deleter>(p.get_deleter())) {
 	}
 
-	template< typename TOtherElement, typename TOtherDeleter, typename _TDummy = EnableIf< IsConstructible< TOtherElement, TOtherDeleter > > >
-	UniquePointer(UniquePointer< TOtherElement, TOtherDeleter > && p) noexcept : m_impl(p.release(), forward<TOtherDeleter>(p.get_deleter())) {
+	template< typename TOtherElement, typename TOtherDeleter >
+	UniquePointer(UniquePointer< TOtherElement, TOtherDeleter > && p, EnableIf< IsConstructible< TOtherElement, TOtherDeleter > > * = nullptr) noexcept : m_impl(p.release(), forward<TOtherDeleter>(p.get_deleter())) {
 	}
 
 	~UniquePointer() {
@@ -330,14 +335,14 @@ public:
 		return *this;
 	}
 
-	template< typename TOtherElement, typename TOtherDeleter, typename _TDummy = EnableIf< IsAssignable< TOtherElement, TOtherDeleter > > >
-	auto operator=(UniquePointer< TOtherElement, TOtherDeleter > && p) noexcept -> UniquePointer & {
+	template< typename TOtherElement, typename TOtherDeleter >
+	auto operator=(UniquePointer< TOtherElement, TOtherDeleter > && p) noexcept -> EnableIf< IsAssignable< TOtherElement, TOtherDeleter >, UniquePointer & > {
 		reset(p.release());
 		m_impl.second() = forward<TOtherDeleter>(p.get_deleter());
 		return *this;
 	}
 
-	auto operator=(NullPointer _dummy) noexcept -> UniquePointer & {
+	auto operator=(NullPointer) noexcept -> UniquePointer & {
 		reset();
 		return *this;
 	}
@@ -368,19 +373,19 @@ public:
 		return t;
 	}
 
-	template< typename TOtherPointer, typename _TDummy = EnableIf< IsCompatible<TOtherPointer> > >
-	void reset(Pointer p) noexcept {
+	template< typename TOtherPointer >
+	auto reset(Pointer p) noexcept -> EnableIf< IsCompatible<TOtherPointer> > {
 		auto t = m_impl.first();
 		m_impl.first() = p;
-		if (t) {
+		if (t != nullptr) {
 			m_impl.second()(t);
 		}
 	}
 
-	void reset(NullPointer _dummy) noexcept {
+	void reset(NullPointer) noexcept {
 		auto t = m_impl.first();
 		m_impl.first() = nullptr;
-		if (t) {
+		if (t != nullptr) {
 			m_impl.second()(t);
 		}
 	}
@@ -388,7 +393,7 @@ public:
 	void reset() noexcept {
 		auto t = m_impl.first();
 		m_impl.first() = nullptr;
-		if (t) {
+		if (t != nullptr) {
 			m_impl.second()(t);
 		}
 	}
@@ -404,92 +409,57 @@ public:
 
 	template< typename TOtherElement, typename TOtherDeleter >
 	auto operator!=(UniquePointer< TOtherElement, TOtherDeleter > const & y) const -> bool {
-		return !(*this == y);
+		return !operator==(y);
 	}
 
 	template< typename TOtherElement, typename TOtherDeleter >
 	auto operator<(UniquePointer< TOtherElement, TOtherDeleter > const & y) const -> bool {
-		return Less<void>()(get(), y.get());
+		return Less<>()(get(), y.get());
 	}
 
 	template< typename TOtherElement, typename TOtherDeleter >
 	auto operator>(UniquePointer< TOtherElement, TOtherDeleter > const & y) const -> bool {
-		return y < *this;
+		return y.operator<(*this);
 	}
 
 	template< typename TOtherElement, typename TOtherDeleter >
 	auto operator<=(UniquePointer< TOtherElement, TOtherDeleter > const & y) const -> bool {
-		return !(y < *this);
+		return !y.operator<(*this);
 	}
 
 	template< typename TOtherElement, typename TOtherDeleter >
 	auto operator>=(UniquePointer< TOtherElement, TOtherDeleter > const & y) const -> bool {
-		return !(*this < y);
+		return !operator<(y);
 	}
 
-	auto operator==(NullPointer _dummy) const -> bool {
-		return !(*this);
+	auto operator==(NullPointer) const -> bool {
+		return !operator bool();
 	}
 
-	auto operator!=(NullPointer _dummy) const -> bool {
-		return static_cast<bool>(*this);
+	auto operator!=(NullPointer) const -> bool {
+		return operator bool();
 	}
 
-	auto operator<(NullPointer _dummy) const -> bool {
-		return Less<void>()(get(), nullptr);
+	auto operator<(NullPointer) const -> bool {
+		return Less<>()(get(), nullptr);
 	}
 
-	auto operator>(NullPointer _dummy) const -> bool {
-		return nullptr < *this;
+	auto operator>(NullPointer) const -> bool {
+		return Less<>()(nullptr, get());
 	}
 
-	auto operator<=(NullPointer _dummy) const -> bool {
-		return !(nullptr < *this);
+	auto operator<=(NullPointer) const -> bool {
+		return !operator>(nullptr);
 	}
 
-	auto operator>=(NullPointer _dummy) const -> bool {
-		return !(*this < nullptr);
+	auto operator>=(NullPointer) const -> bool {
+		return !operator<(nullptr);
 	}
 
 private:
 	CompressedPair< Pointer, Deleter > m_impl;
 
 }; // class UniquePointer< TElement[], TDeleter >
-
-template< typename TElement, typename TDeleter >
-inline void swap(UniquePointer< TElement, TDeleter > & x, UniquePointer< TElement, TDeleter > & y) noexcept {
-	x.swap(y);
-}
-
-template< typename TElement, typename TDeleter >
-inline auto operator==(NullPointer _dummy, UniquePointer< TElement, TDeleter > const & y) -> bool {
-	return !y;
-}
-
-template< typename TElement, typename TDeleter >
-inline auto operator!=(NullPointer _dummy, UniquePointer< TElement, TDeleter > const & y) -> bool {
-	return static_cast<bool>(y);
-}
-
-template< typename TElement, typename TDeleter >
-inline auto operator<(NullPointer _dummy, UniquePointer< TElement, TDeleter > const & y) -> bool {
-	return Less<void>()(nullptr, y.get());
-}
-
-template< typename TElement, typename TDeleter >
-inline auto operator>(NullPointer _dummy, UniquePointer< TElement, TDeleter > const & y) -> bool {
-	return y < nullptr;
-}
-
-template< typename TElement, typename TDeleter >
-inline auto operator<=(NullPointer _dummy, UniquePointer< TElement, TDeleter > const & y) -> bool {
-	return !(y < nullptr);
-}
-
-template< typename TElement, typename TDeleter >
-inline auto operator>=(NullPointer _dummy, UniquePointer< TElement, TDeleter > const & y) -> bool {
-	return !(nullptr < y);
-}
 
 } // namespace BR
 

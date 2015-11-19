@@ -14,6 +14,9 @@
 
 namespace BR {
 
+template< typename TOutputIterator, typename TValue, typename TSize >
+inline auto fill_n(TOutputIterator first, TSize n, TValue const & value) -> TOutputIterator;
+
 namespace Detail {
 namespace Algorithm {
 
@@ -37,7 +40,7 @@ inline auto fill_n(TOutputValue * first, TSize n, TValue const & value) -> TOutp
 } // namespace Detail
 
 template< typename TOutputIterator, typename TValue, typename TSize >
-inline auto fill_n(TOutputIterator first, TSize n, TValue const & value) -> TOutputIterator {
+auto fill_n(TOutputIterator first, TSize n, TValue const & value) -> TOutputIterator {
 	return Detail::Algorithm::fill_n(first, n, value);
 }
 

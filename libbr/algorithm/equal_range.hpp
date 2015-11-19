@@ -28,15 +28,15 @@ auto equal_range(TForwardIterator first, TForwardIterator last, TValue const & v
 			last = middle;
 			length = half_length;
 		} else {
-			return make_pair(lower_bound(first, middle, value, comparator), upper_bound(next(middle), last, value, comparator));
+			return {lower_bound(first, middle, value, comparator), upper_bound(next(middle), last, value, comparator)};
 		}
 	}
-	return make_pair(first, first);
+	return {first, first};
 }
 
 template< typename TForwardIterator, typename TValue >
 inline auto equal_range(TForwardIterator first, TForwardIterator last, TValue const & value) -> Pair< TForwardIterator, TForwardIterator > {
-	return equal_range(first, last, Less<void>());
+	return equal_range(first, last, Less<>());
 }
 
 } // namespace BR

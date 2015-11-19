@@ -11,6 +11,14 @@
 
 namespace BR {
 
+template< typename TInputIterator, typename TForwardIterator, typename TBinaryPredicate >
+inline auto find_first_of(TInputIterator first0, TInputIterator last0, TForwardIterator first1, TForwardIterator last1, TBinaryPredicate && predicate) -> TInputIterator;
+
+template< typename TInputIterator, typename TForwardIterator >
+inline auto find_first_of(TInputIterator first0, TInputIterator last0, TForwardIterator first1, TForwardIterator last1) -> TInputIterator {
+	return find_first_of(first0, last0, first1, last1, Equal<>());
+}
+
 namespace Detail {
 namespace Algorithm {
 
@@ -30,14 +38,8 @@ auto find_first_of(TInputIterator first0, TInputIterator last0, TForwardIterator
 } // namespace Detail
 
 template< typename TInputIterator, typename TForwardIterator, typename TBinaryPredicate >
-inline auto find_first_of(TInputIterator first0, TInputIterator last0, TForwardIterator first1, TForwardIterator last1, TBinaryPredicate && predicate) -> TInputIterator {
+auto find_first_of(TInputIterator first0, TInputIterator last0, TForwardIterator first1, TForwardIterator last1, TBinaryPredicate && predicate) -> TInputIterator {
 	return Detail::Algorithm::find_first_of(first0, last0, first1, last1, predicate);
 }
-
-template< typename TInputIterator, typename TForwardIterator >
-inline auto find_first_of(TInputIterator first0, TInputIterator last0, TForwardIterator first1, TForwardIterator last1) -> TInputIterator {
-	return find_first_of(first0, last0, first1, last1, Equal<>());
-}
-
 
 } // namespace BR

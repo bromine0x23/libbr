@@ -13,6 +13,14 @@
 
 namespace BR {
 
+template< typename TForwardIterator0, typename TForwardIterator1, typename TBinaryPredicate >
+inline auto search(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1, TBinaryPredicate && predicate) -> TForwardIterator0;
+
+template< typename TForwardIterator0, typename TForwardIterator1 >
+inline auto search(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1) -> TForwardIterator0 {
+	return search(first0, last0, first1, last1, Equal<>());
+}
+
 namespace Detail {
 namespace Algorithm {
 
@@ -85,13 +93,8 @@ auto search(TRandomAccessIterator0 first0, TRandomAccessIterator0 last0, TRandom
 } // namespace Detail
 
 template< typename TForwardIterator0, typename TForwardIterator1, typename TBinaryPredicate >
-inline auto search(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1, TBinaryPredicate && predicate) -> TForwardIterator0 {
+auto search(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1, TBinaryPredicate && predicate) -> TForwardIterator0 {
 	return Detail::Algorithm::search(first0, last0, first1, last1, predicate, IteratorTraits<TForwardIterator0>::category(), IteratorTraits<TForwardIterator1>::category());
-}
-
-template< typename TForwardIterator0, typename TForwardIterator1 >
-inline auto search(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1) -> TForwardIterator0 {
-	return search(first0, last0, first1, last1, Equal<void>());
 }
 
 } // namespace BR

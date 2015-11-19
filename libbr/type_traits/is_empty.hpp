@@ -17,6 +17,50 @@
 
 namespace BR {
 
+/**
+ * @brief 检查 \em T 是否是空类型
+ * @tparam T 待检查类型
+ * @see BR::IntegerConstant
+ * @see BR_IS_EMPTY
+ * @see BR::IsClass
+ * @see BR::NotEmpty
+ *
+ * 如果 \em T 是空的(除静态成员外的字段位宽为0、无虚函数、无虚基类、无非空基类)类类型，那么封装的值为 \em true ；否则为 \em false
+ */
+template< typename T >
+struct IsEmpty;
+
+/**
+ * @brief IsEmpty 的否定
+ * @tparam T 待检查类型
+ * @see BR::IsEmpty
+ */
+template< typename T >
+struct NotEmpty : BooleanNot< IsEmpty<T> > {
+};
+
+#if defined(BR_CXX14)
+
+/**
+ * @brief IsEmpty 的模板变量版本
+ * @tparam T 待检查类型
+ * @see BR::IsEmpty
+ * @see BR::not_empty
+ */
+template< typename T >
+constexpr auto is_empty = bool_constant< IsEmpty<T> >;
+
+/**
+ * @brief NotEmpty 的模板变量版本
+ * @tparam T 待检查类型
+ * @see BR::NotEmpty
+ * @see BR::is_empty
+ */
+template< typename T >
+constexpr auto not_empty = bool_constant< NotEmpty<T> >;
+
+#endif // defined(BR_CXX14)
+
 namespace Detail {
 namespace TypeTraits {
 
@@ -48,47 +92,8 @@ using IsEmpty = BooleanAnd< IsClass<T>, IsEmptyBasic< RemoveConstVolatile<T> > >
 } // namespace TypeTraits
 } // namespace Detail
 
-/**
- * @brief 检查 \em T 是否是空类型
- * @tparam T 待检查类型
- * @see BR::IntegerConstant
- * @see BR_IS_EMPTY
- * @see BR::IsClass
- * @see BR::NotEmpty
- *
- * 如果 \em T 是空的(除静态成员外的字段位宽为0、无虚函数、无虚基类、无非空基类)类类型，那么封装的值为 \em true ；否则为 \em false
- */
 template< typename T >
-struct IsEmpty : BooleanRewrapPositive< Detail::TypeTraits::IsEmpty<T> > {};
-
-/**
- * @brief IsEmpty 的否定
- * @tparam T 待检查类型
- * @see BR::IsEmpty
- */
-template< typename T >
-struct NotEmpty : BooleanRewrapNegative< Detail::TypeTraits::IsEmpty<T> > {};
-
-#if defined(BR_CXX14)
-
-/**
- * @brief IsEmpty 的模板变量版本
- * @tparam T 待检查类型
- * @see BR::IsEmpty
- * @see BR::not_empty
- */
-template< typename T >
-constexpr auto is_empty = bool_constant< IsEmpty<T> >;
-
-/**
- * @brief NotEmpty 的模板变量版本
- * @tparam T 待检查类型
- * @see BR::NotEmpty
- * @see BR::is_empty
- */
-template< typename T >
-constexpr auto not_empty = bool_constant< NotEmpty<T> >;
-
-#endif // defined(BR_CXX14)
+struct IsEmpty : BooleanRewrapPositive< Detail::TypeTraits::IsEmpty<T> > {
+};
 
 } // namespace BR

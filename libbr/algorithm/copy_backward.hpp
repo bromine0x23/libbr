@@ -16,6 +16,9 @@
 
 namespace BR {
 
+template< typename TInputIterator0, typename TInputIterator1 >
+inline auto copy_backward(TInputIterator0 first, TInputIterator0 last, TInputIterator1 result) -> TInputIterator1;
+
 namespace Detail {
 namespace Algorithm {
 
@@ -27,7 +30,7 @@ inline auto copy_backward(TBidirectionalIterator0 first, TBidirectionalIterator0
 	return result;
 }
 
-template< typename TInputValue, typename TOutputValue, typename _TDummy = EnableIf< BooleanAnd< IsSame< RemoveConst<TInputValue>, TOutputValue >, HasTrivialCopyAssign<TOutputValue> > > >
+template< typename TInputValue, typename TOutputValue, typename = EnableIf< BooleanAnd< IsSame< RemoveConst<TInputValue>, TOutputValue >, HasTrivialCopyAssign<TOutputValue> > > >
 inline auto copy_backward(TInputValue * first, TInputValue * last, TOutputValue * result) -> TOutputValue * {
 	auto n = static_cast<Size>(last - first);
 	result -= n;
@@ -38,8 +41,8 @@ inline auto copy_backward(TInputValue * first, TInputValue * last, TOutputValue 
 } // namespace Algorithm
 } // namespace Detail
 
-template< typename TBidirectionalIterator0, typename TBidirectionalIterator1 >
-auto copy_backward(TBidirectionalIterator0 first, TBidirectionalIterator0 last, TBidirectionalIterator1 result) -> TBidirectionalIterator1 {
+template< typename TInputIterator0, typename TInputIterator1 >
+auto copy_backward(TInputIterator0 first, TInputIterator0 last, TInputIterator1 result) -> TInputIterator1 {
 	return Detail::Algorithm::copy_backward(first, last, result);
 }
 

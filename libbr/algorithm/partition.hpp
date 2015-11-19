@@ -12,6 +12,9 @@
 
 namespace BR {
 
+template< typename TForwardIterator, typename TUnaryPredicate >
+inline auto partition(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate) -> TForwardIterator;
+
 namespace Detail {
 namespace Algorithm {
 
@@ -58,7 +61,7 @@ auto partition(TBidirectionalIterator first, TBidirectionalIterator last, TUnary
 } // namespace Detail
 
 template< typename TForwardIterator, typename TUnaryPredicate >
-inline auto partition(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate) -> TForwardIterator {
+auto partition(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate) -> TForwardIterator {
 	return Detail::Algorithm::partition(first, last, predicate, IteratorTraits<TForwardIterator>::category());
 }
 

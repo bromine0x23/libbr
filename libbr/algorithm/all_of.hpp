@@ -10,6 +10,11 @@
 
 namespace BR {
 
+/**
+ * @brief 检查区间内是否所有元素满足给定谓词
+ * @param[in] first, last 待检查区间
+ * @param[in] predicate 一元谓词
+ */
 template< typename TInputIterator, typename TUnaryPredicate >
 inline auto all_of(TInputIterator first, TInputIterator last, TUnaryPredicate && predicate) -> bool {
 	for (; first != last; ++first) {

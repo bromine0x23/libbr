@@ -13,6 +13,9 @@
 
 namespace BR {
 
+template< typename TAllocator >
+struct AllocatorTraits;
+
 namespace Detail {
 namespace TypeTraits {
 namespace AllocatorTraits {

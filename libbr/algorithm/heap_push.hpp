@@ -12,6 +12,14 @@
 
 namespace BR {
 
+template< typename TRandomAccessIterator, typename TComparator >
+inline void heap_push(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator);
+
+template< typename TRandomAccessIterator >
+inline void heap_push(TRandomAccessIterator first, TRandomAccessIterator last) {
+	heap_push(first, last, Less<>());
+}
+
 namespace Detail {
 namespace Algorithm {
 
@@ -40,13 +48,8 @@ void heap_shift_up(TRandomAccessIterator first, TRandomAccessIterator last, TDif
 } // namespace Detail
 
 template< typename TRandomAccessIterator, typename TComparator >
-inline void heap_push(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) {
+void heap_push(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) {
 	Detail::Algorithm::heap_shift_up(first, last, last - first, comparator);
-}
-
-template< typename TRandomAccessIterator >
-inline void heap_push(TRandomAccessIterator first, TRandomAccessIterator last) {
-	heap_push(first, last, Less<>());
 }
 
 } // namespace BR

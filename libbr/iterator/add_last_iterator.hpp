@@ -25,7 +25,8 @@ inline auto make_add_first_iterator(TContainer & container) -> AddLastIterator<T
 template< typename TContainer >
 class AddLastIterator : public BasicIterator {
 public:
-	using Category = OutputIteratorTag;
+	struct Category : public IteratorTag, public WritableTag, public IncrementableTraversalTag {
+	};
 
 	using Element = void;
 

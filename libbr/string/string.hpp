@@ -516,6 +516,13 @@ public:
 	using ConstReverseIterator = BR::ReverseIterator<ConstIterator>;
 
 private:
+	template< typename TIterator >
+	using IsInputIterator = BooleanAnd<
+		IsConvertible< typename IteratorTraits<TIterator>::Category, ReadableTag >,
+		IsConvertible< typename IteratorTraits<TIterator>::Category, SinglePassTraversalTag >
+	>;
+
+private:
 	struct Storage {
 		Size capacity;
 		Size size;
@@ -619,9 +626,9 @@ public:
 	 * @param[in] first, last 区间\f$[first, last)\f$
 	 * @param[in] allocator 分配器
 	 */
-	template<typename TInputIterator>
-	String(TInputIterator first, TInputIterator last, Allocator const & allocator = Allocator()) : m_pair(allocator) {
-		m_construct(first, last, IteratorTraits<TInputIterator>::category());
+	template< typename TIterator >
+	String(TIterator first, TIterator last, Allocator const & allocator = Allocator(), EnableIf< IsInputIterator<TIterator> > * = nullptr) : m_pair(allocator) {
+		m_construct(first, last, IteratorTraits<TIterator>::category());
 	}
 
 	/**
@@ -662,6 +669,13 @@ public:
 	}
 
 	/**
+	 * @brief 返回表示迭代开始的迭代器(常量限定)
+	 */
+	auto cbegin() const noexcept -> ConstIterator {
+		return begin();
+	}
+
+	/**
 	 * @brief 返回表示迭代结束的迭代器
 	 */
 	auto end() noexcept -> Iterator {
@@ -673,6 +687,13 @@ public:
 	 */
 	auto end() const noexcept -> ConstIterator {
 		return ConstIterator(m_get_pointer() + size());
+	}
+
+	/**
+	 * @brief 返回表示迭代结束的迭代器(常量限定)
+	 */
+	auto cend() const noexcept -> ConstIterator {
+		return end();
 	}
 
 	/**
@@ -690,6 +711,13 @@ public:
 	}
 
 	/**
+	 * @brief 返回表示反向迭代开始的迭代器(常量限定)
+	 */
+	auto crbegin() const noexcept -> ConstReverseIterator {
+		return rbegin();
+	}
+
+	/**
 	 * @brief 返回表示反向迭代结束的迭代器
 	 */
 	auto rend() noexcept -> ReverseIterator {
@@ -701,27 +729,6 @@ public:
 	 */
 	auto rend() const noexcept -> ConstReverseIterator {
 		return ConstReverseIterator(begin());
-	}
-
-	/**
-	 * @brief 返回表示迭代开始的迭代器(常量限定)
-	 */
-	auto cbegin() const noexcept -> ConstIterator {
-		return begin();
-	}
-
-	/**
-	 * @brief 返回表示迭代结束的迭代器(常量限定)
-	 */
-	auto cend() const noexcept -> ConstIterator {
-		return end();
-	}
-
-	/**
-	 * @brief 返回表示反向迭代开始的迭代器(常量限定)
-	 */
-	auto crbegin() const noexcept -> ConstReverseIterator {
-		return rbegin();
 	}
 
 	/**
@@ -965,9 +972,9 @@ public:
 	 * @brief 从迭代器区间复制
 	 * @param[in] first, last 区间\f$[first, last)\f$
 	 */
-	template<typename TSinglePassIterator>
-	auto operator=(IteratorRange<TSinglePassIterator> range) -> String & {
-		m_assign(range.begin(), range.end(), IteratorTraits<TSinglePassIterator>::category());
+	template<typename TIterator >
+	auto operator=(IteratorRange<TIterator> range) -> EnableIf< IsInputIterator<TIterator>, String & >  {
+		m_assign(range.begin(), range.end(), IteratorTraits<TIterator>::category());
 		return *this;
 	}
 
@@ -1001,9 +1008,9 @@ public:
 	 * @brief 追加迭代器区间中的内容
 	 * @param[in] first, last 区间\f$[first, last)\f$
 	 */
-	template<typename TSinglePassIterator>
-	auto operator<<(IteratorRange<TSinglePassIterator> range) -> String & {
-		m_append(range.begin(), range.end(), IteratorTraits<TSinglePassIterator>::category());
+	template< typename TIterator >
+	auto operator<<(IteratorRange<TIterator> range) -> EnableIf< IsInputIterator<TIterator>, String & > {
+		m_append(range.begin(), range.end(), IteratorTraits<TIterator>::category());
 		return *this;
 	}
 
@@ -1055,8 +1062,8 @@ public:
 		return begin() + index;
 	}
 
-	template<typename TSinglePassTraversalIterator>
-	auto insert(ConstIterator position, IteratorRange<TSinglePassTraversalIterator> range) -> Iterator {
+	template<typename TIterator >
+	auto insert(ConstIterator position, IteratorRange<TIterator> range) -> EnableIf< IsInputIterator<TIterator>, Iterator > {
 		return insert(position, range.begin(), range.end());
 	}
 
@@ -1064,13 +1071,9 @@ public:
 		return insert(position, list.begin(), list.end());
 	}
 
-	template<typename TSinglePassTraversalIterator>
-	auto insert(
-		ConstIterator position,
-		TSinglePassTraversalIterator first,
-		TSinglePassTraversalIterator last
-	) -> Iterator {
-		return m_insert(position, first, last, IteratorTraits<TSinglePassTraversalIterator>::category());
+	template<typename TIterator>
+	auto insert(ConstIterator position, TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator>, Iterator > {
+		return m_insert(position, first, last, IteratorTraits<TIterator>::category());
 	}
 	///@}
 
@@ -1086,13 +1089,8 @@ public:
 		return replace(first, last, list.begin(), list.end());
 	}
 
-	template<typename TSinglePassTraversalIterator>
-	auto replace(
-		ConstIterator first0,
-		ConstIterator last0,
-		TSinglePassTraversalIterator first1,
-		TSinglePassTraversalIterator last1
-	) -> String &;
+	template<typename TIterator >
+	auto replace(ConstIterator first0, ConstIterator last0, TIterator first1, TIterator last1) -> EnableIf< IsInputIterator<TIterator>, String & >;
 	///@}
 
 	/**
@@ -1185,8 +1183,8 @@ private:
 
 	void m_construct(Char ch, Size size);
 
-	template<typename TInputIterator>
-	void m_construct(TInputIterator first, TInputIterator last, SinglePassTraversalTag);
+	template<typename TSinglePassIterator>
+	void m_construct(TSinglePassIterator first, TSinglePassIterator last, SinglePassTraversalTag);
 
 	template<typename TForwardIterator>
 	void m_construct(TForwardIterator first, TForwardIterator last, ForwardTraversalTag);
@@ -1229,42 +1227,32 @@ private:
 
 	void m_grow(Size old_capacity, Size delta_capacity, Size old_size, Size copy_count, Size delete_count, Size add_count = 0);
 
-	template<typename TSinglePassTraversalIterator>
-	void m_assign(TSinglePassTraversalIterator first, TSinglePassTraversalIterator last, SinglePassTraversalTag) {
+	template< typename TSinglePassIterator >
+	void m_assign(TSinglePassIterator first, TSinglePassIterator last, SinglePassTraversalTag) {
 		clear();
 		for (; first != last; ++first) {
 			*this << *first;
 		}
 	}
 
-	template<typename TForwardTraversalIterator>
-	void m_assign(TForwardTraversalIterator first, TForwardTraversalIterator last, ForwardTraversalTag);
+	template< typename TForwardIterator >
+	void m_assign(TForwardIterator first, TForwardIterator last, ForwardTraversalTag);
 
-	template<typename TSinglePassTraversalIterator>
-	void m_append(TSinglePassTraversalIterator first, TSinglePassTraversalIterator last, SinglePassTraversalTag) {
+	template< typename TSinglePassIterator >
+	void m_append(TSinglePassIterator first, TSinglePassIterator last, SinglePassTraversalTag) {
 		for (; first != last; ++first) {
 			*this << *first;
 		}
 	}
 
-	template<typename TForwardTraversalIterator>
-	void m_append(TForwardTraversalIterator first, TForwardTraversalIterator last, ForwardTraversalTag);
+	template< typename TForwardIterator >
+	void m_append(TForwardIterator first, TForwardIterator last, ForwardTraversalTag);
 
-	template<typename TSinglePassTraversalIterator>
-	auto m_insert(
-		ConstIterator position,
-		TSinglePassTraversalIterator first,
-		TSinglePassTraversalIterator last,
-		SinglePassTraversalTag
-	) -> Iterator;
+	template< typename TSinglePassIterator >
+	auto m_insert(ConstIterator position, TSinglePassIterator first, TSinglePassIterator last, SinglePassTraversalTag) -> Iterator;
 
-	template<typename TForwardTraversalIterator>
-	auto m_insert(
-		ConstIterator position,
-		TForwardTraversalIterator first,
-		TForwardTraversalIterator last,
-		ForwardTraversalTag
-	) -> Iterator;
+	template< typename TForwardIterator >
+	auto m_insert(ConstIterator position, TForwardIterator first, TForwardIterator last, ForwardTraversalTag) -> Iterator;
 
 private:
 	CompressedPair<Storage, Allocator> m_pair;
@@ -1307,8 +1295,8 @@ void String<TChar, TCharTraits, TAllocator>::m_construct(Char c, Size size) {
 }
 
 template<typename TChar, typename TCharTraits, typename TAllocator>
-template<typename TinglePassTraversalIterator>
-void String<TChar, TCharTraits, TAllocator>::m_construct(TinglePassTraversalIterator first, TinglePassTraversalIterator last, SinglePassTraversalTag) {
+template<typename TSinglePassIterator>
+void String<TChar, TCharTraits, TAllocator>::m_construct(TSinglePassIterator first, TSinglePassIterator last, SinglePassTraversalTag) {
 	m_zeroize();
 	try {
 		for (; first != last; ++first) {
@@ -1321,8 +1309,8 @@ void String<TChar, TCharTraits, TAllocator>::m_construct(TinglePassTraversalIter
 }
 
 template<typename TChar, typename TCharTraits, typename TAllocator>
-template<typename TForwardTraversalIterator>
-void String<TChar, TCharTraits, TAllocator>::m_construct(TForwardTraversalIterator first, TForwardTraversalIterator last, ForwardTraversalTag) {
+template<typename TForwardIterator>
+void String<TChar, TCharTraits, TAllocator>::m_construct(TForwardIterator first, TForwardIterator last, ForwardTraversalTag) {
 	auto size = static_cast<Size>(distance(first, last));
 	m_prepare(size + 1);
 	auto pointer = m_get_pointer();
@@ -1479,12 +1467,8 @@ auto String<TChar, TCharTraits, TAllocator>::operator=(StringView<Char, CharTrai
 }
 
 template<typename TChar, typename TCharTraits, typename TAllocator>
-template<typename TForwardTraversalIterator>
-void String<TChar, TCharTraits, TAllocator>::m_assign(
-	TForwardTraversalIterator first,
-	TForwardTraversalIterator last,
-	ForwardTraversalTag
-) {
+template<typename TForwardIterator>
+void String<TChar, TCharTraits, TAllocator>::m_assign(TForwardIterator first, TForwardIterator last, ForwardTraversalTag) {
 	auto count = static_cast<Size>(distance(first, last));
 	auto capacity = m_get_capacity();
 	if (capacity < count) {
@@ -1558,12 +1542,8 @@ auto String<TChar, TCharTraits, TAllocator>::operator<<(Pair<Char, Size> const &
 };
 
 template<typename TChar, typename TCharTraits, typename TAllocator>
-template<typename TForwardTraversalIterator>
-void String<TChar, TCharTraits, TAllocator>::m_append(
-	TForwardTraversalIterator first,
-	TForwardTraversalIterator last,
-	ForwardTraversalTag
-) {
+template<typename TForwardIterator>
+void String<TChar, TCharTraits, TAllocator>::m_append(TForwardIterator first, TForwardIterator last, ForwardTraversalTag) {
 	auto size = m_get_size();
 	auto capacity = m_get_capacity();
 	auto count = static_cast<Size>(distance(first, last));
@@ -1688,13 +1668,8 @@ auto String<TChar, TCharTraits, TAllocator>::insert(Size index, Pair<Char, Size>
 }
 
 template<typename TChar, typename TCharTraits, typename TAllocator>
-template<typename TSinglePassTraversalIterator>
-auto String<TChar, TCharTraits, TAllocator>::m_insert(
-	ConstIterator position,
-	TSinglePassTraversalIterator first,
-	TSinglePassTraversalIterator last,
-	SinglePassTraversalTag
-) -> Iterator {
+template<typename TSinglePassIterator>
+auto String<TChar, TCharTraits, TAllocator>::m_insert(ConstIterator position, TSinglePassIterator first, TSinglePassIterator last, SinglePassTraversalTag) -> Iterator {
 	auto index = position - begin();
 	auto old_size = m_get_size();
 	for (; first != last; ++first) {
@@ -1706,13 +1681,8 @@ auto String<TChar, TCharTraits, TAllocator>::m_insert(
 }
 
 template<typename TChar, typename TCharTraits, typename TAllocator>
-template<typename TForwardTraversalIterator>
-auto String<TChar, TCharTraits, TAllocator>::m_insert(
-	ConstIterator position,
-	TForwardTraversalIterator first,
-	TForwardTraversalIterator last,
-	ForwardTraversalTag
-) -> Iterator {
+template<typename TForwardIterator>
+auto String<TChar, TCharTraits, TAllocator>::m_insert(ConstIterator position, TForwardIterator first, TForwardIterator last, ForwardTraversalTag) -> Iterator {
 	auto index = position - begin();
 	auto old_size = m_get_size();
 	auto capacity = m_get_capacity();
@@ -1740,11 +1710,7 @@ auto String<TChar, TCharTraits, TAllocator>::m_insert(
 }
 
 template<typename TChar, typename TCharTraits, typename TAllocator>
-auto String<TChar, TCharTraits, TAllocator>::replace(
-	Size index,
-	Size count,
-	StringView<Char, CharTraits> const & view
-) -> String & {
+auto String<TChar, TCharTraits, TAllocator>::replace(Size index, Size count, StringView<Char, CharTraits> const & view) -> String & {
 	auto old_size = m_get_size();
 	auto capacity = m_get_capacity();
 	auto source_data = view.data();
@@ -1793,11 +1759,7 @@ auto String<TChar, TCharTraits, TAllocator>::replace(
 }
 
 template<typename TChar, typename TCharTraits, typename TAllocator>
-auto String<TChar, TCharTraits, TAllocator>::replace(
-	Size index,
-	Size length,
-	Pair<Char, Size> const & chars
-) -> String & {
+auto String<TChar, TCharTraits, TAllocator>::replace(Size index, Size length, Pair<Char, Size> const & chars) -> String & {
 	auto old_size = m_get_size();
 	if (index > old_size) {
 		throw_index_exception("String::replace");
@@ -1826,13 +1788,8 @@ auto String<TChar, TCharTraits, TAllocator>::replace(
 }
 
 template<typename TChar, typename TCharTraits, typename TAllocator>
-template<typename TSinglePassTraversalIterator>
-auto String<TChar, TCharTraits, TAllocator>::replace(
-	ConstIterator first0,
-	ConstIterator last0,
-	TSinglePassTraversalIterator first1,
-	TSinglePassTraversalIterator last1
-) -> String & {
+template<typename TIterator>
+auto String<TChar, TCharTraits, TAllocator>::replace(ConstIterator first0, ConstIterator last0, TIterator first1, TIterator last1) -> EnableIf< IsInputIterator<TIterator>, String & > {
 	for (; ; ++first0, (void) ++first1) {
 		if (first0 == last0) {
 			if (first1 != last1) {

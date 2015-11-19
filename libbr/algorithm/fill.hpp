@@ -13,6 +13,8 @@
 
 namespace BR {
 
+template< typename TForwardIterator, typename TValue >
+inline void fill(TForwardIterator first, TForwardIterator last, TValue const & value);
 
 namespace Detail {
 namespace Algorithm {
@@ -33,7 +35,7 @@ inline void fill(TRandomAccessIterator first, TRandomAccessIterator last, TValue
 } // namespace Detail
 
 template< typename TForwardIterator, typename TValue >
-inline void fill(TForwardIterator first, TForwardIterator last, TValue const & value) {
+void fill(TForwardIterator first, TForwardIterator last, TValue const & value) {
 	Detail::Algorithm::fill(first, last, value, IteratorTraits<TForwardIterator>::category());
 }
 

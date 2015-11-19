@@ -19,6 +19,23 @@
 
 namespace BR {
 
+/**
+ * @brief 排序算法
+ * @param[in,out] first,last 待排序区间
+ * @param[in] comparator 比较器
+ */
+template< typename TRandomAccessIterator, typename TComparator >
+inline void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator);
+
+/**
+ * @brief 排序算法(使用BR::Less<>作比较器)
+ * @param[in,out] first,last 待排序区间
+ */
+template< typename TRandomAccessIterator >
+inline void sort(TRandomAccessIterator first, TRandomAccessIterator last)  {
+	sort(first, last, Less<>());
+}
+
 namespace Detail {
 namespace Algorithm {
 
@@ -288,23 +305,9 @@ void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator &
 } // namespace Algorithm
 } // namespace Detail
 
-/**
- * @brief 排序算法
- * @param[in,out] first,last 待排序区间
- * @param[in] comparator 比较器
- */
 template< typename TRandomAccessIterator, typename TComparator >
-inline void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) {
+void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) {
 	Detail::Algorithm::sort(first, last, comparator);
-}
-
-/**
- * @brief 排序算法(使用BR::Less<>作比较器)
- * @param[in,out] first,last 待排序区间
- */
-template< typename TRandomAccessIterator >
-inline void sort(TRandomAccessIterator first, TRandomAccessIterator last)  {
-	sort(first, last, Less<>());
 }
 
 extern template void sort(NChar * first, NChar * last, Less<NChar> && comparator);

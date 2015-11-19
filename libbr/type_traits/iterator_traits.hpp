@@ -14,6 +14,7 @@
 #include <libbr/type_operate/template_argument.hpp>
 #include <libbr/type_operate/type.hpp>
 #include <libbr/type_traits/is_convertible.hpp>
+#include <libbr/type_traits/is_empty.hpp>
 
 namespace BR {
 
@@ -94,6 +95,8 @@ public:
 
 	using Category = typename Iterator::Category;
 
+	static_assert(IsEmpty<Category>::value, "`Category` should be an empty type.");
+
 	using Element = IteratorTraits::Element<Iterator>;
 
 	using Pointer = TypeUnwrap< TypePointer<Iterator> >;
@@ -137,12 +140,18 @@ struct IteratorTraits : Detail::TypeTraits::IteratorTraits::Implement<TIterator>
 template< typename TElement >
 struct IteratorTraits< TElement * > {
 public:
+	/**
+	 * @brief 迭代器类型
+	 */
 	using Iterator = TElement *;
 
 	/**
 	 * @brief 迭代器类别
 	 */
-	using Category = MutableRandomAccessIteratorTag;
+	struct Category : public IteratorTag, public ReadableTag, public WritableTag, public RandomAccessTraversalTag {
+	};
+
+	static_assert(IsEmpty<Category>::value, "`Category` should be an empty type.");
 
 	/**
 	 * @brief 迭代元素

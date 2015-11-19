@@ -14,6 +14,22 @@
 
 namespace BR {
 
+template< typename TForwardIterator0, typename TForwardIterator1, typename TBinaryPredicate >
+inline auto is_permutation(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TBinaryPredicate && predicate) -> bool;
+
+template< typename TForwardIterator0, typename TForwardIterator1, typename TBinaryPredicate >
+inline auto is_permutation(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1) -> bool {
+	return is_permutation(first0, last0, first1, Equal<>());
+}
+
+template< typename TForwardIterator0, typename TForwardIterator1, typename TBinaryPredicate >
+inline auto is_permutation(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1, TBinaryPredicate && predicate) -> bool;
+
+template< typename TForwardIterator0, typename TForwardIterator1 >
+inline auto is_permutation(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1) -> bool {
+	return is_permutation(first0, last0, first1, last1, Equal<>());
+}
+
 namespace Detail {
 namespace Algorithm {
 
@@ -122,23 +138,13 @@ inline auto is_permutation(TRandomAccessIteratorTag0 first0, TRandomAccessIterat
 } // namespace Detail
 
 template< typename TForwardIterator0, typename TForwardIterator1, typename TBinaryPredicate >
-inline auto is_permutation(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TBinaryPredicate && predicate) -> bool {
+auto is_permutation(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TBinaryPredicate && predicate) -> bool {
 	return Detail::Algorithm::is_permutation(first0, last0, first1, predicate);
 }
 
 template< typename TForwardIterator0, typename TForwardIterator1, typename TBinaryPredicate >
-inline auto is_permutation(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1) -> bool {
-	return is_permutation(first0, last0, first1, Equal<>());
-}
-
-template< typename TForwardIterator0, typename TForwardIterator1, typename TBinaryPredicate >
-inline auto is_permutation(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1, TBinaryPredicate && predicate) -> bool {
+auto is_permutation(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1, TBinaryPredicate && predicate) -> bool {
 	return Detail::Algorithm::is_permutation(first0, last0, first1, last1, predicate);
-}
-
-template< typename TForwardIterator0, typename TForwardIterator1 >
-inline auto is_permutation(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1) -> bool {
-	return is_permutation(first0, last0, first1, last1, Equal<>());
 }
 
 } // namespace BR

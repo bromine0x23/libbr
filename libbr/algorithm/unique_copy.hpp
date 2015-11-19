@@ -15,6 +15,14 @@
 
 namespace BR {
 
+template< typename TInputIterator, typename TOutputIterator, typename TBinaryPredicate >
+inline auto unique_copy(TInputIterator first, TInputIterator last, TOutputIterator result, TBinaryPredicate && predicate) -> TOutputIterator;
+
+template< typename TInputIterator, typename TOutputIterator >
+inline auto unique_copy(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator {
+	return unique_copy(first, last, result, Equal<>());
+}
+
 namespace Detail {
 namespace Algorithm {
 
@@ -69,13 +77,8 @@ auto unique_copy(TInputIterator first, TInputIterator last, TForwardIterator res
 } // namespace Detail
 
 template< typename TInputIterator, typename TOutputIterator, typename TBinaryPredicate >
-inline auto unique_copy(TInputIterator first, TInputIterator last, TOutputIterator result, TBinaryPredicate && predicate) -> TOutputIterator {
+auto unique_copy(TInputIterator first, TInputIterator last, TOutputIterator result, TBinaryPredicate && predicate) -> TOutputIterator {
 	return Detail::Algorithm::unique_copy(first, last, result, predicate);
-}
-
-template< typename TInputIterator, typename TOutputIterator >
-inline auto unique_copy(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator {
-	return unique_copy(first, last, result, Equal<>());
 }
 
 } // namespace BR

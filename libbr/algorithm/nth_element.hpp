@@ -13,6 +13,14 @@
 
 namespace BR {
 
+template< typename TRandomAccessIterator, typename TComparator >
+inline void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandomAccessIterator last, TComparator && comparator);
+
+template< typename TRandomAccessIterator >
+inline void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandomAccessIterator last) {
+	nth_element(first, nth, last, Less<void>());
+}
+
 namespace Detail {
 namespace Algorithm {
 
@@ -159,13 +167,8 @@ void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandom
 } // namespace Detail
 
 template< typename TRandomAccessIterator, typename TComparator >
-inline void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandomAccessIterator last, TComparator && comparator) {
+void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandomAccessIterator last, TComparator && comparator) {
 	Detail::Algorithm::nth_element(first, nth, last, comparator);
-}
-
-template< typename TRandomAccessIterator >
-inline void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandomAccessIterator last) {
-	nth_element(first, nth, last, Less<void>());
 }
 
 } // namespace BR

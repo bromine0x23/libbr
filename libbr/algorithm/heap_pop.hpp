@@ -13,6 +13,14 @@
 
 namespace BR {
 
+template< typename TRandomAccessIterator, typename TComparator >
+inline void heap_pop(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator);
+
+template< typename TRandomAccessIterator >
+inline void heap_pop(TRandomAccessIterator first, TRandomAccessIterator last) {
+	heap_pop(first, last, Less<>());
+}
+
 namespace Detail {
 namespace Algorithm {
 
@@ -60,17 +68,12 @@ void heap_shift_down(TRandomAccessIterator first, TRandomAccessIterator last, TD
 } // namespace Detail
 
 template< typename TRandomAccessIterator, typename TComparator >
-inline void heap_pop(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) {
+void heap_pop(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) {
 	auto length = last - first;
 	if (length > 1) {
 		swap(*first, *--last);
 		heap_shift_down(first, last, length - 1, first, comparator);
 	}
-}
-
-template< typename TRandomAccessIterator >
-inline void heap_pop(TRandomAccessIterator first, TRandomAccessIterator last) {
-	heap_pop(first, last, Less<>());
 }
 
 } // namespace BR

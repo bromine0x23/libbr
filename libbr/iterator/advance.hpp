@@ -30,7 +30,7 @@ inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Di
 }
 
 template< typename TIterator >
-inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step, RandomAccessIteratorTag _dummy) {
+inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step, RandomAccessTraversalTag) {
 	iterator += step;
 }
 

@@ -19,6 +19,9 @@
 
 namespace BR {
 
+template< typename TForwardIterator, typename TUnaryPredicate >
+inline auto partition_stably(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate) -> TForwardIterator;
+
 namespace Detail {
 namespace Algorithm {
 

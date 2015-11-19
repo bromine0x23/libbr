@@ -28,7 +28,7 @@ struct BooleanAnd<> : public BooleanTrue {
 };
 
 template< typename TB0 >
-struct BooleanAnd<TB0> : public BooleanRewrapPositive<TB0> {
+struct BooleanAnd<TB0> : public BooleanRewrap<TB0> {
 };
 
 template< typename TB0, typename TB1, typename... TBn >
@@ -46,7 +46,7 @@ struct BooleanOr<> : public BooleanFalse {
 };
 
 template< typename TB0 >
-struct BooleanOr<TB0> : public BooleanRewrapPositive<TB0> {
+struct BooleanOr<TB0> : public BooleanRewrap<TB0> {
 };
 
 template< typename TB0, typename TB1, typename... TBn >
