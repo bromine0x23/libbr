@@ -41,7 +41,7 @@ struct TypeAddConst : public TypeWrapper< T const > {
 } // namespace Detail
 
 template< typename T >
-struct TypeAddConst : public TypeWrapper< Detail::TypeOperate::TypeAddConst<T> > {
+struct TypeAddConst : public TypeRewrap< Detail::TypeOperate::TypeAddConst<T> > {
 };
 
 } // namespace BR

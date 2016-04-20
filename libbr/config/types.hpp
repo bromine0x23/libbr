@@ -126,34 +126,29 @@ using UInt16 = unsigned short;
 #  elif UINT_MAX == 0xFFFF
 using SInt16 =   signed int;
 using UInt16 = unsigned int;
-
 #  else
 #    error "defaults not correct; you must hand modify libbr/typedef.hpp"
 #  endif
 
-#if UINT_MAX == 0xFFFFFFFF
+#  if UINT_MAX == 0xFFFFFFFF
 using SInt32 =   signed int;
 using UInt32 = unsigned int;
-
-#elif ULONG_MAX == 0xFFFFFFFF
+#  elif ULONG_MAX == 0xFFFFFFFF
 using SInt32 =   signed long;
 using UInt32 = unsigned long;
+#  else
+#    error "defaults not correct; you must hand modify libbr/typedef.hpp"
+#  endif
 
-#else
-#  error "defaults not correct; you must hand modify libbr/typedef.hpp"
-#endif
-
-#if ULONG_MAX == 0xFFFFFFFFFFFFFFFFULL
+#  if ULONG_MAX == 0xFFFFFFFFFFFFFFFFULL
 using SInt64 =   signed long;
 using UInt64 = unsigned long;
-
-#elif ULLONG_MAX == 0xFFFFFFFFFFFFFFFFULL
+#  elif ULLONG_MAX == 0xFFFFFFFFFFFFFFFFULL
 using SInt64 =   signed long long;
 using UInt64 = unsigned long long;
-
-#else
-#  error "defaults not correct; you must hand modify libbr/typedef.hpp"
-#endif
+#  else
+#    error "defaults not correct; you must hand modify libbr/typedef.hpp"
+#  endif
 
 constexpr static auto BIT_PER_BYTE = CHAR_BIT;
 
@@ -188,16 +183,6 @@ using Char16 = char16_t;
  * @brief 32位字符
  */
 using Char32 = char32_t;
-
-/**
- * @brief 窄字符类型是否无符号
- */
-constexpr static auto IS_NCHAR_UNSIGNED = static_cast< NChar >(0) < static_cast< NChar >(-1);
-
-/**
- * @brief 宽字符类型是否无符号
- */
-constexpr static auto IS_WCHAR_UNSIGNED = static_cast< WChar >(0) < static_cast< WChar >(-1);
 
 using SFloat = float;
 

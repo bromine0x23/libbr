@@ -1,0 +1,45 @@
+#include <libbr/type_operate/remove_pointer.hpp>
+
+#include "test.hpp"
+
+using namespace BR;
+
+TEST(TestTypeOperate, RemovePointer) {
+	OPERATE_CHECKS(RemovePointer, BR_EMPTY, BR_EMPTY)
+	OPERATE_CHECKS(RemovePointer, const, const)
+	OPERATE_CHECKS(RemovePointer, volatile, volatile)
+	OPERATE_CHECKS(RemovePointer, const volatile, const volatile)
+	OPERATE_CHECKS(RemovePointer, *, BR_EMPTY)
+	OPERATE_CHECKS(RemovePointer, * const, BR_EMPTY)
+	OPERATE_CHECKS(RemovePointer, * volatile, BR_EMPTY)
+	OPERATE_CHECKS(RemovePointer, * const volatile, BR_EMPTY)
+	OPERATE_CHECKS(RemovePointer, const *, const)
+	OPERATE_CHECKS(RemovePointer, volatile *, volatile)
+	OPERATE_CHECKS(RemovePointer, const * const, const)
+	OPERATE_CHECKS(RemovePointer, const * volatile, const)
+	OPERATE_CHECKS(RemovePointer, const * const volatile, const)
+	OPERATE_CHECKS(RemovePointer, &, &)
+	OPERATE_CHECKS(RemovePointer, const &, const &)
+	OPERATE_CHECKS(RemovePointer, volatile &, volatile &)
+	OPERATE_CHECKS(RemovePointer, const volatile &, const volatile &)
+	OPERATE_CHECKS(RemovePointer, &&, &&)
+	OPERATE_CHECKS(RemovePointer, const &&, const &&)
+	OPERATE_CHECKS(RemovePointer, volatile &&, volatile &&)
+	OPERATE_CHECKS(RemovePointer, const volatile &&, const volatile &&)
+	OPERATE_CHECKS(RemovePointer, [2], [2])
+	OPERATE_CHECKS(RemovePointer, const[2], const[2])
+	OPERATE_CHECKS(RemovePointer, volatile[2], volatile[2])
+	OPERATE_CHECKS(RemovePointer, const volatile[2], const volatile[2])
+	OPERATE_CHECKS(RemovePointer, [2][3], [2][3])
+	OPERATE_CHECKS(RemovePointer, const[2][3], const[2][3])
+	OPERATE_CHECKS(RemovePointer, volatile[2][3], volatile[2][3])
+	OPERATE_CHECKS(RemovePointer, const volatile[2][3], const volatile[2][3])
+	OPERATE_CHECKS(RemovePointer, [][3], [][3])
+	OPERATE_CHECKS(RemovePointer, const[][3], const[][3])
+	OPERATE_CHECKS(RemovePointer, volatile[][3], volatile[][3])
+	OPERATE_CHECKS(RemovePointer, const volatile[][3], const volatile[][3])
+	OPERATE_CHECKS(RemovePointer, (&)[2], (&)[2])
+	OPERATE_CHECKS(RemovePointer, (&&)[2], (&&)[2])
+	OPERATE_CHECKS(RemovePointer, (&)[2][3], (&)[2][3])
+	OPERATE_CHECKS(RemovePointer, (&&)[2][3], (&&)[2][3])
+}

@@ -7,14 +7,13 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/conditional.hpp>
+#include <libbr/assert/dummy_false.hpp>
+#include <libbr/type_operate/map_cv.hpp>
 #include <libbr/type_operate/remove_const_volatile.hpp>
 #include <libbr/type_operate/type.hpp>
 #include <libbr/type_traits/is_enum.hpp>
 #include <libbr/type_traits/is_integral.hpp>
 #include <libbr/type_traits/is_same.hpp>
-#include <libbr/type_traits/is_unsigned.hpp>
 
 namespace BR {
 
@@ -78,7 +77,8 @@ template< Size size >
 struct TypeMakeUnsignedEnum : public TypeWrapper<UInt128> {
 };
 
-template<> struct TypeMakeUnsignedEnum< sizeof(UInt64) > : TypeWrapper<UInt64> {
+template<>
+struct TypeMakeUnsignedEnum< sizeof(UInt64) > : TypeWrapper<UInt64> {
 };
 
 #else
@@ -98,21 +98,30 @@ template<> struct TypeMakeUnsignedEnum< sizeof(UInt16) > : public TypeWrapper<UI
 template<> struct TypeMakeUnsignedEnum< sizeof(UInt32) > : public TypeWrapper<UInt32> {
 };
 
+template< typename T, bool is_integral = IsIntegral<T>()(), bool is_enum = IsEnum<T>()() >
+struct TypeMakeUnsignedBasic;
+
 template< typename T >
-struct TypeMakeUnsignedBasic : public Conditional<
-	IsUnsigned<T>,
-	TypeWrapper<T>,
-	Conditional<
-		IsIntegral<T>,
-		TypeMakeUnsignedInteger<T>,
-		TypeMakeUnsignedEnum< sizeof(T) >
-	>
-> {
-	static_assert(!BooleanAnd< NotIntegral<T>, NotEnum<T>, IsSame< T, bool > >::value, "Type must be integer type (except bool), or an enumeration type.");
+struct TypeMakeUnsignedBasic< T, false, false > {
+	static_assert(DummyFalse<T>()(), "Type must be integer type (except bool), or an enumeration type.");
 };
 
 template< typename T >
-struct TypeMakeUnsigned : public TypeMakeUnsignedBasic< RemoveConstVolatile<T> > {
+struct TypeMakeUnsignedBasic< T, true, false > : TypeMakeUnsignedInteger<T> {
+	static_assert(NotSame< T, bool >()(), "Type must be integer type (except bool), or an enumeration type.");
+};
+
+template< typename T >
+struct TypeMakeUnsignedBasic< T, false, true > : TypeMakeUnsignedEnum< sizeof(T) > {
+};
+
+template< typename T >
+struct TypeMakeUnsignedBasic< T, true, true > {
+	static_assert(DummyFalse<T>()(), "[Fatal Error] Type cannot be both integer type and enumeration type.");
+};
+
+template< typename T >
+struct TypeMakeUnsigned : public TypeMapCV< T, TypeUnwrap< TypeMakeUnsignedBasic< RemoveConstVolatile<T> > > > {
 };
 
 } // namespace TypeOperate

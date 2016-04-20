@@ -83,7 +83,7 @@ template< typename TIterator >
 struct TypeDifference< TIterator, true > : TypeWrapper< typename TIterator::Difference > {};
 
 template< typename TIterator >
-struct TypeDifference< TIterator, false > : TypeWrapper<BR::PointerDifference> {};
+struct TypeDifference< TIterator, false > : TypeWrapper<::BR::PointerDifference> {};
 
 template< typename TIterator, bool _dummy = IsConvertible< typename TIterator::Category, IteratorTag >::value >
 struct Base;

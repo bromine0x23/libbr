@@ -13,12 +13,12 @@
 #  define BR_CXX11
 #endif
 
-#if __cplusplus > 201103L
-#  define BR_AFTER_CXX11
-#endif
-
 #if __cplusplus >= 201402L
 #  define BR_CXX14
+#endif
+
+#if __cplusplus > 201103L
+#  define BR_AFTER_CXX11
 #endif
 
 #if defined(BR_AFTER_CXX11)
@@ -60,6 +60,11 @@
 #if !defined(BR_UNLIKELY)
 #  define BR_UNLIKELY(x) (x)
 #endif
+
+#if !defined(BR_FORCE_USE)
+#  define BR_FORCE_USE(x) ((void)x)
+#endif
+
 
 #define BR_EMPTY_ARG
 

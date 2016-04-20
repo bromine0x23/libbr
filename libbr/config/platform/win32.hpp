@@ -17,5 +17,5 @@
 
 #if !defined(BR_BYTE_ORDER)
 #  define BR_BYTE_ORDER "little endian"
-#  define BR_BIG_ENDIAN
+#  define BR_LITTLE_ENDIAN
 #endif

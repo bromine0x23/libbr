@@ -51,7 +51,7 @@ struct TypeCallResultEmpty {
 };
 
 template< typename T, typename... TArgs >
-using TypeCallResult = Conditional<  IsCallable< T, TArgs... >, TypeCallResultBasic< T, TArgs... > , TypeCallResultEmpty< T, TArgs... > >;
+using TypeCallResult = Conditional< IsCallable< T, TArgs... >, TypeCallResultBasic< T, TArgs... > , TypeCallResultEmpty< T, TArgs... > >;
 
 } // namespace TypeOperate
 } // namespace Detail

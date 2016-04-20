@@ -16,6 +16,12 @@ template< AllocatorConstructorUsageType type >
 using AllocatorConstructorUsageConstant = IntegerConstant< AllocatorConstructorUsageType, type >;
 
 template< typename T, typename TAllocator, typename ... TArguments >
+struct TypeAllocatorConstructorUsage;
+
+template< typename T, typename TAllocator, typename ... TArguments >
+using AllocatorConstructorUsage = TypeUnwrap< TypeAllocatorConstructorUsage< T, TAllocator, TArguments ... > >;
+
+template< typename T, typename TAllocator, typename ... TArguments >
 struct TypeAllocatorConstructorUsage : TypeWrapper<
 	Conditional<
 		IsUseAllocator< T, TAllocator >,
@@ -26,10 +32,8 @@ struct TypeAllocatorConstructorUsage : TypeWrapper<
 		>,
 		AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::not_used >
 	>
-> {};
-
-template< typename T, typename TAllocator, typename ... TArguments >
-using AllocatorConstructorUsage = TypeUnwrap< TypeAllocatorConstructorUsage< T, TAllocator, TArguments ... > >;
+> {
+};
 
 } // namespace BR
 

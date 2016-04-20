@@ -11,6 +11,8 @@
 #  endif // __cplusplus
 #endif // __cplusplus
 
+#define BR_EMPTY
+
 #define BR_STRINGIFY(X) BR_DO_STRINGIFY(X)
 #define BR_DO_STRINGIFY(X) #X
 
@@ -56,3 +58,4 @@
 
 #include <libbr/config/macros.hpp>
 #include <libbr/config/types.hpp>
+#include <libbr/config/constants.hpp>

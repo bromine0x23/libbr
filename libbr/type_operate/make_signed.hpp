@@ -7,14 +7,13 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/conditional.hpp>
+#include <libbr/assert/dummy_false.hpp>
+#include <libbr/type_operate/map_cv.hpp>
 #include <libbr/type_operate/remove_const_volatile.hpp>
 #include <libbr/type_operate/type.hpp>
 #include <libbr/type_traits/is_enum.hpp>
 #include <libbr/type_traits/is_integral.hpp>
 #include <libbr/type_traits/is_same.hpp>
-#include <libbr/type_traits/is_signed.hpp>
 
 namespace BR {
 
@@ -99,21 +98,30 @@ template<> struct TypeMakeSignedEnum< sizeof(SInt16) > : public TypeWrapper<SInt
 template<> struct TypeMakeSignedEnum< sizeof(SInt32) > : public TypeWrapper<SInt32> {
 };
 
+template< typename T, bool is_integral = IsIntegral<T>()(), bool is_enum = IsEnum<T>()() >
+struct TypeMakeSignedBasic;
+
 template< typename T >
-struct TypeMakeSignedBasic : public Conditional<
-	IsSigned<T>,
-	TypeWrapper<T>,
-	Conditional<
-		IsIntegral<T>,
-		TypeMakeSignedInteger<T>,
-		TypeMakeSignedEnum< sizeof(T) >
-	>
-> {
-	static_assert(!BooleanAnd< NotIntegral<T>, NotEnum<T>, IsSame< T, bool > >::value, "Type must be integer type (except bool), or an enumeration type.");
+struct TypeMakeSignedBasic< T, false, false > {
+	static_assert(DummyFalse<T>()(), "Type must be integer type (except bool), or an enumeration type.");
 };
 
 template< typename T >
-struct TypeMakeSigned : public TypeMakeSignedBasic< RemoveConstVolatile<T> > {
+struct TypeMakeSignedBasic< T, true, false > : TypeMakeSignedInteger<T> {
+	static_assert(NotSame< T, bool >()(), "Type must be integer type (except bool), or an enumeration type.");
+};
+
+template< typename T >
+struct TypeMakeSignedBasic< T, false, true > : TypeMakeSignedEnum< sizeof(T) > {
+};
+
+template< typename T >
+struct TypeMakeSignedBasic< T, true, true > {
+	static_assert(DummyFalse<T>()(), "[Fatal Error] Type cannot be both integer type and enumeration type.");
+};
+
+template< typename T >
+struct TypeMakeSigned : public TypeMapCV< T, TypeUnwrap< TypeMakeSignedBasic< RemoveConstVolatile<T> > > > {
 };
 
 } // namespace TypeOperate

@@ -1,0 +1,45 @@
+#include <libbr/type_operate/remove_reference.hpp>
+
+#include "test.hpp"
+
+using namespace BR;
+
+TEST(TestTypeOperate, RemoveReference) {
+	OPERATE_CHECKS(RemoveReference, BR_EMPTY, BR_EMPTY)
+	OPERATE_CHECKS(RemoveReference, const, const)
+	OPERATE_CHECKS(RemoveReference, volatile, volatile)
+	OPERATE_CHECKS(RemoveReference, const volatile, const volatile)
+	OPERATE_CHECKS(RemoveReference, *, *)
+	OPERATE_CHECKS(RemoveReference, * const, * const)
+	OPERATE_CHECKS(RemoveReference, * volatile, * volatile)
+	OPERATE_CHECKS(RemoveReference, * const volatile, * const volatile)
+	OPERATE_CHECKS(RemoveReference, const *, const *)
+	OPERATE_CHECKS(RemoveReference, volatile *, volatile *)
+	OPERATE_CHECKS(RemoveReference, const * const, const * const)
+	OPERATE_CHECKS(RemoveReference, const * volatile, const * volatile)
+	OPERATE_CHECKS(RemoveReference, const * const volatile, const * const volatile)
+	OPERATE_CHECKS(RemoveReference, &, BR_EMPTY)
+	OPERATE_CHECKS(RemoveReference, const &, const)
+	OPERATE_CHECKS(RemoveReference, volatile &, volatile)
+	OPERATE_CHECKS(RemoveReference, const volatile &, const volatile)
+	OPERATE_CHECKS(RemoveReference, &&, BR_EMPTY)
+	OPERATE_CHECKS(RemoveReference, const &&, const)
+	OPERATE_CHECKS(RemoveReference, volatile &&, volatile)
+	OPERATE_CHECKS(RemoveReference, const volatile &&, const volatile)
+	OPERATE_CHECKS(RemoveReference, [2], [2])
+	OPERATE_CHECKS(RemoveReference, const[2], const[2])
+	OPERATE_CHECKS(RemoveReference, volatile[2], volatile[2])
+	OPERATE_CHECKS(RemoveReference, const volatile[2], const volatile[2])
+	OPERATE_CHECKS(RemoveReference, [2][3], [2][3])
+	OPERATE_CHECKS(RemoveReference, const[2][3], const[2][3])
+	OPERATE_CHECKS(RemoveReference, volatile[2][3], volatile[2][3])
+	OPERATE_CHECKS(RemoveReference, const volatile[2][3], const volatile[2][3])
+	OPERATE_CHECKS(RemoveReference, [][3], [][3])
+	OPERATE_CHECKS(RemoveReference, const[][3], const[][3])
+	OPERATE_CHECKS(RemoveReference, volatile[][3], volatile[][3])
+	OPERATE_CHECKS(RemoveReference, const volatile[][3], const volatile[][3])
+	OPERATE_CHECKS(RemoveReference, (&)[2], [2])
+	OPERATE_CHECKS(RemoveReference, (&&)[2], [2])
+	OPERATE_CHECKS(RemoveReference, (&)[2][3], [2][3])
+	OPERATE_CHECKS(RemoveReference, (&&)[2][3], [2][3])
+}

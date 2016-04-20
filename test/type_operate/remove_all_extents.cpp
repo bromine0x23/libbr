@@ -1,0 +1,45 @@
+#include <libbr/type_operate/remove_all_extents.hpp>
+
+#include "test.hpp"
+
+using namespace BR;
+
+TEST(TestTypeOperate, RemoveAllExtents) {
+	OPERATE_CHECKS(RemoveAllExtents, BR_EMPTY, BR_EMPTY)
+	OPERATE_CHECKS(RemoveAllExtents, const, const)
+	OPERATE_CHECKS(RemoveAllExtents, volatile, volatile)
+	OPERATE_CHECKS(RemoveAllExtents, const volatile, const volatile)
+	OPERATE_CHECKS(RemoveAllExtents, *, *)
+	OPERATE_CHECKS(RemoveAllExtents, * const, * const)
+	OPERATE_CHECKS(RemoveAllExtents, * volatile, * volatile)
+	OPERATE_CHECKS(RemoveAllExtents, * const volatile, * const volatile)
+	OPERATE_CHECKS(RemoveAllExtents, const *, const *)
+	OPERATE_CHECKS(RemoveAllExtents, volatile *, volatile *)
+	OPERATE_CHECKS(RemoveAllExtents, const * const, const * const)
+	OPERATE_CHECKS(RemoveAllExtents, const * volatile, const * volatile)
+	OPERATE_CHECKS(RemoveAllExtents, const * const volatile, const * const volatile)
+	OPERATE_CHECKS(RemoveAllExtents, &, &)
+	OPERATE_CHECKS(RemoveAllExtents, const &, const &)
+	OPERATE_CHECKS(RemoveAllExtents, volatile &, volatile &)
+	OPERATE_CHECKS(RemoveAllExtents, const volatile &, const volatile &)
+	OPERATE_CHECKS(RemoveAllExtents, &&, &&)
+	OPERATE_CHECKS(RemoveAllExtents, const &&, const &&)
+	OPERATE_CHECKS(RemoveAllExtents, volatile &&, volatile &&)
+	OPERATE_CHECKS(RemoveAllExtents, const volatile &&, const volatile &&)
+	OPERATE_CHECKS(RemoveAllExtents, [2], BR_EMPTY)
+	OPERATE_CHECKS(RemoveAllExtents, const[2], const)
+	OPERATE_CHECKS(RemoveAllExtents, volatile[2], volatile)
+	OPERATE_CHECKS(RemoveAllExtents, const volatile[2], const volatile)
+	OPERATE_CHECKS(RemoveAllExtents, [2][3], BR_EMPTY)
+	OPERATE_CHECKS(RemoveAllExtents, const[2][3], const)
+	OPERATE_CHECKS(RemoveAllExtents, volatile[2][3], volatile)
+	OPERATE_CHECKS(RemoveAllExtents, const volatile[2][3], const volatile)
+	OPERATE_CHECKS(RemoveAllExtents, [][3], BR_EMPTY)
+	OPERATE_CHECKS(RemoveAllExtents, const[][3], const)
+	OPERATE_CHECKS(RemoveAllExtents, volatile[][3], volatile)
+	OPERATE_CHECKS(RemoveAllExtents, const volatile[][3], const volatile)
+	OPERATE_CHECKS(RemoveAllExtents, (&)[2], (&)[2])
+	OPERATE_CHECKS(RemoveAllExtents, (&&)[2], (&&)[2])
+	OPERATE_CHECKS(RemoveAllExtents, (&)[2][3], (&)[2][3])
+	OPERATE_CHECKS(RemoveAllExtents, (&&)[2][3], (&&)[2][3])
+}
