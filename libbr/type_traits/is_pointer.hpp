@@ -7,7 +7,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/utility/bool_constant.hpp>
+#include <libbr/utility/boolean_constant.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/remove_const_volatile.hpp>
 #include <libbr/type_traits/is_member_pointer.hpp>

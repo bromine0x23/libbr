@@ -7,7 +7,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/utility/bool_constant.hpp>
+#include <libbr/utility/boolean_constant.hpp>
 #include <libbr/type_traits/is_nothrow_constructible.hpp>
 
 namespace BR {

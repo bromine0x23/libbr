@@ -7,7 +7,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/utility/integer_constant.hpp>
+#include <libbr/utility/integral_constant.hpp>
 
 namespace BR {
 
@@ -19,7 +19,7 @@ namespace BR {
  * <tt>sizeof(T)</tt>
  */
 template< typename T >
-using SizeOf = IntegerConstant< Size, sizeof(T) >;
+using SizeOf = IntegralConstant< Size, sizeof(T) >;
 
 #if defined(BR_CXX14)
 
@@ -29,7 +29,7 @@ using SizeOf = IntegerConstant< Size, sizeof(T) >;
  * @see SizeOf
  */
 template< typename T >
-constexpr auto size_of = integer_constant< SizeOf<T> >;
+constexpr auto size_of = integral_constant< SizeOf<T> >;
 
 #endif // defined(BR_CXX14)
 

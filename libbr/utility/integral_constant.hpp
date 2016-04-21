@@ -17,7 +17,7 @@ namespace BR {
  * @tparam v 常量值
  */
 template< typename TValue, TValue v >
-struct IntegerConstant : public TypeWrapper< IntegerConstant< TValue, v > > {
+struct IntegralConstant : public TypeWrapper< IntegralConstant< TValue, v > > {
 
 	/**
 	 * @brief 整型常量类型
@@ -29,7 +29,7 @@ struct IntegerConstant : public TypeWrapper< IntegerConstant< TValue, v > > {
 	 */
 	constexpr static TValue value = v;
 
-	constexpr IntegerConstant() noexcept = default;
+	constexpr IntegralConstant() noexcept = default;
 
 	/**
 	 * @brief 返回整型常量值
@@ -47,15 +47,15 @@ struct IntegerConstant : public TypeWrapper< IntegerConstant< TValue, v > > {
 };
 
 template< typename TI >
-using IntegerRewrap = IntegerConstant< typename TI::Value, TI::value >;
+using IntegralRewrap = IntegralConstant< typename TI::Value, TI::value >;
 
 template< Size index >
-using IndexConstant = IntegerConstant< Size, index >;
+using IndexConstant = IntegralConstant< Size, index >;
 
 #if defined(BR_CXX14)
 
 template< typename TI >
-constexpr static typename TI::Value integer_constant = TI::value;
+constexpr static typename TI::Value integral_constant = TI::value;
 
 #endif // defined(BR_CXX14)
 

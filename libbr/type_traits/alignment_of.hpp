@@ -7,7 +7,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/utility/integer_constant.hpp>
+#include <libbr/utility/integral_constant.hpp>
 
 namespace BR {
 
@@ -19,7 +19,7 @@ namespace BR {
  * <tt>alignof(T)</tt>
  */
 template< typename T >
-using AlignmentOf = IntegerConstant< Size, alignof(T) >;
+using AlignmentOf = IntegralConstant< Size, alignof(T) >;
 
 #if defined(BR_CXX14)
 

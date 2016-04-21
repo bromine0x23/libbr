@@ -8,30 +8,9 @@
 
 #include <libbr/config.hpp>
 #include <libbr/type_operate/remove_const_volatile.hpp>
-#include <libbr/utility/integer_constant.hpp>
+#include <libbr/utility/integral_constant.hpp>
 
 namespace BR {
-
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T, Size I >
-struct Extent : IntegerConstant< Size, 0 > {};
-
-template< typename T, Size I >
-struct Extent< T [], I > : IntegerConstant< Size, Extent< RemoveConstVolatile<T>, I - 1 >::value > {};
-
-template< typename T >
-struct Extent< T [], 0 > : IntegerConstant< Size,  0 > {};
-
-template< typename T, Size S, Size I >
-struct Extent< T [S], I > : IntegerConstant< Size, Extent< RemoveConstVolatile<T>, I - 1 >::value > {};
-
-template< typename T, Size S >
-struct Extent< T [S], 0 > : IntegerConstant< Size, S > {};
-
-} // namespace TypeTraits
-} // namespace Detail
 
 /**
  * @brief 获取数组指定维度的大小
@@ -42,7 +21,7 @@ struct Extent< T [S], 0 > : IntegerConstant< Size, S > {};
  * 如果 \em T 是至少 \em I 维的数组类型，那么封装的值第 \em I 维的大小；否则为 0
  */
 template< typename T, Size I = 0 >
-struct Extent : IntegerRewrap< Detail::TypeTraits::Extent< T, I > > {};
+struct Extent;
 
 #if defined(BR_CXX14)
 
@@ -52,8 +31,35 @@ struct Extent : IntegerRewrap< Detail::TypeTraits::Extent< T, I > > {};
  * @see Rank
  */
 template< typename T, Size I = 0 >
-constexpr auto extent = integer_constant< Extent< T, I > >;
+constexpr auto extent = integral_constant< Extent< T, I > >;
 
 #endif // defined(BR_CXX14)
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T, Size I >
+struct Extent;
+
+template< typename T, Size I >
+struct Extent : IntegralConstant< Size, 0 > {};
+
+template< typename T, Size I >
+struct Extent< T [], I > : IntegralConstant< Size, (Extent< RemoveConstVolatile<T>, I - 1 >{})() > {};
+
+template< typename T >
+struct Extent< T [], 0 > : IntegralConstant< Size,  0 > {};
+
+template< typename T, Size S, Size I >
+struct Extent< T [S], I > : IntegralConstant< Size, (Extent< RemoveConstVolatile<T>, I - 1 >{})() > {};
+
+template< typename T, Size S >
+struct Extent< T [S], 0 > : IntegralConstant< Size, S > {};
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T, Size I >
+struct Extent : IntegralRewrap< Detail::TypeTraits::Extent< T, I > > {};
 
 } // namespace BR

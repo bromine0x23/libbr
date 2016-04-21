@@ -8,24 +8,9 @@
 
 #include <libbr/config.hpp>
 #include <libbr/type_operate/remove_const_volatile.hpp>
-#include <libbr/utility/integer_constant.hpp>
+#include <libbr/utility/integral_constant.hpp>
 
 namespace BR {
-
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-struct Rank : IntegerConstant< Size, 0 > {};
-
-template< typename T >
-struct Rank< T [] > : IntegerConstant< Size, Rank< RemoveConstVolatile<T> >::value + 1 > {};
-
-template< typename T, Size S >
-struct Rank< T [S] > : IntegerConstant< Size, Rank< RemoveConstVolatile<T> >::value + 1 > {};
-
-} // namespace TypeTraits
-} // namespace Detail
 
 /**
  * @brief 获取数组类型的维度
@@ -36,7 +21,7 @@ struct Rank< T [S] > : IntegerConstant< Size, Rank< RemoveConstVolatile<T> >::va
  * 如果 \em T 是数组类型，那么封装的值为数组类型的维度；否则为 0
  */
 template< typename T >
-struct Rank : IntegerRewrap< Detail::TypeTraits::Rank<T> > {};
+struct Rank;
 
 #if defined(BR_CXX14)
 
@@ -46,8 +31,26 @@ struct Rank : IntegerRewrap< Detail::TypeTraits::Rank<T> > {};
  * @see Rank
  */
 template< typename T >
-constexpr auto rank = integer_constant< Rank<T> >;
+constexpr auto rank = integral_constant< Rank<T> >;
 
 #endif // defined(BR_CXX14)
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+struct Rank : IntegralConstant< Size, 0 > {};
+
+template< typename T >
+struct Rank< T [] > : IntegralConstant< Size, (Rank< RemoveConstVolatile<T> >{})() + 1 > {};
+
+template< typename T, Size S >
+struct Rank< T [S] > : IntegralConstant< Size, (Rank< RemoveConstVolatile<T> >{})() + 1 > {};
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct Rank : IntegralRewrap< Detail::TypeTraits::Rank<T> > {};
 
 } // namespace BR

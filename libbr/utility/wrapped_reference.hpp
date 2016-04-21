@@ -6,7 +6,7 @@
 #include <libbr/type_operate/remove_const_volatile.hpp>
 #include <libbr/type_operate/type.hpp>
 #include <libbr/type_operate/call_result.hpp>
-#include <libbr/utility/bool_constant.hpp>
+#include <libbr/utility/boolean_constant.hpp>
 #include <libbr/utility/forward.hpp>
 
 namespace BR {

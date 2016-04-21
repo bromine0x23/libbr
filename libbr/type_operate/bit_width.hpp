@@ -1,7 +1,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/utility/integer_constant.hpp>
+#include <libbr/utility/integral_constant.hpp>
 
 namespace BR {
 

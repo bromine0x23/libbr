@@ -9,7 +9,7 @@
 #include <libbr/config.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/types.hpp>
-#include <libbr/utility/bool_constant.hpp>
+#include <libbr/utility/boolean_constant.hpp>
 #include <libbr/utility/make_value.hpp>
 
 namespace BR {

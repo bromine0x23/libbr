@@ -13,7 +13,7 @@ enum class AllocatorConstructorUsageType {
 };
 
 template< AllocatorConstructorUsageType type >
-using AllocatorConstructorUsageConstant = IntegerConstant< AllocatorConstructorUsageType, type >;
+using AllocatorConstructorUsageConstant = IntegralConstant< AllocatorConstructorUsageType, type >;
 
 template< typename T, typename TAllocator, typename ... TArguments >
 struct TypeAllocatorConstructorUsage;

@@ -7,31 +7,10 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/utility/bool_constant.hpp>
+#include <libbr/utility/boolean_constant.hpp>
 #include <libbr/type_operate/bool.hpp>
 
 namespace BR {
-
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-struct IsArrayKnownBounds : BooleanFalse {};
-
-template< typename T, Size S >
-struct IsArrayKnownBounds< T [S] > : BooleanTrue {};
-
-template< typename T >
-struct IsArrayUnknownBounds : BooleanFalse {};
-
-template< typename T >
-struct IsArrayUnknownBounds< T [] > : BooleanTrue {};
-
-template< typename T >
-using IsArray = BooleanOr< IsArrayKnownBounds<T>, IsArrayUnknownBounds<T> >;
-
-} // namespace TypeTraits
-} // namespace Detail
 
 /**
  * @brief 检查 \em T 是否是约束长度的数组类型(<tt>U[S]</tt>)
@@ -42,7 +21,7 @@ using IsArray = BooleanOr< IsArrayKnownBounds<T>, IsArrayUnknownBounds<T> >;
  * 如果 \em T 是约束长度的数组类型，那么封装的值为 true ；否则为 false
  */
 template< typename T >
-struct IsArrayKnownBounds : BooleanRewrapPositive< Detail::TypeTraits::IsArrayKnownBounds<T> > {};
+struct IsArrayKnownBounds;
 
 /**
  * @brief IsArrayKnownBounds 的否定
@@ -50,7 +29,7 @@ struct IsArrayKnownBounds : BooleanRewrapPositive< Detail::TypeTraits::IsArrayKn
  * @see IsArrayKnownBounds
  */
 template< typename T >
-struct NotArrayKnownBounds : BooleanRewrapNegative< Detail::TypeTraits::IsArrayKnownBounds<T> > {};
+struct NotArrayKnownBounds;
 
 /**
  * @brief 检查 \em T 是否是不约束长度的数组类型(<tt>U[]</tt>)
@@ -61,7 +40,7 @@ struct NotArrayKnownBounds : BooleanRewrapNegative< Detail::TypeTraits::IsArrayK
  * 如果 \em T 是不约束长度的数组类型，那么封装的值为 true ；否则为 false
  */
 template< typename T >
-struct IsArrayUnknownBounds : BooleanRewrapPositive< Detail::TypeTraits::IsArrayUnknownBounds<T> > {};
+struct IsArrayUnknownBounds;
 
 /**
  * @brief IsArrayUnknownBounds 的否定
@@ -69,7 +48,7 @@ struct IsArrayUnknownBounds : BooleanRewrapPositive< Detail::TypeTraits::IsArray
  * @see IsArrayUnknownBounds
  */
 template< typename T >
-struct NotArrayUnknownBounds : BooleanRewrapNegative< Detail::TypeTraits::IsArrayUnknownBounds<T> > {};
+struct NotArrayUnknownBounds;
 
 /**
  * @brief 检查 \em T 是否是数组类型(<tt>U[S]</tt>或<tt>U[]</tt>)
@@ -82,7 +61,7 @@ struct NotArrayUnknownBounds : BooleanRewrapNegative< Detail::TypeTraits::IsArra
  * 如果 \em T 是数组类型，那么封装的值为 true ；否则为 false
  */
 template< typename T >
-struct IsArray : BooleanRewrapPositive< Detail::TypeTraits::IsArray<T> > {};
+struct IsArray;
 
 /**
  * @brief IsArray 的否定
@@ -90,7 +69,7 @@ struct IsArray : BooleanRewrapPositive< Detail::TypeTraits::IsArray<T> > {};
  * @see IsArray
  */
 template< typename T >
-struct NotArray : BooleanRewrapNegative< Detail::TypeTraits::IsArray<T> > {};
+struct NotArray;
 
 #if defined(BR_CXX14)
 
@@ -149,5 +128,44 @@ template< typename T >
 constexpr auto not_array = bool_constant< NotArray<T> >;
 
 #endif // defined(BR_CXX14)
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+struct IsArrayKnownBounds : BooleanFalse {};
+
+template< typename T, Size S >
+struct IsArrayKnownBounds< T [S] > : BooleanTrue {};
+
+template< typename T >
+struct IsArrayUnknownBounds : BooleanFalse {};
+
+template< typename T >
+struct IsArrayUnknownBounds< T [] > : BooleanTrue {};
+
+template< typename T >
+using IsArray = BooleanOr< IsArrayKnownBounds<T>, IsArrayUnknownBounds<T> >;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsArrayKnownBounds : BooleanRewrapPositive< Detail::TypeTraits::IsArrayKnownBounds<T> > {};
+
+template< typename T >
+struct NotArrayKnownBounds : BooleanRewrapNegative< Detail::TypeTraits::IsArrayKnownBounds<T> > {};
+
+template< typename T >
+struct IsArrayUnknownBounds : BooleanRewrapPositive< Detail::TypeTraits::IsArrayUnknownBounds<T> > {};
+
+template< typename T >
+struct NotArrayUnknownBounds : BooleanRewrapNegative< Detail::TypeTraits::IsArrayUnknownBounds<T> > {};
+
+template< typename T >
+struct IsArray : BooleanRewrapPositive< Detail::TypeTraits::IsArray<T> > {};
+
+template< typename T >
+struct NotArray : BooleanRewrapNegative< Detail::TypeTraits::IsArray<T> > {};
 
 } // namespace BR

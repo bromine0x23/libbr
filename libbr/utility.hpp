@@ -9,13 +9,13 @@
 #include <libbr/utility/aligned_storage.hpp>
 #include <libbr/utility/aligned_union.hpp>
 #include <libbr/utility/bit_math.hpp>
-#include <libbr/utility/bool_constant.hpp>
+#include <libbr/utility/boolean_constant.hpp>
 #include <libbr/utility/current_function.hpp>
 #include <libbr/utility/demangle.hpp>
 #include <libbr/utility/enumerator.hpp>
 #include <libbr/utility/exchange.hpp>
 #include <libbr/utility/forward.hpp>
-#include <libbr/utility/integer_constant.hpp>
+#include <libbr/utility/integral_constant.hpp>
 #include <libbr/utility/make_value.hpp>
 #include <libbr/utility/move.hpp>
 #include <libbr/utility/piecewise_construct_tag.hpp>

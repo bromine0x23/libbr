@@ -13,14 +13,14 @@
 #include <libbr/type_operate/call_result.hpp>
 #include <libbr/type_operate/decay.hpp>
 #include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/make_integer_sequence.hpp>
+#include <libbr/type_operate/make_integral_sequence.hpp>
 #include <libbr/type_operate/remove_const.hpp>
 #include <libbr/type_operate/remove_reference.hpp>
 #include <libbr/type_traits/is_callable.hpp>
 #include <libbr/type_traits/is_convertible.hpp>
 #include <libbr/type_traits/is_same.hpp>
-#include <libbr/utility/bool_constant.hpp>
-#include <libbr/utility/integer_constant.hpp>
+#include <libbr/utility/boolean_constant.hpp>
+#include <libbr/utility/integral_constant.hpp>
 #include <libbr/utility/wrapped_reference.hpp>
 
 namespace BR {

@@ -7,7 +7,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/utility/integer_constant.hpp>
+#include <libbr/utility/integral_constant.hpp>
 
 namespace BR {
 
@@ -15,7 +15,7 @@ namespace BR {
  * @brief 布尔常量封装类
  */
 template< bool value >
-using BooleanConstant = IntegerConstant< bool, value >;
+using BooleanConstant = IntegralConstant< bool, value >;
 
 /**
  * @brief 封装布尔常量true
@@ -39,7 +39,7 @@ using BooleanRewrapNegative = BooleanConstant< !TB::value >;
 #if defined(BR_CXX14)
 
 template< typename TB >
-constexpr static bool bool_constant = integer_constant<TB>;
+constexpr static bool bool_constant = integral_constant<TB>;
 
 #endif // defined(BR_CXX14)
 

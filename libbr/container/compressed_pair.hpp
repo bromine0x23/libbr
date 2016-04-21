@@ -3,7 +3,7 @@
 #include <libbr/config.hpp>
 #include <libbr/container/tuple.hpp>
 #include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/make_integer_sequence.hpp>
+#include <libbr/type_operate/make_integral_sequence.hpp>
 #include <libbr/type_operate/remove_reference.hpp>
 #include <libbr/type_traits/has_nothrow_copy_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_move_constructor.hpp>
@@ -11,7 +11,7 @@
 #include <libbr/type_traits/is_final.hpp>
 #include <libbr/type_traits/is_nothrow_swappable.hpp>
 #include <libbr/utility/forward.hpp>
-#include <libbr/utility/integer_sequence.hpp>
+#include <libbr/utility/integral_sequence.hpp>
 #include <libbr/utility/piecewise_construct_tag.hpp>
 
 namespace BR {

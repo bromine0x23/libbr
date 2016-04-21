@@ -16,7 +16,7 @@ namespace BR {
  * @tparam values 常量值
  */
 template< typename TValue, TValue... values >
-struct IntegerSequence {
+struct IntegralSequence {
 	constexpr static Size size = sizeof...(values);
 
 	constexpr operator Size() const noexcept {
@@ -29,7 +29,7 @@ struct IntegerSequence {
 };
 
 template< Size ... indices >
-using IndexSequence = IntegerSequence< Size, indices ... >;
+using IndexSequence = IntegralSequence< Size, indices ... >;
 
 } // namespace BR
 

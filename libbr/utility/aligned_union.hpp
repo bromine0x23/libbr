@@ -13,12 +13,12 @@
 #include <libbr/type_traits/alignment_of.hpp>
 #include <libbr/type_traits/size_of.hpp>
 #include <libbr/utility/aligned_storage.hpp>
-#include <libbr/utility/integer_constant.hpp>
+#include <libbr/utility/integral_constant.hpp>
 
 namespace BR {
 
 template< Size length, typename ...TTypes >
-struct TypeAlignedUnion : public TypeWrapper< AlignedStorage< MaxInteger< IntegerConstant< Size, length >, SizeOf<TTypes>... >::value, MaxInteger< AlignmentOf<TTypes>... >::value > > {
+struct TypeAlignedUnion : public TypeWrapper< AlignedStorage< MaxInteger< IntegralConstant< Size, length >, SizeOf<TTypes>... >::value, MaxInteger< AlignmentOf<TTypes>... >::value > > {
 };
 
 template< Size length, typename ...TTypes >

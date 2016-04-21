@@ -9,8 +9,8 @@
 #include <libbr/config.hpp>
 #include <libbr/type_operate/type.hpp>
 #include <libbr/type_operate/conditional.hpp>
-#include <libbr/utility/integer_constant.hpp>
-#include <libbr/utility/integer_sequence.hpp>
+#include <libbr/utility/integral_constant.hpp>
+#include <libbr/utility/integral_sequence.hpp>
 
 namespace BR {
 

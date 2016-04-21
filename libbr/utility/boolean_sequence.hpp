@@ -7,7 +7,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/utility/integer_sequence.hpp>
+#include <libbr/utility/integral_sequence.hpp>
 
 namespace BR {
 
