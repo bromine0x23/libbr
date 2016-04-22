@@ -58,6 +58,8 @@ constexpr auto not_arithmetic = bool_constant< NotArithmetic<T> >;
 
 #endif // defined(BR_CXX14)
 
+
+
 namespace Detail {
 namespace TypeTraits {
 

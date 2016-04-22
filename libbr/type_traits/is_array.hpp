@@ -129,6 +129,8 @@ constexpr auto not_array = bool_constant< NotArray<T> >;
 
 #endif // defined(BR_CXX14)
 
+
+
 namespace Detail {
 namespace TypeTraits {
 

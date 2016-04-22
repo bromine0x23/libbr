@@ -4,7 +4,7 @@
 
 using namespace BR;
 
-TEST(TestTypeOperate, RemoveAllExtents) {
+TEST(TypeOperate, RemoveAllExtents) {
 	OPERATE_CHECKS(RemoveAllExtents, BR_EMPTY, BR_EMPTY)
 	OPERATE_CHECKS(RemoveAllExtents, const, const)
 	OPERATE_CHECKS(RemoveAllExtents, volatile, volatile)

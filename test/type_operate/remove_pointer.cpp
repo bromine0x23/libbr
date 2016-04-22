@@ -4,7 +4,7 @@
 
 using namespace BR;
 
-TEST(TestTypeOperate, RemovePointer) {
+TEST(TypeOperate, RemovePointer) {
 	OPERATE_CHECKS(RemovePointer, BR_EMPTY, BR_EMPTY)
 	OPERATE_CHECKS(RemovePointer, const, const)
 	OPERATE_CHECKS(RemovePointer, volatile, volatile)

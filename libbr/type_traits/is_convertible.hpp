@@ -40,8 +40,7 @@ struct IsConvertible;
  * @see BR::IsConvertible
  */
 template< typename TFrom, typename TTo >
-struct NotConvertible : BooleanNot< IsConvertible< TFrom, TTo > > {
-};
+struct NotConvertible;
 
 #if defined(BR_CXX14)
 
@@ -89,8 +88,7 @@ struct IsConvertibleTest {
 };
 
 template< typename TFrom, typename TTo >
-using IsConvertibleBasic = decltype(IsConvertibleTest::test< TFrom, TTo >(0));
-
+struct IsConvertibleBasic : public decltype(IsConvertibleTest::test< TFrom, TTo >(0)) {};
 
 template< typename TFrom, typename TTo >
 using IsConvertible = BooleanAnd<
@@ -111,7 +109,9 @@ using IsConvertible = BooleanAnd<
 } // namespace Detail
 
 template< typename TFrom, typename TTo >
-struct IsConvertible : BooleanRewrap< Detail::TypeTraits::IsConvertible< TFrom, TTo > > {
-};
+struct IsConvertible : BooleanRewrapPositive< Detail::TypeTraits::IsConvertible< TFrom, TTo > > {};
+
+template< typename TFrom, typename TTo >
+struct NotConvertible : BooleanRewrapNegative< Detail::TypeTraits::IsConvertible< TFrom, TTo > > {};
 
 } // namespace BR

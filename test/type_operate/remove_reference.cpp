@@ -4,7 +4,7 @@
 
 using namespace BR;
 
-TEST(TestTypeOperate, RemoveReference) {
+TEST(TypeOperate, RemoveReference) {
 	OPERATE_CHECKS(RemoveReference, BR_EMPTY, BR_EMPTY)
 	OPERATE_CHECKS(RemoveReference, const, const)
 	OPERATE_CHECKS(RemoveReference, volatile, volatile)

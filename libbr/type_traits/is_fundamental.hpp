@@ -18,7 +18,13 @@ namespace Detail {
 namespace TypeTraits {
 
 template< typename T >
-using IsFundamental = BooleanOr< IsArithmetic<T>, IsVoid<T> >;
+struct IsFundamentalBasic : BooleanFalse {};
+
+template<>
+struct IsFundamentalBasic< NullPointer > : BooleanTrue {};
+
+template< typename T >
+using IsFundamental = BooleanOr< IsArithmetic<T>, IsVoid<T>, IsFundamentalBasic< RemoveConstVolatile<T> > >;
 
 } // namespace TypeTraits
 } // namespace Detail

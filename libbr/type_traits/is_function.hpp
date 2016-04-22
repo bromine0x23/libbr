@@ -13,49 +13,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename TResult, typename... TArgs >
-auto is_function_pointer_tester(TResult(* pointer)(TArgs...)) -> BooleanTrue;
-
-template< typename TResult, typename... TArgs >
-auto is_function_pointer_tester(TResult(* pointer)(TArgs..., ...)) -> BooleanTrue;
-
-#if defined(BR_MSVC) || defined(BR_WIN32)
-
-template< typename TResult, typename... TArgs >
-auto is_function_pointer_tester(TResult(__stdcall * pointer)(TArgs...)) -> BooleanTrue;
-
-template< typename TResult, typename... TArgs >
-auto is_function_pointer_tester(TResult(__stdcall * pointer)(TArgs..., ...)) -> BooleanTrue;
-
-template< typename TResult, typename... TArgs >
-auto is_function_pointer_tester(TResult(__fastcall * pointer)(TArgs...)) -> BooleanTrue;
-
-template< typename TResult, typename... TArgs >
-auto is_function_pointer_tester(TResult(__fastcall * pointer)(TArgs..., ...)) -> BooleanTrue;
-
-template< typename TResult, typename... TArgs >
-auto is_function_pointer_tester(TResult(__cdecl * pointer)(TArgs...)) -> BooleanTrue;
-
-template< typename TResult, typename... TArgs >
-auto is_function_pointer_tester(TResult(__cdecl * pointer)(TArgs..., ...)) -> BooleanTrue;
-
-#endif // defined(BR_MSVC) || defined(BR_WIN32)
-
-auto is_function_pointer_tester(...) -> BooleanFalse;
-
-template< typename T >
-struct IsFunctionBasic : decltype(is_function_pointer_tester(static_cast< T * >(nullptr))) {
-};
-
-template< typename T >
-using IsFunction = BooleanAnd< NotReference<T>, IsFunctionBasic<T> >;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否是函数类型
  * @tparam T 待检查类型
@@ -65,7 +22,7 @@ using IsFunction = BooleanAnd< NotReference<T>, IsFunctionBasic<T> >;
  * 如果\em T 是函数类型(不包括lambda等可调用对象)，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsFunction : BooleanRewrapPositive< Detail::TypeTraits::IsFunction<T> > {};
+struct IsFunction;
 
 /**
  * @brief IsFunction 的否定
@@ -73,7 +30,7 @@ struct IsFunction : BooleanRewrapPositive< Detail::TypeTraits::IsFunction<T> > {
  * @see IsFunction
  */
 template< typename T >
-struct NotFunction : BooleanRewrapNegative< Detail::TypeTraits::IsFunction<T> > {};
+struct NotFunction;
 
 #if defined(BR_CXX14)
 
@@ -96,5 +53,146 @@ template< typename T >
 constexpr auto not_function = bool_constant< NotFunction<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+struct IsFunction : BooleanFalse {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs...)               > : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs...) const         > : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs...)       volatile> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs...) const volatile> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs..., ...)               > : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs..., ...) const         > : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs..., ...)       volatile> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs..., ...) const volatile> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs...)                &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs...) const          &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs...)       volatile &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs...) const volatile &> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs..., ...)                &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs..., ...) const          &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs..., ...)       volatile &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs..., ...) const volatile &> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs...)                &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs...) const          &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs...)       volatile &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs...) const volatile &&> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs..., ...)                &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs..., ...) const          &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs..., ...)       volatile &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs..., ...) const volatile &&> : BooleanTrue {};
+
+#if defined(BR_MSVC)
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs...)               > : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs...) const         > : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs...)       volatile> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs...) const volatile> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs..., ...)               > : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs..., ...) const         > : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs..., ...)       volatile> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs..., ...) const volatile> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs...)                &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs...) const          &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs...)       volatile &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs...) const volatile &> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs..., ...)                &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs..., ...) const          &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs..., ...)       volatile &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs..., ...) const volatile &> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs...)                &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs...) const          &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs...)       volatile &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs...) const volatile &&> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs..., ...)                &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs..., ...) const          &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs..., ...)       volatile &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __stdcall (TArgs..., ...) const volatile &&> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs...)               > : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs...) const         > : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs...)       volatile> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs...) const volatile> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs..., ...)               > : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs..., ...) const         > : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs..., ...)       volatile> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs..., ...) const volatile> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs...)                &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs...) const          &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs...)       volatile &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs...) const volatile &> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs..., ...)                &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs..., ...) const          &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs..., ...)       volatile &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs..., ...) const volatile &> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs...)                &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs...) const          &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs...)       volatile &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs...) const volatile &&> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs..., ...)                &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs..., ...) const          &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs..., ...)       volatile &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs..., ...) const volatile &&> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs...)               > : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs...) const         > : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs...)       volatile> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __fastcall (TArgs...) const volatile> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs..., ...)               > : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs..., ...) const         > : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs..., ...)       volatile> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs..., ...) const volatile> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs...)                &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs...) const          &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs...)       volatile &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs...) const volatile &> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs..., ...)                &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs..., ...) const          &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs..., ...)       volatile &> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs..., ...) const volatile &> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs...)                &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs...) const          &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs...)       volatile &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs...) const volatile &&> : BooleanTrue {};
+
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs..., ...)                &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs..., ...) const          &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs..., ...)       volatile &&> : BooleanTrue {};
+template< typename TResult, typename... TArgs > struct IsFunction<TResult __cdecl (TArgs..., ...) const volatile &&> : BooleanTrue {};
+
+#endif
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsFunction : BooleanRewrapPositive< Detail::TypeTraits::IsFunction<T> > {};
+
+template< typename T >
+struct NotFunction : BooleanRewrapNegative< Detail::TypeTraits::IsFunction<T> > {};
 
 } // namespace BR

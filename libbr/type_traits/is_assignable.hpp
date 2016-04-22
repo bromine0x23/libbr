@@ -12,23 +12,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-struct IsAssignableTest {
-	template< typename T, typename TArg, typename = decltype(make_rvalue<T>() = make_rvalue<TArg>()) >
-	static auto test(int) -> BooleanTrue;
-
-	template< typename T, typename TArg >
-	static auto test(...) -> BooleanFalse;
-};
-
-template< typename T, typename TArg >
-using IsAssignable = decltype(IsAssignableTest::test< T, TArg >(0));
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否重载了特定参数的赋值运算符
  * @tparam T 待检查类型
@@ -40,7 +23,7 @@ using IsAssignable = decltype(IsAssignableTest::test< T, TArg >(0));
  * 那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T, typename TArg >
-struct IsAssignable : BooleanRewrapPositive< Detail::TypeTraits::IsAssignable< T, TArg > > {};
+struct IsAssignable;
 
 /**
  * @brief IsAssignable 的否定
@@ -49,7 +32,7 @@ struct IsAssignable : BooleanRewrapPositive< Detail::TypeTraits::IsAssignable< T
  * @see IsAssignable
  */
 template< typename T, typename TArg >
-struct NotAssignable : BooleanRewrapNegative< Detail::TypeTraits::IsAssignable< T, TArg > > {};
+struct NotAssignable;
 
 #if defined(BR_CXX14)
 
@@ -74,5 +57,30 @@ template< typename T, typename TArg >
 constexpr auto not_assignable = bool_constant< NotAssignable< T, TArg > >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+struct IsAssignableTest {
+	template< typename T, typename TArg, typename = decltype(make_rvalue<T>() = make_rvalue<TArg>()) >
+	static auto test(int) -> BooleanTrue;
+
+	template< typename T, typename TArg >
+	static auto test(...) -> BooleanFalse;
+};
+
+template< typename T, typename TArg >
+using IsAssignable = decltype(IsAssignableTest::test< T, TArg >(0));
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T, typename TArg >
+struct IsAssignable : BooleanRewrapPositive< Detail::TypeTraits::IsAssignable< T, TArg > > {};
+
+template< typename T, typename TArg >
+struct NotAssignable : BooleanRewrapNegative< Detail::TypeTraits::IsAssignable< T, TArg > > {};
 
 } // namespace BR

@@ -29,6 +29,54 @@
 
 namespace BR {
 
+/**
+ * @brief 检查 \em T 是否重载了特定参数的构造函数
+ * @tparam T 待检查类型
+ * @tparam TArgs 构造函数参数类型
+ * @see IntegerConstant
+ * @see BR_IS_CONSTRUCTIBLE
+ * @see NotConstructible
+ *
+ * 如果表达式 <tt>T(BR::make_rvalue<TArgs>()...)</tt> 是合法的，那么封装的值为 \em true ；否则为 \em false
+ */
+template< typename T, typename... TArgs >
+struct IsConstructible;
+
+/**
+ * @brief IsConstructible 的否定
+ * @tparam T 待检查类型
+ * @tparam TArgs 构造函数参数类型
+ * @see IsConstructible
+ */
+template< typename T, typename... TArgs >
+struct NotConstructible;
+
+#if defined(BR_CXX14)
+
+/**
+ * @brief IsConstructible 的模板变量版本
+ * @tparam T 待检查类型
+ * @tparam TArgs 构造函数参数类型
+ * @see IsConstructible
+ * @see not_constructible
+ */
+template< typename T, typename... TArgs >
+constexpr auto is_constructible = bool_constant< IsConstructible< T, TArgs... > >
+
+/**
+ * @brief NotConstructible 的模板变量版本
+ * @tparam T 待检查类型
+ * @tparam TArgs 构造函数参数类型
+ * @see NotConstructible
+ * @see is_constructible
+ */
+template< typename T, typename... TArgs >
+constexpr auto not_constructible = bool_constant< NotConstructible< T, TArgs... > >;
+
+#endif // defined(BR_CXX14)
+
+
+
 namespace Detail {
 namespace TypeTraits {
 
@@ -47,8 +95,14 @@ struct IsConstructibleZeroTest {
 	static auto test(...) -> BooleanFalse;
 };
 
+template< typename T, bool = IsVoid<T>{}() >
+struct IsConstructibleZeroBasic;
+
 template< typename T >
-using IsConstructibleZeroBasic = BooleanAnd< NotVoid<T>, decltype(IsConstructibleZeroTest::test<T>(0))>;
+struct IsConstructibleZeroBasic< T, true > : public BooleanFalse {};
+
+template< typename T >
+struct IsConstructibleZeroBasic< T, false > : public decltype(IsConstructibleZeroTest::test<T>(0)) {};
 
 template< typename T >
 using IsConstructibleZero = Conditional<
@@ -141,50 +195,10 @@ struct IsConstructible : IsConstructibleMany< T, TArgs... > {
 } // namespace TypeTraits
 } // namespace Detail
 
-/**
- * @brief 检查 \em T 是否重载了特定参数的构造函数
- * @tparam T 待检查类型
- * @tparam TArgs 构造函数参数类型
- * @see IntegerConstant
- * @see BR_IS_CONSTRUCTIBLE
- * @see NotConstructible
- *
- * 如果表达式 <tt>T(BR::make_rvalue<TArgs>()...)</tt> 是合法的，那么封装的值为 \em true ；否则为 \em false
- */
 template< typename T, typename... TArgs >
 struct IsConstructible : BooleanRewrapPositive< Detail::TypeTraits::IsConstructible< T, TArgs... > > {};
 
-/**
- * @brief IsConstructible 的否定
- * @tparam T 待检查类型
- * @tparam TArgs 构造函数参数类型
- * @see IsConstructible
- */
 template< typename T, typename... TArgs >
 struct NotConstructible : BooleanRewrapNegative< Detail::TypeTraits::IsConstructible< T, TArgs... > > {};
-
-#if defined(BR_CXX14)
-
-/**
- * @brief IsConstructible 的模板变量版本
- * @tparam T 待检查类型
- * @tparam TArgs 构造函数参数类型
- * @see IsConstructible
- * @see not_constructible
- */
-template< typename T, typename... TArgs >
-constexpr auto is_constructible = bool_constant< IsConstructible< T, TArgs... > >
-
-/**
- * @brief NotConstructible 的模板变量版本
- * @tparam T 待检查类型
- * @tparam TArgs 构造函数参数类型
- * @see NotConstructible
- * @see is_constructible
- */
-template< typename T, typename... TArgs >
-constexpr auto not_constructible = bool_constant< NotConstructible< T, TArgs... > >;
-
-#endif // defined(BR_CXX14)
 
 } // namespace BR

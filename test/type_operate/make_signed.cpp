@@ -21,7 +21,7 @@ enum ES128 : SInt128 {};
 enum EU128 : UInt128 {};
 #endif
 
-TEST(TestTypeOperate, MakeSigned) {
+TEST(TypeOperate, MakeSigned) {
 	OPERATE_CHECK(signed char     , MakeSigned,          char     )
 	OPERATE_CHECK(signed char     , MakeSigned,   signed char     )
 	OPERATE_CHECK(signed char     , MakeSigned, unsigned char     )

@@ -4,7 +4,7 @@
 
 using namespace BR;
 
-TEST(TestTypeOperate, Decay) {
+TEST(TypeOperate, Decay) {
 	OPERATE_CHECKS(Decay, BR_EMPTY, BR_EMPTY)
 	OPERATE_CHECKS(Decay, [2], *)
 	OPERATE_CHECKS(Decay, const [2], const *)

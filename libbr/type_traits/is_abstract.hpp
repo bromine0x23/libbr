@@ -58,6 +58,8 @@ constexpr auto not_abstract = bool_constant< NotAbstract<T> >;
 
 #endif // defined(BR_CXX14)
 
+
+
 namespace Detail {
 namespace TypeTraits {
 

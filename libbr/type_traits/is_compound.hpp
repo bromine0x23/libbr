@@ -12,15 +12,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-using IsCompound = BooleanNot< IsFundamental<T> >;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否是复合类型
  * @tparam T 待检查类型
@@ -32,7 +23,7 @@ using IsCompound = BooleanNot< IsFundamental<T> >;
  * 那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsCompound : BooleanRewrapPositive< Detail::TypeTraits::IsCompound<T> > {};
+struct IsCompound;
 
 /**
  * @brief IsCompound 的否定
@@ -40,7 +31,7 @@ struct IsCompound : BooleanRewrapPositive< Detail::TypeTraits::IsCompound<T> > {
  * @see IsCompound
  */
 template< typename T >
-struct NotCompound : BooleanRewrapNegative< Detail::TypeTraits::IsCompound<T> > {};
+struct NotCompound;
 
 #if defined(BR_CXX14)
 
@@ -63,6 +54,23 @@ template< typename T >
 constexpr auto not_compound = bool_constant< NotCompound<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+using IsCompound = BooleanNot< IsFundamental<T> >;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsCompound : BooleanRewrapPositive< Detail::TypeTraits::IsCompound<T> > {};
+
+template< typename T >
+struct NotCompound : BooleanRewrapNegative< Detail::TypeTraits::IsCompound<T> > {};
 
 } // namespace BR
 

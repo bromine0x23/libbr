@@ -5,7 +5,7 @@
 
 using namespace BR;
 
-TEST(TestTypeOperate, Conditional) {
+TEST(TypeOperate, Conditional) {
 	OPERATE_CHECK(int, ConditionalByValue, true, int, double)
 	OPERATE_CHECK(double, ConditionalByValue, false, int, double)
 	OPERATE_CHECK(int, Conditional, BooleanTrue, int, double)

@@ -9,54 +9,18 @@
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/type_traits/intrinsics.hpp>
-#if !defined(BR_HAS_DESTRUCTOR)
+#ifndef BR_HAS_DESTRUCTOR
 #  include <libbr/type_operate/bool.hpp>
 #  include <libbr/type_operate/remove_all_extents.hpp>
 #  include <libbr/type_traits/is_array.hpp>
 #  include <libbr/type_traits/is_function.hpp>
 #  include <libbr/type_traits/is_reference.hpp>
+#  include <libbr/type_traits/is_scalar.hpp>
 #  include <libbr/type_traits/is_void.hpp>
 #  include <libbr/utility/make_value.hpp>
 #endif
 
 namespace BR {
-
-namespace Detail {
-namespace TypeTraits {
-
-#if defined(BR_HAS_DESTRUCTOR)
-
-template< typename T >
-using HasDestructor = BooleanConstant< BR_HAS_DESTRUCTOR(T) >;
-
-#else
-
-struct HasDestructorTest {
-	template< typename T, typename = decltype(make_reference<T>().~T()) >
-	static auto test(int) -> BooleanTrue;
-
-	template< typename T >
-	static auto test(...) -> BooleanFalse;
-};
-
-template< typename T >
-using HasDestructorBasic = decltype(HasDestructorTest::test<T>(0));
-
-template< typename T >
-using HasDestructor = BooleanAnd<
-	NotArrayUnknownBounds<T>,
-	NotFunction<T>,
-	NotVoid<T>,
-	BooleanOr<
-		IsReference<T>,
-		HasDestructorBasic< RemoveAllExtents<T> >
-	>
->;
-
-#endif
-
-} // namespace TypeTraits
-} // namespace Detail
 
 /**
  * @brief 检查 \em T 具有析构函数
@@ -68,7 +32,7 @@ using HasDestructor = BooleanAnd<
  * 如果 \em T 具有析构函数，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct HasDestructor : BooleanRewrapPositive< Detail::TypeTraits::HasDestructor<T> > {};
+struct HasDestructor;
 
 /**
  * @brief HasDestructor 的否定
@@ -76,7 +40,7 @@ struct HasDestructor : BooleanRewrapPositive< Detail::TypeTraits::HasDestructor<
  * @see BR::HasDestructor
  */
 template< typename T >
-struct NoDestructor : BooleanRewrapNegative< Detail::TypeTraits::HasDestructor<T> > {};
+struct NoDestructor;
 
 #if defined(BR_CXX14)
 
@@ -99,5 +63,49 @@ template< typename T >
 constexpr auto no_destructor = bool_constant< NoDestructor<T> >;
 
 #endif // defined(BR_CXX14)
+
+namespace Detail {
+namespace TypeTraits {
+
+#ifdef BR_HAS_DESTRUCTOR
+
+template< typename T >
+using HasDestructor = BooleanConstant< BR_HAS_DESTRUCTOR(T) >;
+
+#else
+
+struct HasDestructorTest {
+	template< typename T, typename = decltype(make_reference<T>().~T()) >
+	static auto test(T *) -> BooleanTrue;
+
+	template< typename T >
+	static auto test(...) -> BooleanFalse;
+};
+
+template< typename T >
+using HasDestructorBasic = decltype(HasDestructorTest::test<T>(nullptr));
+
+template< typename T >
+using HasDestructor = BooleanAnd<
+	NotVoid<T>,
+	NotArrayUnknownBounds<T>,
+	NotFunction<T>,
+	BooleanOr<
+		IsReference<T>,
+		IsScalar<T>,
+		HasDestructorBasic< RemoveAllExtents<T> >
+	>
+>;
+
+#endif
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct HasDestructor : BooleanRewrapPositive< Detail::TypeTraits::HasDestructor<T> > {};
+
+template< typename T >
+struct NoDestructor : BooleanRewrapNegative< Detail::TypeTraits::HasDestructor<T> > {};
 
 } // namespace BR

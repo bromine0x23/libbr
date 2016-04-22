@@ -18,7 +18,8 @@ struct C1C2 {
 };
 
 using namespace BR;
-TEST(TestTypeOperate, Common) {
+
+TEST(TypeOperate, Common) {
 	OPERATE_CHECKS(Common, BR_EMPTY, BR_EMPTY)
 
 	OPERATE_CHECK(C1C2, Common, C1, C1C2)

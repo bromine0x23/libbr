@@ -4,7 +4,7 @@
 
 using namespace BR;
 
-TEST(TestTypeOperate, AddVolatile) {
+TEST(TypeOperate, AddVolatile) {
 	OPERATE_CHECKS(AddVolatile, BR_EMPTY, volatile)
 	OPERATE_CHECKS(AddVolatile, const, const volatile)
 	OPERATE_CHECKS(AddVolatile, volatile, volatile)

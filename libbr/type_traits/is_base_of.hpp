@@ -19,6 +19,55 @@
 
 namespace BR {
 
+/**
+ * @brief 检查 \em TDerived 是否是 \em TBase 的基类(不考虑CV修饰符)
+ * @tparam TBase 待检查类型，作为基类
+ * @tparam TDerived 待检查类型，作为派生类
+ * @see BR::IntegerConstant
+ * @see BR_IS_BASE_OF
+ * @see BR::NotAssignable
+ *
+ * 如果 \em TDerived 是否是 \em TBase 或派生自 \em TBase ，
+ * 那么封装的值为 \em true ；否则为 \em false
+ */
+template< typename TBase, typename TDerived >
+struct IsBaseOf;
+
+/**
+ * @brief IsBaseOf 的否定
+ * @tparam TBase 待检查类型，作为基类
+ * @tparam TDerived 待检查类型，作为派生类
+ * @see BR::IsBaseOf
+ */
+template< typename TBase, typename TDerived >
+struct NotBaseOf;
+
+#if defined(BR_CXX14)
+
+/**
+ * @brief IsBaseOf 的模板变量版本
+ * @tparam TBase 待检查类型，作为基类
+ * @tparam TDerived 待检查类型，作为派生类
+ * @see BR::IsBaseOf
+ * @see BR::not_base_of
+ */
+template< typename TBase, typename TDerived >
+constexpr auto is_base_of = bool_constant< IsBaseOf< TBase, TDerived > >;
+
+/**
+ * @brief NotBaseOf 的模板变量版本
+ * @tparam TBase 待检查类型，作为基类
+ * @tparam TDerived 待检查类型，作为派生类
+ * @see BR::NotBaseOf
+ * @see BR::is_base_of
+ */
+template< typename TBase, typename TDerived >
+constexpr auto not_base_of = bool_constant< NotBaseOf< TBase, TDerived > >;
+
+#endif // defined(BR_CXX14)
+
+
+
 namespace Detail {
 namespace TypeTraits {
 
@@ -65,52 +114,11 @@ using IsBaseOf = BooleanAnd<
 } // namespace TypeTraits
 } // namespace Detail
 
-/**
- * @brief 检查 \em TDerived 是否是 \em TBase 的基类(不考虑CV修饰符)
- * @tparam TBase 待检查类型，作为基类
- * @tparam TDerived 待检查类型，作为派生类
- * @see BR::IntegerConstant
- * @see BR_IS_BASE_OF
- * @see BR::NotAssignable
- *
- * 如果 \em TDerived 是否是 \em TBase 或派生自 \em TBase ，
- * 那么封装的值为 \em true ；否则为 \em false
- */
 template< typename TBase, typename TDerived >
 struct IsBaseOf : BooleanRewrapPositive< Detail::TypeTraits::IsBaseOf< TBase, TDerived > > {};
 
-/**
- * @brief IsBaseOf 的否定
- * @tparam TBase 待检查类型，作为基类
- * @tparam TDerived 待检查类型，作为派生类
- * @see BR::IsBaseOf
- */
 template< typename TBase, typename TDerived >
 struct NotBaseOf : BooleanRewrapNegative< Detail::TypeTraits::IsBaseOf< TBase, TDerived > > {};
-
-#if defined(BR_CXX14)
-
-/**
- * @brief IsBaseOf 的模板变量版本
- * @tparam TBase 待检查类型，作为基类
- * @tparam TDerived 待检查类型，作为派生类
- * @see BR::IsBaseOf
- * @see BR::not_base_of
- */
-template< typename TBase, typename TDerived >
-constexpr auto is_base_of = bool_constant< IsBaseOf< TBase, TDerived > >;
-
-/**
- * @brief NotBaseOf 的模板变量版本
- * @tparam TBase 待检查类型，作为基类
- * @tparam TDerived 待检查类型，作为派生类
- * @see BR::NotBaseOf
- * @see BR::is_base_of
- */
-template< typename TBase, typename TDerived >
-constexpr auto not_base_of = bool_constant< NotBaseOf< TBase, TDerived > >;
-
-#endif // defined(BR_CXX14)
 
 } // namespace BR
 

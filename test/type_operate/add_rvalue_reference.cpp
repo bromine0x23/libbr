@@ -4,7 +4,7 @@
 
 using namespace BR;
 
-TEST(TestTypeOperate, AddRValueReference) {
+TEST(TypeOperate, AddRValueReference) {
 	OPERATE_CHECKS(AddRValueReference, BR_EMPTY, &&)
 	OPERATE_CHECKS(AddRValueReference, const, const &&)
 	OPERATE_CHECKS(AddRValueReference, volatile, volatile &&)
