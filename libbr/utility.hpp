@@ -11,7 +11,6 @@
 #include <libbr/utility/bit_math.hpp>
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/utility/demangle.hpp>
-#include <libbr/utility/enumerator.hpp>
 #include <libbr/utility/exchange.hpp>
 #include <libbr/utility/forward.hpp>
 #include <libbr/utility/integral_constant.hpp>

@@ -12,6 +12,7 @@
 #include <libbr/assert/assert.hpp>
 #include <libbr/container/initializer_list.hpp>
 #include <libbr/container/tuple.hpp>
+#include <libbr/enumerate/enumerable.hpp>
 #include <libbr/iterator/basic_iterator.hpp>
 #include <libbr/iterator/category.hpp>
 #include <libbr/iterator/distance.hpp>
@@ -252,11 +253,12 @@ private:
 
 template< typename TElement, typename TAllocator >
 class Base {
-protected:
+public:
 	using Element = TElement;
 
 	using Allocator = TAllocator;
 
+protected:
 	using AllocatorTraits = BR::AllocatorTraits<Allocator>;
 
 	using VoidPointer = typename AllocatorTraits::VoidPointer;
@@ -281,6 +283,7 @@ protected:
 
 	using HeadNodePointerTraits = PointerTraits<HeadNodePointer>;
 
+public:
 	using Reference = Element &;
 
 	using ConstReference = Element const &;
@@ -328,7 +331,7 @@ protected:
 		return static_cast<NodeConstPointer>(HeadNodePointerTraits::make_pointer(const_cast<HeadNode &>(m_impl.template get<HeadNode>())));
 	}
 
-	bool m_is_empty() const noexcept {
+	bool m_empty() const noexcept {
 		return m_size() == 0;
 	}
 
@@ -428,7 +431,7 @@ protected:
 
 template< typename TElement, typename TAllocator >
 void Base< TElement, TAllocator >::m_clear() noexcept {
-	if (!m_is_empty()) {
+	if (!m_empty()) {
 		auto & allocator = m_allocator();
 		auto f = m_begin(), l = m_end();
 		m_unlink_nodes(f, l->prev);
@@ -489,7 +492,12 @@ void Base< TElement, TAllocator >::m_swap(Base & list) noexcept(
  * @tparam TAllocator 分配器类型
  */
 template< typename TElement, typename TAllocator >
-class List : private Detail::Container::List::Base< TElement, TAllocator > {
+class List : private Detail::Container::List::Base< TElement, TAllocator >,
+	public Enumerable<
+		List<TElement, TAllocator>,
+		typename Detail::Container::List::Base< TElement, TAllocator >::Iterator,
+		typename Detail::Container::List::Base< TElement, TAllocator >::ConstIterator
+	> {
 public:
 	/**
 	 * @brief 元素类型
@@ -806,8 +814,8 @@ public:
 	/**
 	 * @brief is empty
 	 */
-	auto is_empty() const noexcept -> bool {
-		return this->m_is_empty();
+	auto empty() const noexcept -> bool {
+		return this->m_empty();
 	}
 
 	/**
@@ -1223,7 +1231,7 @@ auto List< TElement, TAllocator >::insert(ConstIterator p, TIterator f, TIterato
 
 template< typename TElement, typename TAllocator >
 auto List< TElement, TAllocator >::erase_front() -> List & {
-	BR_ASSERT(!is_empty());
+	BR_ASSERT(!empty());
 	auto & allocator = this->m_allocator();
 	auto n = this->m_head()->next;
 	this->m_unlink_nodes(n, n);
@@ -1264,7 +1272,7 @@ auto List< TElement, TAllocator >::erase(ConstIterator f, ConstIterator l) -> It
 
 template< typename TElement, typename TAllocator >
 auto List< TElement, TAllocator >::erase_back() -> List & {
-	BR_ASSERT(!is_empty());
+	BR_ASSERT(!empty());
 	auto & allocator = this->m_allocator();
 	auto n = this->m_head()->prev;
 	this->m_unlink_nodes(n, n);
@@ -1396,7 +1404,7 @@ auto List< TElement, TAllocator >::resize(Size n, Element const & x) -> List & {
 
 template< typename TElement, typename TAllocator >
 auto List< TElement, TAllocator >::splice(ConstIterator p, List & other) -> List & {
-	if (!other.is_empty()) {
+	if (!other.empty()) {
 		auto f = other.m_head()->next;
 		auto l = other.m_head()->prev;
 		this->m_unlink_nodes(f, l);

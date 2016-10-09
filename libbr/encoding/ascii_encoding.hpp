@@ -7,7 +7,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/string/invalid_code_point_exception.hpp>
+#include <libbr/encoding/invalid_code_point_exception.hpp>
 
 namespace BR {
 

@@ -1,5 +1,5 @@
 #include <libbr/encoding/utf8_encoding.hpp>
-#include <libbr/string/invalid_code_point_exception.hpp>
+#include <libbr/encoding/invalid_code_point_exception.hpp>
 #include <libbr/type_operate/make_unsigned.hpp>
 
 namespace BR {

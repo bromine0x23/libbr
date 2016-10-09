@@ -15,18 +15,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-using IsIterator = BooleanOr<
-	IsPointer<T>,
-	IsBaseOf< BasicIterator, T >
->;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否是迭代器
  * @tparam T 待检查类型
@@ -39,8 +27,7 @@ using IsIterator = BooleanOr<
  * 那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsIterator : BooleanRewrapPositive< Detail::TypeTraits::IsIterator<T> > {
-};
+struct IsIterator;
 
 /**
  * @brief IsIterator 的否定
@@ -48,8 +35,7 @@ struct IsIterator : BooleanRewrapPositive< Detail::TypeTraits::IsIterator<T> > {
  * @see BR::IsIterator
  */
 template< typename T >
-struct NotIterator : BooleanRewrapNegative< Detail::TypeTraits::IsIterator<T> > {
-};
+struct NotIterator;
 
 #if defined(BR_CXX14)
 
@@ -72,5 +58,25 @@ template< typename T >
 constexpr auto not_iterator = bool_constant< NotIterator<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+using IsIterator = BooleanOr<
+	IsPointer<T>,
+	IsBaseOf< BasicIterator, T >
+>;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsIterator : BooleanRewrapPositive< Detail::TypeTraits::IsIterator<T> > {};
+
+template< typename T >
+struct NotIterator : BooleanRewrapNegative< Detail::TypeTraits::IsIterator<T> > {};
 
 } // namespace BR

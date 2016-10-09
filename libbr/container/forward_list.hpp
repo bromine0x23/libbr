@@ -11,6 +11,7 @@
 #include <libbr/algorithm/lexicographical_compare.hpp>
 #include <libbr/container/initializer_list.hpp>
 #include <libbr/container/tuple.hpp>
+#include <libbr/enumerate/enumerable.hpp>
 #include <libbr/functional/equal.hpp>
 #include <libbr/functional/less.hpp>
 #include <libbr/iterator/basic_iterator.hpp>
@@ -223,11 +224,12 @@ private:
 
 template< typename TElement, typename TAllocator >
 class Base {
-protected:
+public:
 	using Element = TElement;
 
 	using Allocator = TAllocator;
 
+protected:
 	using AllocatorTraits = BR::AllocatorTraits<Allocator>;
 
 	using VoidPointer = typename AllocatorTraits::VoidPointer;
@@ -252,6 +254,7 @@ protected:
 
 	using HeadNodePointerTraits = PointerTraits<HeadNodePointer>;
 
+public:
 	using Reference = Element &;
 
 	using ConstReference = Element const &;
@@ -398,7 +401,12 @@ void Base< TElement, TAllocator >::m_clear() noexcept {
  * @tparam TAllocator 分配器类型
  */
 template< typename TElement, typename TAllocator >
-class ForwardList : private Detail::Container::ForwardList::Base< TElement, TAllocator > {
+class ForwardList : private Detail::Container::ForwardList::Base< TElement, TAllocator >,
+	public Enumerable<
+		ForwardList<TElement, TAllocator>,
+		typename Detail::Container::ForwardList::Base< TElement, TAllocator >::Iterator,
+		typename Detail::Container::ForwardList::Base< TElement, TAllocator >::ConstIterator
+	> {
 
 public:
 	/**
@@ -662,7 +670,7 @@ public:
 	/**
 	 * @brief is empty
 	 */
-	auto is_empty() const noexcept -> bool {
+	auto empty() const noexcept -> bool {
 		return this->m_head()->next == nullptr;
 	}
 
@@ -1162,7 +1170,7 @@ auto ForwardList< TElement, TAllocator >::resize(Size n, Element const & x) -> F
 
 template< typename TElement, typename TAllocator >
 void ForwardList< TElement, TAllocator >::splice_after(ConstIterator p, ForwardList & other) {
-	if (!other.is_empty()) {
+	if (!other.empty()) {
 		if (p.m_pointer->next != nullptr) {
 			auto i = other.chead();
 			for (; i.m_pointer->next != nullptr; ++i) {}

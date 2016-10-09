@@ -127,7 +127,6 @@ TEST(String, Back) {
 
 TEST(String, Size) {
 	auto test = [](S s, S::Size expected_length) {
-		printf("%llu %llu\n", s.size(), s.length());
 		EXPECT_EQ(expected_length, s.length());
 	};
 	test(U8S(), 0);

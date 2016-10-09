@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief 分配器特性类
+ * @author Bromine0x23
+ * @since 2016/10/9
+ */
 #pragma once
 
 #include <libbr/config.hpp>
@@ -19,6 +25,10 @@
 
 namespace BR {
 
+/**
+ * 分配器特性类
+ * @tparam TAllocator 分配器类型
+ */
 template< typename TAllocator >
 struct AllocatorTraits;
 

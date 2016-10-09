@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief 指针类型信息
+ * @brief 指针特性类
  * @author Bromine0x23
  * @since 2015/11/17
  */

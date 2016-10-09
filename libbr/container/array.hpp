@@ -11,11 +11,12 @@
 #include <libbr/algorithm/fill_n.hpp>
 #include <libbr/algorithm/lexicographical_compare.hpp>
 #include <libbr/container/detail/tuple_forward.hpp>
-#include <libbr/iterator/reverse_iterator.hpp>
+#include <libbr/enumerate/enumerator.hpp>
+#include <libbr/enumerate/enumerable.hpp>
 #include <libbr/exception/throw.hpp>
+#include <libbr/iterator/reverse_iterator.hpp>
 #include <libbr/type_operate/remove_const_volatile.hpp>
 #include <libbr/type_traits/is_nothrow_swappable.hpp>
-#include <libbr/utility/enumerator.hpp>
 #include <libbr/utility/integral_constant.hpp>
 #include <libbr/utility/move.hpp>
 #include <libbr/utility/swap.hpp>
@@ -68,7 +69,11 @@ void swap(Array< T, N > & x, Array< T, N > & y) noexcept(noexcept(x.swap(y))) {
 }
 
 template< typename TElement, Size N >
-class Array {
+class Array : public Enumerable<
+	Array< TElement, N >,
+	TElement *,
+	TElement const *
+> {
 public:
 	using Element = TElement;
 
@@ -94,7 +99,7 @@ public:
 
 public:
 	template< typename TFunctor >
-	static auto build(TFunctor && functor) -> Array {
+	static auto build(TFunctor functor) -> Array {
 		Array array;
 		for (Size i = 0; i < N; ++i) {
 			auto t = i;

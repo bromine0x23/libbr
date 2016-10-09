@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief 迭代器类型信息
+ * @brief 迭代器特性类
  * @author Bromine0x23
  * @since 2015/10/22
  */
@@ -18,74 +18,108 @@
 
 namespace BR {
 
-template< typename T >
+/**
+ * 迭代器特性类
+ * @tparam TIterator 分配器类型
+ */
+template< typename TIterator >
 struct IteratorTraits;
+
+
 
 namespace Detail {
 namespace TypeTraits {
 namespace IteratorTraits {
 
+////////////////////////////////
+//
+// IteratorTraits::Category
+//
 #define BR_TYPE_OPERATE_TYPE_NAME Category
 #include <libbr/type_traits/has_member_type.inc>
 
+template< typename TIterator, bool = HasMemberTypeCategory<TIterator>{} >
+struct TypeCategory;
+
+template< typename TIterator >
+struct TypeCategory< TIterator, true > : TypeWrapper< typename TIterator::Category > {};
+
+template< typename TIterator >
+struct TypeCategory< TIterator, false > : TypeWrapper< IteratorTag > {};
+
+template< typename TIterator >
+using Category = typename TIterator::Category;
+
+////////////////////////////////
+//
+// IteratorTraits::Element
+//
 #define BR_TYPE_OPERATE_TYPE_NAME Element
 #include <libbr/type_traits/has_member_type.inc>
 
-template< typename TIterator, bool _dummy = HasMemberTypeElement<TIterator>::value >
+template< typename TIterator, bool = HasMemberTypeElement<TIterator>{} >
 struct TypeElement;
 
 template< typename TIterator >
-struct TypeElement< TIterator, true > : TypeWrapper< typename TIterator::Element > {
-};
+struct TypeElement< TIterator, true > : TypeWrapper< typename TIterator::Element > {};
 
 template< typename TIterator >
-struct TypeElement< TIterator, false > : FirstTemplateArgument<TIterator> {
-};
+struct TypeElement< TIterator, false > : TypeFirstTemplateArgument<TIterator> {};
 
 template< typename TIterator >
 using Element = TypeUnwrap< TypeElement<TIterator> >;
 
+////////////////////////////////
+//
+// IteratorTraits::Pointer
+//
 #define BR_TYPE_OPERATE_TYPE_NAME Pointer
 #include <libbr/type_traits/has_member_type.inc>
 
-template< typename TIterator, bool _dummy = HasMemberTypePointer<TIterator>::value >
+template< typename TIterator, bool = HasMemberTypePointer<TIterator>{} >
 struct TypePointer;
 
 template< typename TIterator >
-struct TypePointer< TIterator, true > : TypeWrapper< typename TIterator::Pointer > {
-};
+struct TypePointer< TIterator, true > : TypeWrapper< typename TIterator::Pointer > {};
 
 template< typename TIterator >
-struct TypePointer< TIterator, false > : TypeAddPointer< Element<TIterator> > {
-};
+struct TypePointer< TIterator, false > : TypeAddPointer< Element<TIterator> > {};
 
+////////////////////////////////
+//
+// IteratorTraits::Reference
+//
 #define BR_TYPE_OPERATE_TYPE_NAME Reference
 #include <libbr/type_traits/has_member_type.inc>
 
-template< typename TIterator, bool _dummy = HasMemberTypeReference<TIterator>::value >
+template< typename TIterator, bool = HasMemberTypeReference<TIterator>{} >
 struct TypeReference;
 
 template< typename TIterator >
-struct TypeReference< TIterator, true > : TypeWrapper< typename TIterator::Reference > {
-};
+struct TypeReference< TIterator, true > : TypeWrapper< typename TIterator::Reference > {};
 
 template< typename TIterator >
-struct TypeReference< TIterator, false > : TypeAddLValueReference< Element<TIterator> > {
-};
+struct TypeReference< TIterator, false > : TypeAddLValueReference< Element<TIterator> > {};
 
+////////////////////////////////
+//
+// IteratorTraits::Difference
+//
 #define BR_TYPE_OPERATE_TYPE_NAME Difference
 #include <libbr/type_traits/has_member_type.inc>
 
-template< typename TIterator, bool _dummy = HasMemberTypeDifference<TIterator>::value >
+template< typename TIterator, bool = HasMemberTypeDifference<TIterator>{} >
 struct TypeDifference;
 
 template< typename TIterator >
 struct TypeDifference< TIterator, true > : TypeWrapper< typename TIterator::Difference > {};
 
 template< typename TIterator >
-struct TypeDifference< TIterator, false > : TypeWrapper<::BR::PointerDifference> {};
+struct TypeDifference< TIterator, false > : TypeWrapper<BR::PointerDifference> {};
 
-template< typename TIterator, bool _dummy = IsConvertible< typename TIterator::Category, IteratorTag >::value >
+
+
+template< typename TIterator, bool = IsConvertible< typename TIterator::Category, IteratorTag >{} >
 struct Base;
 
 template< typename TIterator >
@@ -95,7 +129,7 @@ public:
 
 	using Category = typename Iterator::Category;
 
-	static_assert(IsEmpty<Category>::value, "`Category` should be an empty type.");
+	static_assert(IsEmpty<Category>{}, "`Category` should be an empty type.");
 
 	using Element = IteratorTraits::Element<Iterator>;
 
@@ -114,7 +148,7 @@ template< typename TIterator >
 struct Base< TIterator, false > {
 };
 
-template< typename TIterator, bool _dummy = HasMemberTypeCategory<TIterator>::value >
+template< typename TIterator, bool = HasMemberTypeCategory<TIterator>{} >
 struct Implement;
 
 template< typename TIterator >
@@ -129,13 +163,8 @@ struct Implement< TIterator, false > {
 } // namespace TypeTraits
 } // namespace Detail
 
-/**
- * @brief 迭代器类型信息
- * @tparam T 迭代器类型
- */
 template< typename TIterator >
-struct IteratorTraits : Detail::TypeTraits::IteratorTraits::Implement<TIterator> {
-};
+struct IteratorTraits : Detail::TypeTraits::IteratorTraits::Implement<TIterator> {};
 
 template< typename TElement >
 struct IteratorTraits< TElement * > {

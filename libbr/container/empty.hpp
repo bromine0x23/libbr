@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief is_empty
+ * @brief empty
  * @author Bromine0x23
  * @since 2015/10/26
  */

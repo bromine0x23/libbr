@@ -1,7 +1,14 @@
+/**
+ * @file
+ * @brief 指针特性类
+ * @author Bromine0x23
+ * @since 2016/10/9
+ */
 #pragma once
 
 #include <libbr/config.hpp>
 #include <libbr/memory/address_of.hpp>
+#include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/conditional.hpp>
 #include <libbr/type_operate/enable_if.hpp>
 #include <libbr/type_operate/replace_template_argument.hpp>
@@ -11,17 +18,27 @@
 
 namespace BR {
 
+/**
+ * 指针特性类
+ * @tparam TPointer 指针类型
+ */
 template< typename TPointer >
 struct PointerTraits;
 
+
+
 namespace Detail {
 namespace TypeTraits {
-namespace PointerTraitsHelper {
+namespace PointerTraits {
 
+////////////////////////////////
+//
+// PointerTraits::Element
+//
 #define BR_TYPE_OPERATE_TYPE_NAME Element
 #include <libbr/type_traits/has_member_type.inc>
 
-template< typename TPointer, bool = HasMemberTypeElement<TPointer>::value >
+template< typename TPointer, bool = HasMemberTypeElement<TPointer>{} >
 struct TypeElement;
 
 template< typename TPointer >
@@ -30,10 +47,17 @@ struct TypeElement< TPointer, true > : TypeWrapper< typename TPointer::Element >
 template< typename TPointer >
 struct TypeElement< TPointer, false > : TypeFirstTemplateArgument<TPointer> {};
 
+template< typename TPointer >
+using Element = TypeUnwrap< TypeElement<TPointer> >;
+
+////////////////////////////////
+//
+// PointerTraits::Difference
+//
 #define BR_TYPE_OPERATE_TYPE_NAME Difference
 #include <libbr/type_traits/has_member_type.inc>
 
-template< typename TPointer, bool = HasMemberTypeDifference<TPointer>::value >
+template< typename TPointer, bool = HasMemberTypeDifference<TPointer>{} >
 struct TypeDifference;
 
 template< typename TPointer >
@@ -42,10 +66,17 @@ struct TypeDifference< TPointer, true > : TypeWrapper< typename TPointer::Differ
 template< typename TPointer >
 struct TypeDifference< TPointer, false > : TypeWrapper<BR::PointerDifference> {};
 
+template< typename TPointer >
+using Difference = TypeUnwrap< TypeDifference<TPointer> >;
+
+////////////////////////////////
+//
+// PointerTraits::Rebind
+//
 #define BR_TYPE_OPERATE_TYPE_NAME Rebind
 #include <libbr/type_traits/has_member_type.inc>
 
-template< typename TPointer, typename TElement, bool = HasMemberTypeRebind<TPointer>::value >
+template< typename TPointer, typename TElement, bool = HasMemberTypeRebind<TPointer>{} >
 struct TypeRebind;
 
 template< typename TPointer, typename TElement >
@@ -54,14 +85,13 @@ struct TypeRebind< TPointer, TElement, true > : TypeWrapper< typename TPointer::
 template< typename TPointer, typename TElement >
 struct TypeRebind< TPointer, TElement, false > : TypeReplaceFirstTemplateArgument< TPointer, TElement > {};
 
-} // namespace PointerTraitsHelper
+template< typename TPointer, typename TElement >
+using Rebind = TypeUnwrap< TypeRebind< TPointer, TElement > >;
+
+} // namespace PointerTraits
 } // namespace TypeTraits
 } // namespace Detail
 
-/**
- * @brief 指针特性类
- * @tparam TPointer 指针类型
- */
 template< typename TPointer >
 struct PointerTraits {
 private:
@@ -80,7 +110,7 @@ public:
 	 * 如果 <tt>Pointer::Element</tt> 存在则为该类型；
 	 * 否则，如果 \em Pointer 是一个模板实例 <tt>Template< T, TArgs... ></tt>，则为类型 \em T
 	 */
-	using Element = TypeUnwrap< Detail::TypeTraits::PointerTraitsHelper::TypeElement<Pointer> >;
+	using Element = Detail::TypeTraits::PointerTraits::Element<Pointer>;
 
 	/**
 	 * @brief 两指针求差的结果类型
@@ -89,7 +119,7 @@ public:
 	 * 如果 <tt>Pointer::Difference</tt> 存在则为该类型；
 	 * 否则，为 PointerDifference
 	 */
-	using Difference = TypeUnwrap< Detail::TypeTraits::PointerTraitsHelper::TypeDifference<Pointer> >;
+	using Difference = Detail::TypeTraits::PointerTraits::Difference<Pointer>;
 
 	/**
 	 * @brief 绑定到新的元素类型
@@ -99,7 +129,7 @@ public:
 	 * 否则，如果 \em Pointer 是一个模板实例 <tt>Template< T, TArgs... ></tt>，则为类型 <tt>Template< TNewElement, TArgs... ></tt>
 	 */
 	template< typename TOtherElement >
-	using Rebind = TypeUnwrap< Detail::TypeTraits::PointerTraitsHelper::TypeRebind< Pointer, TOtherElement > >;
+	using Rebind = Detail::TypeTraits::PointerTraits::Rebind< Pointer, TOtherElement >;
 
 	/**
 	 * @brief 包装引用为指针
