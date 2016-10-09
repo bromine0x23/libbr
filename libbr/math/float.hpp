@@ -240,20 +240,26 @@ auto round(Float64 f) -> Float64;
 namespace Detail {
 namespace Math {
 
+template< typename TFrom, typename TTo >
+union Converter {
+	TFrom f;
+	TTo t;
+};
+
 constexpr auto to_raw(Float32 f) -> SInt32 {
-	return *reinterpret_cast<SInt32 *>(&f);
+	return Converter< Float32, SInt32 >{f}.t;
 }
 
 constexpr auto to_raw(Float64 f) -> SInt64 {
-	return *reinterpret_cast<SInt64 *>(&f);
+	return Converter< Float64, SInt64 >{f}.t;
 }
 
-constexpr auto to_float32(SInt32 u) -> Float32 {
-	return *reinterpret_cast<Float32 *>(&u);
+constexpr auto to_float32(SInt32 f) -> Float32 {
+	return Converter< SInt32, Float32 >{f}.t;
 }
 
-constexpr auto to_float64(SInt64 u) -> Float64 {
-	return *reinterpret_cast<Float64 *>(&u);
+constexpr auto to_float64(SInt64 f) -> Float64 {
+	return Converter< SInt64, Float64 >{f}.t;
 }
 
 constexpr auto get_high_part(Float64 f) -> SInt32 {
@@ -379,7 +385,7 @@ constexpr auto is_infinite(Float32 f) -> bool {
 }
 
 constexpr auto is_infinite(Float64 f) -> bool {
-	return (Detail::Math::get_low_part(f) | (Detail::Math::get_high_part(f) & 0x7FFFFFFFU) ^ 0x7FF00000U) == 0;
+	return (Detail::Math::get_low_part(f) | ((Detail::Math::get_high_part(f) & 0x7FFFFFFFU) ^ 0x7FF00000U)) == 0;
 }
 
 constexpr auto is_nan(Float32 f) -> bool {

@@ -10,6 +10,7 @@
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/functional/invoke.hpp>
 #include <libbr/type_operate/bool.hpp>
+#include <libbr/type_traits/is_void.hpp>
 #include <libbr/utility/make_value.hpp>
 #include <libbr/utility/forward.hpp>
 
@@ -67,7 +68,10 @@ struct IsCallableTest {
 };
 
 template< typename TCallable, typename... TArgs >
-using IsCallable = decltype(IsCallableTest::test(make_rvalue<TCallable>(), make_rvalue<TArgs>() ...));
+struct IsCallableBasic : public decltype(IsCallableTest::test(make_rvalue<TCallable>(), make_rvalue<TArgs>() ...)) {};
+
+template< typename TCallable, typename... TArgs >
+using IsCallable = BooleanAnd< NotVoid<TCallable>, IsCallableBasic< TCallable, TArgs... > >;
 
 } // namespace TypeTraits
 } // namespace Detail

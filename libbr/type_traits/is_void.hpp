@@ -12,23 +12,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-using BR::RemoveConstVolatile;
-
-template< typename T >
-struct IsVoidBasic : BooleanFalse {};
-
-template<>
-struct IsVoidBasic< void > : BooleanTrue {};
-
-template< typename T >
-using IsVoid = IsVoidBasic< RemoveConstVolatile<T> >;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否是 \em void 类型
  * @tparam T 待检查类型
@@ -38,7 +21,7 @@ using IsVoid = IsVoidBasic< RemoveConstVolatile<T> >;
  * 如果 \em T 是 \em void 类型(包括带CV修饰的版本)，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsVoid : BooleanRewrapPositive< Detail::TypeTraits::IsVoid<T> > {};
+struct IsVoid;
 
 /**
  * @brief IsVoid 的否定
@@ -46,7 +29,7 @@ struct IsVoid : BooleanRewrapPositive< Detail::TypeTraits::IsVoid<T> > {};
  * @see IsVoid
  */
 template< typename T >
-struct NotVoid : BooleanRewrapNegative< Detail::TypeTraits::IsVoid<T> > {};
+struct NotVoid;
 
 #if defined(BR_CXX14)
 
@@ -69,5 +52,26 @@ template< typename T >
 constexpr auto not_void = bool_constant< NotVoid<T> >;
 
 #endif // defined(BR_CXX14)
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+struct IsVoidBasic : public BooleanFalse {};
+
+template<>
+struct IsVoidBasic<void> : public BooleanTrue {};
+
+template< typename T >
+using IsVoid = IsVoidBasic< RemoveConstVolatile<T> >;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsVoid : public BooleanRewrapPositive< Detail::TypeTraits::IsVoid<T> > {};
+
+template< typename T >
+struct NotVoid : public BooleanRewrapNegative< Detail::TypeTraits::IsVoid<T> > {};
 
 } // namespace BR

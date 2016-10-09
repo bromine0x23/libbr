@@ -16,7 +16,7 @@ extern "C" {
  * @param[in] S
  * @param[in] n
  */
-void libbr_memory_move(void * D, void const * S, BR::Size n);
+void libbr_memory_move(void * D, void const * S, ::BR::Size n);
 
 }
 

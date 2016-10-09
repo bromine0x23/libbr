@@ -12,27 +12,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-struct IsFloatingPointBasic : BooleanFalse {};
-
-template<>
-struct IsFloatingPointBasic<float> : BooleanTrue {};
-
-template<>
-struct IsFloatingPointBasic<double> : BooleanTrue {};
-
-template<>
-struct IsFloatingPointBasic<long double> : BooleanTrue {};
-
-template< typename T >
-using IsFloatingPoint = IsFloatingPointBasic< RemoveConstVolatile<T> >;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否是浮点类型
  * @tparam T 待检查类型
@@ -42,7 +21,7 @@ using IsFloatingPoint = IsFloatingPointBasic< RemoveConstVolatile<T> >;
  * 如果\em T 是浮点类型(\em float、\em double、\em long \em double 及其带CV修饰的版本)，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsFloatingPoint : BooleanRewrapPositive< Detail::TypeTraits::IsFloatingPoint<T> > {};
+struct IsFloatingPoint;
 
 /**
  * @brief IsFloatingPoint 的否定
@@ -50,7 +29,7 @@ struct IsFloatingPoint : BooleanRewrapPositive< Detail::TypeTraits::IsFloatingPo
  * @see IsFloatingPoint
  */
 template< typename T >
-struct NotFloatingPoint : BooleanRewrapNegative< Detail::TypeTraits::IsFloatingPoint<T> > {};
+struct NotFloatingPoint;
 
 #if defined(BR_CXX14)
 
@@ -73,5 +52,34 @@ template< typename T >
 constexpr auto not_floating_point = bool_constant< NotFloatingPoint<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+struct IsFloatingPointBasic : public BooleanFalse {};
+
+template<>
+struct IsFloatingPointBasic<float> : public BooleanTrue {};
+
+template<>
+struct IsFloatingPointBasic<double> : public BooleanTrue {};
+
+template<>
+struct IsFloatingPointBasic<long double> : public BooleanTrue {};
+
+template< typename T >
+using IsFloatingPoint = IsFloatingPointBasic< RemoveConstVolatile<T> >;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsFloatingPoint : public BooleanRewrapPositive< Detail::TypeTraits::IsFloatingPoint<T> > {};
+
+template< typename T >
+struct NotFloatingPoint : public BooleanRewrapNegative< Detail::TypeTraits::IsFloatingPoint<T> > {};
 
 } // namespace BR

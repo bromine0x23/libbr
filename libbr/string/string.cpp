@@ -1,10 +1,22 @@
-#include <libbr/string/cstring.hpp>
-#include <libbr/string/string.hpp>
+#include <libbr/string/string_append.hpp>
+#include <libbr/string/string_compare.hpp>
+#include <libbr/string/string_copy.hpp>
+#include <libbr/string/string_fill.hpp>
+#include <libbr/string/string_find.hpp>
+#include <libbr/string/string_length.hpp>
+#include <libbr/string/string_move.hpp>
+#include <libbr/string/string_search.hpp>
 #include <cstring>
 #include <cwchar>
+#include <libbr/string/raw_string.hpp>
+#include <libbr/string/string.hpp>
 
 #if defined(BR_MSVC)
+#pragma warning(push)
 #pragma warning(disable: 4996)
+#elif defined(BR_CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
 auto libbr_nstring_append(BR::NChar * D, BR::CString<BR::NChar> S) -> BR::NChar * {
@@ -104,12 +116,20 @@ auto libbr_wstring_search(BR::WChar * S, BR::CString<BR::WChar> K) -> BR::WChar 
 
 namespace BR {
 
-template class String<NChar>;
+template class RawString<Char8>;
 
-template class String<WChar>;
+template class RawString<Char16>;
 
-template class String<Char16>;
+template class RawString<Char32>;
 
-template class String<Char32>;
+template class String<ASCIIEncoding>;
+
+template class String<UTF8Encoding>;
 
 } // namespace BR
+
+#if defined(BR_MSVC)
+#pragma warning(pop)
+#elif defined(BR_CLANG)
+#pragma clang diagnostic pop
+#endif

@@ -15,21 +15,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-struct IsSignedBasic {
-	using Type = RemoveConstVolatile<T>;
-	constexpr static auto value = static_cast<Type>(-1) < static_cast<Type>(0);
-};
-
-template< typename T >
-using IsSigned = BooleanAnd< BooleanOr< IsIntegral<T>, IsEnum<T> >, BooleanConstant< IsSignedBasic<T>::value > >;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否是有符号整型类型
  * @tparam T 待检查类型
@@ -41,8 +26,7 @@ using IsSigned = BooleanAnd< BooleanOr< IsIntegral<T>, IsEnum<T> >, BooleanConst
  * 如果 \em T 是有符号整型类型，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsSigned : BooleanRewrapPositive< Detail::TypeTraits::IsSigned<T> > {
-};
+struct IsSigned;
 
 /**
  * @brief IsSigned 的否定
@@ -50,8 +34,7 @@ struct IsSigned : BooleanRewrapPositive< Detail::TypeTraits::IsSigned<T> > {
  * @see IsSigned
  */
 template< typename T >
-struct NotSigned : BooleanRewrapNegative< Detail::TypeTraits::IsSigned<T> > {
-};
+struct NotSigned;
 
 #if defined(BR_CXX14)
 
@@ -74,5 +57,25 @@ template< typename T >
 constexpr auto not_signed = bool_constant< NotSigned<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+struct IsSignedBasic : public BooleanConstant< (static_cast<T>(-1) < static_cast<T>(0)) > {};
+
+template< typename T >
+using IsSigned = BooleanAnd< BooleanOr< IsIntegral<T>, IsEnum<T> >, IsSignedBasic< RemoveConstVolatile<T> > >;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsSigned : public BooleanRewrapPositive< Detail::TypeTraits::IsSigned<T> > {};
+
+template< typename T >
+struct NotSigned : public BooleanRewrapNegative< Detail::TypeTraits::IsSigned<T> > {};
 
 } // namespace BR

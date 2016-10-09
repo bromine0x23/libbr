@@ -78,9 +78,9 @@ using IsAssignable = decltype(IsAssignableTest::test< T, TArg >(0));
 } // namespace Detail
 
 template< typename T, typename TArg >
-struct IsAssignable : BooleanRewrapPositive< Detail::TypeTraits::IsAssignable< T, TArg > > {};
+struct IsAssignable : public BooleanRewrapPositive< Detail::TypeTraits::IsAssignable< T, TArg > > {};
 
 template< typename T, typename TArg >
-struct NotAssignable : BooleanRewrapNegative< Detail::TypeTraits::IsAssignable< T, TArg > > {};
+struct NotAssignable : public BooleanRewrapNegative< Detail::TypeTraits::IsAssignable< T, TArg > > {};
 
 } // namespace BR

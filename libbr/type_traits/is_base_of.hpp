@@ -93,7 +93,7 @@ struct IsBaseOfHelper {
 };
 
 template< typename TBase, typename TDerived >
-struct IsBaseOfBasic : BooleanAnd<
+struct IsBaseOfBasic : public BooleanAnd<
 	IsClass<TBase>,
 	IsClass<TDerived>,
 	decltype(IsBaseOfTester< TBase, TDerived >::test(IsBaseOfHelper< TBase, TDerived >(), 0))
@@ -107,7 +107,7 @@ using IsBaseOf = BooleanAnd<
 	NotLValueReference<TBase>,
 	NotLValueReference<TDerived>,
 	IsBaseOfBasic< RemoveConstVolatile<TBase>, RemoveConstVolatile<TDerived> >
- >;
+>;
 
 #endif // BR_IS_BASE_OF
 
@@ -115,10 +115,10 @@ using IsBaseOf = BooleanAnd<
 } // namespace Detail
 
 template< typename TBase, typename TDerived >
-struct IsBaseOf : BooleanRewrapPositive< Detail::TypeTraits::IsBaseOf< TBase, TDerived > > {};
+struct IsBaseOf : public BooleanRewrapPositive< Detail::TypeTraits::IsBaseOf< TBase, TDerived > > {};
 
 template< typename TBase, typename TDerived >
-struct NotBaseOf : BooleanRewrapNegative< Detail::TypeTraits::IsBaseOf< TBase, TDerived > > {};
+struct NotBaseOf : public BooleanRewrapNegative< Detail::TypeTraits::IsBaseOf< TBase, TDerived > > {};
 
 } // namespace BR
 

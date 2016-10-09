@@ -19,7 +19,7 @@
 #include <libbr/type_traits/has_copy_constructor.hpp>
 #include <libbr/type_traits/has_move_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_destructor.hpp>
-#include <libbr/type_traits/has_nothrow_move_assign.hpp>
+#include <libbr/type_traits/has_nothrow_move_assignment.hpp>
 #include <libbr/type_traits/has_nothrow_move_constructor.hpp>
 #include <libbr/type_traits/has_operator_address_of.hpp>
 #include <libbr/type_traits/has_trivial_destructor.hpp>
@@ -205,7 +205,7 @@ public:
 		return *this;
 	}
 
-	auto operator=(Optional && optional) noexcept(BooleanAnd< HasNothrowMoveConstructor<Value>, HasNothrowMoveAssign<Value> >::value) -> Optional & {
+	auto operator=(Optional && optional) noexcept(BooleanAnd< HasNothrowMoveConstructor<Value>, HasNothrowMoveAssignment<Value> >{}) -> Optional & {
 		if (this->m_engaged == optional.m_engaged) {
 			if (this->m_engaged) {
 				this->m_value = move(optional.m_value);
@@ -304,15 +304,15 @@ public:
 
 	template< typename TOtherValue >
 	constexpr auto value_or(TOtherValue && value) const & -> Value {
-		static_assert(HasCopyConstructor<Value>::value, "Optional<T>::value_or: Value must be copy constructible");
-		static_assert(IsConvertible< TOtherValue, Value>::value, "Optional<T>::value_or: TOtherValue must be convertible to Value");
+		static_assert(HasCopyConstructor<Value>{}, "Optional<T>::value_or: Value must be copy constructible");
+		static_assert(IsConvertible< TOtherValue, Value>{}, "Optional<T>::value_or: TOtherValue must be convertible to Value");
 		return this->m_engaged ? this->m_value : static_cast<Value>(forward<TOtherValue>(value));
 	}
 
 	template< typename TOtherValue >
 	constexpr auto value_or(TOtherValue && value) && -> Value {
-		static_assert(HasCopyConstructor<Value>::value, "Optional<T>::value_or: Value must be copy constructible");
-		static_assert(IsConvertible< TOtherValue, Value>::value, "Optional<T>::value_or: TOtherValue must be convertible to Value");
+		static_assert(HasCopyConstructor<Value>{}, "Optional<T>::value_or: Value must be copy constructible");
+		static_assert(IsConvertible< TOtherValue, Value>{}, "Optional<T>::value_or: TOtherValue must be convertible to Value");
 		return this->m_engaged ? move(this->m_value) : static_cast<Value>(forward<TOtherValue>(value));
 	}
 

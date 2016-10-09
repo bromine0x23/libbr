@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gtest/gtest.h>
+#include "../test.hpp"
 #include <libbr/config.hpp>
 
 template< typename T0, typename T1 >

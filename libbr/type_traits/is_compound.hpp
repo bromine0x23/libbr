@@ -67,10 +67,10 @@ using IsCompound = BooleanNot< IsFundamental<T> >;
 } // namespace Detail
 
 template< typename T >
-struct IsCompound : BooleanRewrapPositive< Detail::TypeTraits::IsCompound<T> > {};
+struct IsCompound : public BooleanRewrapPositive< Detail::TypeTraits::IsCompound<T> > {};
 
 template< typename T >
-struct NotCompound : BooleanRewrapNegative< Detail::TypeTraits::IsCompound<T> > {};
+struct NotCompound : public BooleanRewrapNegative< Detail::TypeTraits::IsCompound<T> > {};
 
 } // namespace BR
 

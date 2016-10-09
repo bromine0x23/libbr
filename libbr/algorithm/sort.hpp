@@ -11,8 +11,8 @@
 #include <libbr/iterator/advance.hpp>
 #include <libbr/functional/less.hpp>
 #include <libbr/type_operate/bool.hpp>
-#include <libbr/type_traits/has_trivial_copy_assign.hpp>
 #include <libbr/type_traits/has_trivial_copy_constructor.hpp>
+#include <libbr/type_traits/has_trivial_copy_assignment.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>
 #include <libbr/utility/move.hpp>
 #include <libbr/utility/swap.hpp>
@@ -175,7 +175,7 @@ template< typename TRandomAccessIterator, typename TComparator >
 void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator & comparator) {
 	using Difference = typename IteratorTraits<TRandomAccessIterator>::Difference;
 	using Element = typename IteratorTraits<TRandomAccessIterator>::Element;
-	constexpr Difference insertion_sort_threshold = BooleanAnd< HasTrivialCopyConstructor<Element>, HasTrivialCopyAssign<Element> >() ? 30 : 6;
+	constexpr Difference insertion_sort_threshold = BooleanAnd< HasTrivialCopyConstructor<Element>, HasTrivialCopyAssignment<Element> >{} ? 30 : 6;
 	constexpr Difference pivot_select_threshold = 1000;
 	for (;;) {
 		RESTART:

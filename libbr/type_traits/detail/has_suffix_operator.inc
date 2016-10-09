@@ -99,10 +99,10 @@ struct BR_JOIN(NoOperator, BR_TYPE_OPERATE_OP_NAME_C) : BooleanRewrapNegative<
 
 #if defined(BR_CXX14)
 
-template< typename TLhs, typename TRet = Detail::TypeTraits::BR_JOIN(PrefixOperator, BR_TYPE_OPERATE_OP_NAME_C)::NotCareTag >
+template< typename TLhs, typename TRet = Detail::TypeTraits::BR_JOIN(SuffixOperator, BR_TYPE_OPERATE_OP_NAME_C)::NotCareTag >
 constexpr auto BR_JOIN(has_operator_, BR_TYPE_OPERATE_OP_NAME_V) = bool_constant< BR_JOIN(HasOperator, BR_TYPE_OPERATE_OP_NAME_C)< TLhs, TRet > >;
 
-template< typename TLhs, typename TRet = Detail::TypeTraits::BR_JOIN(PrefixOperator, BR_TYPE_OPERATE_OP_NAME_C)::NotCareTag >
+template< typename TLhs, typename TRet = Detail::TypeTraits::BR_JOIN(SuffixOperator, BR_TYPE_OPERATE_OP_NAME_C)::NotCareTag >
 constexpr auto BR_JOIN(no_operator_, BR_TYPE_OPERATE_OP_NAME_V) = bool_constant< BR_JOIN(NoOperator, BR_TYPE_OPERATE_OP_NAME_C)< TLhs, TRet > >;
 
 #endif // defined(BR_CXX14)

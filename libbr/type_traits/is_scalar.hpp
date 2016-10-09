@@ -17,21 +17,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-using IsScalar = BooleanOr<
-	IsArithmetic<T>,
-	IsEnum<T>,
-	IsPointer<T>,
-	IsNullPointer<T>,
-	IsMemberPointer<T>
->;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否是指针类型
  * @tparam T 待检查类型
@@ -46,7 +31,7 @@ using IsScalar = BooleanOr<
  * 如果 \em T 是标量类型(算术类型、枚举类型、指针、成员指针、空指针及其带CV修饰的版本)，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsScalar : BooleanRewrapPositive< Detail::TypeTraits::IsScalar<T> > {};
+struct IsScalar;
 
 /**
  * @brief IsScalar 的否定
@@ -54,7 +39,7 @@ struct IsScalar : BooleanRewrapPositive< Detail::TypeTraits::IsScalar<T> > {};
  * @see IsScalar
  */
 template< typename T >
-struct NotScalar : BooleanRewrapNegative< Detail::TypeTraits::IsScalar<T> > {};
+struct NotScalar;
 
 #if defined(BR_CXX14)
 
@@ -77,5 +62,20 @@ template< typename T >
 constexpr auto not_scalar = bool_constant< NotScalar<T> >;
 
 #endif // defined(BR_CXX14)
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+using IsScalar = BooleanOr< IsArithmetic<T>, IsEnum<T>, IsPointer<T>, IsNullPointer<T>, IsMemberPointer<T> >;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsScalar : public BooleanRewrapPositive< Detail::TypeTraits::IsScalar<T> > {};
+
+template< typename T >
+struct NotScalar : public BooleanRewrapNegative< Detail::TypeTraits::IsScalar<T> > {};
 
 } // namespace BR

@@ -16,6 +16,8 @@ namespace BR {
 template< typename TInputIterator, typename TSize, typename TOutputIterator >
 inline auto copy_n(TInputIterator first, TSize n, TOutputIterator result) -> TOutputIterator;
 
+
+
 namespace Detail {
 namespace Algorithm {
 

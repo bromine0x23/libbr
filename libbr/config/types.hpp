@@ -175,6 +175,11 @@ using NChar = char;
 using WChar = wchar_t;
 
 /**
+ * @brief 8位字符
+ */
+using Char8 = char;
+
+/**
  * @brief 16位字符
  */
 using Char16 = char16_t;

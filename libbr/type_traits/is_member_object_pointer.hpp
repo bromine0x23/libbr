@@ -31,7 +31,7 @@ struct IsMemberObjectPointer;
  * @see IsMemberObjectPointer
  */
 template< typename T >
-using NotMemberObjectPointer = BooleanNot< IsMemberObjectPointer<T> >;
+struct NotMemberObjectPointer;
 
 #if defined(BR_CXX14)
 
@@ -42,7 +42,7 @@ using NotMemberObjectPointer = BooleanNot< IsMemberObjectPointer<T> >;
  * @see not_member_object_pointer
  */
 template< typename T >
-constexpr auto is_member_object_pointer = IsMemberObjectPointer<T>::value;
+constexpr auto is_member_object_pointer = bool_constant< IsMemberObjectPointer<T> >;
 
 /**
  * @brief NotMemberObjectPointer 的模板变量版本
@@ -51,23 +51,26 @@ constexpr auto is_member_object_pointer = IsMemberObjectPointer<T>::value;
  * @see is_member_object_pointer
  */
 template< typename T >
-constexpr auto not_member_object_pointer = NotMemberObjectPointer<T>::value;
+constexpr auto not_member_object_pointer = bool_constant< NotMemberObjectPointer<T> >;
 
 #endif // defined(BR_CXX14)
+
+
 
 namespace Detail {
 namespace TypeTraits {
 
 template< typename T >
-struct IsMemberObjectPointer : public BooleanAnd< IsMemberPointer<T>, NotMemberFunctionPointer<T> > {
-};
+struct IsMemberObjectPointer : public BooleanAnd< IsMemberPointer<T>, NotMemberFunctionPointer<T> > {};
 
 } // namespace TypeTraits
 } // namespace Detail
 
 template< typename T >
-struct IsMemberObjectPointer : public BooleanRewrap< Detail::TypeTraits::IsMemberObjectPointer<T> > {
-};
+struct IsMemberObjectPointer : public BooleanRewrapPositive< Detail::TypeTraits::IsMemberObjectPointer<T> > {};
+
+template< typename T >
+struct NotMemberObjectPointer : public BooleanRewrapNegative< Detail::TypeTraits::IsMemberObjectPointer<T> > {};
 
 
 } // namespace BR

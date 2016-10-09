@@ -12,42 +12,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-struct IsIntegralBasic : BooleanFalse {
-};
-
-template<> struct IsIntegralBasic<   signed char      > : BooleanTrue {};
-template<> struct IsIntegralBasic< unsigned char      > : BooleanTrue {};
-template<> struct IsIntegralBasic<   signed short     > : BooleanTrue {};
-template<> struct IsIntegralBasic< unsigned short     > : BooleanTrue {};
-template<> struct IsIntegralBasic<   signed int       > : BooleanTrue {};
-template<> struct IsIntegralBasic< unsigned int       > : BooleanTrue {};
-template<> struct IsIntegralBasic<   signed long      > : BooleanTrue {};
-template<> struct IsIntegralBasic< unsigned long      > : BooleanTrue {};
-template<> struct IsIntegralBasic<   signed long long > : BooleanTrue {};
-template<> struct IsIntegralBasic< unsigned long long > : BooleanTrue {};
-
-template<> struct IsIntegralBasic< bool     > : BooleanTrue {};
-template<> struct IsIntegralBasic< char     > : BooleanTrue {};
-template<> struct IsIntegralBasic< wchar_t  > : BooleanTrue {};
-template<> struct IsIntegralBasic< char16_t > : BooleanTrue {};
-template<> struct IsIntegralBasic< char32_t > : BooleanTrue {};
-
-#if defined(BR_HAS_INT128)
-template<> struct IsIntegralBasic< SInt128 > : BooleanTrue {};
-template<> struct IsIntegralBasic< UInt128 > : BooleanTrue {};
-#endif // BR_HAS_INT128
-
-template< typename T >
-struct IsIntegral : IsIntegralBasic< RemoveConstVolatile<T> > {
-};
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否是整型类型
  * @tparam T 待检查类型
@@ -58,8 +22,7 @@ struct IsIntegral : IsIntegralBasic< RemoveConstVolatile<T> > {
  * 那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsIntegral : BooleanRewrapPositive< Detail::TypeTraits::IsIntegral<T> > {
-};
+struct IsIntegral;
 
 /**
  * @brief IsIntegral 的否定
@@ -67,8 +30,7 @@ struct IsIntegral : BooleanRewrapPositive< Detail::TypeTraits::IsIntegral<T> > {
  * @see BR::IsIntegral
  */
 template< typename T >
-struct NotIntegral : BooleanRewrapNegative< Detail::TypeTraits::IsIntegral<T> > {
-};
+struct NotIntegral;
 
 #if defined(BR_CXX14)
 
@@ -91,5 +53,52 @@ template< typename T >
 constexpr auto not_integral = bool_constant< NotIntegral<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+struct IsIntegralBasic : public BooleanFalse {};
+
+template<> struct IsIntegralBasic<   signed char      > : public BooleanTrue {};
+template<> struct IsIntegralBasic< unsigned char      > : public BooleanTrue {};
+template<> struct IsIntegralBasic<   signed short     > : public BooleanTrue {};
+template<> struct IsIntegralBasic< unsigned short     > : public BooleanTrue {};
+template<> struct IsIntegralBasic<   signed int       > : public BooleanTrue {};
+template<> struct IsIntegralBasic< unsigned int       > : public BooleanTrue {};
+template<> struct IsIntegralBasic<   signed long      > : public BooleanTrue {};
+template<> struct IsIntegralBasic< unsigned long      > : public BooleanTrue {};
+template<> struct IsIntegralBasic<   signed long long > : public BooleanTrue {};
+template<> struct IsIntegralBasic< unsigned long long > : public BooleanTrue {};
+
+template<> struct IsIntegralBasic< bool     > : public BooleanTrue {};
+template<> struct IsIntegralBasic< char     > : public BooleanTrue {};
+template<> struct IsIntegralBasic< wchar_t  > : public BooleanTrue {};
+template<> struct IsIntegralBasic< char16_t > : public BooleanTrue {};
+template<> struct IsIntegralBasic< char32_t > : public BooleanTrue {};
+
+#if defined(BR_HAS_INT128)
+template<> struct IsIntegralBasic< SInt128 > : public BooleanTrue {};
+template<> struct IsIntegralBasic< UInt128 > : public BooleanTrue {};
+#endif // BR_HAS_INT128
+
+template< typename T >
+using IsIntegral = IsIntegralBasic< RemoveConstVolatile<T> >;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsIntegral : public BooleanRewrapPositive< Detail::TypeTraits::IsIntegral<T> > {};
+
+/**
+ * @brief IsIntegral 的否定
+ * @tparam T 待检查类型
+ * @see BR::IsIntegral
+ */
+template< typename T >
+struct NotIntegral : public BooleanRewrapNegative< Detail::TypeTraits::IsIntegral<T> > {};
 
 } // namespace BR

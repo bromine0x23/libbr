@@ -42,7 +42,7 @@ struct TypeDisableIfValue;
  * @see TypeEnableIfByValue
  */
 template< typename TCondition, typename T = void >
-using TypeEnableIf = TypeEnableIfByValue< TCondition::value, T >;
+using TypeEnableIf = TypeEnableIfByValue< TCondition{}, T >;
 
 /**
  * @brief TypeDisableIfValue 使用布尔常量包装类的版本
@@ -51,7 +51,7 @@ using TypeEnableIf = TypeEnableIfByValue< TCondition::value, T >;
  * @see TypeDisableIfValue
  */
 template< typename TCondition, typename T = void >
-using TypeDisableIf = TypeDisableIfValue< TCondition::value, T >;
+using TypeDisableIf = TypeDisableIfValue< TCondition{}, T >;
 
 /**
  * @brief TypeEnableIfByValue 的简写版本

@@ -14,15 +14,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-using IsReference = BooleanOr< IsLValueReference<T>, IsRValueReference<T> >;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否是引用类型
  * @tparam T 待检查类型
@@ -34,7 +25,7 @@ using IsReference = BooleanOr< IsLValueReference<T>, IsRValueReference<T> >;
  * 如果\em T 是引用类型，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsReference : BooleanRewrapPositive< Detail::TypeTraits::IsReference<T> > {};
+struct IsReference;
 
 /**
  * @brief IsReference 的否定
@@ -42,7 +33,7 @@ struct IsReference : BooleanRewrapPositive< Detail::TypeTraits::IsReference<T> >
  * @see IsReference
  */
 template< typename T >
-struct NotReference : BooleanRewrapNegative< Detail::TypeTraits::IsReference<T> > {};
+struct NotReference;
 
 #if defined(BR_CXX14)
 
@@ -65,5 +56,22 @@ template< typename T >
 constexpr auto not_reference = bool_constant< NotReference<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+using IsReference = BooleanOr< IsLValueReference<T>, IsRValueReference<T> >;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsReference : public BooleanRewrapPositive< Detail::TypeTraits::IsReference<T> > {};
+
+template< typename T >
+struct NotReference : public BooleanRewrapNegative< Detail::TypeTraits::IsReference<T> > {};
 
 } // namespace BR

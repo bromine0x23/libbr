@@ -14,21 +14,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-struct IsPointerBasic : BooleanFalse {};
-
-template< typename T >
-struct IsPointerBasic< T * > : BooleanTrue {};
-
-template< typename T >
-using IsPointer = BooleanAnd< IsPointerBasic< RemoveConstVolatile<T> >, NotMemberPointer<T> >;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否是指针类型
  * @tparam T 待检查类型
@@ -38,7 +23,7 @@ using IsPointer = BooleanAnd< IsPointerBasic< RemoveConstVolatile<T> >, NotMembe
  * 如果 \em T 是对象指针类型或函数指针类型(但不是空指针或非静态成员对象或成员函数指针)，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsPointer : BooleanRewrapPositive< Detail::TypeTraits::IsPointer<T> > {};
+struct IsPointer;
 
 /**
  * @brief IsPointer 的否定
@@ -46,7 +31,7 @@ struct IsPointer : BooleanRewrapPositive< Detail::TypeTraits::IsPointer<T> > {};
  * @see IsPointer
  */
 template< typename T >
-struct NotPointer : BooleanRewrapNegative< Detail::TypeTraits::IsPointer<T> > {};
+struct NotPointer;
 
 #if defined(BR_CXX14)
 
@@ -69,5 +54,28 @@ template< typename T >
 constexpr auto not_pointer = bool_constant< NotPointer<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+struct IsPointerBasic : public BooleanFalse {};
+
+template< typename T >
+struct IsPointerBasic< T * > : public BooleanTrue {};
+
+template< typename T >
+using IsPointer = BooleanAnd< IsPointerBasic< RemoveConstVolatile<T> >, NotMemberPointer<T> >;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsPointer : public BooleanRewrapPositive< Detail::TypeTraits::IsPointer<T> > {};
+
+template< typename T >
+struct NotPointer : public BooleanRewrapNegative< Detail::TypeTraits::IsPointer<T> > {};
 
 } // namespace BR

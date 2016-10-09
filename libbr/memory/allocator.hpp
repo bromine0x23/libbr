@@ -8,9 +8,8 @@
 
 #include <libbr/config.hpp>
 #include <libbr/memory/address_of.hpp>
-#include <libbr/memory/new.hpp>
 #include <libbr/type_operate/type.hpp>
-#include <libbr/utility/bool_constant.hpp>
+#include <libbr/utility/boolean_constant.hpp>
 #include <libbr/utility/forward.hpp>
 
 namespace BR {
@@ -19,73 +18,17 @@ namespace BR {
  * @brief 默认分配器
  * @tparam TValue 元素类型
  */
-template< typename TValue >
+template< typename TElement >
 class Allocator;
 
 template<>
 class Allocator<void> {
 public:
-	using Value = void;
+	using Element = void;
 
 	using Pointer = void *;
 
 	using ConstPointer = void const *;
-
-	template< typename TOtherValue >
-	using Rebind = Allocator<TOtherValue>;
-
-	constexpr Allocator() noexcept = default;
-
-	template< typename TOtherValue >
-	BR_FORCE_INLINE auto operator==(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
-		return true;
-	}
-
-	template< typename TOtherValue >
-	BR_FORCE_INLINE auto operator!=(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
-		return false;
-	}
-
-}; // class Allocator< void >
-
-template<>
-class Allocator< void const > {
-public:
-	using Value = void const;
-
-	using Pointer = void const *;
-
-	using ConstPointer = void const *;
-
-	template< typename TOtherValue >
-	using Rebind = Allocator<TOtherValue>;
-
-	constexpr Allocator() noexcept = default;
-
-	template< typename TOtherValue >
-	BR_FORCE_INLINE auto operator==(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
-		return true;
-	}
-
-	template< typename TOtherValue >
-	BR_FORCE_INLINE auto operator!=(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
-		return false;
-	}
-
-}; // class Allocator< void const >
-
-template< typename TValue >
-class Allocator {
-public:
-	using Value = TValue;
-
-	using Pointer = TValue *;
-
-	using ConstPointer = TValue const *;
-
-	using Reference = TValue &;
-
-	using ConstReference = TValue const &;
 
 	using Size = BR::Size;
 
@@ -93,14 +36,54 @@ public:
 
 	using IsPropagateOnContainerMoveAssignment = BooleanTrue;
 
-	template< typename TOtherValue >
-	using Rebind = Allocator<TOtherValue>;
+	using IsAlwaysEqual = BooleanTrue;
+
+	template< typename TOtherElement >
+	using Rebind = Allocator<TOtherElement>;
+
+	constexpr Allocator() noexcept = default;
+
+	template< typename TOtherElement >
+	BR_FORCE_INLINE auto operator==(Allocator<TOtherElement> const &) const noexcept -> bool {
+		return true;
+	}
+
+	template< typename TOtherElement >
+	BR_FORCE_INLINE auto operator!=(Allocator<TOtherElement> const &) const noexcept -> bool {
+		return false;
+	}
+
+}; // class Allocator< void >
+
+template< typename TElement >
+class Allocator {
+public:
+	using Element = TElement;
+
+	using Pointer = Element *;
+
+	using ConstPointer = Element const *;
+
+	using Reference = Element &;
+
+	using ConstReference = Element const &;
+
+	using Size = BR::Size;
+
+	using Difference = PointerDifference;
+
+	using IsPropagateOnContainerMoveAssignment = BooleanTrue;
+
+	using IsAlwaysEqual = BooleanTrue;
+
+	template< typename TOtherElement >
+	using Rebind = Allocator<TOtherElement>;
 
 	BR_FORCE_INLINE constexpr Allocator() noexcept {
 	}
 
-	template< typename TOtherValue >
-	BR_FORCE_INLINE constexpr Allocator(Allocator<TOtherValue> const & _dummy) noexcept {
+	template< typename TOtherElement >
+	BR_FORCE_INLINE constexpr Allocator(Allocator<TOtherElement> const &) noexcept {
 	}
 
 	BR_FORCE_INLINE auto address(Reference reference) noexcept -> Pointer {
@@ -111,103 +94,37 @@ public:
 		return address_of(reference);
 	}
 
-	BR_FORCE_INLINE auto allocate(Size size, Allocator<void>::ConstPointer _dummy = nullptr) -> Pointer {
-		return static_cast<Pointer>(Detail::Memory::allocate(size * sizeof(Value)));
+	BR_FORCE_INLINE auto allocate(Size size, Allocator<void>::ConstPointer = nullptr) -> Pointer {
+		return static_cast<Pointer>(::operator new(size * sizeof(Element)));
 	}
 
 	BR_FORCE_INLINE void deallocate(Pointer pointer, Size) noexcept {
-		return Detail::Memory::deallocate(reinterpret_cast< void * >(pointer));
+		return ::operator delete(reinterpret_cast< void * >(pointer));
 	}
 
 	BR_FORCE_INLINE auto maxSize() const noexcept -> Size {
-		return Size(~0) / sizeof(Value);
+		return Size(~0) / sizeof(Element);
 	}
 
-	template< typename TOtherValue, typename ... TArgs >
-	BR_FORCE_INLINE void construct(TOtherValue * pointer, TArgs && ... args) {
-		::new(reinterpret_cast< void * >(pointer)) TOtherValue(forward<TArgs>(args) ...);
+	template< typename TOtherElement, typename ... TArgs >
+	BR_FORCE_INLINE void construct(TOtherElement * pointer, TArgs && ... args) {
+		::new(reinterpret_cast< void * >(pointer)) TOtherElement(forward<TArgs>(args) ...);
 	}
 
 	BR_FORCE_INLINE void destroy(Pointer pointer) {
 		pointer->~Value();
 	}
 
-	template< typename TOtherValue >
-	BR_FORCE_INLINE auto operator==(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
+	template< typename TOtherElement >
+	BR_FORCE_INLINE auto operator==(Allocator<TOtherElement> const &) const noexcept -> bool {
 		return true;
 	}
 
-	template< typename TOtherValue >
-	BR_FORCE_INLINE auto operator!=(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
+	template< typename TOtherElement >
+	BR_FORCE_INLINE auto operator!=(Allocator<TOtherElement> const &) const noexcept -> bool {
 		return false;
 	}
 
-}; // class Allocator
-
-template< typename TValue >
-class Allocator< TValue const > {
-public:
-	using Value = TValue;
-
-	using Pointer = TValue const *;
-
-	using ConstPointer = TValue const *;
-
-	using Reference = TValue const &;
-
-	using ConstReference = TValue const &;
-
-	using Size = BR::Size;
-
-	using Difference = BR::PointerDifference;
-
-	using IsPropagateOnContainerMoveAssignment = BooleanTrue;
-
-	template< typename TOtherValue >
-	using Rebind = Allocator<TOtherValue>;
-
-	BR_FORCE_INLINE constexpr Allocator() noexcept {
-	}
-
-	template< typename TOtherValue >
-	BR_FORCE_INLINE constexpr Allocator(Allocator<TOtherValue> const & _dummy) noexcept {
-	}
-
-	BR_FORCE_INLINE auto address(ConstReference reference) const noexcept -> ConstPointer {
-		return address_of(reference);
-	}
-
-	BR_FORCE_INLINE auto allocate(Size size, Allocator<void>::ConstPointer _dummy = nullptr) -> Pointer {
-		return static_cast< Pointer >(Detail::Memory::allocate(size * sizeof(Value)));
-	}
-
-	BR_FORCE_INLINE void deallocate(Pointer pointer, Size) noexcept {
-		return Detail::Memory::allocate(reinterpret_cast< void * >(pointer));
-	}
-
-	BR_FORCE_INLINE auto maxSize() const noexcept -> Size {
-		return Size(~0) / sizeof(Value);
-	}
-
-	template< typename TOtherValue, typename ... TArguments >
-	BR_FORCE_INLINE void construct(TOtherValue * pointer, TArguments && ... arguments) {
-		::new(reinterpret_cast< void * >(pointer)) TOtherValue(forward<TArguments>(arguments) ...);
-	}
-
-	BR_FORCE_INLINE void destroy(Pointer pointer) {
-		pointer->~Value();
-	}
-
-	template< typename TOtherValue >
-	BR_FORCE_INLINE auto operator==(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
-		return true;
-	}
-
-	template< typename TOtherValue >
-	BR_FORCE_INLINE auto operator!=(Allocator<TOtherValue> const & _dummy) const noexcept -> bool {
-		return false;
-	}
-
-}; // class Allocator< TValue const >
+}; // class Allocator<TElement>
 
 } // namespace BR

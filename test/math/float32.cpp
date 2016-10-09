@@ -1,5 +1,5 @@
-#include "libbr/math/float.hpp"
-#include <gtest/gtest.h>
+#include "../test.hpp"
+#include <libbr/math/float.hpp>
 
 using namespace BR;
 

@@ -7,7 +7,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/container/array.hpp>
+#include <libbr/assert/dummy_false.hpp>
 #include <libbr/memory/allocator_argument_tag.hpp>
 #include <libbr/type_operate/add_const.hpp>
 #include <libbr/type_operate/add_const_volatile.hpp>
@@ -16,17 +16,17 @@
 #include <libbr/type_operate/conditional.hpp>
 #include <libbr/type_operate/decay.hpp>
 #include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/make_integer_sequence.hpp>
+#include <libbr/type_operate/make_integral_sequence.hpp>
 #include <libbr/type_operate/map_qualifier.hpp>
 #include <libbr/type_operate/remove_reference.hpp>
 #include <libbr/type_operate/type.hpp>
 #include <libbr/type_operate/types.hpp>
 #include <libbr/type_traits/allocator_constructor_usage.hpp>
 #include <libbr/type_traits/has_default_constructor.hpp>
-#include <libbr/type_traits/has_nothrow_default_constructor.hpp>
-#include <libbr/type_traits/has_nothrow_copy_assign.hpp>
+#include <libbr/type_traits/has_nothrow_copy_assignment.hpp>
 #include <libbr/type_traits/has_nothrow_copy_constructor.hpp>
-#include <libbr/type_traits/has_nothrow_move_assign.hpp>
+#include <libbr/type_traits/has_nothrow_default_constructor.hpp>
+#include <libbr/type_traits/has_nothrow_move_assignment.hpp>
 #include <libbr/type_traits/is_assignable.hpp>
 #include <libbr/type_traits/is_constructible.hpp>
 #include <libbr/type_traits/is_convertible.hpp>
@@ -40,46 +40,43 @@
 #include <libbr/type_traits/is_same.hpp>
 #include <libbr/type_traits/is_use_allocator.hpp>
 #include <libbr/utility/forward.hpp>
-#include <libbr/utility/integer_constant.hpp>
-#include <libbr/utility/integer_sequence.hpp>
+#include <libbr/utility/integral_constant.hpp>
+#include <libbr/utility/integral_sequence.hpp>
 #include <libbr/utility/move.hpp>
 #include <libbr/utility/wrapped_reference.hpp>
+#include <libbr/container/detail/tuple_forward.hpp>
 
 namespace BR {
 
-/**
- * @brief 元组
- * @tparam TTypes 各个内容类型
- */
-template< typename ... TTypes >
-class Tuple;
-
-/**
- * @brief 获取(类)元组类型的长度
- * @tparam T (类)元组类型
- */
-template< typename T >
-struct TupleSize;
-
-template< Size I, typename T >
-struct TypeTupleElement;
-
-template< Size I, typename T >
-using TupleElement = TypeUnwrap< TypeTupleElement< I, T > >;
+template< typename TFirst, typename TSecond >
+class Pair;
 
 template< typename ... TElement >
 void swap(Tuple< TElement ... > & lhs, Tuple< TElement ... > & rhs) noexcept(noexcept(lhs.swap(rhs))) {
 	lhs.swap(rhs);
 }
 
-template< Size I, typename ... Tn >
-BR_CONSTEXPR_AFTER_CXX11 auto get(Tuple< Tn ... > & tuple) noexcept -> TupleElement< I, Tuple< Tn ... > > &;
+template< Size I, typename ... Tn > constexpr auto get(Tuple< Tn ... >        & t) noexcept -> TupleElement< I, Tuple< Tn ... > >        & { return t.template get<I>(); }
+template< Size I, typename ... Tn > constexpr auto get(Tuple< Tn ... > const  & t) noexcept -> TupleElement< I, Tuple< Tn ... > > const  & { return t.template get<I>(); }
+template< Size I, typename ... Tn > constexpr auto get(Tuple< Tn ... >       && t) noexcept -> TupleElement< I, Tuple< Tn ... > >       && { return t.template get<I>(); }
+template< Size I, typename ... Tn > constexpr auto get(Tuple< Tn ... > const && t) noexcept -> TupleElement< I, Tuple< Tn ... > > const && { return t.template get<I>(); }
 
-template< Size I, typename ... Tn >
-BR_CONSTEXPR_AFTER_CXX11 auto get(Tuple< Tn ... > const & tuple) noexcept -> TupleElement< I, Tuple< Tn ... > > const &;
+template< typename T, typename ... Tn > constexpr auto get(Tuple< Tn ... >        & t) noexcept -> T        & { return t.template get<T>(); }
+template< typename T, typename ... Tn > constexpr auto get(Tuple< Tn ... > const  & t) noexcept -> T const  & { return t.template get<T>(); }
+template< typename T, typename ... Tn > constexpr auto get(Tuple< Tn ... >       && t) noexcept -> T       && { return t.template get<T>(); }
+template< typename T, typename ... Tn > constexpr auto get(Tuple< Tn ... > const && t) noexcept -> T const && { return t.template get<T>(); }
 
-template< Size I, typename ... Tn >
-BR_CONSTEXPR_AFTER_CXX11 auto get(Tuple< Tn ... > && tuple) noexcept -> TupleElement< I, Tuple< Tn ... > > &&;
+template< Size I, typename T0, typename T1 >
+constexpr auto get(Pair< T0, T1 > & P) noexcept -> TupleElement< I, Pair< T0, T1 > > &;
+
+template< Size I, typename T0, typename T1 >
+constexpr auto get(Pair< T0, T1 > const & P) noexcept -> TupleElement< I, Pair< T0, T1 > > const &;
+
+template< Size I, typename T0, typename T1 >
+constexpr auto get(Pair< T0, T1 > && P) noexcept -> TupleElement< I, Pair< T0, T1 > > &&;
+
+template< Size I, typename T0, typename T1 >
+constexpr auto get(Pair< T0, T1 > const && P) noexcept -> TupleElement< I, Pair< T0, T1 > > const &&;
 
 template< typename ... Tn >
 BR_CONSTEXPR_AFTER_CXX11 inline auto tie(Tn & ... t) noexcept -> Tuple< Tn & ... > {
@@ -95,153 +92,105 @@ template< typename T, typename TAllocator >
 struct IsUseAllocator;
 
 template< typename ... T, typename TAllocator >
-struct IsUseAllocator< Tuple< T ... >, TAllocator > : BooleanTrue {
+struct IsUseAllocator< Tuple< T ... >, TAllocator > : public BooleanTrue {
 };
 
 template< typename T, typename TAllocator >
 struct NotUseAllocator;
 
 template< typename ... T, typename TAllocator >
-struct NotUseAllocator< Tuple< T ... >, TAllocator > : BooleanFalse {
+struct NotUseAllocator< Tuple< T ... >, TAllocator > : public BooleanFalse {
 };
-
-#if defined(BR_CXX14)
-
-template< typename T >
-constexpr auto tuple_size = integer_constant< TupleSize<T> >;
-
-#endif // defined(BR_CXX14)
 
 namespace Detail {
 namespace Container {
 
 template< typename ... TTypes >
-struct TupleTypes : Types< TTypes ... > {
-};
+struct TupleTypes : public Types< TTypes ... > {};
 
-template< typename T >
-struct TupleSize;
+} // namespace Container
+} // namespace Detail
 
 template< typename ... TTypes >
-struct TupleSize< Tuple< TTypes ... > > : IntegerConstant< Size, sizeof...(TTypes) > {
-};
-
-template< typename T >
-struct TupleSize< T const > : TupleSize<T> {
-};
-
-template< typename T >
-struct TupleSize< T volatile > : TupleSize<T> {
-};
-
-template< typename T >
-struct TupleSize< T const volatile > : TupleSize<T> {
-};
+struct TupleSize< Tuple< TTypes ... > > : public IntegralConstant< Size, sizeof...(TTypes) > {};
 
 template< typename ...TTypes >
-struct TupleSize< TupleTypes< TTypes ... > > : IntegerConstant< Size, sizeof...(TTypes) > {
-};
-
-template< Size I, typename T >
-struct TypeTupleElement;
+struct TupleSize< Detail::Container::TupleTypes< TTypes ... > > : public IntegralConstant< Size, sizeof...(TTypes) > {};
 
 template< Size I, typename ... TTypes >
-struct TypeTupleElement< I, Tuple< TTypes ... > > : TypeTupleElement< I, TupleTypes< TTypes ... > > {
-};
-
-template< Size I, typename T >
-struct TypeTupleElement< I, T const > : TypeAddConst< TupleElement< I, T > > {
-};
-
-template< Size I, typename T >
-struct TypeTupleElement< I, T volatile > : TypeAddVolatile< TupleElement< I, T > > {
-};
-
-template< Size I, typename T >
-struct TypeTupleElement< I, T const volatile > : TypeAddConstVolatile< TupleElement< I, T > > {
-};
+struct TypeTupleElement< I, Tuple< TTypes ... > > : public TypeTupleElement< I, Detail::Container::TupleTypes< TTypes ... > > {};
 
 template< Size I, typename ... TTypes >
-struct TypeTupleElement< I, TupleTypes< TTypes ... > > : TypeWrapper< typename TupleTypes< TTypes ... >::template Get<I> > {
-};
+struct TypeTupleElement< I, Detail::Container::TupleTypes< TTypes ... > > : public TypeWrapper< typename Detail::Container::TupleTypes< TTypes ... >::template Get<I> > {};
 
-template< Size I, typename T >
-using TupleElement = TypeUnwrap< TypeTupleElement< I, T > >;
-
-template< typename T >
-struct IsTupleLike : BooleanFalse {
-};
+namespace Detail {
+namespace Container {
 
 template< typename T >
-struct IsTupleLike< T const > : IsTupleLike<T> {
-};
+struct IsTupleLike : public BooleanFalse {};
 
 template< typename T >
-struct IsTupleLike< T volatile > : IsTupleLike<T> {
-};
+struct IsTupleLike< T const > : public IsTupleLike<T> {};
 
 template< typename T >
-struct IsTupleLike< T const volatile > : IsTupleLike<T> {
-};
+struct IsTupleLike< T volatile > : public IsTupleLike<T> {};
+
+template< typename T >
+struct IsTupleLike< T const volatile > : public IsTupleLike<T> {};
 
 template< typename ... TTypes >
-struct IsTupleLike< Tuple< TTypes ... > > : BooleanTrue {
-};
+struct IsTupleLike< Tuple< TTypes ... > > : public BooleanTrue {};
 
 template< typename ... TTypes >
-struct IsTupleLike< TupleTypes< TTypes ... > > : BooleanTrue {
-};
+struct IsTupleLike< TupleTypes< TTypes ... > > : public BooleanTrue {};
+
+template< typename T0, typename T1 >
+struct IsTupleLike< Pair< T0, T1 > > : public BooleanTrue {};
 
 template< Size I, typename T >
-using MakeTupleType = Conditional< IsLValueReference<T>, AddLValueReference< TupleElement< I, T > >, TupleElement< I, T > >;
+using MakeTupleType = Conditional< IsLValueReference<T>, AddLValueReference< BR::TupleElement< I, T > >, BR::TupleElement< I, T > >;
 
 template< typename T, Size from, Size to, typename ... TTypes >
 struct TypeMakeTupleTypes;
 
 template< typename T, Size from, Size to, typename ... TTypes >
-struct TypeMakeTupleTypes : TypeRewrap< TypeMakeTupleTypes< T, from + 1, to, TTypes ..., MakeTupleType< from, RemoveReference<T> > > > {
+struct TypeMakeTupleTypes : public TypeRewrap< TypeMakeTupleTypes< T, from + 1, to, TTypes ..., MakeTupleType< from, RemoveReference<T> > > > {
 	static_assert(from <= to, "MakeTupleTypes input error");
 };
 
 template< typename T, Size to, typename ... TTypes >
-struct TypeMakeTupleTypes< T, to, to, TTypes ... > : TypeWrapper< TupleTypes< TTypes ... > > {
-};
+struct TypeMakeTupleTypes< T, to, to, TTypes ... > : public TypeWrapper< TupleTypes< TTypes ... > > {};
 
 template< typename T, Size from = 0, Size to = TupleSize< RemoveReference<T> >::value >
 using MakeTupleTypes = TypeUnwrap< TypeMakeTupleTypes< T, from, to > >;
 
 template< typename TFrom, typename TTo >
-struct IsTupleConvertibleBasic : BooleanFalse {
-};
+struct IsTupleConvertibleBasic : public BooleanFalse {};
 
 template< typename ... TFrom, typename ... TTo >
-struct IsTupleConvertibleBasic< TupleTypes< TFrom ... >, TupleTypes< TTo ... > > : BooleanAnd< IsConvertible< TFrom, TTo > ... > {
-};
+struct IsTupleConvertibleBasic< TupleTypes< TFrom ... >, TupleTypes< TTo ... > > : public BooleanAnd< IsConvertible< TFrom, TTo > ... > {};
 
 template< typename TFrom, typename TTo >
-struct IsTupleConvertibleApply : BooleanAnd<
-	BooleanConstant< TupleSize< RemoveReference<TFrom> >::value == TupleSize<TTo>::value >,
+struct IsTupleConvertibleApply : public BooleanAnd<
+	BooleanConstant< (TupleSize< RemoveReference<TFrom> >::value == TupleSize<TTo>::value) >,
 	IsTupleConvertibleBasic< MakeTupleTypes<TFrom>, MakeTupleTypes<TTo> >
-> {
-};
+> {};
 
 template< typename TFrom, typename TTo >
-using IsTupleConvertible = BooleanAnd< IsTupleLike< RemoveReference<TFrom> >, IsTupleLike<TTo>, IsTupleConvertibleApply< TFrom, TTo > >;
+struct IsTupleConvertible : public BooleanAnd< IsTupleLike< RemoveReference<TFrom> >, IsTupleLike<TTo>, IsTupleConvertibleApply< TFrom, TTo > > {};
 
 template< typename TFrom, typename TTo >
 using NotTupleConvertible = BooleanNot< IsTupleConvertible< TFrom, TTo > >;
 
 template< typename T0, typename T1 >
-struct IsTupleConstructibleBasic : BooleanFalse {
-};
+struct IsTupleConstructibleBasic : public BooleanFalse {};
 
 template< typename ... TElement, typename ... TValue >
-struct IsTupleConstructibleBasic< TupleTypes< TElement ... >, TupleTypes< TValue ... > > : BooleanAnd< IsConstructible< TElement, TValue > ... > {
-};
+struct IsTupleConstructibleBasic< TupleTypes< TElement ... >, TupleTypes< TValue ... > > : public BooleanAnd< IsConstructible< TElement, TValue > ... > {};
 
 template< typename TTuple, typename TArgument >
-struct IsTupleConstructibleApply : BooleanAnd<
-	BooleanConstant< TupleSize<TTuple>::value == TupleSize< RemoveReference<TArgument> >::value >,
+struct IsTupleConstructibleApply : public BooleanAnd<
+	BooleanConstant< (TupleSize<TTuple>::value == TupleSize< RemoveReference<TArgument> >::value) >,
 	IsTupleConstructibleBasic< MakeTupleTypes<TTuple>, MakeTupleTypes<TArgument> > > {
 };
 
@@ -252,19 +201,16 @@ template< typename TFrom, typename TTo >
 using NotTupleConstructible = BooleanNot< IsTupleConstructible< TFrom, TTo > >;
 
 template< typename T0, typename T1 >
-struct IsTupleAssignableBasic : BooleanFalse {
-};
+struct IsTupleAssignableBasic : public BooleanFalse {};
 
 template< typename ... TElement, typename ... TValue >
-struct IsTupleAssignableBasic< TupleTypes< TElement ... >, TupleTypes< TValue ... > > : BooleanAnd< IsAssignable< TElement &, TValue > ... > {
-};
+struct IsTupleAssignableBasic< TupleTypes< TElement ... >, TupleTypes< TValue ... > > : public BooleanAnd< IsAssignable< TElement &, TValue > ... > {};
 
 template< typename TTuple, typename TArgument >
-struct IsTupleAssignableApply : BooleanAnd<
-	BooleanConstant< TupleSize<TTuple>::value == TupleSize< RemoveReference<TArgument> >::value >,
+struct IsTupleAssignableApply : public BooleanAnd<
+	BooleanConstant< (TupleSize<TTuple>{}() == TupleSize< RemoveReference<TArgument> >{}()) >,
 	IsTupleAssignableBasic< MakeTupleTypes<TTuple>, MakeTupleTypes<TArgument> >
-> {
-};
+> {};
 
 template< typename TTuple, typename TArgument >
 using IsTupleAssignable = BooleanAnd< IsTupleLike<TTuple>, IsTupleLike< RemoveReference<TArgument> >, IsTupleAssignableApply< TTuple, TArgument > >;
@@ -273,22 +219,22 @@ template< typename ... T >
 struct IsAllDefaultConstructible;
 
 template< typename ... T >
-struct IsAllDefaultConstructible< TupleTypes< T ... > > : BooleanAnd< HasDefaultConstructor<T> ... > {
-};
+struct IsAllDefaultConstructible< TupleTypes< T ... > > : public BooleanAnd< HasDefaultConstructor<T> ... > {};
 
-template< Size I, typename TElement, bool _dummy = BooleanAnd< IsEmpty<TElement>, NotFinal<TElement> >::value >
+template< Size I, typename TElement, bool = BooleanAnd< IsEmpty<TElement>, NotFinal<TElement> >{} >
 class TupleLeaf;
 
 template< Size I, typename T, bool B >
 inline void swap(TupleLeaf< I, T, B > & x, TupleLeaf< I, T, B > & y) noexcept(noexcept(swap(x.get(), y.get()))) {
+	using BR::swap;
 	swap(x.get(), y.get());
 }
 
 template< Size I, typename TElement >
 class TupleLeaf< I, TElement, false > {
 public:
-	BR_CONSTEXPR_AFTER_CXX11 TupleLeaf() noexcept(HasNothrowDefaultConstructor<TElement>()) : m_element() {
-		m_assert();
+	BR_CONSTEXPR_AFTER_CXX11 TupleLeaf() noexcept(HasNothrowDefaultConstructor<TElement>{}) : m_element() {
+		m_default_construct_check();
 	}
 
 	TupleLeaf(TupleLeaf const & leaf) = default;
@@ -296,22 +242,66 @@ public:
 	TupleLeaf(TupleLeaf && leaf) = default;
 
 	template< typename TAllocator >
-	TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::not_used > _dummy, TAllocator const & _allocator) : m_element() {
-		m_assert();
+	TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::not_used >, TAllocator const & /*allocator*/) : m_element() {
+		m_default_construct_check();
 	}
 
 	template< typename TAllocator >
-	TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_with_tag > _dummy, TAllocator const & allocator) : m_element(allocator_argument_tag, allocator) {
-		m_assert();
+	TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_with_tag >, TAllocator const & allocator) : m_element(allocator_argument_tag, allocator) {
+		m_default_construct_check();
 	}
 
 	template< typename TAllocator >
-	TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_without_tag > _dummy, TAllocator const & allocator) : m_element(allocator) {
-		m_assert();
+	TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_without_tag >, TAllocator const & allocator) : m_element(allocator) {
+		m_default_construct_check();
 	}
 
-	template< typename TValue, typename _TDummy = EnableIf< BooleanAnd< NotSame< Decay<TValue>, TupleLeaf >, IsConstructible< TElement, TValue > > > >
-	explicit BR_CONSTEXPR_AFTER_CXX11 TupleLeaf(TValue && value) noexcept(IsNothrowConstructible< TElement, TValue >()) : m_element(forward<TValue>(value)) {
+	template< typename TValue, typename = EnableIf< BooleanAnd< NotSame< Decay<TValue>, TupleLeaf >, IsConstructible< TElement, TValue > > > >
+	explicit BR_CONSTEXPR_AFTER_CXX11 TupleLeaf(TValue && value) noexcept(IsNothrowConstructible< TElement, TValue >{}) : m_element(forward<TValue>(value)) {
+		m_construct_check_rvalue<TValue>();
+	}
+
+	template< typename TValue, typename TAllocator >
+	explicit TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::not_used >, TAllocator const & /*allocator*/, TValue && value) : m_element(forward<TValue>(value)) {
+		m_construct_check_rvalue_with_allocator<TValue>();
+	}
+
+	template< typename TValue, typename TAllocator >
+	explicit TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_with_tag >, TAllocator const & allocator, TValue && value) : m_element(allocator_argument_tag, allocator, forward<TValue>(value)) {
+		m_construct_check_rvalue_with_allocator<TValue>();
+	}
+
+	template< typename TValue, typename TAllocator >
+	explicit TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_without_tag >, TAllocator const & allocator, TValue && value) : m_element(forward<TValue>(value), allocator) {
+		m_construct_check_rvalue_with_allocator<TValue>();
+	}
+
+	template< typename TValue >
+	auto operator=(TValue && value) noexcept(IsNothrowAssignable< AddLValueReference<TElement>, TValue >()) -> TupleLeaf & {
+		m_element = forward<TValue>(value);
+		return *this;
+	}
+
+	auto swap(TupleLeaf & leaf) noexcept(IsNothrowSwappable<TupleLeaf>{}) -> int {
+		using BR::swap;
+		swap(*this, leaf);
+		return 0;
+	}
+
+	BR_CONSTEXPR_AFTER_CXX11 auto get()        & noexcept -> TElement        & { return m_element; }
+	constexpr                auto get() const  & noexcept -> TElement const  & { return m_element; }
+	BR_CONSTEXPR_AFTER_CXX11 auto get()       && noexcept -> TElement       && { return static_cast< TElement && >(m_element); }
+	constexpr                auto get() const && noexcept -> TElement const && { return static_cast< TElement const && >(m_element); }
+
+private:
+	auto operator=(TupleLeaf const & leaf) -> TupleLeaf & = delete;
+
+	void m_default_construct_check() const {
+		static_assert(NotReference<TElement>{}, "Attempted to default construct a reference element in a Tuple");
+	}
+
+	template< typename TValue >
+	void m_construct_check_rvalue() const {
 		static_assert(
 			BooleanOr<
 				NotReference<TElement>,
@@ -323,54 +313,13 @@ public:
 					>
 				>,
 				BooleanAnd< IsRValueReference<TElement>, NotLValueReference<TValue> >
-			>(),
+			>{},
 			"Attempted to construct a reference element in a Tuple with an rvalue"
 		);
 	}
 
-	template< typename TValue, typename TAllocator >
-	explicit TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::not_used > _dummy, TAllocator const & _allocator, TValue && value) : m_element(forward<TValue>(value)) {
-		m_assert<TValue>();
-	}
-
-	template< typename TValue, typename TAllocator >
-	explicit TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_with_tag > _dummy, TAllocator const & allocator, TValue && value) : m_element(allocator_argument_tag, allocator, forward<TValue>(value)) {
-		m_assert<TValue>();
-	}
-
-	template< typename TValue, typename TAllocator >
-	explicit TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_without_tag > _dummy, TAllocator const & allocator, TValue && value) : m_element(forward<TValue>(value), allocator) {
-		m_assert<TValue>();
-	}
-
 	template< typename TValue >
-	auto operator=(TValue && value) noexcept(IsNothrowAssignable< AddLValueReference<TElement>, TValue >()) -> TupleLeaf & {
-		m_element = forward<TValue>(value);
-		return *this;
-	}
-
-	auto swap(TupleLeaf & leaf) noexcept(IsNothrowSwappable<TupleLeaf>()) -> int {
-		swap(*this, leaf);
-		return 0;
-	}
-
-	BR_CONSTEXPR_AFTER_CXX11 auto get() noexcept -> TElement & {
-		return m_element;
-	}
-
-	BR_CONSTEXPR_AFTER_CXX11 auto get() const noexcept -> TElement const & {
-		return m_element;
-	}
-
-private:
-	auto operator=(TupleLeaf const & leaf) -> TupleLeaf & = delete;
-
-	void m_assert() const {
-		static_assert(NotReference<TElement>(), "Attempted to default construct a reference element in a Tuple");
-	}
-
-	template< typename TValue >
-	void m_assert() const {
+	void m_construct_check_rvalue_with_allocator() const {
 		static_assert(
 			BooleanOr<
 				NotReference<TElement>,
@@ -381,19 +330,19 @@ private:
 						IsSame< RemoveReference<TValue>, WrappedReference< RemoveReference<TElement> > >
 					>
 				>
-			>(),
+			>{},
 			"Attempted to construct a reference element in a Tuple with an rvalue"
 		);
 	}
 
 private:
 	TElement m_element;
-}; // class TupleLeaf
+}; // class TupleLeaf< I, TElement, false >
 
 template< Size I, typename TElement >
-class TupleLeaf< I, TElement, true > : TElement {
+class TupleLeaf< I, TElement, true > : private TElement {
 public:
-	BR_CONSTEXPR_AFTER_CXX11 TupleLeaf() noexcept(HasNothrowDefaultConstructor<TElement>()) {
+	BR_CONSTEXPR_AFTER_CXX11 TupleLeaf() noexcept(HasNothrowDefaultConstructor<TElement>{}) {
 	}
 
 	TupleLeaf(TupleLeaf const & leaf) = default;
@@ -401,51 +350,49 @@ public:
 	TupleLeaf(TupleLeaf && leaf) = default;
 
 	template< typename TAllocator >
-	TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::not_used > _dummy, TAllocator const & _allocator) {
+	TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::not_used >, TAllocator const & /*allocator*/) {
 	}
 
 	template< typename TAllocator >
-	TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_with_tag > _dummy, TAllocator const & allocator) : TElement(allocator_argument_tag, allocator) {
+	TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_with_tag >, TAllocator const & allocator) : TElement(allocator_argument_tag, allocator) {
 	}
 
 	template< typename TAllocator >
-	TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_without_tag > _dummy, TAllocator const & allocator) : TElement(allocator) {
+	TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_without_tag >, TAllocator const & allocator) : TElement(allocator) {
 	}
 
 	template< typename TValue, typename = EnableIf< BooleanAnd< NotSame< Decay<TValue>, TupleLeaf >, IsConstructible< TElement, TValue > > > >
-	explicit BR_CONSTEXPR_AFTER_CXX11 TupleLeaf(TValue && value) noexcept(IsNothrowConstructible< TElement, TValue >()) : TElement(forward<TValue>(value)) {
+	explicit BR_CONSTEXPR_AFTER_CXX11 TupleLeaf(TValue && value) noexcept(IsNothrowConstructible< TElement, TValue >{}) : TElement(forward<TValue>(value)) {
 	}
 
 	template< typename TValue, typename TAllocator >
-	explicit TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::not_used > _dummy, TAllocator const & _allocator, TValue && value) : TElement(forward<TValue>(value)) {
+	explicit TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::not_used >, TAllocator const & _allocator, TValue && value) : TElement(forward<TValue>(value)) {
 	}
 
 	template< typename TValue, typename TAllocator >
-	explicit TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_with_tag > _dummy, TAllocator const & allocator, TValue && value) : TElement(allocator_argument_tag, allocator, forward<TValue>(value)) {
+	explicit TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_with_tag >, TAllocator const & allocator, TValue && value) : TElement(allocator_argument_tag, allocator, forward<TValue>(value)) {
 	}
 
 	template< typename TValue, typename TAllocator >
-	explicit TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_without_tag > _dummy, TAllocator const & allocator, TValue && value) : TElement(forward<TValue>(value), allocator) {
+	explicit TupleLeaf(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_without_tag >, TAllocator const & allocator, TValue && value) : TElement(forward<TValue>(value), allocator) {
 	}
 
 	template< typename TValue >
-	auto operator=(TValue && value) noexcept(IsNothrowAssignable< AddLValueReference<TElement>, TValue >()) -> TupleLeaf & {
+	auto operator=(TValue && value) noexcept(IsNothrowAssignable< AddLValueReference<TElement>, TValue >{}) -> TupleLeaf & {
 		TElement::operator=(forward<TValue>(value));
 		return *this;
 	}
 
 	auto swap(TupleLeaf & leaf) noexcept(IsNothrowSwappable<TupleLeaf>()) -> int {
+		using BR::swap;
 		swap(*this, leaf);
 		return 0;
 	}
 
-	BR_CONSTEXPR_AFTER_CXX11 auto get() noexcept -> TElement & {
-		return static_cast< TElement & >(*this);
-	}
-
-	BR_CONSTEXPR_AFTER_CXX11 auto get() const noexcept -> TElement const & {
-		return static_cast< TElement const & >(*this);
-	}
+	BR_CONSTEXPR_AFTER_CXX11 auto get()        & noexcept -> TElement        & { return static_cast< TElement        & >(*this); }
+	constexpr                auto get() const  & noexcept -> TElement const  & { return static_cast< TElement const  & >(*this); }
+	BR_CONSTEXPR_AFTER_CXX11 auto get()       && noexcept -> TElement       && { return static_cast< TElement       && >(*this); }
+	constexpr                auto get() const && noexcept -> TElement const && { return static_cast< TElement const && >(*this); }
 
 private:
 	auto operator=(TupleLeaf const & leaf) -> TupleLeaf & = delete;
@@ -455,13 +402,45 @@ template< typename ... TTypes >
 void swallow(TTypes &&...) noexcept {
 }
 
+template< typename T, typename ... TTypes >
+struct FindTupleLeafChecker;
+
+template< typename T >
+struct FindTupleLeafChecker< T > : BooleanTrue {};
+
+template< typename T, typename ... TTails >
+struct FindTupleLeafChecker< T, T, TTails... > : BooleanFalse {};
+
+template< typename T, typename THead, typename ... TTails >
+struct FindTupleLeafChecker< T, THead, TTails... > : public BooleanRewrap< FindTupleLeafChecker< T, TTails... > > {};
+
+template< typename T, Size I, typename ... TTypes >
+struct TypeFindTupleLeafBasic;
+
+template< typename T, Size I >
+struct TypeFindTupleLeafBasic< T, I > {
+	static_assert(DummyFalse<T>{}, "Type not found in type list.");
+};
+
+template< typename T, Size I, typename ... TTails >
+struct TypeFindTupleLeafBasic< T, I, T, TTails... > : public TypeWrapper< TupleLeaf< I, T > > {
+	static_assert(FindTupleLeafChecker< T, TTails... >{}, "Type can only occur once in type list.");
+};
+
+template< typename T, Size I, typename THead, typename ... TTails >
+struct TypeFindTupleLeafBasic< T, I, THead, TTails... > : public TypeRewrap< TypeFindTupleLeafBasic< T, I + 1, TTails... > > {
+};
+
+template< typename T, typename ... TTypes >
+using FindTupleLeaf = TypeUnwrap< TypeFindTupleLeafBasic< T, 0, TTypes... > >;
+
 template< typename I, typename ... TTypes >
 class TupleImp;
 
 template< Size ... I, typename ... T >
 class TupleImp< IndexSequence< I ... >, T ... > : public TupleLeaf< I, T > ... {
 public:
-	BR_CONSTEXPR_AFTER_CXX11 TupleImp() noexcept(BooleanAnd< HasNothrowDefaultConstructor<T> ... >()) {
+	BR_CONSTEXPR_AFTER_CXX11 TupleImp() noexcept(BooleanAnd< HasNothrowDefaultConstructor<T> ... >{}) {
 	}
 
 	TupleImp(TupleImp const & tuple) = default;
@@ -470,61 +449,66 @@ public:
 
 	template< Size ... IHead, typename ... THead, Size ... ITail, typename ... TTail, typename ... TValue >
 	BR_CONSTEXPR_AFTER_CXX11 explicit TupleImp(
-		IndexSequence< IHead... > _ih, TupleTypes< THead... > _th, IndexSequence< ITail... > _it, TupleTypes< TTail... > _tt, TValue && ... value
+		IndexSequence< IHead... > /*ih*/, TupleTypes< THead... > /*th*/,
+		IndexSequence< ITail... > /*it*/, TupleTypes< TTail... > /*tt*/,
+		TValue && ... value
 	) noexcept(
-		BooleanAnd< IsNothrowConstructible< THead, TValue >..., HasNothrowDefaultConstructor<TTail>... >()
+		BooleanAnd< IsNothrowConstructible< THead, TValue >..., HasNothrowDefaultConstructor<TTail>... >{}
 	) : TupleLeaf< IHead, THead >(forward<TValue>(value))..., TupleLeaf< ITail, TTail >()... {
 	}
 
 	template< typename TAllocator, Size ... IHead, typename ... THead, Size ... ITail, typename ... TTail, typename ... TValue >
 	explicit TupleImp(
-		AllocatorArgumentTag _dummy, TAllocator const & allocator, IndexSequence< IHead ... > _ih, TupleTypes< THead ... > _th, IndexSequence< ITail ... > _it, TupleTypes< TTail ... > _tt, TValue && ... value
-	) : TupleLeaf< IHead, THead >(AllocatorConstructorUsage< THead, TAllocator, TValue >(), allocator, forward<TValue>(value)) ...,  TupleLeaf< ITail, TTail >(AllocatorConstructorUsage< TTail, TAllocator >(), allocator) ... {
+		AllocatorArgumentTag, TAllocator const & allocator,
+		IndexSequence< IHead ... > /*ih*/, TupleTypes< THead ... > /*th*/,
+		IndexSequence< ITail ... > /*it*/, TupleTypes< TTail ... > /*tt*/,
+		TValue && ... value
+	) : TupleLeaf< IHead, THead >(AllocatorConstructorUsage< THead, TAllocator, TValue >(), allocator, forward<TValue>(value))..., TupleLeaf< ITail, TTail >(AllocatorConstructorUsage< TTail, TAllocator >(), allocator)... {
 	}
 
-	template< typename TTuple, typename _TDummy = EnableIf< IsTupleConstructible< Tuple< T ... >, TTuple > > >
+	template< typename TTuple, typename = EnableIf< IsTupleConstructible< Tuple< T ... >, TTuple > > >
 	BR_CONSTEXPR_AFTER_CXX11 TupleImp(TTuple && tuple) noexcept(
-		BooleanAnd< IsNothrowConstructible< T, TupleElement< I, MakeTupleTypes<TTuple> > > ... >()
-	) : TupleLeaf< I, T >(forward< TupleElement< I, MakeTupleTypes<TTuple> > >(BR::get<I>(tuple))) ... {
+		BooleanAnd< IsNothrowConstructible< T, TupleElement< I, MakeTupleTypes<TTuple> > > ... >{}
+	) : TupleLeaf< I, T >(forward< TupleElement< I, MakeTupleTypes<TTuple> > >(tuple.template get<I>())) ... {
 	}
 
-	template< typename TAllocator, typename TTuple, typename _TDummy = EnableIf< IsTupleConstructible< Tuple< T ... >, TTuple > > >
+	template< typename TAllocator, typename TTuple, typename = EnableIf< IsTupleConstructible< Tuple< T ... >, TTuple > > >
 	TupleImp(
-		AllocatorArgumentTag _dummy, TAllocator const & allocator, TTuple && tuple
-	) : TupleLeaf< I, T >(AllocatorConstructorUsage< T, TAllocator, TupleElement< I, MakeTupleTypes<TTuple> > >(), allocator, forward< TupleElement< I, MakeTupleTypes<TTuple> > >(get<I>(tuple))) ...  {
+		AllocatorArgumentTag, TAllocator const & allocator, TTuple && tuple
+	) : TupleLeaf< I, T >(AllocatorConstructorUsage< T, TAllocator, TupleElement< I, MakeTupleTypes<TTuple> > >{}, allocator, forward< TupleElement< I, MakeTupleTypes<TTuple> > >(tuple.template get<I>())) ...  {
 	}
 
-	template< typename TTuple, typename _TDummy = EnableIf< IsTupleAssignable< Tuple< T ... >, TTuple > > >
+	template< typename TTuple, typename = EnableIf< IsTupleAssignable< Tuple< T ... >, TTuple > > >
 	auto operator=(TTuple && tuple) noexcept(
-		BooleanAnd< IsNothrowAssignable< T &, TupleElement< I, MakeTupleTypes<TTuple> > > ... >::value
+		BooleanAnd< IsNothrowAssignable< T &, TupleElement< I, MakeTupleTypes<TTuple> > > ... >{}
 	) -> TupleImp & {
-		swallow(TupleLeaf< I, T >::operator=(forward< TupleElement< I, MakeTupleTypes<TTuple> > >(BR::get<I>(tuple))) ...);
+		swallow(TupleLeaf< I, T >::operator=(forward< TupleElement< I, MakeTupleTypes<TTuple> > >(tuple.template get<I>())) ...);
 		return *this;
 	}
 
-	auto operator=(TupleImp const & tuple) noexcept(BooleanAnd< HasNothrowCopyAssign<T> ... >::value) -> TupleImp & {
+	auto operator=(TupleImp const & tuple) noexcept(BooleanAnd< HasNothrowCopyAssignment<T> ... >{}) -> TupleImp & {
 		swallow(TupleLeaf< I, T >::operator=(static_cast< TupleLeaf< I, T > const & >(tuple).get()) ...);
 		return *this;
 	}
 
-	auto operator=(TupleImp && tuple) noexcept(BooleanAnd< HasNothrowMoveAssign<T> ... >::value) -> TupleImp &  {
-		swallow(TupleLeaf< I, T >::operator=(forward< T >(static_cast< TupleLeaf< I, T > & >(tuple).get())) ...);
+	auto operator=(TupleImp && tuple) noexcept(BooleanAnd< HasNothrowMoveAssignment<T> ... >{}) -> TupleImp &  {
+		swallow(TupleLeaf< I, T >::operator=(forward<T>(static_cast< TupleLeaf< I, T > & >(tuple).get())) ...);
 		return *this;
 	}
 
-	void swap(TupleImp & tuple) noexcept(BooleanAnd< IsNothrowSwappable<T> ... >::value) {
+	void swap(TupleImp & tuple) noexcept(BooleanAnd< IsNothrowSwappable<T> ... >{}) {
 		swallow(TupleLeaf< I, T >::swap(static_cast< TupleLeaf< I, T > & >(tuple)) ...);
 	}
 
-	template< Size P >
-	BR_CONSTEXPR_AFTER_CXX11 auto get() noexcept -> TupleElement< P, TupleTypes< T ... > > & {
-		return static_cast< TupleLeaf< P, TupleElement< P, TupleTypes< T ... > > > & >(*this).get();
-	}
+	template< Size P > BR_CONSTEXPR_AFTER_CXX11 auto get()        & noexcept -> TupleElement< P, TupleTypes< T ... > >        & { return static_cast< TupleLeaf< P, TupleElement< P, TupleTypes< T ... > > >        & >(*this).get(); }
+	template< Size P > constexpr                auto get() const  & noexcept -> TupleElement< P, TupleTypes< T ... > > const  & { return static_cast< TupleLeaf< P, TupleElement< P, TupleTypes< T ... > > > const  & >(*this).get(); }
+	template< Size P > BR_CONSTEXPR_AFTER_CXX11 auto get()       && noexcept -> TupleElement< P, TupleTypes< T ... > >       && { return static_cast< TupleLeaf< P, TupleElement< P, TupleTypes< T ... > > >       && >(*this).get(); }
+	template< Size P > constexpr                auto get() const && noexcept -> TupleElement< P, TupleTypes< T ... > > const && { return static_cast< TupleLeaf< P, TupleElement< P, TupleTypes< T ... > > > const && >(*this).get(); }
 
-	template< Size P >
-	BR_CONSTEXPR_AFTER_CXX11 auto get() const noexcept -> TupleElement< P, TupleTypes< T ... > > const & {
-		return static_cast< TupleLeaf< P, TupleElement< P, TupleTypes< T ... > > > const & >(*this).get();
-	}
+	template< typename TI > BR_CONSTEXPR_AFTER_CXX11 auto get()        & noexcept -> TI        & { return static_cast< FindTupleLeaf< TI, T... >        & >(*this).get(); }
+	template< typename TI > constexpr                auto get() const  & noexcept -> TI const  & { return static_cast< FindTupleLeaf< TI, T... > const  & >(*this).get(); }
+	template< typename TI > BR_CONSTEXPR_AFTER_CXX11 auto get()       && noexcept -> TI       && { return static_cast< FindTupleLeaf< TI, T... >       && >(*this).get(); }
+	template< typename TI > constexpr                auto get() const && noexcept -> TI const && { return static_cast< FindTupleLeaf< TI, T... > const && >(*this).get(); }
 
 }; // class TupleImp< IndexSequence< I ... >, T ... >
 
@@ -533,15 +517,15 @@ public:
 
 template < typename ... TElement >
 class Tuple {
-public:
+private:
 	using Imp = Detail::Container::TupleImp< MakeIndexSequence< 0, sizeof...(TElement) >, TElement ... >;
 
 public:
 	/**
 	 * default constructor
 	 */
-	template< typename _TDummy0 = BooleanTrue, typename _TDummy1 = EnableIf< BooleanAnd< _TDummy0, HasDefaultConstructor<TElement> ... > > >
-	BR_CONSTEXPR_AFTER_CXX11 Tuple() noexcept(BooleanAnd< HasNothrowDefaultConstructor<TElement> ... >()) {
+	template< bool dummy = true, typename = EnableIf< BooleanAnd< BooleanConstant<dummy>, HasDefaultConstructor<TElement> ... > > >
+	BR_CONSTEXPR_AFTER_CXX11 Tuple() noexcept(BooleanAnd< HasNothrowDefaultConstructor<TElement> ... >{}) {
 	}
 
 	/**
@@ -558,7 +542,7 @@ public:
 	 *	initialization conversion constructor
 	 */
 	explicit BR_CONSTEXPR_AFTER_CXX11 Tuple(TElement const & ... elements) noexcept(
-		BooleanAnd< HasNothrowCopyConstructor<TElement> ... >()
+		BooleanAnd< HasNothrowCopyConstructor<TElement> ... >{}
 	) : m_imp(MakeIndexSequence< 0, sizeof...(TElement) >(), Detail::Container::MakeTupleTypes< Tuple, 0, sizeof...(TElement) >(), MakeIndexSequence< 0, 0 >(), Detail::Container::MakeTupleTypes< Tuple, 0, 0 >(), elements ...) {
 	}
 
@@ -574,7 +558,7 @@ public:
 				Detail::Container::IsAllDefaultConstructible< Detail::Container::MakeTupleTypes< Tuple, sizeof...(TValue), sizeof...(TElement) > >
 			>,
 			bool
-		> _dummy = false
+		> = false
 	>
 	BR_CONSTEXPR_AFTER_CXX11 Tuple(TValue && ... value) noexcept(
 		IsNothrowConstructible<
@@ -584,7 +568,7 @@ public:
 			MakeIndexSequence< sizeof...(TValue), sizeof...(TElement) >,
 			Detail::Container::MakeTupleTypes< Tuple, sizeof...(TValue), sizeof...(TElement) >,
 			TValue ...
-		>()
+		>{}
 	) : m_imp(
 		MakeIndexSequence< 0, sizeof...(TValue) >(),
 		Detail::Container::MakeTupleTypes< Tuple, 0, sizeof...(TValue) >(),
@@ -604,7 +588,7 @@ public:
 				Detail::Container::IsAllDefaultConstructible< Detail::Container::MakeTupleTypes< Tuple, sizeof...(TValue), sizeof...(TElement) > >
 			>,
 			bool
-		> _dummy = false
+		> = false
 	>
 	explicit BR_CONSTEXPR_AFTER_CXX11 Tuple(TValue && ... value) noexcept(
 		IsNothrowConstructible<
@@ -614,7 +598,7 @@ public:
 			MakeIndexSequence< sizeof...(TValue), sizeof...(TElement) >,
 			Detail::Container::MakeTupleTypes< Tuple, sizeof...(TValue), sizeof...(TElement) >,
 			TValue ...
-		>()
+		>{}
 	) : m_imp(
 		MakeIndexSequence< 0, sizeof...(TValue) >(),
 		Detail::Container::MakeTupleTypes< Tuple, 0, sizeof...(TValue) >(),
@@ -629,11 +613,11 @@ public:
 	 */
 	template<
 		typename TTuple,
-		EnableIf< Detail::Container::IsTupleConvertible< TTuple, Tuple >, bool > _dummy = false
+		EnableIf< Detail::Container::IsTupleConvertible< TTuple, Tuple >, bool > = false
 	>
 	BR_CONSTEXPR_AFTER_CXX11 Tuple(TTuple && tuple) noexcept(
 		IsNothrowConstructible< Imp, TTuple >()
-	) : m_imp(forward< TTuple >(tuple)) {
+	) : m_imp(forward<TTuple>(tuple)) {
 	}
 
 	template<
@@ -644,7 +628,7 @@ public:
 				Detail::Container::NotTupleConvertible< TTuple, Tuple >
 			>,
 			bool
-		> _dummy = false
+		> = false
 	>
 	explicit BR_CONSTEXPR_AFTER_CXX11 Tuple(TTuple && tuple) noexcept(
 		IsNothrowConstructible< Imp, TTuple >()
@@ -655,7 +639,7 @@ public:
 	 *	allocator version initialization constructor
 	 */
 	template< typename TAllocator >
-	Tuple(AllocatorArgumentTag _dummy, TAllocator const & allocator, TElement const & ... element) : m_imp(
+	Tuple(AllocatorArgumentTag, TAllocator const & allocator, TElement const & ... element) : m_imp(
 		allocator_argument_tag,
 		allocator,
 		MakeIndexSequence< 0, sizeof...(TElement) >(),
@@ -663,7 +647,8 @@ public:
 		MakeIndexSequence< 0, 0 >(),
 		Detail::Container::MakeTupleTypes< Tuple, 0, 0 >(),
 		element ...
-	) {}
+	) {
+	}
 
 	/**
 	 *	allocator version implicit initialization conversion constructor
@@ -678,9 +663,9 @@ public:
 				Detail::Container::IsAllDefaultConstructible< Detail::Container::MakeTupleTypes< Tuple, sizeof...(TValue), sizeof...(TElement) > >
 			>,
 			bool
-		> _dummy0 = false
+		> = false
 	>
-	Tuple(AllocatorArgumentTag _dummy, TAllocator const & allocator, TValue && ... value) : m_imp(
+	Tuple(AllocatorArgumentTag, TAllocator const & allocator, TValue && ... value) : m_imp(
 		allocator_argument_tag,
 		allocator,
 		MakeIndexSequence<  0, sizeof...(TValue) >(),
@@ -688,13 +673,14 @@ public:
 		MakeIndexSequence< sizeof...(TValue), sizeof...(TElement) >(),
 		Detail::Container::MakeTupleTypes< Tuple, sizeof...(TValue), sizeof...(TElement) >(),
 		forward<TValue>(value) ...
-	) {}
+	) {
+	}
 
 	/**
 	 * allocator version move conversion constructor
 	 */
-	template< typename TAllocator, typename TTuple, typename _TDummy = EnableIf< Detail::Container::IsTupleConvertible< TTuple, Tuple > > >
-	Tuple(AllocatorArgumentTag _dummy, TAllocator const & allocator, TTuple && tuple) : m_imp(
+	template< typename TAllocator, typename TTuple, typename = EnableIf< Detail::Container::IsTupleConvertible< TTuple, Tuple > > >
+	Tuple(AllocatorArgumentTag, TAllocator const & allocator, TTuple && tuple) : m_imp(
 		allocator_argument_tag, allocator, forward< TTuple >(tuple)
 	) {
 	}
@@ -702,8 +688,8 @@ public:
 	/**
 	 * implicit move conversion assignment
 	 */
-	template< typename TTuple, typename _TDummy = EnableIf< Detail::Container::IsTupleAssignable< Tuple, TTuple > > >
-	auto operator=(TTuple && tuple) noexcept(IsNothrowAssignable< Imp &, TTuple >()) -> Tuple & {
+	template< typename TTuple, typename = EnableIf< Detail::Container::IsTupleAssignable< Tuple, TTuple > > >
+	auto operator=(TTuple && tuple) noexcept(IsNothrowAssignable< Imp &, TTuple >{}) -> Tuple & {
 		m_imp.operator=(forward<TTuple>(tuple));
 		return *this;
 	}
@@ -711,25 +697,29 @@ public:
 	/**
 	 * swap
 	 */
-	void swap(Tuple & tuple) noexcept(BooleanAnd< IsNothrowSwappable<TElement> ... >()) {
+	void swap(Tuple & tuple) noexcept(BooleanAnd< IsNothrowSwappable<TElement> ... >{}) {
 		m_imp.swap(tuple.m_imp);
 	}
 
 	/**
-	 *  get element at \em I
+	 *  取第 \em I 个元素
 	 */
-	template< Size I >
-	BR_CONSTEXPR_AFTER_CXX11 auto get() noexcept -> TupleElement< I, Tuple > & {
-		return m_imp.get<I>();
-	}
+	///@{
+	template< Size I > BR_CONSTEXPR_AFTER_CXX11 auto get()        & noexcept -> TupleElement< I, Tuple >        & { return m_imp.template get<I>(); }
+	template< Size I > constexpr                auto get() const  & noexcept -> TupleElement< I, Tuple > const  & { return m_imp.template get<I>(); }
+	template< Size I > BR_CONSTEXPR_AFTER_CXX11 auto get()       && noexcept -> TupleElement< I, Tuple >       && { return m_imp.template get<I>(); }
+	template< Size I > constexpr                auto get() const && noexcept -> TupleElement< I, Tuple > const && { return m_imp.template get<I>(); }
+	///@}
 
 	/**
-	 *  get element at \em I
+	 *  取类型 \em T 对应的元素
 	 */
-	template< Size I >
-	BR_CONSTEXPR_AFTER_CXX11 auto get() const noexcept -> TupleElement< I, Tuple > const & {
-		return m_imp.get<I>();
-	}
+	///@{
+	template< typename T > BR_CONSTEXPR_AFTER_CXX11 auto get()        & noexcept -> T        & { return m_imp.template get<T>(); }
+	template< typename T > constexpr                auto get() const  & noexcept -> T const  & { return m_imp.template get<T>(); }
+	template< typename T > BR_CONSTEXPR_AFTER_CXX11 auto get()       && noexcept -> T       && { return m_imp.template get<T>(); }
+	template< typename T > constexpr                auto get() const && noexcept -> T const && { return m_imp.template get<T>(); }
+	///@}
 
 private:
 	Imp m_imp;
@@ -742,68 +732,31 @@ public:
 	constexpr Tuple() noexcept = default;
 
 	template< typename TAllocator >
-	constexpr Tuple(AllocatorArgumentTag _tag, TAllocator const & _allocator) noexcept {
+	constexpr Tuple(AllocatorArgumentTag, TAllocator const &) noexcept {
 	}
 
 	template< typename TAllocator >
-	constexpr Tuple(AllocatorArgumentTag _tag, TAllocator const & _allocator, Tuple const & _tuple) noexcept {
-	}
-
-	template< typename TValue >
-	constexpr Tuple(Array< TValue, 0 > _array) noexcept {}
-
-	template< typename TAllocator, typename TValue >
-	constexpr Tuple(AllocatorArgumentTag _dummy, TAllocator const & _allocator, Array< TValue, 0 > _array) noexcept {
+	constexpr Tuple(AllocatorArgumentTag, TAllocator const &, Tuple const &) noexcept {
 	}
 
 	void swap(Tuple & tuple) noexcept {
 	}
 }; // class Tuple<>
 
-template< typename T >
-struct TupleSize : IntegerRewrap< Detail::Container::TupleSize< T > > {
-};
-
-template< Size I, typename T >
-struct TypeTupleElement : TypeRewrap< Detail::Container::TypeTupleElement< I, T > > {
-};
-
-template< Size I, typename ... Tn >
-BR_CONSTEXPR_AFTER_CXX11 inline  auto get(Tuple< Tn ... > & tuple) noexcept -> TupleElement< I, Tuple< Tn ... > > & {
-	return tuple.get<I>();
-};
-
-template< Size I, typename ... Tn >
-BR_CONSTEXPR_AFTER_CXX11 inline  auto get(Tuple< Tn ... > const & tuple) noexcept -> TupleElement< I, Tuple< Tn ... > > const & {
-	return tuple.get<I>();
-};
-
-template< Size I, typename ... Tn >
-BR_CONSTEXPR_AFTER_CXX11 inline  auto get(Tuple< Tn ... > && tuple) noexcept -> TupleElement< I, Tuple< Tn ... > > && {
-	return move(tuple.get< I >());
-};
-
 namespace Detail {
 namespace Container {
 
 template< typename T >
-struct TypeMakeTupleReturnBasic : TypeWrapper<T> {};
+struct TypeMakeTupleReturnBasic : public TypeWrapper<T> {};
 
 template< typename T >
-struct TypeMakeTupleReturnBasic< WrappedReference<T> > : TypeAddLValueReference<T> {};
+struct TypeMakeTupleReturnBasic< WrappedReference<T> > : public TypeAddLValueReference<T> {};
 
 template< typename T >
-struct TypeMakeTupleReturn : TypeMakeTupleReturnBasic< Decay<T> > {};
+struct TypeMakeTupleReturn : public TypeMakeTupleReturnBasic< Decay<T> > {};
 
 template< typename T >
 using MakeTupleReturn = TypeUnwrap< TypeMakeTupleReturn<T> >;
-
-struct IgnoreTag {
-	template< typename TT >
-	auto operator=(TT && _dummy) const -> IgnoreTag const & {
-		return *this;
-	}
-};
 
 } // namespace Container
 } // namespace Detail
@@ -812,6 +765,19 @@ template< typename ... T >
 BR_CONSTEXPR_AFTER_CXX11 inline auto make_tuple(T && ... t) -> Tuple< Detail::Container::MakeTupleReturn<T> ... > {
 	return Tuple< Detail::Container::MakeTupleReturn<T> ... >(forward<T>(t) ...);
 }
+
+namespace Detail {
+namespace Container {
+
+struct IgnoreTag {
+	template< typename TT >
+	auto operator=(TT &&) const -> IgnoreTag const & {
+		return *this;
+	}
+};
+
+} // namespace Container
+} // namespace Detail
 
 constexpr auto ignore_tag = Detail::Container::IgnoreTag();
 
@@ -887,7 +853,7 @@ template< typename T0, typename T1 >
 using TupleCatType = TypeUnwrap< TypeTupleCatType< T0, T1 > >;
 
 template< typename ... T0, typename ... T1 >
-struct TypeTupleCatType< Tuple< T0 ... >, TupleTypes< T1 ... > > : TypeWrapper< Tuple< T0 ..., T1 ...  > > {
+struct TypeTupleCatType< Tuple< T0 ... >, TupleTypes< T1 ... > > : public TypeWrapper< Tuple< T0 ..., T1 ...  > > {
 };
 
 template< typename TResult, bool is_tuple_like, typename ... TTuple >
@@ -895,23 +861,22 @@ struct TypeTupleCatResultBasic {
 };
 
 template< typename ... T, typename TTuple >
-struct TypeTupleCatResultBasic< Tuple< T ... >, true, TTuple > : TypeTupleCatType< Tuple< T ... >, MakeTupleTypes< RemoveReference< TTuple > > > {
+struct TypeTupleCatResultBasic< Tuple< T ... >, true, TTuple > : public TypeTupleCatType< Tuple< T ... >, MakeTupleTypes< RemoveReference< TTuple > > > {
 };
 
 template< typename ... T, typename TTuple0, typename TTuple1, typename ... TTuple >
-struct TypeTupleCatResultBasic< Tuple< T ... >, true, TTuple0, TTuple1, TTuple ... > : TypeTupleCatResultBasic< TupleCatType< Tuple< T ... >, MakeTupleTypes< RemoveReference< TTuple0 > > >, IsTupleLike< RemoveReference<TTuple1> >::value, TTuple1, TTuple ... > {
+struct TypeTupleCatResultBasic< Tuple< T ... >, true, TTuple0, TTuple1, TTuple ... > : public TypeTupleCatResultBasic< TupleCatType< Tuple< T ... >, MakeTupleTypes< RemoveReference< TTuple0 > > >, IsTupleLike< RemoveReference<TTuple1> >::value, TTuple1, TTuple ... > {
 };
 
 template< typename ... TTuple >
 struct TypeTupleCatResult;
 
 template< typename TTuple0, typename ... TTuple >
-struct TypeTupleCatResult< TTuple0, TTuple ... > : TypeTupleCatResultBasic< Tuple<>, IsTupleLike< RemoveReference<TTuple0> >::value, TTuple0, TTuple ... > {
+struct TypeTupleCatResult< TTuple0, TTuple ... > : public TypeTupleCatResultBasic< Tuple<>, IsTupleLike< RemoveReference<TTuple0> >::value, TTuple0, TTuple ... > {
 };
 
 template<>
-struct TypeTupleCatResult<> : TypeWrapper< Tuple<> > {
-};
+struct TypeTupleCatResult<> : public TypeWrapper< Tuple<> > {};
 
 template< typename ... TTuple >
 using TupleCatResult = TypeUnwrap< TypeTupleCatResult< TTuple ... > >;
@@ -920,19 +885,19 @@ template< typename TResult, typename TIndices, typename TTuple0, typename ... TT
 struct TypeTupleCatResultReferenceBasic;
 
 template< typename ... T, Size ... I, typename TTuple >
-struct TypeTupleCatResultReferenceBasic< Tuple< T ... >, IndexSequence< I ... >, TTuple > : TypeWrapper<
+struct TypeTupleCatResultReferenceBasic< Tuple< T ... >, IndexSequence< I ... >, TTuple > : public TypeWrapper<
 	Tuple< T ..., MapQualifier< TTuple, TupleElement< I, RemoveReference<TTuple> > > && ... >
 > {
 };
 
 template< typename ... T, Size ... I, typename TTuple0, typename TTuple1, typename ... TTuple >
-struct TypeTupleCatResultReferenceBasic< Tuple< T ... >, IndexSequence< I ... >, TTuple0, TTuple1, TTuple ... > : TypeTupleCatResultReferenceBasic<
+struct TypeTupleCatResultReferenceBasic< Tuple< T ... >, IndexSequence< I ... >, TTuple0, TTuple1, TTuple ... > : public TypeTupleCatResultReferenceBasic<
 	Tuple< T ..., MapQualifier< TTuple0, TupleElement< I, RemoveReference<TTuple0> > > && ... >, MakeIndexSequence< 0, TupleSize< RemoveReference<TTuple1> >::value >, TTuple1, TTuple ...
 > {
 };
 
 template< typename TTuple0, typename ... TTuple >
-struct TypeTupleCatResultReference : TypeTupleCatResultReferenceBasic< Tuple<>, MakeIndexSequence< 0, TupleSize< RemoveReference<TTuple0> >::value >, TTuple0, TTuple ... > {
+struct TypeTupleCatResultReference : public TypeTupleCatResultReferenceBasic< Tuple<>, MakeIndexSequence< 0, TupleSize< RemoveReference<TTuple0> >::value >, TTuple0, TTuple ... > {
 };
 
 template< typename ... TTuple >
@@ -942,7 +907,7 @@ template< typename TResult, typename TIHead, typename TITail >
 struct TupleCat;
 
 template< typename ... T, Size ... IHead, Size ... ITail >
-struct TupleCat< Tuple<  T ... >, IndexSequence< IHead ... >, IndexSequence< ITail ... > > {
+struct TupleCat< Tuple< T ... >, IndexSequence< IHead ... >, IndexSequence< ITail ... > > {
 	template< typename TTuple >
 	BR_CONSTEXPR_AFTER_CXX11 auto operator()(Tuple< T ... > head, TTuple && tail) -> TupleCatResultReference< Tuple< T ... > &&, TTuple && > {
 		return forward_as_tuple(forward<T>(get<IHead>(head)) ..., get<ITail>(forward<TTuple>(tail)) ...);
@@ -962,7 +927,7 @@ struct TupleCat< Tuple<  T ... >, IndexSequence< IHead ... >, IndexSequence< ITa
 } // namespace Container
 } // namespace Detail
 
-BR_CONSTEXPR_AFTER_CXX11 inline  auto tuple_cat() -> Tuple<> {
+BR_CONSTEXPR_AFTER_CXX11 inline auto tuple_cat() -> Tuple<> {
 	return Tuple<>();
 }
 

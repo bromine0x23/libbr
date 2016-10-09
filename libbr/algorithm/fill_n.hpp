@@ -14,8 +14,13 @@
 
 namespace BR {
 
+/**
+ * 填充
+ */
 template< typename TOutputIterator, typename TValue, typename TSize >
 inline auto fill_n(TOutputIterator first, TSize n, TValue const & value) -> TOutputIterator;
+
+
 
 namespace Detail {
 namespace Algorithm {
@@ -28,7 +33,7 @@ inline auto fill_n(TOutputIterator first, TSize n, TValue const & value) -> TOut
 	return first;
 }
 
-template< typename TOutputValue, typename TValue, typename TSize, typename _TDummy = EnableIf< BooleanAnd< IsIntegral<TOutputValue>, BooleanConstant< sizeof(TOutputValue) == 1 >, NotSame< TOutputValue, bool >, IsIntegral<TValue>, BooleanConstant< sizeof(TValue) == 1 > > > >
+template< typename TOutputValue, typename TValue, typename TSize, typename = EnableIf< BooleanAnd< IsIntegral<TOutputValue>, BooleanConstant< sizeof(TOutputValue) == 1 >, NotSame< TOutputValue, bool >, IsIntegral<TValue>, BooleanConstant< sizeof(TValue) == 1 > > > >
 inline auto fill_n(TOutputValue * first, TSize n, TValue const & value) -> TOutputValue * {
 	if (n > 0) {
 		memory_set(first, value, n);

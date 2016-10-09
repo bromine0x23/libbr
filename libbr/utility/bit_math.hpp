@@ -13,35 +13,60 @@ namespace BR {
 namespace Detail {
 namespace BitMath {
 
-constexpr auto half(UInt16 x) -> UInt8;
+auto half(UInt16 x) noexcept -> UInt8;
 
-constexpr auto half(UInt32 x) -> UInt16;
+auto half(UInt32 x) noexcept -> UInt16;
 
-constexpr auto half(UInt64 x) -> UInt32;
+auto half(UInt64 x) noexcept -> UInt32;
 
 template< typename TInt >
-constexpr auto half(TInt x) -> TInt;
+auto half(TInt x) noexcept -> TInt;
 
+union SplitUInt16 {
+	UInt16 u16;
+	UInt8 u8[2];
+};
+
+template< typename TEntirety, typename TPart >
+union Split {
+	static_assert(sizeof(TEntirety) > sizeof(TPart), "Wrong Use");
+	static_assert(sizeof(TEntirety) % sizeof(TPart) == 0, "Wrong Use");
+	TEntirety entirety;
+	TPart parts[sizeof(TEntirety) / sizeof(TPart)];
+};
+
+constexpr auto bisect(UInt16 from) -> Split< UInt16, UInt8 > {
+	return Split< UInt16, UInt8 >{from};
+}
+
+constexpr auto bisect(UInt32 from) -> Split< UInt32, UInt16 > {
+	return Split< UInt32, UInt16 >{from};
+}
+
+constexpr auto bisect(UInt64 from) -> Split< UInt64, UInt32 > {
+	return Split< UInt64, UInt32 >{from};
+}
+/*
 constexpr auto bisect(UInt16 const & x) -> UInt8 const (&)[2] {
-	return *reinterpret_cast< UInt8 const (*)[2] >(&x);
+	return *reinterpret_cast< UInt8 const (* const)[2] >(&x);
 }
 
 constexpr auto bisect(UInt32 const & x) -> UInt16 const (&)[2] {
-	return *reinterpret_cast< UInt16 const (*)[2] >(&x);
+	return *reinterpret_cast< UInt16 const (* const)[2] >(&x);
 }
 
 constexpr auto bisect(UInt64 const & x) -> UInt32 const (&)[2] {
-	return *reinterpret_cast< UInt32 const (*)[2] >(&x);
+	return *reinterpret_cast< UInt32 const (* const)[2] >(&x);
+}
+*/
+template< typename TUInt >
+constexpr auto part0(TUInt x) -> decltype(bisect(x).parts[0]) {
+	return bisect(x).parts[0];
 }
 
 template< typename TUInt >
-constexpr auto part0(TUInt x) -> decltype(bisect(x)[0]) {
-	return bisect(x)[0];
-}
-
-template< typename TUInt >
-constexpr auto part1(TUInt x) -> decltype(bisect(x)[1]) {
-	return bisect(x)[1];
+constexpr auto part1(TUInt x) -> decltype(bisect(x).parts[1]) {
+	return bisect(x).parts[1];
 }
 
 } // namespace BitMath

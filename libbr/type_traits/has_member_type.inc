@@ -4,7 +4,7 @@
  */
 #if false
 #include <libbr/config.hpp>
-#include <libbr/type_traits/bool_constant.hpp>
+#include <libbr/utility/boolean_constant.hpp>
 #endif
 
 #ifndef BR_TYPE_OPERATE_TYPE_NAME
@@ -17,10 +17,10 @@ using BR::BooleanTrue;
 using BR::BooleanFalse;
 
 struct HasMemberTypeTest {
-	template < typename T >
-	static auto test(typename T::BR_TYPE_OPERATE_TYPE_NAME * = nullptr) -> BR::BooleanTrue;
+	template< typename T >
+	static auto test(typename T::BR_TYPE_OPERATE_TYPE_NAME *) -> BR::BooleanTrue;
 
-	template < typename T >
+	template< typename T >
 	static auto test(...) -> BR::BooleanFalse;
 };
 

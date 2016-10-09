@@ -22,6 +22,11 @@ inline auto make_move_iterator(TIterator iterator) -> MoveIterator<TIterator> {
 	return  MoveIterator<TIterator>(iterator);
 }
 
+template< typename TIterator, typename TElement = typename IteratorTraits<TIterator>::Element, typename TResultIterator = Conditional< BooleanAnd< NoNothrowMoveConstructor<TElement>, HasCopyConstructor<TElement> >, TIterator, MoveIterator<TIterator> > >
+inline auto make_move_iterator_if_noexcept(TIterator iterator) -> TResultIterator{
+	return TResultIterator(iterator);
+}
+
 template< typename TIterator >
 class MoveIterator : public BasicIterator {
 public:

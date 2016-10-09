@@ -7,5 +7,5 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/string/cstring.hpp>
+#include <libbr/string/raw_string.hpp>
 #include <libbr/string/string.hpp>

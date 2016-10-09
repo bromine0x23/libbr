@@ -14,15 +14,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-using HasCopyConstructor = IsConstructible< T, AddLValueReference< AddConst<T> > >;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否具有拷贝构造函数
  * @tparam T 待检查类型
@@ -33,7 +24,7 @@ using HasCopyConstructor = IsConstructible< T, AddLValueReference< AddConst<T> >
  * 如果 \em T 具有拷贝构造函数，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct HasCopyConstructor : BooleanRewrapPositive< Detail::TypeTraits::HasCopyConstructor<T> > {};
+struct HasCopyConstructor;
 
 /**
  * @brief HasCopyConstructor 的否定
@@ -41,7 +32,7 @@ struct HasCopyConstructor : BooleanRewrapPositive< Detail::TypeTraits::HasCopyCo
  * @see BR::HasCopyConstructor
  */
 template< typename T >
-struct NoCopyConstructor : BooleanRewrapNegative< Detail::TypeTraits::HasCopyConstructor<T> > {};
+struct NoCopyConstructor;
 
 #if defined(BR_CXX14)
 
@@ -65,5 +56,21 @@ constexpr auto no_copy_constructor = bool_constant< NoCopyConstructor<T> >;
 
 #endif // defined(BR_CXX14)
 
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+using HasCopyConstructor = IsConstructible< T, AddLValueReference< AddConst<T> > >;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct HasCopyConstructor : public BooleanRewrapPositive< Detail::TypeTraits::HasCopyConstructor<T> > {};
+
+template< typename T >
+struct NoCopyConstructor : public BooleanRewrapNegative< Detail::TypeTraits::HasCopyConstructor<T> > {};
 
 } // namespace BR

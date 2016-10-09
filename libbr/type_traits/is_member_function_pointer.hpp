@@ -29,7 +29,7 @@ struct IsMemberFunctionPointer;
  * @see IsMemberFunctionPointer
  */
 template< typename T >
-using NotMemberFunctionPointer = BooleanNot< IsMemberFunctionPointer<T> >;
+struct NotMemberFunctionPointer;
 
 #if defined(BR_CXX14)
 
@@ -53,84 +53,37 @@ constexpr auto not_member_function_pointer = bool_constant< NotMemberFunctionPoi
 
 #endif // defined(BR_CXX14)
 
+
+
 namespace Detail {
 namespace TypeTraits {
 
 template< typename T >
-struct IsMemberFunctionPointerBasic : public BooleanFalse {
-};
+struct IsMemberFunctionPointerBasic : public BooleanFalse {};
 
 template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(TClass::*)(TArgs...) > : public BooleanTrue {
-};
+struct IsMemberFunctionPointerBasic< TResult(TClass::*)(TArgs...)                > : public BooleanTrue {};
 
 template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(TClass::*)(TArgs..., ...) > : public BooleanTrue {
-};
+struct IsMemberFunctionPointerBasic< TResult(TClass::*)(TArgs...) const          > : public BooleanTrue {};
 
 template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(TClass::*)(TArgs...) const > : public BooleanTrue {
-};
+struct IsMemberFunctionPointerBasic< TResult(TClass::*)(TArgs...)       volatile > : public BooleanTrue {};
 
 template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(TClass::*)(TArgs..., ...) const > : public BooleanTrue {
-};
+struct IsMemberFunctionPointerBasic< TResult(TClass::*)(TArgs...) const volatile > : public BooleanTrue {};
 
 template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(TClass::*)(TArgs...) volatile > : public BooleanTrue {
-};
+struct IsMemberFunctionPointerBasic< TResult(TClass::*)(TArgs..., ...)                > : public BooleanTrue {};
 
 template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(TClass::*)(TArgs..., ...) volatile > : public BooleanTrue {
-};
+struct IsMemberFunctionPointerBasic< TResult(TClass::*)(TArgs..., ...) const          > : public BooleanTrue {};
 
 template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(TClass::*)(TArgs...) const volatile > : public BooleanTrue {
-};
+struct IsMemberFunctionPointerBasic< TResult(TClass::*)(TArgs..., ...)       volatile > : public BooleanTrue {};
 
 template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(TClass::*)(TArgs..., ...) const volatile > : public BooleanTrue {
-};
-
-#if defined(BR_MSVC)
-/*
-template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(__stdcall TClass::*)(TArgs...) > : BooleanTrue {};
-
-template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(__stdcall TClass::*)(TArgs...) const > : BooleanTrue {};
-
-template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(__stdcall TClass::*)(TArgs...) volatile > : BooleanTrue {};
-
-template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(__stdcall TClass::*)(TArgs...) const volatile > : BooleanTrue {};
-
-template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(__fastcall TClass::*)(TArgs...) > : BooleanTrue {};
-
-template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(__fastcall TClass::*)(TArgs...) const > : BooleanTrue {};
-
-template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(__fastcall TClass::*)(TArgs...) volatile > : BooleanTrue {};
-
-template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(__fastcall TClass::*)(TArgs...) const volatile > : BooleanTrue {};
-
-template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(__cdecl TClass::*)(TArgs...) > : BooleanTrue {};
-
-template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(__cdecl TClass::*)(TArgs...) const > : BooleanTrue {};
-
-template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(__cdecl TClass::*)(TArgs...) volatile > : BooleanTrue {};
-
-template< typename TResult, typename TClass, typename... TArgs >
-struct IsMemberFunctionPointerBasic< TResult(__cdecl TClass::*)(TArgs...) const volatile > : BooleanTrue {};
-*/
-#endif
+struct IsMemberFunctionPointerBasic< TResult(TClass::*)(TArgs..., ...) const volatile > : public BooleanTrue {};
 
 template< typename T >
 using IsMemberFunctionPointer = IsMemberFunctionPointerBasic< RemoveConstVolatile<T> >;
@@ -139,8 +92,10 @@ using IsMemberFunctionPointer = IsMemberFunctionPointerBasic< RemoveConstVolatil
 } // namespace Detail
 
 template< typename T >
-struct IsMemberFunctionPointer : BooleanRewrap< Detail::TypeTraits::IsMemberFunctionPointer<T> > {
-};
+struct IsMemberFunctionPointer : public BooleanRewrapPositive< Detail::TypeTraits::IsMemberFunctionPointer<T> > {};
+
+template< typename T >
+struct NotMemberFunctionPointer : public BooleanRewrapNegative< Detail::TypeTraits::IsMemberFunctionPointer<T> > {};
 
 } // namespace BR
 

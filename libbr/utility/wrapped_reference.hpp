@@ -51,6 +51,7 @@ struct NotWrappedReference;
 template< typename T >
 constexpr auto is_wrapped_reference = bool_constant< IsWrappedReference<T> >;
 
+template< typename T >
 constexpr auto not_wrapped_reference = bool_constant< NotWrappedReference<T> >;
 
 #endif // defined(BR_CXX14)

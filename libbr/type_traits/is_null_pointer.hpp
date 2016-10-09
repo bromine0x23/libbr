@@ -12,21 +12,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-struct IsNullPointerBasic : BooleanFalse {};
-
-template<>
-struct IsNullPointerBasic<NullPointer> : BooleanTrue {};
-
-template< typename T >
-struct IsNullPointer : IsNullPointerBasic< RemoveConstVolatile<T> > {};
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否是空指针类型
  * @tparam T 待检查类型
@@ -36,7 +21,7 @@ struct IsNullPointer : IsNullPointerBasic< RemoveConstVolatile<T> > {};
  * 如果 \em T 是空指针类型(\em nullptr 的类型)，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsNullPointer : BooleanRewrapPositive< Detail::TypeTraits::IsNullPointer<T> > {};
+struct IsNullPointer;
 
 /**
  * @brief IsNullPointer 的否定
@@ -44,7 +29,7 @@ struct IsNullPointer : BooleanRewrapPositive< Detail::TypeTraits::IsNullPointer<
  * @see IsNullPointer
  */
 template< typename T >
-struct NotNullPointer: BooleanRewrapNegative< Detail::TypeTraits::IsNullPointer<T> > {};
+struct NotNullPointer;
 
 #if defined(BR_CXX14)
 
@@ -67,5 +52,28 @@ template< typename T >
 constexpr auto not_null_pointer = bool_constant< NotNullPointer<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+struct IsNullPointerBasic : public BooleanFalse {};
+
+template<>
+struct IsNullPointerBasic<NullPointer> : public BooleanTrue {};
+
+template< typename T >
+using IsNullPointer = IsNullPointerBasic< RemoveConstVolatile<T> >;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsNullPointer : public BooleanRewrapPositive< Detail::TypeTraits::IsNullPointer<T> > {};
+
+template< typename T >
+struct NotNullPointer: public BooleanRewrapNegative< Detail::TypeTraits::IsNullPointer<T> > {};
 
 } // namespace BR

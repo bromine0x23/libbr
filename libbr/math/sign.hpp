@@ -11,8 +11,6 @@ namespace BR {
 
 /**
  * @brief 符号
- * @author Bromine0x23
- * @since 2015/6/20
  */
 enum class Sign {
 	NEG = false,  ///< 负

@@ -19,13 +19,13 @@ public:
 	using BaseException = LogicException;
 
 	ArgumentException() : BaseException("BR::ArgumentException") {
-	};
+	}
 
-	explicit ArgumentException(String<NChar> const & message) : BaseException(message) {
-	};
+	explicit ArgumentException(RawString<NChar> const & message) : BaseException(message) {
+	}
 
 	explicit ArgumentException(CString<NChar> message) : BaseException(message) {
-	};
+	}
 
 	~ArgumentException() noexcept override;
 };

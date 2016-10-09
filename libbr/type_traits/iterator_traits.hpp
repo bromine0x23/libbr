@@ -151,7 +151,7 @@ public:
 	struct Category : public IteratorTag, public ReadableTag, public WritableTag, public RandomAccessTraversalTag {
 	};
 
-	static_assert(IsEmpty<Category>::value, "`Category` should be an empty type.");
+	static_assert(IsEmpty<Category>{}, "`Category` should be an empty type.");
 
 	/**
 	 * @brief 迭代元素

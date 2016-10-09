@@ -12,24 +12,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-#if defined(BR_IS_TRIVIAL)
-
-template< typename T >
-using IsTrivial = BooleanConstant< BR_IS_TRIVIAL(T) >;
-
-#else
-
-template< typename T >
-using IsTrivial = BooleanFalse;
-
-#endif // defined(BR_IS_TRIVIAL)
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否是 \em trivial 的
  * @tparam T 待检查类型
@@ -40,7 +22,7 @@ using IsTrivial = BooleanFalse;
  * 如果 \em T 是 \em trivial 的，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsTrivial : BooleanRewrapPositive< Detail::TypeTraits::IsTrivial<T> > {};
+struct IsTrivial;
 
 /**
  * @brief IsTrivial 的否定
@@ -48,7 +30,7 @@ struct IsTrivial : BooleanRewrapPositive< Detail::TypeTraits::IsTrivial<T> > {};
  * @see BR::IsTrivial
  */
 template< typename T >
-struct NotTrivial : BooleanRewrapNegative< Detail::TypeTraits::IsTrivial<T> > {};
+struct NotTrivial;
 
 #if defined(BR_CXX14)
 
@@ -71,5 +53,31 @@ template< typename T >
 constexpr auto not_trivial = bool_constant< NotTrivial<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+#if defined(BR_IS_TRIVIAL)
+
+template< typename T >
+using IsTrivial = BooleanConstant< BR_IS_TRIVIAL(T) >;
+
+#else
+
+template< typename T >
+using IsTrivial = BooleanFalse;
+
+#endif // defined(BR_IS_TRIVIAL)
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsTrivial : public BooleanRewrapPositive< Detail::TypeTraits::IsTrivial<T> > {};
+
+template< typename T >
+struct NotTrivial : public BooleanRewrapNegative< Detail::TypeTraits::IsTrivial<T> > {};
 
 } // namespace BR

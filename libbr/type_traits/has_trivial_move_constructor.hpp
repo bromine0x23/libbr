@@ -13,15 +13,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-using HasTrivialMoveConstructor = IsTriviallyConstructible < T, AddRValueReference<T> >;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否具有平凡的移动构造函数
  * @tparam T 待检查类型
@@ -33,7 +24,7 @@ using HasTrivialMoveConstructor = IsTriviallyConstructible < T, AddRValueReferen
  * 如果 \em T 具有平凡的移动构造函数，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct HasTrivialMoveConstructor : BooleanRewrapPositive< Detail::TypeTraits::HasTrivialMoveConstructor<T> > {};
+struct HasTrivialMoveConstructor;
 
 /**
  * @brief HasTrivialMoveConstructor 的否定
@@ -41,7 +32,7 @@ struct HasTrivialMoveConstructor : BooleanRewrapPositive< Detail::TypeTraits::Ha
  * @see BR::HasTrivialMoveConstructor
  */
 template< typename T >
-struct NoTrivialMoveConstructor : BooleanRewrapNegative< Detail::TypeTraits::HasTrivialMoveConstructor<T> > {};
+struct NoTrivialMoveConstructor;
 
 #if defined(BR_CXX14)
 
@@ -64,5 +55,22 @@ template< typename T >
 constexpr auto no_trivial_move_constructor = bool_constant< NoTrivialMoveConstructor<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+using HasTrivialMoveConstructor = IsTriviallyConstructible < T, AddRValueReference<T> >;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct HasTrivialMoveConstructor : public BooleanRewrapPositive< Detail::TypeTraits::HasTrivialMoveConstructor<T> > {};
+
+template< typename T >
+struct NoTrivialMoveConstructor : public BooleanRewrapNegative< Detail::TypeTraits::HasTrivialMoveConstructor<T> > {};
 
 } // namespace BR

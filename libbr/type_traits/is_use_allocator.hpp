@@ -24,7 +24,7 @@ struct IsUseAllocatorTest {
 	static auto test(...) -> BooleanFalse;
 };
 
-template< typename T, typename TAllocator, typename _TDummy = decltype(IsUseAllocatorTest::test<T>()) >
+template< typename T, typename TAllocator, typename = decltype(IsUseAllocatorTest::test<T>()) >
 struct IsUseAllocator;
 
 template< typename T, typename TAllocator >
@@ -32,8 +32,7 @@ struct IsUseAllocator< T, TAllocator, BooleanTrue > : IsConstructible< TAllocato
 };
 
 template< typename T, typename TAllocator >
-struct IsUseAllocator< T, TAllocator, BooleanFalse > : BooleanFalse {
-};
+struct IsUseAllocator< T, TAllocator, BooleanFalse > : BooleanFalse {};
 
 } // namespace TypeTraits
 } // namespace Detail
@@ -67,7 +66,7 @@ struct NotUseAllocator : BooleanRewrapNegative< Detail::TypeTraits::IsUseAllocat
  * @see IsUseAllocator
  * @see not_use_allocator
  */
-template< typename T >
+template< typename T, typename TAllocator >
 constexpr auto is_use_allocator = bool_constant< IsUseAllocator< T, TAllocator> >;
 
 /**

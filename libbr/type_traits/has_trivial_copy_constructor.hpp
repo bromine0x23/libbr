@@ -14,15 +14,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-using HasTrivialCopyConstructor = IsTriviallyConstructible< T, AddLValueReference< AddConst<T> > >;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否具有平凡的拷贝构造函数
  * @tparam T 待检查类型
@@ -34,15 +25,15 @@ using HasTrivialCopyConstructor = IsTriviallyConstructible< T, AddLValueReferenc
  * 如果 \em T 具有平凡的拷贝构造函数，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct HasTrivialCopyConstructor : BooleanRewrapPositive< Detail::TypeTraits::HasTrivialCopyConstructor<T> > {};
+struct HasTrivialCopyConstructor;
 
 /**
- * @brief HasTriviallyCopyConstructor 的否定
+ * @brief HasTrivialCopyConstructor 的否定
  * @tparam T 待检查类型
- * @see BR::HasTriviallyCopyConstructor
+ * @see BR::HasTrivialCopyConstructor
  */
 template< typename T >
-struct NoTrivialCopyConstructor : BooleanRewrapNegative< Detail::TypeTraits::HasTrivialCopyConstructor<T> > {};
+struct NoTrivialCopyConstructor;
 
 #if defined(BR_CXX14)
 
@@ -65,5 +56,22 @@ template< typename T >
 constexpr auto no_trivial_copy_constructor = bool_constant< NoTrivialCopyConstructor<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+using HasTrivialCopyConstructor = IsTriviallyConstructible< T, AddLValueReference< AddConst<T> > >;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct HasTrivialCopyConstructor : public BooleanRewrapPositive< Detail::TypeTraits::HasTrivialCopyConstructor<T> > {};
+
+template< typename T >
+struct NoTrivialCopyConstructor : public BooleanRewrapNegative< Detail::TypeTraits::HasTrivialCopyConstructor<T> > {};
 
 } // namespace BR

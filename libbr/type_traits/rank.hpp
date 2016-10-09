@@ -35,22 +35,24 @@ constexpr auto rank = integral_constant< Rank<T> >;
 
 #endif // defined(BR_CXX14)
 
+
+
 namespace Detail {
 namespace TypeTraits {
 
 template< typename T >
-struct Rank : IntegralConstant< Size, 0 > {};
+struct Rank : public IntegralConstant< Size, 0 > {};
 
 template< typename T >
-struct Rank< T [] > : IntegralConstant< Size, (Rank< RemoveConstVolatile<T> >{})() + 1 > {};
+struct Rank< T [] > : public IntegralConstant< Size, (Rank< RemoveConstVolatile<T> >{})() + 1 > {};
 
 template< typename T, Size S >
-struct Rank< T [S] > : IntegralConstant< Size, (Rank< RemoveConstVolatile<T> >{})() + 1 > {};
+struct Rank< T [S] > : public IntegralConstant< Size, (Rank< RemoveConstVolatile<T> >{})() + 1 > {};
 
 } // namespace TypeTraits
 } // namespace Detail
 
 template< typename T >
-struct Rank : IntegralRewrap< Detail::TypeTraits::Rank<T> > {};
+struct Rank : public IntegralRewrap< Detail::TypeTraits::Rank<T> > {};
 
 } // namespace BR

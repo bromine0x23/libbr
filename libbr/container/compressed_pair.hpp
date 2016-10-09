@@ -5,7 +5,6 @@
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/make_integral_sequence.hpp>
 #include <libbr/type_operate/remove_reference.hpp>
-#include <libbr/type_traits/has_nothrow_copy_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_move_constructor.hpp>
 #include <libbr/type_traits/is_empty.hpp>
 #include <libbr/type_traits/is_final.hpp>

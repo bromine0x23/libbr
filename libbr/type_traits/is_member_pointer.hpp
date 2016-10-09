@@ -31,7 +31,7 @@ struct IsMemberPointer;
  * @see IsMemberPointer
  */
 template< typename T >
-using NotMemberPointer = BooleanNot< IsMemberPointer<T> >;
+struct NotMemberPointer;
 
 #if defined(BR_CXX14)
 
@@ -55,16 +55,16 @@ constexpr auto not_member_pointer = bool_constant< NotMemberPointer<T> >;
 
 #endif // defined(BR_CXX14)
 
+
+
 namespace Detail {
 namespace TypeTraits {
 
 template< typename T >
-struct IsMemberPointerBasic : public BooleanFalse {
-};
+struct IsMemberPointerBasic : public BooleanFalse {};
 
 template< typename TClass, typename TMember >
-struct IsMemberPointerBasic< TMember TClass::* > : public BooleanTrue {
-};
+struct IsMemberPointerBasic< TMember TClass::* > : public BooleanTrue {};
 
 template< typename T >
 using IsMemberPointer = IsMemberPointerBasic< RemoveConstVolatile<T> >;
@@ -73,7 +73,9 @@ using IsMemberPointer = IsMemberPointerBasic< RemoveConstVolatile<T> >;
 } // namespace Detail
 
 template< typename T >
-struct IsMemberPointer : public BooleanRewrap< Detail::TypeTraits::IsMemberPointer<T> > {
-};
+struct IsMemberPointer : public BooleanRewrapPositive< Detail::TypeTraits::IsMemberPointer<T> > {};
+
+template< typename T >
+struct NotMemberPointer : public BooleanRewrapNegative< Detail::TypeTraits::IsMemberPointer<T> > {};
 
 } // namespace BR

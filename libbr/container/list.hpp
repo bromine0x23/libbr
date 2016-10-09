@@ -10,12 +10,11 @@
 #include <libbr/algorithm/equal.hpp>
 #include <libbr/algorithm/lexicographical_compare.hpp>
 #include <libbr/assert/assert.hpp>
-#include <libbr/container/compressed_pair.hpp>
 #include <libbr/container/initializer_list.hpp>
+#include <libbr/container/tuple.hpp>
 #include <libbr/iterator/basic_iterator.hpp>
 #include <libbr/iterator/category.hpp>
 #include <libbr/iterator/distance.hpp>
-#include <libbr/iterator/iterator_range.hpp>
 #include <libbr/iterator/move_iterator.hpp>
 #include <libbr/iterator/next.hpp>
 #include <libbr/iterator/prev.hpp>
@@ -30,9 +29,8 @@
 #include <libbr/memory/unique_pointer.hpp>
 #include <libbr/type_operate/enable_if.hpp>
 #include <libbr/type_traits/has_nothrow_default_constructor.hpp>
-#include <libbr/type_traits/has_nothrow_move_assign.hpp>
+#include <libbr/type_traits/has_nothrow_move_assignment.hpp>
 #include <libbr/type_traits/has_nothrow_move_constructor.hpp>
-#include <libbr/type_traits/integer_traits.hpp>
 #include <libbr/type_traits/is_nothrow_swappable.hpp>
 #include <libbr/utility/forward.hpp>
 #include <libbr/utility/move.hpp>
@@ -48,26 +46,14 @@ inline void swap(List< TElement, TAllocator > & x, List< TElement, TAllocator > 
 	x.swap(y);
 }
 
+
+
 namespace Detail {
 namespace Container {
 namespace List {
 
 template< typename TNodePointer >
-struct BasicNode {
-	using NodePointer = TNodePointer;
-
-	using BasicNodePointer = typename BR::PointerTraits<NodePointer>::template Rebind<BasicNode>;
-
-	BasicNode() : prev(self()), next(self()) {
-	}
-
-	auto self() -> NodePointer {
-		return static_cast<NodePointer>(BR::PointerTraits<BasicNodePointer>::make_pointer(*this));
-	}
-
-	NodePointer prev;
-	NodePointer next;
-};
+struct BasicNode;
 
 template< typename TElement, typename TVoidPointer >
 struct Node;
@@ -75,12 +61,32 @@ struct Node;
 template< typename TElement, typename TVoidPointer >
 using HeadNode = BasicNode< typename PointerTraits<TVoidPointer>::template Rebind< Node<TElement, TVoidPointer> > >;
 
+template< typename TNodePointer >
+struct BasicNode {
+	using NodePointer = TNodePointer;
+
+	using BasicNodePointer = typename PointerTraits<NodePointer>::template Rebind<BasicNode>;
+
+	BasicNode() : prev(self()), next(self()) {
+	}
+
+	auto self() -> NodePointer {
+		return static_cast<NodePointer>(PointerTraits<BasicNodePointer>::make_pointer(*this));
+	}
+
+	NodePointer prev;
+	NodePointer next;
+};
+
 template< typename TElement, typename TVoidPointer >
 struct Node : public HeadNode< TElement, TVoidPointer > {
 	using Element = TElement;
 
 	Element element;
 };
+
+template< typename TNodePointer >
+class Iterator;
 
 template< typename TNodeConstPointer >
 class ConstIterator;
@@ -90,9 +96,9 @@ class Iterator : public BasicIterator {
 private:
 	using NodePointer = TNodePointer;
 
-	using PointerTraits = BR::PointerTraits<NodePointer>;
+	using NodePointerTraits = PointerTraits<NodePointer>;
 
-	using Node = typename PointerTraits::Element;
+	using Node = typename NodePointerTraits::Element;
 
 	template< typename TElement, typename TAllocator >
 	friend class BR::List;
@@ -101,16 +107,15 @@ private:
 	friend class ConstIterator;
 
 public:
-	struct Category : public IteratorTag, public ReadableTag, public WritableTag, public BidirectionalTraversalTag {
-	};
+	struct Category : public IteratorTag, public ReadableTag, public WritableTag, public BidirectionalTraversalTag {};
 
 	using Element = typename Node::Element;
 
-	using Pointer = typename PointerTraits::template Rebind<Element>;
+	using Pointer = typename NodePointerTraits::template Rebind<Element>;
 
 	using Reference = Element &;
 
-	using Difference = typename PointerTraits::Difference;
+	using Difference = typename NodePointerTraits::Difference;
 
 	Iterator() noexcept : m_pointer(nullptr) {
 	}
@@ -120,7 +125,7 @@ public:
 	}
 
 	auto operator->() const -> Pointer {
-		return PointerTraits::make_pointer(m_pointer->element);
+		return NodePointerTraits::make_pointer(m_pointer->element);
 	}
 
 	auto operator++() -> Iterator & {
@@ -158,8 +163,7 @@ private:
 	}
 
 private:
-	TNodePointer m_pointer;
-
+	NodePointer m_pointer;
 }; // class Iterator<TNodePointer>
 
 template< typename TNodeConstPointer >
@@ -167,26 +171,25 @@ class ConstIterator : BasicIterator {
 private:
 	using NodeConstPointer = TNodeConstPointer;
 
-	using PointerTraits = BR::PointerTraits<NodeConstPointer>;
+	using NodeConstPointerTraits = PointerTraits<NodeConstPointer>;
 
-	using Node = RemoveConst< typename PointerTraits::Element >;
+	using Node = RemoveConst< typename NodeConstPointerTraits::Element >;
 
-	using NodePointer = typename PointerTraits::template Rebind<Node>;
+	using NodePointer = typename NodeConstPointerTraits::template Rebind<Node>;
 
 	template< typename TElement, typename TAllocator >
 	friend class BR::List;
 
 public:
-	struct Category : public IteratorTag, public ReadableTag, public BidirectionalTraversalTag {
-	};
+	struct Category : public IteratorTag, public ReadableTag, public BidirectionalTraversalTag {};
 
 	using Element = typename Node::Element;
 
-	using Pointer = typename PointerTraits::template Rebind<Element const>;
+	using Pointer = typename NodeConstPointerTraits::template Rebind<Element const>;
 
 	using Reference = Element const &;
 
-	using Difference = typename PointerTraits::Difference;
+	using Difference = typename NodeConstPointerTraits::Difference;
 
 	ConstIterator() noexcept : m_pointer(nullptr) {
 	}
@@ -199,7 +202,7 @@ public:
 	}
 
 	auto operator->() const -> Pointer {
-		return PointerTraits::make_pointer(m_pointer->element);
+		return NodeConstPointerTraits::make_pointer(m_pointer->element);
 	}
 
 	auto operator++() -> ConstIterator & {
@@ -224,7 +227,6 @@ public:
 		return *temp;
 	}
 
-
 	auto operator==(ConstIterator const & y) const -> bool {
 		return m_pointer == y.m_pointer;
 	}
@@ -233,11 +235,11 @@ public:
 		return !operator==(y);
 	}
 
-	auto operator==(Iterator<TNodeConstPointer> const  & y) const -> bool {
+	auto operator==(Iterator<NodePointer> const  & y) const -> bool {
 		return m_pointer == y.m_pointer;
 	}
 
-	auto operator!=(Iterator<TNodeConstPointer> const  & y) const -> bool {
+	auto operator!=(Iterator<NodePointer> const  & y) const -> bool {
 		return !operator==(y);
 	}
 
@@ -247,7 +249,6 @@ private:
 private:
 	NodeConstPointer m_pointer;
 }; // class ConstIterator<TNodeConstPointer>
-
 
 template< typename TElement, typename TAllocator >
 class Base {
@@ -259,8 +260,6 @@ protected:
 	using AllocatorTraits = BR::AllocatorTraits<Allocator>;
 
 	using VoidPointer = typename AllocatorTraits::VoidPointer;
-
-	using Size = typename AllocatorTraits::Size;
 
 	using Node = List::Node< Element, VoidPointer >;
 
@@ -280,42 +279,56 @@ protected:
 
 	using HeadNodePointer = typename HeadNodeAllocatorTraits::Pointer;
 
+	using HeadNodePointerTraits = PointerTraits<HeadNodePointer>;
+
+	using Reference = Element &;
+
+	using ConstReference = Element const &;
+
+	using Pointer = typename AllocatorTraits::Pointer;
+
+	using ConstPointer = typename AllocatorTraits::ConstPointer;
+
+	using Size = typename AllocatorTraits::Size;
+
+	using Difference = typename AllocatorTraits::Difference;
+
 	using Iterator = List::Iterator<NodePointer>;
 
 	using ConstIterator = List::ConstIterator<NodePointer>;
 
 protected:
-	Base() noexcept(HasNothrowDefaultConstructor<NodeAllocator>()) : m_impl(), m_count(0) {
+	Base() noexcept(HasNothrowDefaultConstructor<NodeAllocator>{}) : m_impl(0) {
 	}
 
-	Base(Allocator const & allocator) : m_impl(NodeAllocator(allocator)), m_count(0) {
+	Base(Allocator const & allocator) : m_impl(0, NodeAllocator(allocator)) {
 	}
 
 	auto m_size() noexcept -> Size & {
-		return m_count;
+		return m_impl.template get<Size>();
 	}
 
 	auto m_size() const noexcept -> Size const & {
-		return m_count;
-	}
-
-	auto m_head() noexcept -> NodePointer {
-		return static_cast<NodePointer>(PointerTraits<HeadNodePointer>::make_pointer(m_impl.first()));
-	}
-
-	auto m_head() const noexcept -> NodeConstPointer {
-		return static_cast<NodeConstPointer>(PointerTraits<HeadNodePointer>::make_pointer(const_cast<HeadNode &>(m_impl.first())));
+		return m_impl.template get<Size>();
 	}
 
 	auto m_allocator() noexcept -> NodeAllocator & {
-		return m_impl.second();
+		return m_impl.template get<NodeAllocator>();
 	}
 
 	auto m_allocator() const noexcept -> NodeAllocator const & {
-		return m_impl.second();
+		return m_impl.template get<NodeAllocator>();
 	}
 
-	bool is_empty() const noexcept {
+	auto m_head() noexcept -> NodePointer {
+		return static_cast<NodePointer>(HeadNodePointerTraits::make_pointer(m_impl.template get<HeadNode>()));
+	}
+
+	auto m_head() const noexcept -> NodeConstPointer {
+		return static_cast<NodeConstPointer>(HeadNodePointerTraits::make_pointer(const_cast<HeadNode &>(m_impl.template get<HeadNode>())));
+	}
+
+	bool m_is_empty() const noexcept {
 		return m_size() == 0;
 	}
 
@@ -335,45 +348,60 @@ protected:
 		return m_head();
 	}
 
-	void m_copy_assign_allocate(Base const & list) {
-		m_copy_assign_allocate(list, typename NodeAllocatorTraits::IsPropagateOnContainerCopyAssignment());
+	void m_copy_assign_allocator(Base const & list) {
+		m_copy_assign_allocator(list, typename NodeAllocatorTraits::IsPropagateOnContainerCopyAssignment{});
 	}
 
-	void m_move_assign_allocate(Base & list) noexcept(
+	void m_move_assign_allocator(Base & list) noexcept(
 		BooleanOr<
 			BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment >,
-			HasNothrowMoveAssign<NodeAllocator>
-		>::value
+			HasNothrowMoveAssignment<NodeAllocator>
+		>{}
 	) {
-		m_move_assign_allocate(list, typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment());
+		m_move_assign_allocator(list, typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment{});
 	}
 
 	void m_clear() noexcept;
 
 	void m_swap(Base & list) noexcept(
-		BooleanOr< BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerSwap >, IsNothrowSwappable<NodeAllocator> >::value
+		BooleanOr< BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerSwap >, IsNothrowSwappable<NodeAllocator> >{}
 	);
+
+	static void m_swap_allocator(NodeAllocator & x, NodeAllocator & y) noexcept(
+		BooleanOr<
+			BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerSwap >,
+			IsNothrowSwappable<NodeAllocator>
+		>{}
+	) {
+		m_swap_allocator(x, y, typename NodeAllocatorTraits::IsPropagateOnContainerSwap{});
+	}
+
+	static void m_link_nodes(NodePointer p, NodePointer f, NodePointer l);
 
 	static void m_unlink_nodes(NodePointer f, NodePointer l) noexcept {
 		f->prev->next = l->next;
 		l->next->prev = f->prev;
 	}
 
+	void m_insert_nodes_at_front(NodePointer f, NodePointer l);
+
+	void m_insert_nodes_at_back(NodePointer f, NodePointer l);
+
 private:
-	void m_copy_assign_allocate(Base const & list, BooleanFalse) {
+	void m_copy_assign_allocator(Base const & list, BooleanFalse) {
 	}
 
-	void m_copy_assign_allocate(Base const & list, BooleanTrue) {
+	void m_copy_assign_allocator(Base const & list, BooleanTrue) {
 		if (m_allocator() != list.m_allocator()) {
 			m_clear();
 		}
 		m_allocator() = list.m_allocator();
 	}
 
-	void m_move_assign_allocate(Base & list, BooleanFalse) noexcept {
+	void m_move_assign_allocator(Base & list, BooleanFalse) noexcept {
 	}
 
-	void m_move_assign_allocate(Base & list, BooleanTrue) noexcept(HasNothrowMoveAssign<NodeAllocator>()) {
+	void m_move_assign_allocator(Base & list, BooleanTrue) noexcept(HasNothrowMoveAssignment<NodeAllocator>{}) {
 		m_allocator() = move(list.m_allocator());
 	}
 
@@ -385,35 +413,24 @@ private:
 		}
 	}
 
-	static void m_swap_allocator(NodeAllocator & x, NodeAllocator & y) noexcept(
-		BooleanOr<
-			BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerSwap >,
-			IsNothrowSwappable<NodeAllocator>
-		>::value
-	) {
-		m_swap_allocator(x, y, typename NodeAllocatorTraits::IsPropagateOnContainerSwap());
-	}
-
 	static void m_swap_allocator(NodeAllocator & x, NodeAllocator & y, BooleanFalse) noexcept {
 	}
 
-	static void m_swap_allocator(NodeAllocator & x, NodeAllocator & y, BooleanTrue) noexcept(IsNothrowSwappable<NodeAllocator>()) {
+	static void m_swap_allocator(NodeAllocator & x, NodeAllocator & y, BooleanTrue) noexcept(IsNothrowSwappable<NodeAllocator>{}) {
 		using BR::swap;
 		swap(x, y);
 	}
 
 protected:
-	CompressedPair< HeadNode, NodeAllocator > m_impl;
-	Size m_count;
+	Tuple< Size, NodeAllocator, HeadNode > m_impl;
 
 }; // class Base< TElement, TAllocator >
 
 template< typename TElement, typename TAllocator >
 void Base< TElement, TAllocator >::m_clear() noexcept {
-	if (!is_empty()) {
+	if (!m_is_empty()) {
 		auto & allocator = m_allocator();
-		auto f = m_begin();
-		auto l = m_end();
+		auto f = m_begin(), l = m_end();
 		m_unlink_nodes(f, l->prev);
 		m_size() = 0;
 		for (; f != l;) {
@@ -426,8 +443,32 @@ void Base< TElement, TAllocator >::m_clear() noexcept {
 }
 
 template< typename TElement, typename TAllocator >
+void Base< TElement, TAllocator >::m_link_nodes(NodePointer p, NodePointer f, NodePointer l) {
+	p->prev->next = f;
+	f->prev = p->prev;
+	p->prev = l;
+	l->next = p;
+}
+
+template< typename TElement, typename TAllocator >
+void Base< TElement, TAllocator >::m_insert_nodes_at_front(NodePointer f, NodePointer l) {
+	f->prev = m_head()->self();
+	l->next = m_head()->next;
+	l->next->prev = l;
+	this->m_head()->next = f;
+}
+
+template< typename TElement, typename TAllocator >
+void Base< TElement, TAllocator >::m_insert_nodes_at_back(NodePointer f, NodePointer l) {
+	l->next = m_head()->self();
+	f->prev = m_head()->prev;
+	f->prev->next = f;
+	this->m_head()->prev = l;
+}
+
+template< typename TElement, typename TAllocator >
 void Base< TElement, TAllocator >::m_swap(Base & list) noexcept(
-	BooleanOr< BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerSwap >, IsNothrowSwappable<NodeAllocator> >::value
+	BooleanOr< BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerSwap >, IsNothrowSwappable<NodeAllocator> >{}
 ) {
 	using BR::swap;
 	m_swap_allocator(m_allocator(), list.m_allocator());
@@ -461,7 +502,7 @@ public:
 	using Allocator = TAllocator;
 
 private:
-	using Base = Detail::Container::List::Base< TElement, TAllocator >;
+	using Base = Detail::Container::List::Base< Element, Allocator >;
 
 	using AllocatorTraits = BR::AllocatorTraits<Allocator>;
 
@@ -477,32 +518,32 @@ public:
 	/**
 	 * @brief Reference
 	 */
-	using Reference = Element &;
+	using Reference = typename Base::Reference;
 
 	/**
 	 * @brief ConstReference
 	 */
-	using ConstReference = Element const &;
+	using ConstReference = typename Base::ConstReference;
 
 	/**
 	 * @brief Pointer
 	 */
-	using Pointer = typename AllocatorTraits::Pointer;
+	using Pointer = typename Base::Pointer;
 
 	/**
 	 * @brief ConstPointer
 	 */
-	using ConstPointer = typename AllocatorTraits::ConstPointer;
+	using ConstPointer = typename Base::ConstPointer;
 
 	/**
 	 * @brief Difference
 	 */
-	using Difference = typename AllocatorTraits::Difference;
+	using Difference = typename Base::Difference;
 
 	/**
 	 * @brief Size
 	 */
-	using Size = typename AllocatorTraits::Size;
+	using Size = typename Base::Size;
 
 	/**
 	 * @brief Iterator
@@ -539,7 +580,7 @@ public:
 	/**
 	 * @brief 默认构造函数
 	 */
-	List() noexcept(HasNothrowDefaultConstructor<NodeAllocator>::value) {
+	List() noexcept(HasNothrowDefaultConstructor<NodeAllocator>{}) {
 	}
 
 	/**
@@ -555,7 +596,7 @@ public:
 	 */
 	List(List const & other) : Base(Allocator(NodeAllocatorTraits::select_on_container_copy_construction(other.m_allocator()))) {
 		for (auto i = other.begin(), e = other.end(); i != e; ++i) {
-			add_back(*i);
+			insert_back(*i);
 		}
 	}
 
@@ -566,7 +607,7 @@ public:
 	 */
 	List(List const & other, Allocator const & allocator) : Base(allocator) {
 		for (auto i = other.begin(), e = other.end(); i != e; ++i) {
-			add_back(*i);
+			insert_back(*i);
 		}
 	}
 
@@ -574,7 +615,7 @@ public:
 	 * @brief 移动构造函数
 	 * @param[in,out] list 源容器
 	 */
-	List(List && other) noexcept(HasNothrowMoveConstructor<NodeAllocator>::value) : Base(Allocator(move(other.m_allocator()))) {
+	List(List && other) noexcept(HasNothrowMoveConstructor<NodeAllocator>{}) : Base(Allocator(move(other.m_allocator()))) {
 		splice(end(), other);
 	}
 
@@ -584,12 +625,11 @@ public:
 	 * @param[in] allocator 分配器
 	 */
 	List(List && other, Allocator const & allocator) : Base(allocator) {
-		if (allocator == other.get_allocator()) {
+		if (allocator == other.m_allocator()) {
 			splice(end(), other);
 		} else {
 			assign(make_move_iterator(other.begin()), make_move_iterator(other.end()));
 		}
-
 	}
 
 	/**
@@ -597,7 +637,7 @@ public:
 	 * @param[in] count 容器大小
 	 * @param[in] allocator 分配器
 	 */
-	explicit List(Size n, Allocator const & allocator = Allocator()) : Base(allocator) {
+	explicit List(Size n, Allocator const & allocator = Allocator{}) : Base(allocator) {
 		for (; n > 0; --n) {
 			emplace_back();
 		}
@@ -609,9 +649,9 @@ public:
 	 * @param[in] size 容器大小
 	 * @param[in] allocator 分配器
 	 */
-	List(Element const & x, Size n, Allocator const & allocator = Allocator()) : Base(allocator) {
+	List(ConstReference x, Size n, Allocator const & allocator = Allocator{}) : Base(allocator) {
 		for (; n > 0; --n) {
-			add_back(x);
+			emplace_back(x);
 		}
 	}
 
@@ -622,9 +662,9 @@ public:
 	 * @param[in] allocator 分配器
 	 */
 	template< typename TIterator >
-	List(TIterator f, TIterator l, Allocator const & allocator = Allocator(), EnableIf< IsInputIterator<TIterator> > * = nullptr) : Base(allocator) {
+	List(TIterator f, TIterator l, Allocator const & allocator = Allocator{}, EnableIf< IsInputIterator<TIterator> > * = nullptr) : Base(allocator) {
 		for (; f != l; ++f) {
-			add_back(*f);
+			emplace_back(*f);
 		}
 	}
 
@@ -633,9 +673,9 @@ public:
 	 * @param[in] list 初始化列表
 	 * @param[in] allocator 分配器
 	 */
-	List(InitializerList<Element> l, Allocator const & allocator = Allocator()) : List(allocator) {
+	List(InitializerList<Element> l, Allocator const & allocator = Allocator{}) : Base(allocator) {
 		for (auto i = l.begin(), e = l.end(); i != e; ++i) {
-			add_back(*i);
+			emplace_back(*i);
 		}
 	}
 	///@}
@@ -646,24 +686,24 @@ public:
 	 * @name 成员
 	 */
 	///@{
-	auto get_allocator() const noexcept -> Allocator {
-		return Allocator(Base::m_allocator());
+	auto allocator() const noexcept -> Allocator {
+		return Allocator(this->m_allocator());
 	}
 
 	auto front() -> Reference {
-		return Base::m_head()->next->element;
+		return this->m_head()->next->element;
 	}
 
 	auto front() const -> ConstReference {
-		return Base::m_head()->next->element;
+		return this->m_head()->next->element;
 	}
 
 	auto back() -> Reference {
-		return Base::m_head()->prev->element;
+		return this->m_head()->prev->element;
 	}
 
 	auto back() const -> ConstReference {
-		return Base::m_head()->prev->element;
+		return this->m_head()->prev->element;
 	}
 	///@}
 
@@ -675,14 +715,14 @@ public:
 	 * @brief begin
 	 */
 	auto begin() noexcept -> Iterator {
-		return Iterator(Base::m_begin());
+		return Iterator(this->m_begin());
 	}
 
 	/**
 	 * @brief begin
 	 */
 	auto begin() const noexcept -> ConstIterator {
-		return ConstIterator(Base::m_begin());
+		return ConstIterator(this->m_begin());
 	}
 
 	/**
@@ -696,14 +736,14 @@ public:
 	 * @brief end
 	 */
 	auto end() noexcept -> Iterator {
-		return Iterator(Base::m_end());
+		return Iterator(this->m_end());
 	}
 
 	/**
 	 * @brief end
 	 */
 	auto end() const noexcept -> ConstIterator {
-		return ConstIterator(Base::m_end());
+		return ConstIterator(this->m_end());
 	}
 
 	/**
@@ -767,26 +807,26 @@ public:
 	 * @brief is empty
 	 */
 	auto is_empty() const noexcept -> bool {
-		return Base::is_empty();
+		return this->m_is_empty();
 	}
 
 	/**
 	 * @brief size
 	 */
 	auto size() const noexcept -> Size {
-		return Base::m_size();
+		return this->m_size();
 	}
 
 	/**
 	 * @brief max size
 	 */
 	auto max_size() const noexcept -> Size {
-		return IntegerTraits<Size>::max();
+		return NodeAllocatorTraits::max_size(this->m_allocator());
 	}
 
-	auto resize(Size n) noexcept -> List &;
+	auto resize(Size n) -> List &;
 
-	auto resize(Size n, Element const & x) noexcept -> List &;
+	auto resize(Size n, Element const & x) -> List &;
 	///@}
 
 	/**
@@ -794,7 +834,7 @@ public:
 	 */
 	///@{
 	auto operator==(List const & y) const -> bool {
-		return equal(begin(), end(), y.begin(), y.end());
+		return size() == y.size() && equal(begin(), end(), y.begin(), y.end());
 	}
 
 	auto operator!=(List const & y) const -> bool {
@@ -823,45 +863,32 @@ public:
 	 */
 	///@{
 	/**
-	 * @brief 复制赋值运算符
+	 * @brief 复制运算
 	 * @param[in] string 源链表
 	 */
 	auto operator=(List const & other) -> List & {
 		if (this != &other) {
-			Base::m_copy_assign_allocate(other);
+			this->m_copy_assign_allocator(other);
 			assign(other.begin(), other.end());
 		}
 		return *this;
 	}
 
 	/**
-	 * @brief 移动赋值运算符
+	 * @brief 移动运算
 	 * @param[in] list 源链表
 	 */
-	auto operator=(List && other) noexcept(
-		BooleanAnd< typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment, HasNothrowMoveAssign<Allocator> >::value
-	) -> List & {
-		m_move_assign(other, typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment());
+	auto operator=(List && other) noexcept(BooleanAnd< typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment, HasNothrowMoveAssignment<Allocator> >{}) -> List & {
+		m_move_assign(other, typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment{});
 		return *this;
 	}
 
 	/**
 	 * @brief 从初始化列表复制
 	 * @param[in] list 初始化列表
-	 * @see InitializerList
 	 */
 	auto operator=(InitializerList<Element> l) -> List & {
 		assign(l.begin(), l.end());
-		return *this;
-	}
-
-	/**
-	 * @brief 从迭代器区间复制
-	 * @param[in] first, last 区间\f$[first, last)\f$
-	 */
-	template<typename TIterator >
-	auto operator=(IteratorRange<TIterator> r) -> EnableIf< IsInputIterator<TIterator>, List & > {
-		assign(r.begin(), r.end());
 		return *this;
 	}
 
@@ -885,16 +912,16 @@ public:
 	 */
 	///@{
 	/**
-	 * @brief 从参数构造对象并添加到头部
-	 */
-	template< typename ... TArgs >
-	auto emplace_front(TArgs && ... args) -> List &;
-
-	/**
 	 * @brief 从参数构造对象并添加到指定位置
 	 */
 	template< typename ... TArgs >
 	auto emplace(ConstIterator p, TArgs && ... args) -> Iterator;
+
+	/**
+	 * @brief 从参数构造对象并添加到头部
+	 */
+	template< typename ... TArgs >
+	auto emplace_front(TArgs && ... args) -> List &;
 
 	/**
 	 * @brief 从参数构造对象并添加到尾部
@@ -902,36 +929,36 @@ public:
 	template< typename ... TArgs >
 	auto emplace_back(TArgs && ... args) -> List &;
 
-	auto add_front(Element const & x) -> List & {
-		return emplace_front(x);
-	}
-
-	auto add_front(Element && x) -> List & {
-		return emplace_front(move(x));
-	}
-
-	auto add(ConstIterator p, Element const & x) -> Iterator {
+	auto insert(ConstIterator p, Element const & x) -> Iterator {
 		return emplace(p, x);
 	}
 
-	auto add(ConstIterator p, Element && x) -> Iterator {
+	auto insert(ConstIterator p, Element && x) -> Iterator {
 		return emplace(p, move(x));
 	}
 
-	auto add(ConstIterator p, Element const & x, Size s) -> Iterator;
+	auto insert(ConstIterator p, Element const & x, Size s) -> Iterator;
 
 	template< typename TIterator >
-	auto add(ConstIterator p, TIterator f, TIterator l) -> EnableIf< IsInputIterator<TIterator>, Iterator >;
+	auto insert(ConstIterator p, TIterator f, TIterator l) -> EnableIf< IsInputIterator<TIterator>, Iterator >;
 
-	auto add(ConstIterator p, InitializerList<Element> l) -> Iterator {
-		return add(p, l.begin(), l.end());
+	auto insert(ConstIterator p, InitializerList<Element> l) -> Iterator {
+		return insert(p, l.begin(), l.end());
 	}
 
-	auto add_back(Element const & x) -> List & {
+	auto insert_front(Element const & x) -> List & {
+		return emplace_front(x);
+	}
+
+	auto insert_front(Element && x) -> List & {
+		return emplace_front(move(x));
+	}
+
+	auto insert_back(Element const & x) -> List & {
 		return emplace_back(x);
 	}
 
-	auto add_back(Element && x) -> List & {
+	auto insert_back(Element && x) -> List & {
 		return emplace_back(move(x));
 	}
 	///@}
@@ -941,7 +968,7 @@ public:
 	 */
 	///@{
 	auto clear() noexcept -> List & {
-		Base::m_clear();
+		this->m_clear();
 	}
 
 	auto erase_front() -> List &;
@@ -986,7 +1013,7 @@ public:
 	 */
 	///@{
 	auto unique() -> List & {
-		return unique(Equal<Element>());
+		return unique(Equal<Element>{});
 	}
 
 	template< typename TBinaryPredicate >
@@ -996,7 +1023,7 @@ public:
 	auto merge(List & other, TComparator && comparator) -> List &;
 
 	auto merge(List & other) -> List & {
-		return merge(other, Less<Element>());
+		return merge(other, Less<Element>{});
 	}
 
 	template< typename TComparator >
@@ -1010,48 +1037,37 @@ public:
 
 	template< typename TComparator >
 	auto sort(TComparator && comparator) -> List & {
-		m_sort(begin(), end(), Base::m_size(), comparator);
+		m_sort(begin(), end(), this->m_size(), comparator);
 		return *this;
 	}
 
 	auto sort() -> List & {
-		return sort(Less<Element>());
+		return sort(Less<Element>{});
 	}
 
-	void swap(List & other) noexcept(
-	BooleanOr<
-		BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerSwap >,
-		IsNothrowSwappable<NodeAllocator>
-	>::value
-	) {
-		Base::m_swap(other);
+	void swap(List & other) noexcept(BooleanOr< BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerSwap >, IsNothrowSwappable<NodeAllocator> >{}) {
+		this->m_swap(other);
 	}
 
 	auto reverse() -> List &;
 	///@}
 
 private:
-	static void m_link_nodes(NodePointer p, NodePointer f, NodePointer l);
-
-	void m_add_nodes_at_front(NodePointer f, NodePointer l);
-
-	void m_add_nodes_at_back(NodePointer f, NodePointer l);
-
 	auto m_iterator_at(Size n) -> Iterator {
-		return n <= Base::m_size() / 2 ? next(begin(), n) : prev(end(), Base::m_size() - n);
+		return n <= this->m_size() / 2 ? next(begin(), n) : prev(end(), this->m_size() - n);
 	}
 
-	void m_move_assign(List & list, BooleanTrue) noexcept(HasNothrowMoveAssign<Allocator>::value) {
+	void m_move_assign(List & list, BooleanTrue) noexcept(HasNothrowMoveAssignment<Allocator>{}) {
 		clear();
-		Base::m_move_assign_allocate(list);
+		this->m_move_assign_allocator(list);
 		splice(end(), list);
 	}
 
 	void m_move_assign(List & list, BooleanFalse) {
-		if (Base::m_allocator() != list.m_allocator()) {
+		if (this->m_allocator() != list.m_allocator()) {
 			assign(make_move_iterator(list.begin()), make_move_iterator(list.end()));
 		} else {
-			m_move_assign(list, BooleanTrue());
+			m_move_assign(list, BooleanTrue{});
 		}
 	}
 
@@ -1061,37 +1077,13 @@ private:
 }; // class List< TElement, TAllocator >
 
 template< typename TElement, typename TAllocator >
-void List< TElement, TAllocator >::m_link_nodes(NodePointer p, NodePointer f, NodePointer l) {
-	p->prev->next = f;
-	f->prev = p->prev;
-	p->prev = l;
-	l->next = p;
-}
-
-template< typename TElement, typename TAllocator >
-void List< TElement, TAllocator >::m_add_nodes_at_front(NodePointer f, NodePointer l) {
-	f->prev = Base::m_head()->self();
-	l->next = Base::m_head()->next;
-	l->next->prev = l;
-	Base::m_head()->next = f;
-}
-
-template< typename TElement, typename TAllocator >
-void List< TElement, TAllocator >::m_add_nodes_at_back(NodePointer f, NodePointer l) {
-	l->next = Base::m_head()->self();
-	f->prev = Base::m_head()->prev;
-	f->prev->next = f;
-	Base::m_head()->prev = l;
-}
-
-template< typename TElement, typename TAllocator >
 auto List< TElement, TAllocator >::assign(Element const & x, Size n) -> List & {
 	auto i = begin(), e = end();
 	for (; n > 0 && i != e; --n, ++i) {
 		*i = x;
 	}
 	if (i == e) {
-		add(e, x, n);
+		insert(e, x, n);
 	} else {
 		erase(i, e);
 	}
@@ -1105,7 +1097,7 @@ auto List< TElement, TAllocator >::assign(TIterator f, TIterator l) -> EnableIf<
 		*i = *f;
 	}
 	if (i == e) {
-		add(e, f, l);
+		insert(e, f, l);
 	} else {
 		erase(i, e);
 	}
@@ -1114,55 +1106,57 @@ auto List< TElement, TAllocator >::assign(TIterator f, TIterator l) -> EnableIf<
 
 template< typename TElement, typename TAllocator >
 template< typename ... TArgs >
-auto List< TElement, TAllocator >::emplace_front(TArgs && ... args) -> List & {
+auto List< TElement, TAllocator >::emplace(ConstIterator p, TArgs && ... args) -> Iterator {
 	using Deleter = AllocatorDestructor<NodeAllocator>;
-	auto & allocator = Base::m_allocator();
+	auto & allocator = this->m_allocator();
 	UniquePointer< Node, Deleter > node(NodeAllocatorTraits::allocate(allocator, 1), Deleter(allocator, 1));
+	node->prev = nullptr;
 	NodeAllocatorTraits::construct(allocator, address_of(node->element), forward<TArgs>(args)...);
-	m_add_nodes_at_front(node.get(), node.get());
-	++Base::m_size();
-	node.release();
-	return *this;
+	this->m_link_nodes(p.m_pointer, node.get(), node.get());
+	++this->m_size();
+	return Iterator(node.release());
 }
 
 template< typename TElement, typename TAllocator >
 template< typename ... TArgs >
-auto List< TElement, TAllocator >::emplace(ConstIterator p, TArgs && ... args) -> Iterator {
+auto List< TElement, TAllocator >::emplace_front(TArgs && ... args) -> List & {
 	using Deleter = AllocatorDestructor<NodeAllocator>;
-	auto & allocator = Base::m_allocator();
+	auto & allocator = this->m_allocator();
 	UniquePointer< Node, Deleter > node(NodeAllocatorTraits::allocate(allocator, 1), Deleter(allocator, 1));
-	node->prev = nullptr;
 	NodeAllocatorTraits::construct(allocator, address_of(node->element), forward<TArgs>(args)...);
-	m_link_nodes(p.m_pointer, node.get(), node.get());
-	++Base::m_size();
-	return Iterator(node.release());
+	this->m_insert_nodes_at_front(node.get(), node.get());
+	++this->m_size();
+	node.release();
+	return *this;
 }
 
 template< typename TElement, typename TAllocator >
 template< typename ... TArgs >
 auto List< TElement, TAllocator >::emplace_back(TArgs && ... args) -> List & {
 	using Deleter = AllocatorDestructor<NodeAllocator>;
-	auto & allocator = Base::m_allocator();
+	auto & allocator = this->m_allocator();
 	UniquePointer< Node, Deleter > node(NodeAllocatorTraits::allocate(allocator, 1), Deleter(allocator, 1));
 	NodeAllocatorTraits::construct(allocator, address_of(node->element), forward<TArgs>(args)...);
-	m_add_nodes_at_back(node.get(), node.get());
-	++Base::m_size();
+	this->m_insert_nodes_at_back(node.get(), node.get());
+	++this->m_size();
 	node.release();
 	return *this;
 }
 
 template< typename TElement, typename TAllocator >
-auto List< TElement, TAllocator >::add(ConstIterator p, Element const & x, Size n) -> Iterator {
+auto List< TElement, TAllocator >::insert(ConstIterator p, Element const & x, Size n) -> Iterator {
 	auto r = p.m_pointer;
 	if (n > 0) {
 		using Deleter = AllocatorDestructor<NodeAllocator>;
-		auto & allocator = Base::m_allocator();
+		auto & allocator = this->m_allocator();
 		UniquePointer< Node, Deleter > node(NodeAllocatorTraits::allocate(allocator, 1), Deleter(allocator, 1));
 		node->prev = nullptr;
 		NodeAllocatorTraits::construct(allocator, address_of(node->element), x);
 		r = node.release();
 		auto last = r;
+#if !defined(BR_NO_EXCEPTIONS)
 		try {
+#endif
 			for (Size i = 1; i < n; ++i, last = last->next) {
 				node.reset(NodeAllocatorTraits::allocate(allocator, 1));
 				NodeAllocatorTraits::construct(allocator, address_of(node->element), x);
@@ -1170,6 +1164,7 @@ auto List< TElement, TAllocator >::add(ConstIterator p, Element const & x, Size 
 				node->prev = last;
 				node.release();
 			}
+#if !defined(BR_NO_EXCEPTIONS)
 		} catch (...) {
 			for (; last != nullptr;) {
 				auto prev = last->prev;
@@ -1179,26 +1174,29 @@ auto List< TElement, TAllocator >::add(ConstIterator p, Element const & x, Size 
 			}
 			throw;
 		}
-		m_link_nodes(p.m_pointer, r, last);
-		Base::m_size() += n;
+#endif
+		this->m_link_nodes(p.m_pointer, r, last);
+		this->m_size() += n;
 	}
 	return Iterator(r);
 }
 
 template< typename TElement, typename TAllocator >
 template< typename TIterator >
-auto List< TElement, TAllocator >::add(ConstIterator p, TIterator f, TIterator l) -> EnableIf< List::IsInputIterator<TIterator>, Iterator > {
+auto List< TElement, TAllocator >::insert(ConstIterator p, TIterator f, TIterator l) -> EnableIf< List::IsInputIterator<TIterator>, Iterator > {
 	auto r = p.m_pointer;
 	if (f != l) {
 		using Deleter = AllocatorDestructor<NodeAllocator>;
 		Size n = 0;
-		auto & allocator = Base::m_allocator();
+		auto & allocator = this->m_allocator();
 		UniquePointer< Node, Deleter > node(NodeAllocatorTraits::allocate(allocator, 1), Deleter(allocator, 1));
 		node->prev = nullptr;
 		NodeAllocatorTraits::construct(allocator, address_of(node->element), *f);
 		r = node.release();
 		auto last = r;
+#if !defined(BR_NO_EXCEPTIONS)
 		try {
+#endif
 			for (++f, (void)++n; f != l; ++f, (void)++n, last = last->next) {
 				node.reset(NodeAllocatorTraits::allocate(allocator, 1));
 				NodeAllocatorTraits::construct(allocator, address_of(node->element), *f);
@@ -1206,6 +1204,7 @@ auto List< TElement, TAllocator >::add(ConstIterator p, TIterator f, TIterator l
 				node->prev = last;
 				node.release();
 			}
+#if !defined(BR_NO_EXCEPTIONS)
 		} catch (...) {
 			for (; last != nullptr;) {
 				auto prev = last->prev;
@@ -1215,8 +1214,9 @@ auto List< TElement, TAllocator >::add(ConstIterator p, TIterator f, TIterator l
 			}
 			throw;
 		}
-		m_link_nodes(p.m_pointer, r, last);
-		Base::m_size() += n;
+#endif
+		this->m_link_nodes(p.m_pointer, r, last);
+		this->m_size() += n;
 	}
 	return Iterator(r);
 }
@@ -1224,10 +1224,10 @@ auto List< TElement, TAllocator >::add(ConstIterator p, TIterator f, TIterator l
 template< typename TElement, typename TAllocator >
 auto List< TElement, TAllocator >::erase_front() -> List & {
 	BR_ASSERT(!is_empty());
-	auto & allocator = Base::m_allocator();
-	auto n = Base::m_head()->next;
-	Base::m_unlink_nodes(n, n);
-	--Base::m_size();
+	auto & allocator = this->m_allocator();
+	auto n = this->m_head()->next;
+	this->m_unlink_nodes(n, n);
+	--this->m_size();
 	NodeAllocatorTraits::destroy(allocator, address_of(n->element));
 	NodeAllocatorTraits::deallocate(allocator, n, 1);
 	return *this;
@@ -1236,11 +1236,11 @@ auto List< TElement, TAllocator >::erase_front() -> List & {
 template< typename TElement, typename TAllocator >
 auto List< TElement, TAllocator >::erase(ConstIterator p) -> Iterator {
 	BR_ASSERT(p != end());
-	auto & allocator = Base::m_allocator();
+	auto & allocator = this->m_allocator();
 	auto n = p.m_pointer;
 	auto r = n->next;
-	Base::m_unlink_nodes(n, n);
-	--Base::m_size();
+	this->m_unlink_nodes(n, n);
+	--this->m_size();
 	NodeAllocatorTraits::destroy(allocator, address_of(n->element));
 	NodeAllocatorTraits::deallocate(allocator, n, 1);
 	return Iterator(r);
@@ -1249,12 +1249,12 @@ auto List< TElement, TAllocator >::erase(ConstIterator p) -> Iterator {
 template< typename TElement, typename TAllocator >
 auto List< TElement, TAllocator >::erase(ConstIterator f, ConstIterator l) -> Iterator {
 	if (f != l) {
-		auto allocator = Base::m_allocator();
-		Base::m_unlink_nodes(f.m_pointer, l.m_pointer->prev);
+		auto allocator = this->m_allocator();
+		this->m_unlink_nodes(f.m_pointer, l.m_pointer->prev);
 		while (f != l) {
 			auto n = f.m_pointer;
 			++f;
-			--Base::m_size();
+			--this->m_size();
 			NodeAllocatorTraits::destroy(allocator, address_of(n->element));
 			NodeAllocatorTraits::deallocate(allocator, n, 1);
 		}
@@ -1265,10 +1265,10 @@ auto List< TElement, TAllocator >::erase(ConstIterator f, ConstIterator l) -> It
 template< typename TElement, typename TAllocator >
 auto List< TElement, TAllocator >::erase_back() -> List & {
 	BR_ASSERT(!is_empty());
-	auto & allocator = Base::m_allocator();
-	auto n = Base::m_head()->prev;
-	Base::m_unlink_nodes(n, n);
-	--Base::m_size();
+	auto & allocator = this->m_allocator();
+	auto n = this->m_head()->prev;
+	this->m_unlink_nodes(n, n);
+	--this->m_size();
 	NodeAllocatorTraits::destroy(allocator, address_of(n->element));
 	NodeAllocatorTraits::deallocate(allocator, n, 1);
 	return *this;
@@ -1277,7 +1277,8 @@ auto List< TElement, TAllocator >::erase_back() -> List & {
 template< typename TElement, typename TAllocator >
 auto List< TElement, TAllocator >::remove(Element const & x) -> List & {
 	List deleted_nodes;
-	for (auto i = cbegin(), e = end(); i != e;) {
+	auto e = end();
+	for (auto i = cbegin(); i != e;) {
 		if (*i == x) {
 			auto j = next(i);
 			for (; j != e && *j == x; ++j) {}
@@ -1314,19 +1315,21 @@ auto List< TElement, TAllocator >::remove_if(TUnaryPredicate && predicate) -> Li
 }
 
 template< typename TElement, typename TAllocator >
-auto List< TElement, TAllocator >::resize(Size n) noexcept -> List & {
-	if (n < Base::m_size()) {
+auto List< TElement, TAllocator >::resize(Size n) -> List & {
+	if (n < this->m_size()) {
 		erase(m_iterator_at(n), end());
-	} else if (n > Base::m_size()) {
+	} else if (n > this->m_size()) {
 		using Deleter = AllocatorDestructor<NodeAllocator>;
-		n -= Base::m_size();
-		auto & allocator = Base::m_allocator();
+		n -= this->m_size();
+		auto & allocator = this->m_allocator();
 		UniquePointer< Node, Deleter > node(NodeAllocatorTraits::allocate(allocator, 1), Deleter(allocator, 1));
 		node->prev = nullptr;
 		NodeAllocatorTraits::construct(allocator, address_of(node->element));
 		auto first = node.release();
 		auto last = first;
+#if !defined(BR_NO_EXCEPTIONS)
 		try {
+#endif
 			for (Size i = 1; i < n; ++i, last = last->next) {
 				node.reset(NodeAllocatorTraits::allocate(allocator, 1));
 				NodeAllocatorTraits::construct(allocator, address_of(node->element));
@@ -1334,6 +1337,7 @@ auto List< TElement, TAllocator >::resize(Size n) noexcept -> List & {
 				node->prev = last;
 				node.release();
 			}
+#if !defined(BR_NO_EXCEPTIONS)
 		} catch (...) {
 			for (; last != nullptr;) {
 				auto prev = last->prev;
@@ -1343,26 +1347,29 @@ auto List< TElement, TAllocator >::resize(Size n) noexcept -> List & {
 			}
 			throw;
 		}
-		m_add_nodes_at_back(first, last);
-		Base::m_size() += n;
+#endif
+		this->m_insert_nodes_at_back(first, last);
+		this->m_size() += n;
 	}
 	return *this;
 }
 
 template< typename TElement, typename TAllocator >
-auto List< TElement, TAllocator >::resize(Size n, Element const & x) noexcept -> List & {
-	if (n < Base::m_size()) {
+auto List< TElement, TAllocator >::resize(Size n, Element const & x) -> List & {
+	if (n < this->m_size()) {
 		erase(m_iterator_at(n), end());
-	} else if (n > Base::m_size()) {
+	} else if (n > this->m_size()) {
 		using Deleter = AllocatorDestructor<NodeAllocator>;
-		n -= Base::m_size();
-		auto & allocator = Base::m_allocator();
+		n -= this->m_size();
+		auto & allocator = this->m_allocator();
 		UniquePointer< Node, Deleter > node(NodeAllocatorTraits::allocate(allocator, 1), Deleter(allocator, 1));
 		node->prev = nullptr;
 		NodeAllocatorTraits::construct(allocator, address_of(node->element), x);
 		auto first = node.release();
 		auto last = first;
+#if !defined(BR_NO_EXCEPTIONS)
 		try {
+#endif
 			for (Size i = 1; i < n; ++i, last = last->next) {
 				node.reset(NodeAllocatorTraits::allocate(allocator, 1));
 				NodeAllocatorTraits::construct(allocator, address_of(node->element), x);
@@ -1370,6 +1377,7 @@ auto List< TElement, TAllocator >::resize(Size n, Element const & x) noexcept ->
 				node->prev = last;
 				node.release();
 			}
+#if !defined(BR_NO_EXCEPTIONS)
 		} catch (...) {
 			for (; last != nullptr;) {
 				auto prev = last->prev;
@@ -1379,8 +1387,9 @@ auto List< TElement, TAllocator >::resize(Size n, Element const & x) noexcept ->
 			}
 			throw;
 		}
-		m_add_nodes_at_back(first, last);
-		Base::m_size() += n;
+#endif
+		this->m_insert_nodes_at_back(first, last);
+		this->m_size() += n;
 	}
 	return *this;
 }
@@ -1390,9 +1399,9 @@ auto List< TElement, TAllocator >::splice(ConstIterator p, List & other) -> List
 	if (!other.is_empty()) {
 		auto f = other.m_head()->next;
 		auto l = other.m_head()->prev;
-		Base::m_unlink_nodes(f, l);
-		m_link_nodes(p.m_pointer, f, l);
-		Base::m_size() += other.m_size();
+		this->m_unlink_nodes(f, l);
+		this->m_link_nodes(p.m_pointer, f, l);
+		this->m_size() += other.m_size();
 		other.m_size() = 0;
 	}
 	return *this;
@@ -1402,10 +1411,10 @@ template< typename TElement, typename TAllocator >
 auto List< TElement, TAllocator >::splice(ConstIterator p, List & other, ConstIterator i) -> List & {
 	if (p.m_pointer != i.m_pointer && p.m_pointer != i.m_pointer->next) {
 		auto f = i.m_pointer;
-		Base::m_unlink_nodes(f, f);
-		m_link_nodes(p.m_pointer, f, f);
+		this->m_unlink_nodes(f, f);
+		this->m_link_nodes(p.m_pointer, f, f);
 		--other.m_size();
-		++Base::m_size();
+		++this->m_size();
 	}
 	return *this;
 }
@@ -1416,12 +1425,12 @@ auto List< TElement, TAllocator >::splice(ConstIterator p, List & other, ConstIt
 		if (this != &other) {
 			Size n = distance(f, l);
 			other.m_size() -= n;
-			Base::m_size() += n;
+			this->m_size() += n;
 		}
 		auto first = f.m_pointer;
 		auto last = l.m_pointer->prev;
-		Base::m_unlink_nodes(first, last);
-		m_link_nodes(p.m_pointer, first, last);
+		this->m_unlink_nodes(first, last);
+		this->m_link_nodes(p.m_pointer, first, last);
 	}
 	return *this;
 }
@@ -1450,13 +1459,13 @@ auto List< TElement, TAllocator >::merge(List & other, TComparator && comparator
 				Size n = 1;
 				auto m1 = next(f1);
 				for (; m1 != l1 && comparator(*m1, *f0); ++m1, ++n) {}
-				Base::m_size() += n;
+				this->m_size() += n;
 				other.m_size() -= n;
 				auto f = f1.m_pointer, l = m1.m_pointer->prev;
 				f1 = m1;
-				Base::m_unlink_nodes(f, l);
+				this->m_unlink_nodes(f, l);
 				auto m0 = next(f0);
-				m_link_nodes(f1.m_pointer, f, l);
+				this->m_link_nodes(f1.m_pointer, f, l);
 				f0 = m0;
 			} else {
 				++f0;
@@ -1477,8 +1486,8 @@ auto List< TElement, TAllocator >::m_sort(Iterator f1, Iterator e2, Size n, TCom
 		case 2:
 			if (comparator(*--e2, *f1)) {
 				auto f = e2.m_pointer;
-				Base::m_unlink_nodes(f, f);
-				m_link_nodes(f1.m_pointer, f, f);
+				this->m_unlink_nodes(f, f);
+				this->m_link_nodes(f1.m_pointer, f, f);
 				return e2;
 			}
 			return f1;
@@ -1495,9 +1504,9 @@ auto List< TElement, TAllocator >::m_sort(Iterator f1, Iterator e2, Size n, TCom
 		auto l = m2.m_pointer->prev;
 		r = f2;
 		e1 = f2 = m2;
-		Base::m_unlink_nodes(f, l);
+		this->m_unlink_nodes(f, l);
 		m2 = next(f1);
-		m_link_nodes(f1.m_pointer, f, l);
+		this->m_link_nodes(f1.m_pointer, f, l);
 		f1 = m2;
 	} else {
 		++f1;
@@ -1512,9 +1521,9 @@ auto List< TElement, TAllocator >::m_sort(Iterator f1, Iterator e2, Size n, TCom
 				e1 = m2;
 			}
 			f2 = m2;
-			Base::m_unlink_nodes(f, l);
+			this->m_unlink_nodes(f, l);
 			m2 = next(f1);
-			m_link_nodes(f1.m_pointer, f, l);
+			this->m_link_nodes(f1.m_pointer, f, l);
 			f1 = m2;
 		} else {
 			++f1;
@@ -1526,11 +1535,10 @@ auto List< TElement, TAllocator >::m_sort(Iterator f1, Iterator e2, Size n, TCom
 template< typename TElement, typename TAllocator >
 auto List< TElement, TAllocator >::reverse() -> List & {
 	using BR::swap;
-	if (Base::m_size() > 1) {
+	if (this->m_size() > 1) {
 		auto e = end();
-		for (auto i = begin(); i != e;) {
+		for (auto i = begin(); i != e; i.m_pointer = i.m_pointer->prev) {
 			swap(i.m_pointer->prev, i.m_pointer->next);
-			i.m_pointer = i.m_pointer->prev;
 		}
 		swap(e.m_pointer->prev, e.m_pointer->next);
 	}

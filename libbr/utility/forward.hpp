@@ -25,7 +25,7 @@ constexpr auto forward(RemoveReference<T> & t) noexcept -> T && {
  */
 template< typename T >
 constexpr auto forward(RemoveReference<T> && t) noexcept -> T && {
-	static_assert(NotLValueReference<T>::value, "Template argument substituting type is an lvalue reference type.");
+	static_assert(NotLValueReference<T>{}, "Template argument substituting type is an lvalue reference type.");
 	return static_cast< T && >(t);
 }
 

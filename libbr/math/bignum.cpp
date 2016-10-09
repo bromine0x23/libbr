@@ -1002,7 +1002,7 @@ void BignumAlgorithm::rsh(BignumData const & X, Digit n, BignumData & Z) {
 		auto const bn = n % BIT_PER_DIGIT;
 		auto const dn = n / BIT_PER_DIGIT;
 
-		if (dn - X.length >= 0) {
+		if (dn >= X.length) {
 			set_zero(Z);
 			return;
 		}

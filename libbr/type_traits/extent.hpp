@@ -35,6 +35,8 @@ constexpr auto extent = integral_constant< Extent< T, I > >;
 
 #endif // defined(BR_CXX14)
 
+
+
 namespace Detail {
 namespace TypeTraits {
 
@@ -42,24 +44,24 @@ template< typename T, Size I >
 struct Extent;
 
 template< typename T, Size I >
-struct Extent : IntegralConstant< Size, 0 > {};
+struct Extent : public IntegralConstant< Size, 0 > {};
 
 template< typename T, Size I >
-struct Extent< T [], I > : IntegralConstant< Size, (Extent< RemoveConstVolatile<T>, I - 1 >{})() > {};
+struct Extent< T [], I > : public IntegralConstant< Size, (Extent< RemoveConstVolatile<T>, I - 1 >{})() > {};
 
 template< typename T >
-struct Extent< T [], 0 > : IntegralConstant< Size,  0 > {};
+struct Extent< T [], 0 > : public IntegralConstant< Size,  0 > {};
 
 template< typename T, Size S, Size I >
-struct Extent< T [S], I > : IntegralConstant< Size, (Extent< RemoveConstVolatile<T>, I - 1 >{})() > {};
+struct Extent< T [S], I > : public IntegralConstant< Size, (Extent< RemoveConstVolatile<T>, I - 1 >{})() > {};
 
 template< typename T, Size S >
-struct Extent< T [S], 0 > : IntegralConstant< Size, S > {};
+struct Extent< T [S], 0 > : public IntegralConstant< Size, S > {};
 
 } // namespace TypeTraits
 } // namespace Detail
 
 template< typename T, Size I >
-struct Extent : IntegralRewrap< Detail::TypeTraits::Extent< T, I > > {};
+struct Extent : public IntegralRewrap< Detail::TypeTraits::Extent< T, I > > {};
 
 } // namespace BR

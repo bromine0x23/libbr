@@ -29,7 +29,7 @@ using AlignmentOf = IntegralConstant< Size, alignof(T) >;
  * @see AlignmentOf
  */
 template< typename T >
-constexpr auto alignment_of = integer_constant< AlignmentOf<T> >;
+constexpr auto alignment_of = integral_constant< AlignmentOf<T> >;
 
 #endif // defined(BR_CXX14)
 

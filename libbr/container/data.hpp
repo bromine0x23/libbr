@@ -17,12 +17,12 @@ constexpr auto data(CArray< T, S > const & array) noexcept -> T * {
 
 template< typename TContainer >
 BR_CONSTEXPR_AFTER_CXX11 auto data(TContainer & container) -> decltype(container.data()) {
-	return container.empty();
+	return container.data();
 }
 
 template< typename TContainer >
 BR_CONSTEXPR_AFTER_CXX11 auto data(TContainer const & container) -> decltype(container.data()) {
-	return container.empty();
+	return container.data();
 }
 
 } // namespace BR

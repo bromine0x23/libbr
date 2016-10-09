@@ -19,3 +19,7 @@
 
 #define BR_NOINLINE __declspec(noinline)
 #define BR_FORCE_INLINE __forceinline
+
+#if !defined(_CPPUNWIND) && !defined(BR_NO_EXCEPTIONS)
+#  define BR_NO_EXCEPTIONS
+#endif

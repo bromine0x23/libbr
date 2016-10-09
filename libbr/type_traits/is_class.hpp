@@ -93,9 +93,9 @@ using IsClass = BooleanAnd<
 } // namespace Detail
 
 template< typename T >
-struct IsClass : BooleanRewrapPositive< Detail::TypeTraits::IsClass<T> > {};
+struct IsClass : public BooleanRewrapPositive< Detail::TypeTraits::IsClass<T> > {};
 
 template< typename T >
-struct NotClass : BooleanRewrapNegative< Detail::TypeTraits::IsClass<T> > {};
+struct NotClass : public BooleanRewrapNegative< Detail::TypeTraits::IsClass<T> > {};
 
 } // namespace BR

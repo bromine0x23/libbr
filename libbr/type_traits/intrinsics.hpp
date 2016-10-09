@@ -200,16 +200,16 @@
 #  endif
 
 #  if __has_feature(is_constructible)
-#    define BR_IS_CONSTRUCTIBLE __is_constructible
+#    define BR_IS_CONSTRUCTIBLE(T, ...) __is_constructible(T, ##__VA_ARGS__)
 #  endif
 #  if __has_feature(is_trivially_constructible)
-#    define BR_IS_TRIVIALLY_CONSTRUCTIBLE __is_trivially_constructible
+#    define BR_IS_TRIVIALLY_CONSTRUCTIBLE(T, ...) __is_trivially_constructible(T, ##__VA_ARGS__)
 #  endif
 #  if __has_feature(is_nothrow_constructible)
-#    define BR_IS_NOTHROW_CONSTRUCTIBLE __is_nothrow_constructible
+#    define BR_IS_NOTHROW_CONSTRUCTIBLE(T, ...) __is_nothrow_constructible(T, ##__VA_ARGS__)
 #  endif
 #  if __has_feature(is_trivially_assignable)
-#    define BR_IS_TRIVIALLY_ASSIGNABLE is_trivially_assignable
+#    define BR_IS_TRIVIALLY_ASSIGNABLE(T0, T1) __is_trivially_assignable(T0, T1)
 #  endif
 #  if __has_feature(has_trivial_destructor)
 #    define BR_HAS_TRIVIAL_DESTRUCTOR(T) __has_trivial_destructor(T)

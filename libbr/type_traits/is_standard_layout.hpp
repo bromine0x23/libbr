@@ -12,24 +12,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-#if defined(BR_IS_STANDARD_LAYOUT)
-
-template< typename T >
-using IsStandardLayout = BooleanConstant< BR_IS_STANDARD_LAYOUT(T) >;
-
-#else
-
-template< typename T >
-using IsStandardLayout = BooleanFalse;
-
-#endif // defined(BR_IS_STANDARD_LAYOUT)
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否满足 \em standard-layout 约束
  * @tparam T 待检查类型
@@ -40,7 +22,7 @@ using IsStandardLayout = BooleanFalse;
  * 如果 \em T 满足 \em standard-layout 约束，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsStandardLayout : BooleanRewrapPositive< Detail::TypeTraits::IsStandardLayout<T> > {};
+struct IsStandardLayout;
 
 /**
  * @brief IsStandardLayout 的否定
@@ -48,7 +30,7 @@ struct IsStandardLayout : BooleanRewrapPositive< Detail::TypeTraits::IsStandardL
  * @see BR::IsStandardLayout
  */
 template< typename T >
-struct NotStandardLayout : BooleanRewrapNegative< Detail::TypeTraits::IsStandardLayout<T> > {};
+struct NotStandardLayout;
 
 #if defined(BR_CXX14)
 
@@ -71,5 +53,31 @@ template< typename T >
 constexpr auto not_standard_layout = bool_constant< NotStandardLayout<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+#if defined(BR_IS_STANDARD_LAYOUT)
+
+template< typename T >
+using IsStandardLayout = BooleanConstant< BR_IS_STANDARD_LAYOUT(T) >;
+
+#else
+
+template< typename T >
+using IsStandardLayout = BooleanFalse;
+
+#endif // defined(BR_IS_STANDARD_LAYOUT)
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsStandardLayout : public BooleanRewrapPositive< Detail::TypeTraits::IsStandardLayout<T> > {};
+
+template< typename T >
+struct NotStandardLayout : public BooleanRewrapNegative< Detail::TypeTraits::IsStandardLayout<T> > {};
 
 } // namespace BR

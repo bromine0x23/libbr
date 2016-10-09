@@ -58,18 +58,18 @@ namespace Detail {
 namespace TypeTraits {
 
 template< typename T >
-struct IsConst : BooleanFalse {};
+struct IsConst : public BooleanFalse {};
 
 template< typename T >
-struct IsConst< T const > : BooleanTrue {};
+struct IsConst< T const > : public BooleanTrue {};
 
 } // namespace TypeTraits
 } // namespace Detail
 
 template< typename T >
-struct IsConst : BooleanRewrapPositive< Detail::TypeTraits::IsConst<T> > {};
+struct IsConst : public BooleanRewrapPositive< Detail::TypeTraits::IsConst<T> > {};
 
 template< typename T >
-struct NotConst : BooleanRewrapNegative< Detail::TypeTraits::IsConst<T> > {};
+struct NotConst : public BooleanRewrapNegative< Detail::TypeTraits::IsConst<T> > {};
 
 } // namespace BR

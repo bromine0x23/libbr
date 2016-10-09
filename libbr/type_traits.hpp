@@ -10,7 +10,7 @@
 
 #include <libbr/type_traits/allocator_constructor_usage.hpp>
 #include <libbr/type_traits/allocator_traits.hpp>
-#include <libbr/type_traits/char_traits.hpp>
+// #include <libbr/type_traits/char_traits.hpp>
 #include <libbr/type_traits/cv_traits.hpp>
 #include <libbr/type_traits/integer_traits.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>
@@ -45,7 +45,6 @@
 #include <libbr/type_traits/is_pointer.hpp>
 #include <libbr/type_traits/is_polymorphic.hpp>
 #include <libbr/type_traits/is_reference.hpp>
-#include <libbr/type_traits/is_referenceable.hpp>
 #include <libbr/type_traits/is_rvalue_reference.hpp>
 #include <libbr/type_traits/is_same.hpp>
 #include <libbr/type_traits/is_scalar.hpp>
@@ -84,13 +83,13 @@
 #include <libbr/type_traits/has_trivial_move_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_move_constructor.hpp>
 
-#include <libbr/type_traits/has_copy_assign.hpp>
-#include <libbr/type_traits/has_trivial_copy_assign.hpp>
-#include <libbr/type_traits/has_nothrow_copy_assign.hpp>
+#include <libbr/type_traits/has_copy_assignment.hpp>
+#include <libbr/type_traits/has_trivial_copy_assignment.hpp>
+#include <libbr/type_traits/has_nothrow_copy_assignment.hpp>
 
-#include <libbr/type_traits/has_move_assign.hpp>
-#include <libbr/type_traits/has_trivial_move_assign.hpp>
-#include <libbr/type_traits/has_nothrow_move_assign.hpp>
+#include <libbr/type_traits/has_move_assignment.hpp>
+#include <libbr/type_traits/has_trivial_move_assignment.hpp>
+#include <libbr/type_traits/has_nothrow_move_assignment.hpp>
 
 #include <libbr/type_traits/has_destructor.hpp>
 #include <libbr/type_traits/has_trivial_destructor.hpp>

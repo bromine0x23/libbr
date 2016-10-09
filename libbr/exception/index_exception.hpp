@@ -16,13 +16,13 @@ public:
 	using BaseException = LogicException;
 
 	IndexException() : BaseException("BR::IndexException") {
-	};
+	}
 
-	explicit IndexException(String<NChar> const & message) : BaseException(message) {
-	};
+	explicit IndexException(RawString<NChar> const & message) : BaseException(message) {
+	}
 
 	explicit IndexException(CString<NChar> message) : BaseException(message) {
-	};
+	}
 
 	~IndexException() noexcept override;
 };

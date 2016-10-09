@@ -16,7 +16,8 @@ namespace BR {
  */
 class BasicIterator {
 public:
-	using Category = IteratorTag;
+	struct Category : public IteratorTag {
+	};
 };
 
 } // namespace BR

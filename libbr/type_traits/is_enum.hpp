@@ -24,10 +24,52 @@
 
 namespace BR {
 
+/**
+ * @brief 检查 \em T 是否是枚举类型
+ * @tparam T 待检查类型
+ * @see BR::IntegerConstant
+ * @see BR_IS_ENUM
+ * @see BR::NotEnum
+ *
+ * 如果 \em T 是枚举类型，那么封装的值为 \em true ；否则为 \em false
+ */
+template< typename T >
+struct IsEnum;
+
+/**
+ * @brief IsEnum 的否定
+ * @tparam T 待检查类型
+ * @see BR::IsEnum
+ */
+template< typename T >
+struct NotEnum;
+
+#if defined(BR_CXX14)
+
+/**
+ * @brief IsEnum 的模板变量版本
+ * @tparam T 待检查类型
+ * @see BR::IsEnum
+ * @see BR::not_enum
+ */
+template< typename T >
+constexpr auto is_enum = bool_constant< IsEnum<T> >;
+
+/**
+ * @brief NotEnum 的模板变量版本
+ * @tparam T 待检查类型
+ * @see BR::NotEnum
+ * @see BR::is_enum
+ */
+template< typename T >
+constexpr auto not_enum = bool_constant< NotEnum<T> >;
+
+#endif // defined(BR_CXX14)
+
+
+
 namespace Detail {
 namespace TypeTraits {
-
-using BR::RemoveConstVolatile;
 
 #if defined(BR_IS_ENUM)
 
@@ -62,46 +104,10 @@ using IsEnum = IsEnumBasic< RemoveConstVolatile<T> >;
 } // namespace TypeTraits
 } // namespace Detail
 
-/**
- * @brief 检查 \em T 是否是枚举类型
- * @tparam T 待检查类型
- * @see BR::IntegerConstant
- * @see BR_IS_ENUM
- * @see BR::NotEnum
- *
- * 如果 \em T 是枚举类型，那么封装的值为 \em true ；否则为 \em false
- */
 template< typename T >
-struct IsEnum : BooleanRewrapPositive< Detail::TypeTraits::IsEnum<T> > {};
+struct IsEnum : public BooleanRewrapPositive< Detail::TypeTraits::IsEnum<T> > {};
 
-/**
- * @brief IsEnum 的否定
- * @tparam T 待检查类型
- * @see BR::IsEnum
- */
 template< typename T >
-struct NotEnum : BooleanRewrapNegative< Detail::TypeTraits::IsEnum<T> > {};
-
-#if defined(BR_CXX14)
-
-/**
- * @brief IsEnum 的模板变量版本
- * @tparam T 待检查类型
- * @see BR::IsEnum
- * @see BR::not_enum
- */
-template< typename T >
-constexpr auto is_enum = bool_constant< IsEnum<T> >;
-
-/**
- * @brief NotEnum 的模板变量版本
- * @tparam T 待检查类型
- * @see BR::NotEnum
- * @see BR::is_enum
- */
-template< typename T >
-constexpr auto not_enum = bool_constant< NotEnum<T> >;
-
-#endif // defined(BR_CXX14)
+struct NotEnum : public BooleanRewrapNegative< Detail::TypeTraits::IsEnum<T> > {};
 
 } // namespace BR

@@ -11,7 +11,7 @@
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/enable_if.hpp>
 #include <libbr/type_operate/remove_const.hpp>
-#include <libbr/type_traits/has_trivial_copy_assign.hpp>
+#include <libbr/type_traits/has_trivial_copy_assignment.hpp>
 #include <libbr/type_traits/is_same.hpp>
 
 namespace BR {
@@ -30,7 +30,7 @@ inline auto copy_backward(TBidirectionalIterator0 first, TBidirectionalIterator0
 	return result;
 }
 
-template< typename TInputValue, typename TOutputValue, typename = EnableIf< BooleanAnd< IsSame< RemoveConst<TInputValue>, TOutputValue >, HasTrivialCopyAssign<TOutputValue> > > >
+template< typename TInputValue, typename TOutputValue, typename = EnableIf< BooleanAnd< IsSame< RemoveConst<TInputValue>, TOutputValue >, HasTrivialCopyAssignment<TOutputValue> > > >
 inline auto copy_backward(TInputValue * first, TInputValue * last, TOutputValue * result) -> TOutputValue * {
 	auto n = static_cast<Size>(last - first);
 	result -= n;

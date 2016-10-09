@@ -9,7 +9,7 @@
 #include <libbr/config.hpp>
 #include <libbr/algorithm/merge_inplace.hpp>
 #include <libbr/functional/less.hpp>
-#include <libbr/type_traits/has_trivial_copy_assign.hpp>
+#include <libbr/type_traits/has_trivial_copy_assignment.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>
 #include <libbr/utility/move.hpp>
 
@@ -42,7 +42,7 @@ void sort_stably(TRandomAccessIterator first, TRandomAccessIterator last, TDiffe
 			break;
 		}
 		default: {
-			if (HasTrivialCopyAssign< typename IteratorTraits<TRandomAccessIterator>::Element >() && length < switch_threshold) {
+			if (HasTrivialCopyAssignment< typename IteratorTraits<TRandomAccessIterator>::Element >{} && length < switch_threshold) {
 				// Insertion sort
 				if (first != last) {
 					for (auto i = first; ++i != last; ) {

@@ -12,15 +12,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-using HasDefaultConstructor = IsConstructible<T>;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否可被默认构造
  * @tparam T 待检查类型
@@ -31,15 +22,15 @@ using HasDefaultConstructor = IsConstructible<T>;
  * 如果 \em T 可被默认构造，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct HasDefaultConstructor : BooleanRewrapPositive< Detail::TypeTraits::HasDefaultConstructor<T> > {};
+struct HasDefaultConstructor;
 
 /**
  * @brief HasDefaultConstructor 的否定
  * @tparam T 待检查类型
  * @see BR::HasDefaultConstructor
  */
-template< typename T, typename ... TArguments >
-struct NoDefaultConstructor : BooleanRewrapNegative< Detail::TypeTraits::HasDefaultConstructor<T> > {};
+template< typename T >
+struct NoDefaultConstructor;
 
 #if defined(BR_CXX14)
 
@@ -62,5 +53,22 @@ template< typename T >
 constexpr auto no_default_constructor = bool_constant< NoDefaultConstructor<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+using HasDefaultConstructor = IsConstructible<T>;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct HasDefaultConstructor : public BooleanRewrapPositive< Detail::TypeTraits::HasDefaultConstructor<T> > {};
+
+template< typename T >
+struct NoDefaultConstructor : public BooleanRewrapNegative< Detail::TypeTraits::HasDefaultConstructor<T> > {};
 
 } // namespace BR

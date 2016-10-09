@@ -14,26 +14,17 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-using HasMoveConstructor = IsConstructible< T, AddRValueReference<T> >;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否具有移动构造函数
  * @tparam T 待检查类型
  * @see IntegerConstant
  * @see IsConstructible
- * @see NoMoveConstructor
+ * @see NotMovConstructible
  *
  * 如果 \em T 具有移动构造函数，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct HasMoveConstructor : BooleanRewrapPositive< Detail::TypeTraits::HasMoveConstructor<T> > {};
+struct HasMoveConstructor;
 
 /**
  * @brief HasMoveConstructor 的否定
@@ -41,7 +32,7 @@ struct HasMoveConstructor : BooleanRewrapPositive< Detail::TypeTraits::HasMoveCo
  * @see HasMoveConstructor
  */
 template< typename T >
-struct NoMoveConstructor : BooleanRewrapNegative< Detail::TypeTraits::HasMoveConstructor<T> > {};
+struct NoMoveConstructor;
 
 #if defined(BR_CXX14)
 
@@ -64,5 +55,22 @@ template< typename T >
 constexpr auto no_move_constructor = bool_constant< NoMoveConstructor<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+using HasMoveConstructor = IsConstructible< T, AddRValueReference<T> >;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct HasMoveConstructor : public BooleanRewrapPositive< Detail::TypeTraits::HasMoveConstructor<T> > {};
+
+template< typename T >
+struct NoMoveConstructor : public BooleanRewrapNegative< Detail::TypeTraits::HasMoveConstructor<T> > {};
 
 } // namespace BR

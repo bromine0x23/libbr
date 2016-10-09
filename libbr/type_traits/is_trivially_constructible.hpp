@@ -18,33 +18,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-#if defined(BR_IS_TRIVIALLY_CONSTRUCTIBLE)
-
-template< typename T, typename... TArgs >
-using IsTriviallyConstructible = BooleanConstant< BR_IS_TRIVIALLY_CONSTRUCTIBLE(T, TArgs...) >;
-
-#else
-
-template< typename T, typename TArg >
-using IsTriviallyConstructibleOne = BooleanAnd< IsSame< T, TArg >, IsScalar<T> >;
-
-template< typename T, typename... TArgs >
-struct IsTriviallyConstructible : BooleanFalse {};
-
-template< typename T >
-struct IsTriviallyConstructible<T> : IsScalar<T> {};
-
-template< typename T, typename TArg >
-struct IsTriviallyConstructible< T, TArg > : IsTriviallyConstructibleOne< T, RemoveConst< RemoveReference<TArg> > > {};
-
-#endif // defined(BR_IS_TRIVIALLY_CONSTRUCTIBLE)
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否可从特定参数 \em trivially 地构造
  * @tparam T 待检查类型
@@ -57,7 +30,7 @@ struct IsTriviallyConstructible< T, TArg > : IsTriviallyConstructibleOne< T, Rem
  * 如果表达式 <tt>T(BR::make_rvalue<TArgs>()...)</tt> 是合法且不抛出异常的，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T, typename... TArgs >
-struct IsTriviallyConstructible : BooleanRewrapPositive< Detail::TypeTraits::IsTriviallyConstructible< T, TArgs... > > {};
+struct IsTriviallyConstructible;
 
 /**
  * @brief IsTriviallyConstructible 的否定
@@ -66,7 +39,7 @@ struct IsTriviallyConstructible : BooleanRewrapPositive< Detail::TypeTraits::IsT
  * @see BR::IsTriviallyConstructible
  */
 template< typename T, typename... TArgs >
-struct NotTriviallyConstructible : BooleanRewrapNegative< Detail::TypeTraits::IsTriviallyConstructible< T, TArgs... > > {};
+struct NotTriviallyConstructible;
 
 #if defined(BR_CXX14)
 
@@ -91,5 +64,40 @@ template< typename T, typename... TArgs >
 constexpr auto not_trivially_constructible = bool_constant< NotTriviallyConstructible< T, TArgs... > >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+#if defined(BR_IS_TRIVIALLY_CONSTRUCTIBLE)
+
+template< typename T, typename... TArgs >
+using IsTriviallyConstructible = BooleanConstant< BR_IS_TRIVIALLY_CONSTRUCTIBLE(T, TArgs...) >;
+
+#else
+
+template< typename T, typename TArg >
+using IsTriviallyConstructibleOne = BooleanAnd< IsSame< T, TArg >, IsScalar<T> >;
+
+template< typename T, typename... TArgs >
+struct IsTriviallyConstructible : public BooleanFalse {};
+
+template< typename T >
+struct IsTriviallyConstructible<T> : public IsScalar<T> {};
+
+template< typename T, typename TArg >
+struct IsTriviallyConstructible< T, TArg > : public IsTriviallyConstructibleOne< T, RemoveConst< RemoveReference<TArg> > > {};
+
+#endif // defined(BR_IS_TRIVIALLY_CONSTRUCTIBLE)
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T, typename... TArgs >
+struct IsTriviallyConstructible : public BooleanRewrapPositive< Detail::TypeTraits::IsTriviallyConstructible< T, TArgs... > > {};
+
+template< typename T, typename... TArgs >
+struct NotTriviallyConstructible : public BooleanRewrapNegative< Detail::TypeTraits::IsTriviallyConstructible< T, TArgs... > > {};
 
 } // namespace BR

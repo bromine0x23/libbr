@@ -15,6 +15,10 @@
 #  define __has_extension __has_feature
 #endif
 
+#if !__has_feature(cxx_exceptions) && !defined(BR_NO_EXCEPTIONS)
+#  define BR_NO_EXCEPTIONS
+#endif
+
 #if defined(__has_builtin)
 #  if __has_builtin(__builtin_expect)
 #    define BR_EXPECT(x, y) __builtin_expect(x, y)

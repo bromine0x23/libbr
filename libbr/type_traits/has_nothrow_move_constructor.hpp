@@ -13,27 +13,18 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-using HasNothrowMoveConstructor = IsNothrowConstructible< T, AddRValueReference<T> >;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否具有 \em nothrow 的移动构造函数
  * @tparam T 待检查类型
  * @see BR::IntegerConstant
  * @see BR::IsNothrowConstructible
- * @see BR::HasMoveConstructor
+ * @see BR::IsMoveConstructible
  * @see BR::NoNothrowMoveConstructor
  *
  * 如果 \em T 具有 \em nothrow 的移动构造函数，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct HasNothrowMoveConstructor : BooleanRewrapPositive< Detail::TypeTraits::HasNothrowMoveConstructor<T> > {};
+struct HasNothrowMoveConstructor;
 
 /**
  * @brief HasNothrowMoveConstructor 的否定
@@ -41,7 +32,7 @@ struct HasNothrowMoveConstructor : BooleanRewrapPositive< Detail::TypeTraits::Ha
  * @see BR::HasNothrowMoveConstructor
  */
 template< typename T >
-struct NoNothrowMoveConstructor : BooleanRewrapNegative< Detail::TypeTraits::HasNothrowMoveConstructor<T> > {};
+struct NoNothrowMoveConstructor;
 
 #if defined(BR_CXX14)
 
@@ -64,5 +55,22 @@ template< typename T >
 constexpr auto no_nothrow_move_constructor = bool_constant< NoNothrowMoveConstructor<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+using HasNothrowMoveConstructor = IsNothrowConstructible< T, AddRValueReference<T> >;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct HasNothrowMoveConstructor : public BooleanRewrapPositive< Detail::TypeTraits::HasNothrowMoveConstructor<T> > {};
+
+template< typename T >
+struct NoNothrowMoveConstructor : public BooleanRewrapNegative< Detail::TypeTraits::HasNothrowMoveConstructor<T> > {};
 
 } // namespace BR

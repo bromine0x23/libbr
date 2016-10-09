@@ -16,13 +16,13 @@ public:
 	using BaseException = LogicException;
 
 	DomainException() : BaseException("BR::DomainException") {
-	};
+	}
 
-	explicit DomainException(String<NChar> const & message) : BaseException(message) {
-	};
+	explicit DomainException(RawString<NChar> const & message) : BaseException(message) {
+	}
 
 	explicit DomainException(CString<NChar> message) : BaseException(message) {
-	};
+	}
 
 	~DomainException() noexcept override;
 };

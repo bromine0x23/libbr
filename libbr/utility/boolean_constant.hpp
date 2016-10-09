@@ -28,13 +28,13 @@ using BooleanTrue = BooleanConstant<true>;
 using BooleanFalse = BooleanConstant<false>;
 
 template< typename TB >
-using BooleanRewrap = BooleanConstant< TB::value >;
+using BooleanRewrapPositive = BooleanConstant< (TB{}()) >;
 
 template< typename TB >
-using BooleanRewrapPositive = BooleanRewrap<TB>;
+using BooleanRewrapNegative = BooleanConstant< !(TB{}()) >;
 
 template< typename TB >
-using BooleanRewrapNegative = BooleanConstant< !TB::value >;
+using BooleanRewrap = BooleanRewrapPositive< TB >;
 
 #if defined(BR_CXX14)
 

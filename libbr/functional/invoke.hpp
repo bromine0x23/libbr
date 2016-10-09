@@ -58,7 +58,7 @@ struct InvokerMemberFunctionWithPointer {
 	}
 };
 
-template< typename TCallable, typename TArg, bool is_member_object_pointer = IsMemberObjectPointer<TCallable>::value, bool is_member_function_pointer = IsMemberFunctionPointer<TCallable>::value >
+template< typename TCallable, typename TArg, bool is_member_object_pointer = IsMemberObjectPointer<TCallable>{}(), bool is_member_function_pointer = IsMemberFunctionPointer<TCallable>{}() >
 struct InvokerBasic;
 
 template< typename TMemberObjectPointer, typename TDerived >
@@ -66,31 +66,26 @@ struct InvokerBasic< TMemberObjectPointer, TDerived, true, false > : public Cond
 	IsBaseOf< typename MemberPointerTraits<TMemberObjectPointer>::Class, Decay<TDerived> >,
 	InvokerMemberObjectWithObject,
 	InvokerMemberObjectWithPointer
-> {
-};
+> {};
 
 template< typename TMemberFunctionPointer, typename TDerived >
 struct InvokerBasic< TMemberFunctionPointer, TDerived, false, true > : public Conditional<
 	IsBaseOf< typename MemberPointerTraits<TMemberFunctionPointer>::Class, Decay<TDerived> >,
 	InvokerMemberFunctionWithObject,
 	InvokerMemberFunctionWithPointer
-> {
-};
+> {};
 
 template< typename TCallable, typename TArg >
-struct InvokerBasic< TCallable, TArg, false, false > : public InvokerFunctor {
-};
+struct InvokerBasic< TCallable, TArg, false, false > : public InvokerFunctor {};
 
 template< typename TCallable, typename ... TArgs >
 struct Invoker;
 
 template< typename TCallable >
-struct Invoker<TCallable> : public InvokerFunctor {
-};
+struct Invoker<TCallable> : public InvokerFunctor {};
 
 template< typename TCallable, typename TArg, typename ... TArgs >
-struct Invoker< TCallable, TArg, TArgs ... > : public InvokerBasic< Decay<TCallable>, TArg > {
-};
+struct Invoker< TCallable, TArg, TArgs ... > : public InvokerBasic< Decay<TCallable>, TArg > {};
 
 } // namespace Functional
 } // namespace Detail

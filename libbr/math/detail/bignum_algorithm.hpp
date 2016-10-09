@@ -9,7 +9,7 @@
 #include <libbr/math/detail/bignum_config.hpp>
 #include <libbr/math/relation.hpp>
 #include <libbr/utility/bit_math.hpp>
-#include <libbr/utility/integer_constant.hpp>
+#include <libbr/utility/integral_constant.hpp>
 #include <libbr/utility/swap.hpp>
 
 #include <string>
@@ -198,14 +198,14 @@ public:
 
 protected:
 	template< typename TInt >
-	static void set_int(BignumData & X, TInt v, IntegerConstant< Size, 1 > _dummy) {
+	static void set_int(BignumData & X, TInt v, IntegralConstant< Size, 1 > _dummy) {
 		reserve(X, 1);
 		digits(X)[0] = Digit(v);
 		length(X) = 1;
 	}
 
 	template< typename TInt >
-	static void set_int(BignumData & X, TInt v, IntegerConstant< Size, 2 > _dummy) {
+	static void set_int(BignumData & X, TInt v, IntegralConstant< Size, 2 > _dummy) {
 		reserve(X, 2);
 		digits(X)[0] = mod_radix(v);
 		if ((v = div_radix(v)) != 0) {
@@ -217,7 +217,7 @@ protected:
 	}
 
 	template< typename TInt, Size size >
-	static void set_int(BignumData & X, TInt v, IntegerConstant< Size, size > _dummy) {
+	static void set_int(BignumData & X, TInt v, IntegralConstant< Size, size > _dummy) {
 		reserve(X, size);
 		for (Size i = 0; v != 0; ++i, v = div_radix(v)) {
 			digits(X)[i] = mod_radix(v);
@@ -227,7 +227,7 @@ protected:
 
 	template< typename TInt >
 	static void set_int(BignumData & X, TInt v) {
-		set_int(X, v, IntegerConstant< Size, (sizeof(TInt) + sizeof(Digit) - 1) / sizeof(Digit) >{});
+		set_int(X, v, IntegralConstant< Size, (sizeof(TInt) + sizeof(Digit) - 1) / sizeof(Digit) >{});
 	}
 
 public:

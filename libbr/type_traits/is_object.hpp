@@ -15,15 +15,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-using IsObject = BooleanAnd< NotReference<T>, NotVoid<T>, NotFunction<T> >;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否是对象类型
  * @tparam T 待检查类型
@@ -37,7 +28,7 @@ using IsObject = BooleanAnd< NotReference<T>, NotVoid<T>, NotFunction<T> >;
  * 如果 \em T 是对象类型(标量、数组、类、或联合)，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsObject : BooleanRewrapPositive< Detail::TypeTraits::IsObject<T> > {};
+struct IsObject;
 
 /**
  * @brief IsObject 的否定
@@ -45,7 +36,7 @@ struct IsObject : BooleanRewrapPositive< Detail::TypeTraits::IsObject<T> > {};
  * @see IsObject
  */
 template< typename T >
-struct NotObject : BooleanRewrapNegative< Detail::TypeTraits::IsObject<T> > {};
+struct NotObject;
 
 #if defined(BR_CXX14)
 
@@ -68,6 +59,28 @@ template< typename T >
 constexpr auto not_object = bool_constant< NotObject<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+using IsObject = BooleanAnd< NotReference<T>, NotVoid<T>, NotFunction<T> >;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsObject : public BooleanRewrapPositive< Detail::TypeTraits::IsObject<T> > {};
+
+/**
+ * @brief IsObject 的否定
+ * @tparam T 待检查类型
+ * @see IsObject
+ */
+template< typename T >
+struct NotObject : public BooleanRewrapNegative< Detail::TypeTraits::IsObject<T> > {};
 
 } // namespace BR
 

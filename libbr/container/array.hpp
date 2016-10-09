@@ -10,11 +10,13 @@
 #include <libbr/algorithm/equal.hpp>
 #include <libbr/algorithm/fill_n.hpp>
 #include <libbr/algorithm/lexicographical_compare.hpp>
+#include <libbr/container/detail/tuple_forward.hpp>
 #include <libbr/iterator/reverse_iterator.hpp>
+#include <libbr/exception/throw.hpp>
+#include <libbr/type_operate/remove_const_volatile.hpp>
 #include <libbr/type_traits/is_nothrow_swappable.hpp>
-#include <libbr/utility/current_function.hpp>
 #include <libbr/utility/enumerator.hpp>
-#include <libbr/utility/integer_constant.hpp>
+#include <libbr/utility/integral_constant.hpp>
 #include <libbr/utility/move.hpp>
 #include <libbr/utility/swap.hpp>
 
@@ -27,24 +29,14 @@ namespace BR {
  *
  * 是类元组类型
  */
-template< typename TElement, Size S >
+template< typename T, Size N >
 class Array;
 
-class IndexException;
-
-template< typename T >
-struct TypeTupleSize;
-
 template< typename T, Size S >
-struct TypeTupleSize< Array< T, S > > : IntegerConstant< Size, S > {
-};
-
-template< Size I, typename T >
-struct TypeTupleElement;
+struct TupleSize< Array< T, S > > : IntegralConstant< Size, S > {};
 
 template< Size I, typename T, Size S >
-struct TypeTupleElement< I, Array< T, S > > : TypeWrapper<T> {
-};
+struct TypeTupleElement< I, Array< T, S > > : TypeWrapper<T> {};
 
 template< Size I, typename T, Size S >
 constexpr inline auto get(Array< T, S > & A) noexcept -> T & {
@@ -64,7 +56,18 @@ constexpr inline auto get(Array< T, S > && A) noexcept -> T && {
 	return move(A[I]);
 }
 
-template< typename TElement, Size S >
+template< Size I, typename T, Size S >
+constexpr inline auto get(Array< T, S > const && A) noexcept -> T const && {
+	static_assert(I < S, "Index out of bounds.");
+	return move(A[I]);
+}
+
+template< typename T, Size N >
+void swap(Array< T, N > & x, Array< T, N > & y) noexcept(noexcept(x.swap(y))) {
+	x.swap(y);
+}
+
+template< typename TElement, Size N >
 class Array {
 public:
 	using Element = TElement;
@@ -90,64 +93,29 @@ public:
 	using ConstReverseIterator = BR::ReverseIterator<ConstIterator>;
 
 public:
-	/**
-	 * @brief 默认构造
-	 */
-	constexpr Array() noexcept = default;
-
-	/**
-	 * @brief 复制构造
-	 */
-	Array(Array const & _dummy) noexcept = default;
-
-	/**
-	 * @brief 移动构造
-	 */
-	Array(Array && _dummy) noexcept = default;
-
-	/**
-	 * @brief 逐元素初始化
-	 * @tparam TFunctor 初始化函数类型
-	 * @param functor 初始化函数，返回值用于初始化元素
-	 *
-	 * 对每个元素下标 i ，调用 functor(i) ，返回值用作下标对应的元素的初始值
-	 */
 	template< typename TFunctor >
-	Array(TFunctor functor) {
-		for (Size i = 0; i < S; ++i) {
+	static auto build(TFunctor && functor) -> Array {
+		Array array;
+		for (Size i = 0; i < N; ++i) {
 			auto t = i;
-			m_elements[i] = functor(t);
+			array[i] = functor(t);
 		}
+		return array;
 	}
-
-	/**
-	 * @brief 析构
-	 */
-	~Array() noexcept = default;
-
-	/**
-	 * @brief 复制赋值
-	 */
-	auto operator=(Array const & _dummy) noexcept -> Array & = default;
-
-	/**
-	 * @brief 移动赋值
-	 */
-	auto operator=(Array && _dummy) noexcept -> Array & = default;
 
 	/**
 	 * @brief 填充数组
 	 * @param element 填充值
 	 */
 	auto fill(Element const & element) -> Array & {
-		fill_n(m_elements, S, element);
+		fill_n(m_elements, N, element);
 		return *this;
 	}
 
 	/**
 	 * @brief 交换
 	 */
-	void swap(Array & array) noexcept(IsNothrowSwappable< Element [S] >::value) {
+	void swap(Array & array) noexcept(IsNothrowSwappable< CArray< Element, N > >::value) {
 		using BR::swap;
 		swap(m_elements, array.m_elements);
 	}
@@ -161,11 +129,11 @@ public:
 	}
 
 	auto end() noexcept -> Iterator {
-		return Iterator(m_elements + S);
+		return Iterator(m_elements + N);
 	}
 
 	auto end() const noexcept -> ConstIterator {
-		return ConstIterator(m_elements + S);
+		return ConstIterator(m_elements + N);
 	}
 
 	auto rbegin() noexcept -> ReverseIterator {
@@ -201,15 +169,15 @@ public:
 	}
 
 	constexpr auto size() const noexcept -> Size {
-		return S;
+		return N;
 	}
 
 	constexpr auto max_size() const noexcept -> Size {
-		return S;
+		return N;
 	}
 
 	constexpr auto empty() const noexcept -> bool {
-		return S == 0;
+		return N == 0;
 	}
 
 	auto operator[](Size i) -> Reference {
@@ -221,15 +189,15 @@ public:
 	}
 
 	auto at(Size i) -> Reference {
-		if (i >= S) {
-			throw IndexException(BR_CURRENT_FUNCTION);
+		if (i >= N) {
+			throw_index_exception(BR_CURRENT_FUNCTION);
 		}
 		return operator[](i);
 	}
 
 	BR_CONSTEXPR_AFTER_CXX11 auto at(Size i) const -> ConstReference {
-		if (i >= S) {
-			throw IndexException(BR_CURRENT_FUNCTION);
+		if (i >= N) {
+			throw_index_exception(BR_CURRENT_FUNCTION);
 		}
 		return operator[](i);
 	}
@@ -243,11 +211,11 @@ public:
 	}
 
 	auto back() -> Reference {
-		return operator[](S > 0 ? S - 1 : 0);
+		return operator[](N > 0 ? N - 1 : 0);
 	}
 
 	constexpr auto back() const -> ConstReference {
-		return operator[](S > 0 ? S - 1 : 0);
+		return operator[](N > 0 ? N - 1 : 0);
 	}
 
 	auto data() noexcept -> Element * {
@@ -258,52 +226,12 @@ public:
 		return m_elements;
 	}
 
-	auto each() noexcept -> Enumerator<Iterator> {
-		return make_enumerator(begin(), end());
-	}
-
-	template< typename TFunctor >
-	auto each(TFunctor functor) noexcept -> Array {
-		each().each(functor);
-		return *this;
-	}
-
-	auto each() const noexcept -> Enumerator<ConstIterator> {
-		return make_enumerator(begin(), end());
-	}
-
-	template< typename TFunctor >
-	auto each(TFunctor functor) const noexcept -> Array {
-		each().each(functor);
-		return *this;
-	}
-
-	auto reverse_each() noexcept -> Enumerator<ReverseIterator> {
-		return make_enumerator(rbegin(), rend());
-	}
-
-	template< typename TFunctor >
-	auto reverse_each(TFunctor functor) noexcept -> Array {
-		reverse_each().each(functor);
-		return *this;
-	}
-
-	auto reverse_each() const noexcept -> Enumerator<ConstReverseIterator> {
-		return make_enumerator(rbegin(), rend());
-	}
-
-	template< typename TFunctor >
-	auto reverse_each(TFunctor functor) const noexcept -> Array {
-		reverse_each().each(functor);
-		return *this;
-	}
-
 	auto operator==(Array const & y) const -> bool {
 		return equal(begin(), end(), y.begin(), y.end());
 	}
 
 	auto operator!=(Array const & y) const -> bool {
-		return !(*this == y);
+		return !operator==(y);
 	}
 
 	auto operator<(Array const & y) const -> bool {
@@ -311,24 +239,19 @@ public:
 	}
 
 	auto operator>(Array const & y) const -> bool {
-		return y < *this;
+		return y.operator<(*this);
 	}
 
 	auto operator<=(Array const & y) const -> bool {
-		return !(y < *this);
+		return !y.operator<(*this);
 	}
 
 	auto operator>=(Array const & y) const -> bool {
-		return !(*this < y);
+		return !operator<(y);
 	}
 
 private:
-	Element m_elements[S > 0 ? S : 1];
+	Element m_elements[N > 0 ? N : 1];
 }; // struct Array< TElement, S >
-
-template< typename T, Size S>
-void swap(Array< T, S > & x, Array< T, S > & y) noexcept(noexcept(x.swap(y))) {
-	x.swap(y);
-}
 
 } // namespace BR

@@ -9,6 +9,12 @@
 
 #else
 
+#if __cplusplus == 201103L
+#  define BR_STANDARD "C++11"
+#elif __cplusplus == 201402L
+#  define BR_STANDARD "C++14"
+#endif
+
 #if __cplusplus >= 201103L
 #  define BR_CXX11
 #endif
@@ -19,6 +25,10 @@
 
 #if __cplusplus > 201103L
 #  define BR_AFTER_CXX11
+#endif
+
+#if __cplusplus > 201402L
+#  define BR_AFTER_CXX14
 #endif
 
 #if defined(BR_AFTER_CXX11)
@@ -70,6 +80,10 @@
 
 #if !defined(BR_FALLTHROUGH)
 #  define BR_FALLTHROUGH ((void)0)
+#endif
+
+#if !defined(BR_CURRENT_FUNCTION)
+#  define BR_CURRENT_FUNCTION __func__
 #endif
 
 #endif

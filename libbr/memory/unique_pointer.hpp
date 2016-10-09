@@ -7,7 +7,7 @@
 #pragma once
 
 #include <libbr/assert/assert.hpp>
-#include <libbr/container/compressed_pair.hpp>
+#include <libbr/container/tuple.hpp>
 #include <libbr/functional/less.hpp>
 #include <libbr/memory/default_deleter.hpp>
 #include <libbr/type_operate/add_lvalue_reference.hpp>
@@ -112,7 +112,7 @@ public:
 		static_assert(NotPointer<Deleter>(), "UniquePointer constructed with null function pointer deleter");
 	}
 
-	constexpr UniquePointer(NullPointer) noexcept : m_impl(Pointer()){
+	constexpr UniquePointer(NullPointer) noexcept : m_impl(Pointer()) {
 		static_assert(NotPointer<Deleter>(), "UniquePointer constructed with null function pointer deleter");
 	}
 
@@ -140,14 +140,15 @@ public:
 
 	auto operator=(UniquePointer && p) noexcept -> UniquePointer & {
 		reset(p.release());
-		m_impl.second() = forward<Deleter>(p.get_deleter());
+		m_impl.template get<1>() = forward<Deleter>(p.get_deleter());
 		return *this;
 	}
 
 	template< typename TOtherElement, typename TOtherDeleter >
 	auto operator=(UniquePointer< TOtherElement, TOtherDeleter > && p) noexcept -> EnableIf< IsAssignable< TOtherElement, TOtherDeleter >, UniquePointer & > {
+		using BR::get;
 		reset(p.release());
-		m_impl.second() = forward<TOtherDeleter>(p.get_deleter());
+		m_impl.template get<1>() = forward<TOtherDeleter>(p.get_deleter());
 		return *this;
 	}
 
@@ -157,40 +158,42 @@ public:
 	}
 
 	auto operator*() const -> AddLValueReference<Element> {
-		return *m_impl.first();
+		return *(m_impl.template get<0>());
 	}
 
 	auto operator->() const noexcept -> Pointer {
-		return m_impl.first();
+		return m_impl.template get<0>();
 	}
 
 	auto get() const noexcept -> Pointer {
-		return m_impl.first();
+		return m_impl.template get<0>();
 	}
 
 	auto get_deleter() noexcept -> RemoveReference<Deleter> & {
-		return m_impl.second();
+		return m_impl.template get<1>();
 	}
 
 	auto get_deleter() const noexcept -> RemoveReference<Deleter> const & {
-		return m_impl.second();
+		return m_impl.template get<1>();
 	}
 
 	explicit operator bool() const noexcept {
-		return m_impl.first() != nullptr;
+		return m_impl.template get<0>() != nullptr;
 	}
 
 	auto release() noexcept -> Pointer {
-		auto t = m_impl.first();
-		m_impl.first() = Pointer();
+		using BR::get;
+		auto t = m_impl.template get<0>();
+		m_impl.template get<0>() = Pointer();
 		return t;
 	}
 
 	void reset(Pointer p = Pointer()) noexcept {
-		auto t = m_impl.first();
-		m_impl.first() = p;
+		using BR::get;
+		auto t = m_impl.template get<0>();
+		m_impl.template get<0>() = p;
 		if (t != nullptr) {
-			m_impl.second()(t);
+			m_impl.template get<1>()(t);
 		}
 	}
 
@@ -253,7 +256,7 @@ public:
 	}
 
 private:
-	CompressedPair< Pointer, Deleter > m_impl;
+	Tuple< Pointer, Deleter > m_impl;
 
 }; // class UniquePointer< TPointer, TDeleter >
 
@@ -330,15 +333,17 @@ public:
 	}
 
 	auto operator=(UniquePointer && p) noexcept -> UniquePointer & {
+		using BR::get;
 		reset(p.release());
-		m_impl.second() = forward<Deleter>(p.get_deleter());
+		get<1>(m_impl) = forward<Deleter>(p.get_deleter());
 		return *this;
 	}
 
 	template< typename TOtherElement, typename TOtherDeleter >
 	auto operator=(UniquePointer< TOtherElement, TOtherDeleter > && p) noexcept -> EnableIf< IsAssignable< TOtherElement, TOtherDeleter >, UniquePointer & > {
+		using BR::get;
 		reset(p.release());
-		m_impl.second() = forward<TOtherDeleter>(p.get_deleter());
+		get<1>(m_impl) = forward<TOtherDeleter>(p.get_deleter());
 		return *this;
 	}
 
@@ -348,53 +353,53 @@ public:
 	}
 
 	auto operator[](Size i) const -> AddLValueReference<Element> {
-		return m_impl.first()[i];
+		return m_impl.template get<0>()[i];
 	}
 
 	auto get() const noexcept -> Pointer {
-		return m_impl.first();
+		return m_impl.template get<0>();
 	}
 
 	auto get_deleter() noexcept -> RemoveReference<Deleter> & {
-		return m_impl.second();
+		return m_impl.template get<1>();
 	}
 
 	auto get_deleter() const noexcept -> RemoveReference<Deleter> const & {
-		return m_impl.second();
+		return m_impl.template get<1>();
 	}
 
 	explicit operator bool() const noexcept {
-		return m_impl.first() != nullptr;
+		return m_impl.template get<0>() != nullptr;
 	}
 
 	auto release() noexcept -> Pointer {
-		auto t = m_impl.first();
-		m_impl.first() = Pointer();
+		auto t = m_impl.template get<0>();
+		m_impl.template get<0>() = Pointer();
 		return t;
 	}
 
 	template< typename TOtherPointer >
-	auto reset(Pointer p) noexcept -> EnableIf< IsCompatible<TOtherPointer> > {
-		auto t = m_impl.first();
-		m_impl.first() = p;
+	auto reset(TOtherPointer p) noexcept -> EnableIf< IsCompatible<TOtherPointer> > {
+		auto t = m_impl.template get<0>();
+		m_impl.template get<0>() = p;
 		if (t != nullptr) {
-			m_impl.second()(t);
+			m_impl.template get<1>()(t);
 		}
 	}
 
 	void reset(NullPointer) noexcept {
-		auto t = m_impl.first();
-		m_impl.first() = nullptr;
+		auto t = m_impl.template get<0>();
+		m_impl.template get<0>() = nullptr;
 		if (t != nullptr) {
-			m_impl.second()(t);
+			m_impl.template get<1>()(t);
 		}
 	}
 
 	void reset() noexcept {
-		auto t = m_impl.first();
-		m_impl.first() = nullptr;
+		auto t = m_impl.template get<0>();
+		m_impl.template get<0>() = nullptr;
 		if (t != nullptr) {
-			m_impl.second()(t);
+			m_impl.template get<1>()(t);
 		}
 	}
 
@@ -457,10 +462,8 @@ public:
 	}
 
 private:
-	CompressedPair< Pointer, Deleter > m_impl;
+	Tuple< Pointer, Deleter > m_impl;
 
 }; // class UniquePointer< TElement[], TDeleter >
 
 } // namespace BR
-
-

@@ -25,7 +25,7 @@ inline auto make_insert_iterator(TContainer & container, typename TContainer::It
 template< typename TContainer >
 class InsertIterator : public BasicIterator {
 public:
-	struct Category : public IteratorTag, public WritableTag, public IncrementableTraversalTag {
+	struct Category : public BasicIterator::Category, public WritableTag, public IncrementableTraversalTag {
 	};
 
 	using Element = void;
@@ -40,7 +40,8 @@ public:
 
 	explicit InsertIterator(
 		Container & container, typename Container::Iterator iterator
-	) : m_container(address_of(container)), m_iterator(iterator) {}
+	) : m_container(address_of(container)), m_iterator(iterator) {
+	}
 
 	auto operator=(typename TContainer::Element const & element) -> InsertIterator & {
 		m_container->insert(m_iterator, element);
@@ -54,7 +55,7 @@ public:
 		return *this;
 	}
 
-	auto operator* () -> InsertIterator & {
+	auto operator*() -> Reference {
 		return *this;
 	}
 

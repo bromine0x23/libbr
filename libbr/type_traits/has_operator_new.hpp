@@ -14,73 +14,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T, T t >
-struct HasOperatorNewHelper;
-
-struct HasOperatorNewTester0 {
-	template< typename T, typename _TDummy = HasOperatorNewHelper< void *(*)(std::size_t), &T::operator new > >
-	static auto test(int) -> BooleanTrue;
-
-	template< typename T >
-	static auto test(...) -> BooleanFalse;
-};
-
-struct HasOperatorNewTester1 {
-	template< typename T, typename _TDummy = HasOperatorNewHelper< void *(*)(std::size_t, std::nothrow_t const &), &T::operator new > >
-	static auto test(int) -> BooleanTrue;
-
-	template< typename T >
-	static auto test(...) -> BooleanFalse;
-};
-
-struct HasOperatorNewTester2 {
-	template< typename T, typename _TDummy = HasOperatorNewHelper< void *(*)(std::size_t, void *), &T::operator new > >
-	static auto test(int) -> BooleanTrue;
-
-	template< typename T >
-	static auto test(...) -> BooleanFalse;
-};
-
-struct HasOperatorNewTester3 {
-	template< typename T, typename _TDummy = HasOperatorNewHelper< void *(*)(std::size_t), &T::operator new [] > >
-	static auto test(int) -> BooleanTrue;
-
-	template< typename T >
-	static auto test(...) -> BooleanFalse;
-};
-
-struct HasOperatorNewTester4 {
-	template< typename T, typename _TDummy = HasOperatorNewHelper< void *(*)(std::size_t, std::nothrow_t const &), &T::operator new []  > >
-	static auto test(int) -> BooleanTrue;
-
-	template< typename T >
-	static auto test(...) -> BooleanFalse;
-};
-
-struct HasOperatorNewTester5 {
-	template< typename T, typename _TDummy = HasOperatorNewHelper< void *(*)(std::size_t, void *), &T::operator new []  > >
-	static auto test(int) -> BooleanTrue;
-
-	template< typename T >
-	static auto test(...) -> BooleanFalse;
-};
-
-template< typename T >
-using HasOperatorNew = BooleanOr<
-	decltype(HasOperatorNewTester0::test<T>(nullptr)),
-	decltype(HasOperatorNewTester1::test<T>(nullptr)),
-	decltype(HasOperatorNewTester2::test<T>(nullptr)),
-	decltype(HasOperatorNewTester3::test<T>(nullptr)),
-	decltype(HasOperatorNewTester4::test<T>(nullptr)),
-	decltype(HasOperatorNewTester5::test<T>(nullptr))
->;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否重载了 \em new 操作符
  * @tparam T 待检查类型
@@ -90,8 +23,7 @@ using HasOperatorNew = BooleanOr<
  * 如果 \em T 重载了 \em new 操作符，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct HasOperatorNew : BooleanRewrapPositive< Detail::TypeTraits::HasOperatorNew<T> > {
-};
+struct HasOperatorNew;
 
 /**
  * @brief HasOperatorNew 的否定
@@ -99,8 +31,7 @@ struct HasOperatorNew : BooleanRewrapPositive< Detail::TypeTraits::HasOperatorNe
  * @see BR::HasOperatorNew
  */
 template< typename T >
-struct NoOperatorNew : BooleanRewrapNegative< Detail::TypeTraits::HasOperatorNew<T> > {
-};
+struct NoOperatorNew;
 
 #if defined(BR_CXX14)
 
@@ -123,5 +54,80 @@ template< typename T >
 constexpr auto no_operator_new = bool_constant< NoOperatorNew<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T, T t >
+struct HasOperatorNewHelper;
+
+struct HasOperatorNewTester0 {
+	template< typename T, typename = HasOperatorNewHelper< void *(*)(std::size_t), &T::operator new > >
+	static auto test(int) -> BooleanTrue;
+
+	template< typename T >
+	static auto test(...) -> BooleanFalse;
+};
+
+struct HasOperatorNewTester1 {
+	template< typename T, typename = HasOperatorNewHelper< void *(*)(std::size_t, std::nothrow_t const &), &T::operator new > >
+	static auto test(int) -> BooleanTrue;
+
+	template< typename T >
+	static auto test(...) -> BooleanFalse;
+};
+
+struct HasOperatorNewTester2 {
+	template< typename T, typename = HasOperatorNewHelper< void *(*)(std::size_t, void *), &T::operator new > >
+	static auto test(int) -> BooleanTrue;
+
+	template< typename T >
+	static auto test(...) -> BooleanFalse;
+};
+
+struct HasOperatorNewTester3 {
+	template< typename T, typename = HasOperatorNewHelper< void *(*)(std::size_t), &T::operator new [] > >
+	static auto test(int) -> BooleanTrue;
+
+	template< typename T >
+	static auto test(...) -> BooleanFalse;
+};
+
+struct HasOperatorNewTester4 {
+	template< typename T, typename = HasOperatorNewHelper< void *(*)(std::size_t, std::nothrow_t const &), &T::operator new []  > >
+	static auto test(int) -> BooleanTrue;
+
+	template< typename T >
+	static auto test(...) -> BooleanFalse;
+};
+
+struct HasOperatorNewTester5 {
+	template< typename T, typename = HasOperatorNewHelper< void *(*)(std::size_t, void *), &T::operator new []  > >
+	static auto test(int) -> BooleanTrue;
+
+	template< typename T >
+	static auto test(...) -> BooleanFalse;
+};
+
+template< typename T >
+struct HasOperatorNew : BooleanOr<
+	decltype(HasOperatorNewTester0::test<T>(0)),
+	decltype(HasOperatorNewTester1::test<T>(0)),
+	decltype(HasOperatorNewTester2::test<T>(0)),
+	decltype(HasOperatorNewTester3::test<T>(0)),
+	decltype(HasOperatorNewTester4::test<T>(0)),
+	decltype(HasOperatorNewTester5::test<T>(0))
+> {};
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct HasOperatorNew : BooleanRewrapPositive< Detail::TypeTraits::HasOperatorNew<T> > {};
+
+template< typename T >
+struct NoOperatorNew : BooleanRewrapNegative< Detail::TypeTraits::HasOperatorNew<T> > {};
 
 } // namespace BR

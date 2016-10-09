@@ -17,7 +17,7 @@ namespace BR {
 
 namespace {
 
-static inline auto demangle_implement(CString<NChar> name) -> String<NChar>;
+static inline auto demangle_implement(CString<NChar> name) -> RawString<NChar>;
 
 #if defined(BR_HAS_CXXABI_H)
 
@@ -53,7 +53,7 @@ private:
 	CString<NChar> m_name;
 };
 
-static inline auto demangle_implement(CString<NChar> name) -> String<NChar> {
+static inline auto demangle_implement(CString<NChar> name) -> RawString<NChar> {
 	ScopedDemangledName demangled_name(name);
 	CString<NChar> p = demangled_name.get();
 	return p != nullptr ? p : name;
@@ -69,7 +69,7 @@ static inline auto demangle_implement(CString<NChar> name) -> String<NChar> {
 
 } // namespace [anonymous]
 
-auto demangle(CString<NChar> name) -> String<NChar> {
+auto demangle(CString<NChar> name) -> RawString<NChar> {
 	return demangle_implement(name);
 }
 

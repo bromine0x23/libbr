@@ -9,40 +9,13 @@
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/type_operate/bool.hpp>
-#include <libbr/type_traits/is_constructible.hpp>
-#include <libbr/utility/make_value.hpp>
+#include <libbr/type_traits/intrinsics.hpp>
+#if !defined(BR_IS_NOTHROW_CONSTRUCTIBLE)
+#  include <libbr/type_traits/is_constructible.hpp>
+#  include <libbr/utility/make_value.hpp>
+#endif
 
 namespace BR {
-
-namespace Detail {
-namespace TypeTraits {
-
-#if defined(BR_IS_NOTHROW_CONSTRUCTIBLE)
-
-template< typename T, typename... TArgs >
-using IsNothrowConstructible = BooleanConstant< BR_IS_NOTHROW_CONSTRUCTIBLE(T, TArgs...) >;
-
-#else
-
-template< typename T, typename... TArgs >
-struct IsNothrowConstructibleBasic;
-
-template< typename T >
-struct IsNothrowConstructibleBasic< T > : BooleanConstant< noexcept(T()) > {};
-
-template< typename T, typename TArg >
-struct IsNothrowConstructibleBasic< T, TArg > : BooleanConstant< noexcept(static_cast<T>(make_rvalue<TArg>())) > {};
-
-template< typename T, typename... TArgs >
-struct IsNothrowConstructibleBasic : BooleanConstant< noexcept(T(make_rvalue<TArgs>() ...)) > {};
-
-template< typename T, typename... TArgs >
-using IsNothrowConstructible = BooleanAnd< IsConstructible< T, TArgs... >, IsNothrowConstructibleBasic< T, TArgs... > >;
-
-#endif // defined(BR_IS_NOTHROW_CONSTRUCTIBLE)
-
-} // namespace TypeTraits
-} // namespace Detail
 
 /**
  * @brief 检查 \em T 是否可从特定参数 \em nothrow 地构造
@@ -56,7 +29,7 @@ using IsNothrowConstructible = BooleanAnd< IsConstructible< T, TArgs... >, IsNot
  * 如果表达式 <tt>T(BR::make_rvalue<TArgs>()...)</tt> 是合法且不抛出异常的，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T, typename... TArgs >
-struct IsNothrowConstructible : BooleanRewrapPositive< Detail::TypeTraits::IsNothrowConstructible< T, TArgs... > > {};
+struct IsNothrowConstructible;
 
 /**
  * @brief IsNothrowConstructible 的否定
@@ -65,7 +38,7 @@ struct IsNothrowConstructible : BooleanRewrapPositive< Detail::TypeTraits::IsNot
  * @see BR::IsNothrowConstructible
  */
 template< typename T, typename... TArgs >
-struct NotNothrowConstructible : BooleanRewrapNegative< Detail::TypeTraits::IsNothrowConstructible< T, TArgs... > > {};
+struct NotNothrowConstructible;
 
 #if defined(BR_CXX14)
 
@@ -90,5 +63,43 @@ template< typename T, typename... TArgs >
 constexpr auto not_nothrow_constructible = bool_constant< NotNothrowConstructible< T, TArgs... > >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+#if defined(BR_IS_NOTHROW_CONSTRUCTIBLE)
+
+template< typename T, typename... TArgs >
+using IsNothrowConstructible = BooleanConstant< BR_IS_NOTHROW_CONSTRUCTIBLE(T, TArgs...) >;
+
+#else
+
+template< typename T, typename... TArgs >
+struct IsNothrowConstructibleBasic;
+
+template< typename T >
+struct IsNothrowConstructibleBasic< T > : public BooleanConstant< noexcept(T()) > {};
+
+template< typename T, typename TArg >
+struct IsNothrowConstructibleBasic< T, TArg > : public BooleanConstant< noexcept(static_cast<T>(make_rvalue<TArg>())) > {};
+
+template< typename T, typename... TArgs >
+struct IsNothrowConstructibleBasic : public BooleanConstant< noexcept(T(make_rvalue<TArgs>() ...)) > {};
+
+template< typename T, typename... TArgs >
+using IsNothrowConstructible = BooleanAnd< IsConstructible< T, TArgs... >, IsNothrowConstructibleBasic< T, TArgs... > >;
+
+#endif // defined(BR_IS_NOTHROW_CONSTRUCTIBLE)
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T, typename... TArgs >
+struct IsNothrowConstructible : public BooleanRewrapPositive< Detail::TypeTraits::IsNothrowConstructible< T, TArgs... > > {};
+
+template< typename T, typename... TArgs >
+struct NotNothrowConstructible : public BooleanRewrapNegative< Detail::TypeTraits::IsNothrowConstructible< T, TArgs... > > {};
 
 } // namespace BR

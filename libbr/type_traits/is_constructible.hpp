@@ -14,9 +14,9 @@
 #  include <libbr/type_operate/conditional.hpp>
 #  include <libbr/type_operate/remove_all_extents.hpp>
 #  include <libbr/type_operate/remove_reference.hpp>
+#  include <libbr/type_traits/has_destructor.hpp>
 #  include <libbr/type_traits/is_array.hpp>
 #  include <libbr/type_traits/is_base_of.hpp>
-#  include <libbr/type_traits/is_destructible.hpp>
 #  include <libbr/type_traits/is_function.hpp>
 #  include <libbr/type_traits/is_lvalue_reference.hpp>
 #  include <libbr/type_traits/is_reference.hpp>
@@ -61,7 +61,7 @@ struct NotConstructible;
  * @see not_constructible
  */
 template< typename T, typename... TArgs >
-constexpr auto is_constructible = bool_constant< IsConstructible< T, TArgs... > >
+constexpr auto is_constructible = bool_constant< IsConstructible< T, TArgs... > >;
 
 /**
  * @brief NotConstructible 的模板变量版本
@@ -160,7 +160,7 @@ using IsConstructibleOne = Conditional<
 	IsReference<T>,
 	IsConstructibleReferenceCast< T, TArg >,
 	BooleanAnd<
-		IsDestructible< T >,
+		HasDestructor< T >,
 		IsConstructibleOneBasic< T, TArg >
 	>
 >;
@@ -180,13 +180,13 @@ template< typename T, typename... TArgs >
 struct IsConstructible;
 
 template< typename T >
-struct IsConstructible<T> : IsConstructibleZero<T> {};
+struct IsConstructible<T> : public IsConstructibleZero<T> {};
 
 template< typename T, typename TArg >
-struct IsConstructible< T, TArg > : IsConstructibleOne< T, TArg > {};
+struct IsConstructible< T, TArg > : public IsConstructibleOne< T, TArg > {};
 
 template< typename T, typename... TArgs >
-struct IsConstructible : IsConstructibleMany< T, TArgs... > {
+struct IsConstructible : public IsConstructibleMany< T, TArgs... > {
 	static_assert(sizeof...(TArgs) > 1, "Only useful for > 1 arguments");
 };
 
@@ -196,9 +196,9 @@ struct IsConstructible : IsConstructibleMany< T, TArgs... > {
 } // namespace Detail
 
 template< typename T, typename... TArgs >
-struct IsConstructible : BooleanRewrapPositive< Detail::TypeTraits::IsConstructible< T, TArgs... > > {};
+struct IsConstructible : public BooleanRewrapPositive< Detail::TypeTraits::IsConstructible< T, TArgs... > > {};
 
 template< typename T, typename... TArgs >
-struct NotConstructible : BooleanRewrapNegative< Detail::TypeTraits::IsConstructible< T, TArgs... > > {};
+struct NotConstructible : public BooleanRewrapNegative< Detail::TypeTraits::IsConstructible< T, TArgs... > > {};
 
 } // namespace BR

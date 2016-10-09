@@ -1,4 +1,3 @@
-#include <libbr/memory/bad_weak_pointer.hpp>
 #include <libbr/memory/memory_compare.hpp>
 #include <libbr/memory/memory_copy.hpp>
 #include <libbr/memory/memory_move.hpp>
@@ -25,14 +24,3 @@ auto libbr_memory_search(void * D, BR::UInt8 b, BR::Size n) -> void * {
 auto libbr_memory_set(void * D, BR::Byte v, BR::Size n) -> void * {
 	return std::memset(D, v, n);
 }
-
-namespace BR {
-
-BadWeakPointer::~BadWeakPointer() noexcept {
-}
-
-auto BadWeakPointer::what() const noexcept -> Message {
-	return "BadWeakPointer";
-}
-
-} // namespace BR

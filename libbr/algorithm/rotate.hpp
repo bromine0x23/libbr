@@ -14,7 +14,7 @@
 #include <libbr/iterator/category.hpp>
 #include <libbr/iterator/next.hpp>
 #include <libbr/iterator/prev.hpp>
-#include <libbr/type_traits/has_trivial_move_assign.hpp>
+#include <libbr/type_traits/has_trivial_move_assignment.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>
 #include <libbr/utility/move.hpp>
 #include <libbr/utility/swap.hpp>
@@ -104,7 +104,7 @@ auto rotate_gcd(TRandomAccessIterator first, TRandomAccessIterator middle, TRand
 
 template< typename TForwardIterator >
 inline auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIterator last, ForwardTraversalTag) -> TForwardIterator {
-	if (HasTrivialMoveAssign< typename IteratorTraits<TForwardIterator>::Element >()) {
+	if (HasTrivialMoveAssignment< typename IteratorTraits<TForwardIterator>::Element >{}) {
 		if (next(first) == middle) {
 			return rotate_left(first, last);
 		}
@@ -114,7 +114,7 @@ inline auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIter
 
 template< typename TBidirectionalIterator >
 inline auto rotate(TBidirectionalIterator first, TBidirectionalIterator middle, TBidirectionalIterator last, BidirectionalTraversalTag) -> TBidirectionalIterator {
-	if (HasTrivialMoveAssign< typename IteratorTraits<TBidirectionalIterator>::Element >()) {
+	if (HasTrivialMoveAssignment< typename IteratorTraits<TBidirectionalIterator>::Element >{}) {
 		if (next(first) == middle) {
 			return rotate_left(first, last);
 		}
@@ -127,7 +127,7 @@ inline auto rotate(TBidirectionalIterator first, TBidirectionalIterator middle, 
 
 template< typename TRandomAccessIterator >
 inline auto rotate(TRandomAccessIterator first, TRandomAccessIterator middle, TRandomAccessIterator last, RandomAccessTraversalTag) -> TRandomAccessIterator {
-	if (HasTrivialMoveAssign< typename IteratorTraits<TRandomAccessIterator>::Element >()) {
+	if (HasTrivialMoveAssignment< typename IteratorTraits<TRandomAccessIterator>::Element >{}) {
 		if (next(first) == middle) {
 			return rotate_left(first, last);
 		}

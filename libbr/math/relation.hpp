@@ -11,8 +11,6 @@ namespace BR {
 
 /**
  * @brief 比较结果
- * @author Bromine0x23
- * @since 2015/6/16
  */
 enum class Relation {
 	LT = -1, ///< 小于

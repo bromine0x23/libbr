@@ -1,11 +1,17 @@
+#include "../test.hpp"
 #include <libbr/container/list.hpp>
-#include <gtest/gtest.h>
 
-using namespace BR;
+namespace BR {
 
 template class List<int>;
 
 template class List< List<int> >;
 
-TEST(TestList, Constructor) {
+}
+
+using namespace BR;
+
+struct S {};
+
+TEST(List, Size) {
 }

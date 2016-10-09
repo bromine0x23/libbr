@@ -14,15 +14,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-using HasNothrowCopyConstructor = IsNothrowConstructible< T, AddLValueReference< AddConst<T> > >;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否可被 \em nothrow 地拷贝构造
  * @tparam T 待检查类型
@@ -34,7 +25,7 @@ using HasNothrowCopyConstructor = IsNothrowConstructible< T, AddLValueReference<
  * 如果 \em T 可被 \em nothrow 地拷贝构造，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct HasNothrowCopyConstructor : BooleanRewrapPositive< Detail::TypeTraits::HasNothrowCopyConstructor<T> > {};
+struct HasNothrowCopyConstructor;
 
 /**
  * @brief HasNothrowCopyConstructor 的否定
@@ -42,7 +33,7 @@ struct HasNothrowCopyConstructor : BooleanRewrapPositive< Detail::TypeTraits::Ha
  * @see BR::HasNothrowCopyConstructor
  */
 template< typename T >
-struct NoNothrowCopyConstructor : BooleanRewrapNegative< Detail::TypeTraits::HasNothrowCopyConstructor<T> > {};
+struct NoNothrowCopyConstructor;
 
 #if defined(BR_CXX14)
 
@@ -65,5 +56,22 @@ template< typename T >
 constexpr auto no_nothrow_copy_constructor = bool_constant< NoNothrowCopyConstructor<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+using HasNothrowCopyConstructor = IsNothrowConstructible< T, AddLValueReference< AddConst<T> > >;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct HasNothrowCopyConstructor : public BooleanRewrapPositive< Detail::TypeTraits::HasNothrowCopyConstructor<T> > {};
+
+template< typename T >
+struct NoNothrowCopyConstructor : public BooleanRewrapNegative< Detail::TypeTraits::HasNothrowCopyConstructor<T> > {};
 
 } // namespace BR

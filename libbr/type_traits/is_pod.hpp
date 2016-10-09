@@ -11,35 +11,12 @@
 #include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_IS_POD)
 #  include <libbr/type_operate/bool.hpp>
+#  include <libbr/type_traits/is_array.hpp>
 #  include <libbr/type_traits/is_scalar.hpp>
 #  include <libbr/type_traits/is_void.hpp>
 #endif // !BR_IS_POD
 
 namespace BR {
-
-namespace Detail {
-namespace TypeTraits {
-
-#if defined(BR_IS_POD)
-
-template< typename T >
-using IsPOD = BooleanConstant< BR_IS_POD(T) >;
-
-#else
-
-template< typename T >
-struct IsPOD : BooleanOr< IsScalar<T>, IsVoid<T> > {};
-
-template< typename T >
-struct IsPOD< T [] > : IsPOD<T> {};
-
-template< typename T, Size S >
-struct IsPOD< T [S] > : IsPOD<T> {};
-
-#endif // BR_IS_POD
-
-} // namespace TypeTraits
-} // namespace Detail
 
 /**
  * @brief 检查 \em T 是否是 \em POD 类型
@@ -51,7 +28,7 @@ struct IsPOD< T [S] > : IsPOD<T> {};
  * 如果 \em T 是 \em POD 类型，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsPOD : BooleanRewrapPositive< Detail::TypeTraits::IsPOD<T> > {};
+struct IsPOD;
 
 /**
  * @brief IsPOD 的否定
@@ -59,7 +36,7 @@ struct IsPOD : BooleanRewrapPositive< Detail::TypeTraits::IsPOD<T> > {};
  * @see BR::IsPOD
  */
 template< typename T >
-struct NotPOD : BooleanRewrapNegative< Detail::TypeTraits::IsPOD<T> > {};
+struct NotPOD;
 
 #if defined(BR_CXX14)
 
@@ -82,5 +59,31 @@ template< typename T >
 constexpr auto not_pod = bool_constant< NotPOD<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+#if defined(BR_IS_POD)
+
+template< typename T >
+using IsPOD = BooleanConstant< BR_IS_POD(T) >;
+
+#else
+
+template< typename T >
+using IsPOD = BooleanOr< IsArray<T>, IsScalar<T>, IsVoid<T> >;
+
+#endif // BR_IS_POD
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsPOD : public BooleanRewrapPositive< Detail::TypeTraits::IsPOD<T> > {};
+
+template< typename T >
+struct NotPOD : public BooleanRewrapNegative< Detail::TypeTraits::IsPOD<T> > {};
 
 } // namespace BR

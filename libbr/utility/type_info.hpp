@@ -1,7 +1,6 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/utility/current_function.hpp>
 
 #if defined(BR_NO_STD_TYPEINFO)
 

@@ -103,12 +103,12 @@ struct TypeMakeUnsignedBasic;
 
 template< typename T >
 struct TypeMakeUnsignedBasic< T, false, false > {
-	static_assert(DummyFalse<T>()(), "Type must be integer type (except bool), or an enumeration type.");
+	static_assert(DummyFalse<T>{}(), "Type must be integer type (except bool), or an enumeration type.");
 };
 
 template< typename T >
 struct TypeMakeUnsignedBasic< T, true, false > : TypeMakeUnsignedInteger<T> {
-	static_assert(NotSame< T, bool >()(), "Type must be integer type (except bool), or an enumeration type.");
+	static_assert(NotSame< T, bool >{}(), "Type must be integer type (except bool), or an enumeration type.");
 };
 
 template< typename T >
@@ -117,7 +117,7 @@ struct TypeMakeUnsignedBasic< T, false, true > : TypeMakeUnsignedEnum< sizeof(T)
 
 template< typename T >
 struct TypeMakeUnsignedBasic< T, true, true > {
-	static_assert(DummyFalse<T>()(), "[Fatal Error] Type cannot be both integer type and enumeration type.");
+	static_assert(DummyFalse<T>{}(), "[Fatal Error] Type cannot be both integer type and enumeration type.");
 };
 
 template< typename T >

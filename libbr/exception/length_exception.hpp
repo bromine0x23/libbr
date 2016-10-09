@@ -16,13 +16,13 @@ public:
 	using BaseException = LogicException;
 
 	LengthException() : BaseException("BR::LengthException") {
-	};
+	}
 
-	explicit LengthException(String<NChar> const & message) : BaseException(message) {
-	};
+	explicit LengthException(RawString<NChar> const & message) : BaseException(message) {
+	}
 
 	explicit LengthException(CString<NChar> message) : BaseException(message) {
-	};
+	}
 
 	~LengthException() noexcept override;
 };

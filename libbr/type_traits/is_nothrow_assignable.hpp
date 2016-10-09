@@ -9,31 +9,13 @@
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/type_operate/bool.hpp>
-#include <libbr/type_traits/is_assignable.hpp>
-#include <libbr/utility/make_value.hpp>
-
-namespace BR {
-
-namespace Detail {
-namespace TypeTraits {
-
-#if defined(BR_IS_NOTHROW_ASSIGNABLE)
-
-template< typename T, typename TArg >
-using IsNothrowAssignable = BooleanConstant< BR_IS_CONSTRUCTIBLE(T, TArg) >;
-
-#else
-
-template< typename T, typename TArg >
-struct IsNothrowAssignableBasic : BooleanConstant< noexcept(make_rvalue<T>() = make_rvalue<TArg>()) > {};
-
-template< typename T, typename TArg >
-using IsNothrowAssignable = BooleanAnd< IsAssignable< T, TArg >, IsNothrowAssignableBasic< T, TArg > >;
-
+#include <libbr/type_traits/intrinsics.hpp>
+#if !defined(BR_IS_NOTHROW_ASSIGNABLE)
+#  include <libbr/type_traits/is_assignable.hpp>
+#  include <libbr/utility/make_value.hpp>
 #endif
 
-} // namespace TypeTraits
-} // namespace Detail
+namespace BR {
 
 /**
  * @brief 检查 \em T 是否重载了特定参数的 \em nothrow 赋值运算符
@@ -47,7 +29,7 @@ using IsNothrowAssignable = BooleanAnd< IsAssignable< T, TArg >, IsNothrowAssign
  * 那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T, typename TArg >
-struct IsNothrowAssignable : BooleanRewrapPositive< Detail::TypeTraits::IsNothrowAssignable< T, TArg > > {};
+struct IsNothrowAssignable;
 
 /**
  * @brief IsNothrowAssignable 的否定
@@ -56,7 +38,7 @@ struct IsNothrowAssignable : BooleanRewrapPositive< Detail::TypeTraits::IsNothro
  * @see BR::IsNothrowAssignable
  */
 template< typename T, typename TArg >
-struct NotNothrowAssignable : BooleanRewrapNegative< Detail::TypeTraits::IsNothrowAssignable< T, TArg > > {};
+struct NotNothrowAssignable;
 
 #if defined(BR_CXX14)
 
@@ -81,5 +63,34 @@ template< typename T, typename TArg >
 constexpr auto not_nothrow_assignable = bool_constant< NotNothrowAssignable< T, TArg > >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+#if defined(BR_IS_NOTHROW_ASSIGNABLE)
+
+template< typename T, typename TArg >
+using IsNothrowAssignable = BooleanConstant< BR_IS_CONSTRUCTIBLE(T, TArg) >;
+
+#else
+
+template< typename T, typename TArg >
+struct IsNothrowAssignableBasic : public BooleanConstant< noexcept(make_rvalue<T>() = make_rvalue<TArg>()) > {};
+
+template< typename T, typename TArg >
+using IsNothrowAssignable = BooleanAnd< IsAssignable< T, TArg >, IsNothrowAssignableBasic< T, TArg > >;
+
+#endif
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T, typename TArg >
+struct IsNothrowAssignable : public BooleanRewrapPositive< Detail::TypeTraits::IsNothrowAssignable< T, TArg > > {};
+
+template< typename T, typename TArg >
+struct NotNothrowAssignable : public BooleanRewrapNegative< Detail::TypeTraits::IsNothrowAssignable< T, TArg > > {};
 
 } // namespace BR

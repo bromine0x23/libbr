@@ -1,8 +1,7 @@
+#include "../test.hpp"
 #include <libbr/container/tuple.hpp>
-#include <gtest/gtest.h>
 #include <libbr/container/array.hpp>
 #include <libbr/container/pair.hpp>
-#include <libbr/string/string.hpp>
 
 using namespace BR;
 
@@ -10,19 +9,64 @@ struct Empty0 {};
 
 struct Empty1 {};
 
-TEST(TestTuple, EmptyMember) {
+TEST(Tuple, EmptyMember) {
 	using NotEmpty = int;
-	ASSERT_EQ(sizeof(Tuple<NotEmpty, Empty0>), sizeof(NotEmpty));
-	ASSERT_EQ(sizeof(Tuple<Empty0, NotEmpty>), sizeof(NotEmpty));
-	ASSERT_EQ(sizeof(Tuple<NotEmpty, Empty0, Empty1>), sizeof(NotEmpty));
-	ASSERT_EQ(sizeof(Tuple<Empty0, NotEmpty, Empty1>), sizeof(NotEmpty));
-	ASSERT_EQ(sizeof(Tuple<Empty0, Empty1, NotEmpty>), sizeof(NotEmpty));
+	EXPECT_EQ(sizeof(Tuple<NotEmpty, Empty0>), sizeof(NotEmpty));
+	EXPECT_EQ(sizeof(Tuple<Empty0, NotEmpty>), sizeof(NotEmpty));
+	EXPECT_EQ(sizeof(Tuple<NotEmpty, Empty0, Empty1>), sizeof(NotEmpty));
+	EXPECT_EQ(sizeof(Tuple<Empty0, NotEmpty, Empty1>), sizeof(NotEmpty));
+	EXPECT_EQ(sizeof(Tuple<Empty0, Empty1, NotEmpty>), sizeof(NotEmpty));
 }
 
-TEST(TestTuple, MakeTuple) {
+TEST(Tuple, Get) {
+	using T = Tuple< int,  double >;
+	T t;
+	EXPECT_TRUE((IsSame< decltype(get<0>(static_cast< T        & >(t))), int        & >{}));
+	EXPECT_TRUE((IsSame< decltype(get<0>(static_cast< T const  & >(t))), int const  & >{}));
+	EXPECT_TRUE((IsSame< decltype(get<0>(static_cast< T       && >(t))), int       && >{}));
+	EXPECT_TRUE((IsSame< decltype(get<0>(static_cast< T const && >(t))), int const && >{}));
+
+	EXPECT_TRUE((IsSame< decltype(get<int>(static_cast< T        & >(t))), int        & >{}));
+	EXPECT_TRUE((IsSame< decltype(get<int>(static_cast< T const  & >(t))), int const  & >{}));
+	EXPECT_TRUE((IsSame< decltype(get<int>(static_cast< T       && >(t))), int       && >{}));
+	EXPECT_TRUE((IsSame< decltype(get<int>(static_cast< T const && >(t))), int const && >{}));
+
+	EXPECT_TRUE((IsSame< decltype(static_cast< T        & >(t).get<0>()), int        & >{}));
+	EXPECT_TRUE((IsSame< decltype(static_cast< T const  & >(t).get<0>()), int const  & >{}));
+	EXPECT_TRUE((IsSame< decltype(static_cast< T       && >(t).get<0>()), int       && >{}));
+	EXPECT_TRUE((IsSame< decltype(static_cast< T const && >(t).get<0>()), int const && >{}));
+
+	EXPECT_TRUE((IsSame< decltype(static_cast< T        & >(t).get<int>()), int        & >{}));
+	EXPECT_TRUE((IsSame< decltype(static_cast< T const  & >(t).get<int>()), int const  & >{}));
+	EXPECT_TRUE((IsSame< decltype(static_cast< T       && >(t).get<int>()), int       && >{}));
+	EXPECT_TRUE((IsSame< decltype(static_cast< T const && >(t).get<int>()), int const && >{}));
+
+	EXPECT_TRUE((IsSame< decltype(get<1>(static_cast< T        & >(t))), double        & >{}));
+	EXPECT_TRUE((IsSame< decltype(get<1>(static_cast< T const  & >(t))), double const  & >{}));
+	EXPECT_TRUE((IsSame< decltype(get<1>(static_cast< T       && >(t))), double       && >{}));
+	EXPECT_TRUE((IsSame< decltype(get<1>(static_cast< T const && >(t))), double const && >{}));
+
+	EXPECT_TRUE((IsSame< decltype(get<double>(static_cast< T        & >(t))), double        & >{}));
+	EXPECT_TRUE((IsSame< decltype(get<double>(static_cast< T const  & >(t))), double const  & >{}));
+	EXPECT_TRUE((IsSame< decltype(get<double>(static_cast< T       && >(t))), double       && >{}));
+	EXPECT_TRUE((IsSame< decltype(get<double>(static_cast< T const && >(t))), double const && >{}));
+
+	EXPECT_TRUE((IsSame< decltype(static_cast< T        & >(t).get<1>()), double        & >{}));
+	EXPECT_TRUE((IsSame< decltype(static_cast< T const  & >(t).get<1>()), double const  & >{}));
+	EXPECT_TRUE((IsSame< decltype(static_cast< T       && >(t).get<1>()), double       && >{}));
+	EXPECT_TRUE((IsSame< decltype(static_cast< T const && >(t).get<1>()), double const && >{}));
+
+	EXPECT_TRUE((IsSame< decltype(static_cast< T        & >(t).get<double>()), double        & >{}));
+	EXPECT_TRUE((IsSame< decltype(static_cast< T const  & >(t).get<double>()), double const  & >{}));
+	EXPECT_TRUE((IsSame< decltype(static_cast< T       && >(t).get<double>()), double       && >{}));
+	EXPECT_TRUE((IsSame< decltype(static_cast< T const && >(t).get<double>()), double const && >{}));
+}
+
+TEST(Tuple, MakeTuple) {
+	using T = Tuple< int, int &, double & >;
 	int i = 2;
 	double d = 2.5;
-	Tuple< int, int &, double & > t = make_tuple(1, reference(i), reference(d));
+	T t = make_tuple(1, reference(i), reference(d));
 
 	EXPECT_EQ(1, t.get<0>());
 	EXPECT_EQ(2, t.get<1>());
@@ -42,7 +86,7 @@ TEST(TestTuple, MakeTuple) {
 	EXPECT_EQ(0, d);
 }
 
-TEST(TestTuple, AssignPair) {
+TEST(Tuple, AssignPair) {
 	using P = Pair< double, char >;
 	using T = Tuple< int, short >;
 	P p(2.5, 'a');
@@ -81,7 +125,7 @@ static void test_forward_as_tuple2(TTuple const & t) {
 	EXPECT_EQ('a', get<1>(t));
 }
 
-TEST(TestTuple, ForwardAsTuple) {
+TEST(Tuple, ForwardAsTuple) {
 //	test_forward_as_tuple0(forward_as_tuple());
 //	test_forward_as_tuple1a(forward_as_tuple(1));
 
@@ -93,7 +137,7 @@ TEST(TestTuple, ForwardAsTuple) {
 //	test_forward_as_tuple2(forward_as_tuple(d, c));
 }
 
-TEST(TestTuple, TupleCat) {
+TEST(Tuple, TupleCat) {
 	{
 		Tuple<> t = tuple_cat();
 		BR_FORCE_USE(t);

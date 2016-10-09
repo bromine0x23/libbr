@@ -2,7 +2,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/type_operate/bool.hpp>
-#include <libbr/type_traits/has_nothrow_move_assign.hpp>
+#include <libbr/type_traits/has_nothrow_move_assignment.hpp>
 #include <libbr/type_traits/has_nothrow_move_constructor.hpp>
 #include <libbr/utility/move.hpp>
 
@@ -13,7 +13,7 @@ namespace Utility {
 
 template< typename T >
 inline void swap(T & a, T & b) noexcept(
-	BooleanAnd< HasNothrowMoveAssign<T>, HasNothrowMoveConstructor<T> >::value
+	BooleanAnd< HasNothrowMoveAssignment<T>, HasNothrowMoveConstructor<T> >::value
 ) {
 	T t = move(a);
 	a = move(b);

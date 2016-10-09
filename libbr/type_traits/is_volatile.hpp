@@ -11,18 +11,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-struct IsVolatile : BooleanFalse {};
-
-template< typename T >
-struct IsVolatile< T volatile > : BooleanTrue {};
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否包含 \em volatile 修饰
  * @tparam T 待检查类型
@@ -32,7 +20,7 @@ struct IsVolatile< T volatile > : BooleanTrue {};
  * 如果 \em T 包含顶层 \em volatile 修饰，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct IsVolatile : BooleanRewrapPositive< Detail::TypeTraits::IsVolatile<T> > {};
+struct IsVolatile;
 
 /**
  * @brief IsVolatile 的否定
@@ -40,7 +28,7 @@ struct IsVolatile : BooleanRewrapPositive< Detail::TypeTraits::IsVolatile<T> > {
  * @see IsVolatile
  */
 template< typename T >
-struct NotVolatile : BooleanRewrapNegative< Detail::TypeTraits::IsVolatile<T> > {};
+struct NotVolatile;
 
 #if defined(BR_CXX14)
 
@@ -63,5 +51,23 @@ template< typename T >
 constexpr auto not_volatile = bool_constant< NotVolatile<T> >;
 
 #endif // defined(BR_CXX14)
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+struct IsVolatile : public BooleanFalse {};
+
+template< typename T >
+struct IsVolatile< T volatile > : public BooleanTrue {};
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct IsVolatile : public BooleanRewrapPositive< Detail::TypeTraits::IsVolatile<T> > {};
+
+template< typename T >
+struct NotVolatile : public BooleanRewrapNegative< Detail::TypeTraits::IsVolatile<T> > {};
 
 } // namespace BR

@@ -70,10 +70,10 @@ using IsArithmetic = BooleanOr< IsIntegral<T>, IsFloatingPoint<T> >;
 } // namespace Detail
 
 template< typename T >
-struct IsArithmetic : BooleanRewrapPositive< Detail::TypeTraits::IsArithmetic<T> > {};
+struct IsArithmetic : public BooleanRewrapPositive< Detail::TypeTraits::IsArithmetic<T> > {};
 
 template< typename T >
-struct NotArithmetic : BooleanRewrapNegative< Detail::TypeTraits::IsArithmetic<T> > {};
+struct NotArithmetic : public BooleanRewrapNegative< Detail::TypeTraits::IsArithmetic<T> > {};
 
 } // namespace BR
 

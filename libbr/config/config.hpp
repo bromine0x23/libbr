@@ -56,6 +56,10 @@
 #  define BR_LITTLE_ENDIAN
 #endif
 
+#if !defined(BR_ENCODING)
+#define BR_ENCODING UTF8
+#endif
+
 #include <libbr/config/macros.hpp>
 #include <libbr/config/types.hpp>
 #include <libbr/config/constants.hpp>

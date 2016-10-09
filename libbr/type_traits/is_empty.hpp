@@ -94,9 +94,9 @@ using IsEmpty = BooleanAnd< IsClass<T>, IsEmptyBasic< RemoveConstVolatile<T> > >
 } // namespace Detail
 
 template< typename T >
-struct IsEmpty : BooleanRewrapPositive< Detail::TypeTraits::IsEmpty<T> > {};
+struct IsEmpty : public BooleanRewrapPositive< Detail::TypeTraits::IsEmpty<T> > {};
 
 template< typename T >
-struct NotEmpty : BooleanRewrapNegative< Detail::TypeTraits::IsEmpty<T> > {};
+struct NotEmpty : public BooleanRewrapNegative< Detail::TypeTraits::IsEmpty<T> > {};
 
 } // namespace BR

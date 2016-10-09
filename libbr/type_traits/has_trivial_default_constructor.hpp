@@ -12,27 +12,18 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T >
-using HasTrivialDefaultConstructor = IsTriviallyConstructible<T>;
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T 是否具有平凡的默认构造函数
  * @tparam T 待检查类型
  * @see IntegerConstant
- * @see BR::IsTrivially Constructible
+ * @see BR::IsTriviallyConstructible
  * @see BR::HasDefaultConstructor
  * @see BR::NoTrivialDefaultConstructor
  *
  * 如果 \em T 具有平凡的默认构造函数，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
-struct HasTrivialDefaultConstructor : BooleanRewrapPositive< Detail::TypeTraits::HasTrivialDefaultConstructor<T> > {};
+struct HasTrivialDefaultConstructor;
 
 /**
  * @brief HasTrivialDefaultConstructor 的否定
@@ -40,7 +31,7 @@ struct HasTrivialDefaultConstructor : BooleanRewrapPositive< Detail::TypeTraits:
  * @see BR::HasTrivialDefaultConstructor
  */
 template< typename T >
-struct NoTrivialDefaultConstructor : BooleanRewrapNegative< Detail::TypeTraits::HasTrivialDefaultConstructor<T> > {};
+struct NoTrivialDefaultConstructor;
 
 #if defined(BR_CXX14)
 
@@ -63,5 +54,22 @@ template< typename T >
 constexpr auto no_trivial_default_constructor = bool_constant< NoTrivialDefaultConstructor<T> >;
 
 #endif // defined(BR_CXX14)
+
+
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T >
+using HasTrivialDefaultConstructor = IsTriviallyConstructible<T>;
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T >
+struct HasTrivialDefaultConstructor : public BooleanRewrapPositive< Detail::TypeTraits::HasTrivialDefaultConstructor<T> > {};
+
+template< typename T >
+struct NoTrivialDefaultConstructor : public BooleanRewrapNegative< Detail::TypeTraits::HasTrivialDefaultConstructor<T> > {};
 
 } // namespace BR

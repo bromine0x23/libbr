@@ -136,10 +136,14 @@ public:
 		return address_of(reference);
 	}
 
-	static auto to_raw(Pointer pointer) -> Pointer {
+	static auto to_raw(Pointer pointer) -> Element * {
 		return pointer;
 	}
-
 };
+
+template< typename TPointer >
+inline auto pointer_to_raw(TPointer pointer) -> typename PointerTraits<TPointer>::Element * {
+	return PointerTraits<TPointer>::to_raw(pointer);
+}
 
 } // namespace BR

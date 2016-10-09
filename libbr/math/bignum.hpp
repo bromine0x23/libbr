@@ -17,7 +17,6 @@
 #include <libbr/exception/index_exception.hpp>
 #include <libbr/math/relation.hpp>
 #include <libbr/math/sign.hpp>
-#include <libbr/utility/current_function.hpp>
 #include <libbr/utility/move.hpp>
 #include <libbr/utility/swap.hpp>
 

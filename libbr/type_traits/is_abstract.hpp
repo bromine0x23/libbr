@@ -79,7 +79,7 @@ struct IsAbstractTest {
 };
 
 template< typename T >
-struct IsAbstractBasic : decltype(IsAbstractTest::test<T>(nullptr)) {
+struct IsAbstractBasic : public decltype(IsAbstractTest::test<T>(nullptr)) {
 	static_assert(sizeof(T) != 0, "Type must be complete.");
 };
 
@@ -92,9 +92,9 @@ using IsAbstract = BooleanAnd< IsClass<T>, IsAbstractBasic<T> >;
 } // namespace Detail
 
 template< typename T >
-struct IsAbstract : BooleanRewrapPositive< Detail::TypeTraits::IsAbstract<T> > {};
+struct IsAbstract : public BooleanRewrapPositive< Detail::TypeTraits::IsAbstract<T> > {};
 
 template< typename T >
-struct NotAbstract : BooleanRewrapNegative< Detail::TypeTraits::IsAbstract<T> > {};
+struct NotAbstract : public BooleanRewrapNegative< Detail::TypeTraits::IsAbstract<T> > {};
 
 } // namespace BR

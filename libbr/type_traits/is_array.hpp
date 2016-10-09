@@ -135,16 +135,16 @@ namespace Detail {
 namespace TypeTraits {
 
 template< typename T >
-struct IsArrayKnownBounds : BooleanFalse {};
+struct IsArrayKnownBounds : public BooleanFalse {};
 
 template< typename T, Size S >
-struct IsArrayKnownBounds< T [S] > : BooleanTrue {};
+struct IsArrayKnownBounds< T [S] > : public BooleanTrue {};
 
 template< typename T >
-struct IsArrayUnknownBounds : BooleanFalse {};
+struct IsArrayUnknownBounds : public BooleanFalse {};
 
 template< typename T >
-struct IsArrayUnknownBounds< T [] > : BooleanTrue {};
+struct IsArrayUnknownBounds< T [] > : public BooleanTrue {};
 
 template< typename T >
 using IsArray = BooleanOr< IsArrayKnownBounds<T>, IsArrayUnknownBounds<T> >;
@@ -153,21 +153,21 @@ using IsArray = BooleanOr< IsArrayKnownBounds<T>, IsArrayUnknownBounds<T> >;
 } // namespace Detail
 
 template< typename T >
-struct IsArrayKnownBounds : BooleanRewrapPositive< Detail::TypeTraits::IsArrayKnownBounds<T> > {};
+struct IsArrayKnownBounds : public BooleanRewrapPositive< Detail::TypeTraits::IsArrayKnownBounds<T> > {};
 
 template< typename T >
-struct NotArrayKnownBounds : BooleanRewrapNegative< Detail::TypeTraits::IsArrayKnownBounds<T> > {};
+struct NotArrayKnownBounds : public BooleanRewrapNegative< Detail::TypeTraits::IsArrayKnownBounds<T> > {};
 
 template< typename T >
-struct IsArrayUnknownBounds : BooleanRewrapPositive< Detail::TypeTraits::IsArrayUnknownBounds<T> > {};
+struct IsArrayUnknownBounds : public BooleanRewrapPositive< Detail::TypeTraits::IsArrayUnknownBounds<T> > {};
 
 template< typename T >
-struct NotArrayUnknownBounds : BooleanRewrapNegative< Detail::TypeTraits::IsArrayUnknownBounds<T> > {};
+struct NotArrayUnknownBounds : public BooleanRewrapNegative< Detail::TypeTraits::IsArrayUnknownBounds<T> > {};
 
 template< typename T >
-struct IsArray : BooleanRewrapPositive< Detail::TypeTraits::IsArray<T> > {};
+struct IsArray : public BooleanRewrapPositive< Detail::TypeTraits::IsArray<T> > {};
 
 template< typename T >
-struct NotArray : BooleanRewrapNegative< Detail::TypeTraits::IsArray<T> > {};
+struct NotArray : public BooleanRewrapNegative< Detail::TypeTraits::IsArray<T> > {};
 
 } // namespace BR

@@ -11,18 +11,6 @@
 
 namespace BR {
 
-namespace Detail {
-namespace TypeTraits {
-
-template< typename T0, typename T1 >
-struct IsSame : BooleanFalse {};
-
-template< typename T >
-struct IsSame< T, T > : BooleanTrue {};
-
-} // namespace TypeTraits
-} // namespace Detail
-
 /**
  * @brief 检查 \em T0 、 \em T1 是否相同
  * @tparam T0、T1 待检查类型
@@ -32,7 +20,7 @@ struct IsSame< T, T > : BooleanTrue {};
  * 如果 \em T0 、 \em T1 是相同，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T0, typename T1 >
-struct IsSame : BooleanRewrapPositive< Detail::TypeTraits::IsSame< T0, T1 > > {};
+struct IsSame;
 
 /**
  * @brief IsSame 的否定
@@ -40,7 +28,7 @@ struct IsSame : BooleanRewrapPositive< Detail::TypeTraits::IsSame< T0, T1 > > {}
  * @see IsSame
  */
 template< typename T0, typename T1 >
-struct NotSame : BooleanRewrapNegative< Detail::TypeTraits::IsSame< T0, T1 > > {};
+struct NotSame;
 
 #if defined(BR_CXX14)
 
@@ -63,5 +51,23 @@ template< typename T0, typename T1 >
 constexpr auto not_same = bool_constant< NotSame< T0, T1 > >;
 
 #endif // defined(BR_CXX14)
+
+namespace Detail {
+namespace TypeTraits {
+
+template< typename T0, typename T1 >
+struct IsSame : public BooleanFalse {};
+
+template< typename T >
+struct IsSame< T, T > : public BooleanTrue {};
+
+} // namespace TypeTraits
+} // namespace Detail
+
+template< typename T0, typename T1 >
+struct IsSame : public BooleanRewrapPositive< Detail::TypeTraits::IsSame< T0, T1 > > {};
+
+template< typename T0, typename T1 >
+struct NotSame : public BooleanRewrapNegative< Detail::TypeTraits::IsSame< T0, T1 > > {};
 
 } // namespace BR

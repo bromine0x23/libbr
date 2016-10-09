@@ -5,7 +5,6 @@
 #include <libbr/config.hpp>
 #include <libbr/assert.hpp>
 #include <libbr/math/relation.hpp>
-#include <libbr/string/cstring.hpp>
 
 namespace BR {
 
@@ -214,7 +213,7 @@ struct CharTraits<Char16> {
 
 	static auto copy(Char * D, CString<Char> S, Size n) -> Char * {
 		BR_ASSERT(S < D || S >= D + n);
-		Char * R = D;
+		// Char * R = D;
 		for (; n > 0; --n) {
 			assign(*D++, *S++);
 		}
@@ -297,7 +296,7 @@ struct CharTraits<Char32> {
 
 	static auto copy(Char * D, CString<Char> S, Size n) -> Char * {
 		BR_ASSERT(S < D || S >= D + n);
-		Char * R = D;
+		// Char * R = D;
 		for (; n > 0; --n) {
 			assign(*D++, *S++);
 		}

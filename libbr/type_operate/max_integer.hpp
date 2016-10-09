@@ -17,15 +17,17 @@ namespace BR {
 template< typename ... TIn >
 struct TypeMaxInteger;
 
+template< typename ... TIn >
+using MaxInteger = TypeUnwrap< TypeMaxInteger< TIn... > >;
+
+
+
 template< typename TI0>
 struct TypeMaxInteger<TI0> : TypeWrapper< TI0 > {
 };
 
 template< typename TI0, typename TI1, typename ...TIn >
-struct TypeMaxInteger< TI0, TI1, TIn... > : TypeMaxInteger< ConditionalByValue< (TI0::value < TI1::value), TI1, TI0 >, TIn... > {
+struct TypeMaxInteger< TI0, TI1, TIn... > : TypeMaxInteger< ConditionalByValue< (TI0{} < TI1{}), TI1, TI0 >, TIn... > {
 };
-
-template< typename ... TIn >
-using MaxInteger = TypeUnwrap< TypeMaxInteger< TIn... > >;
 
 } // namespace BR

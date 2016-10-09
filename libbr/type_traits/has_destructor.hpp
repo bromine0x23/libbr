@@ -64,6 +64,8 @@ constexpr auto no_destructor = bool_constant< NoDestructor<T> >;
 
 #endif // defined(BR_CXX14)
 
+
+
 namespace Detail {
 namespace TypeTraits {
 
@@ -103,9 +105,9 @@ using HasDestructor = BooleanAnd<
 } // namespace Detail
 
 template< typename T >
-struct HasDestructor : BooleanRewrapPositive< Detail::TypeTraits::HasDestructor<T> > {};
+struct HasDestructor : public BooleanRewrapPositive< Detail::TypeTraits::HasDestructor<T> > {};
 
 template< typename T >
-struct NoDestructor : BooleanRewrapNegative< Detail::TypeTraits::HasDestructor<T> > {};
+struct NoDestructor : public BooleanRewrapNegative< Detail::TypeTraits::HasDestructor<T> > {};
 
 } // namespace BR

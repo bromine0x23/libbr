@@ -46,3 +46,10 @@
 #  endif
 #endif
 
+#if !defined(__EXCEPTIONS) && !defined(BR_NO_EXCEPTIONS)
+#  define BR_NO_EXCEPTIONS
+#endif
+
+#if !defined(BR_CURRENT_FUNCTION)
+#  define BR_CURRENT_FUNCTION __PRETTY_FUNCTION__
+#endif

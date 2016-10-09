@@ -13,8 +13,8 @@
 #include <libbr/iterator/prev.hpp>
 
 #include <libbr/iterator/reverse_iterator.hpp>
-#include <libbr/iterator/add_first_iterator.hpp>
-#include <libbr/iterator/add_last_iterator.hpp>
+#include <libbr/iterator/insert_front_iterator.hpp>
+#include <libbr/iterator/insert_back_iterator.hpp>
 #include <libbr/iterator/insert_iterator.hpp>
 #include <libbr/iterator/move_iterator.hpp>
 
