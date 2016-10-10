@@ -15,6 +15,7 @@
 #include <libbr/type_operate/type.hpp>
 #include <libbr/type_traits/is_convertible.hpp>
 #include <libbr/type_traits/is_empty.hpp>
+#include <libbr/type_traits/has_member_type.hpp>
 
 namespace BR {
 
@@ -35,8 +36,7 @@ namespace IteratorTraits {
 //
 // IteratorTraits::Category
 //
-#define BR_TYPE_OPERATE_TYPE_NAME Category
-#include <libbr/type_traits/has_member_type.inc>
+BR_HAS_MEMBER_TYPE(Category);
 
 template< typename TIterator, bool = HasMemberTypeCategory<TIterator>{} >
 struct TypeCategory;
@@ -54,8 +54,7 @@ using Category = typename TIterator::Category;
 //
 // IteratorTraits::Element
 //
-#define BR_TYPE_OPERATE_TYPE_NAME Element
-#include <libbr/type_traits/has_member_type.inc>
+BR_HAS_MEMBER_TYPE(Element);
 
 template< typename TIterator, bool = HasMemberTypeElement<TIterator>{} >
 struct TypeElement;
@@ -73,8 +72,7 @@ using Element = TypeUnwrap< TypeElement<TIterator> >;
 //
 // IteratorTraits::Pointer
 //
-#define BR_TYPE_OPERATE_TYPE_NAME Pointer
-#include <libbr/type_traits/has_member_type.inc>
+BR_HAS_MEMBER_TYPE(Pointer);
 
 template< typename TIterator, bool = HasMemberTypePointer<TIterator>{} >
 struct TypePointer;
@@ -89,8 +87,7 @@ struct TypePointer< TIterator, false > : TypeAddPointer< Element<TIterator> > {}
 //
 // IteratorTraits::Reference
 //
-#define BR_TYPE_OPERATE_TYPE_NAME Reference
-#include <libbr/type_traits/has_member_type.inc>
+BR_HAS_MEMBER_TYPE(Reference);
 
 template< typename TIterator, bool = HasMemberTypeReference<TIterator>{} >
 struct TypeReference;
@@ -105,8 +102,7 @@ struct TypeReference< TIterator, false > : TypeAddLValueReference< Element<TIter
 //
 // IteratorTraits::Difference
 //
-#define BR_TYPE_OPERATE_TYPE_NAME Difference
-#include <libbr/type_traits/has_member_type.inc>
+BR_HAS_MEMBER_TYPE(Difference);
 
 template< typename TIterator, bool = HasMemberTypeDifference<TIterator>{} >
 struct TypeDifference;

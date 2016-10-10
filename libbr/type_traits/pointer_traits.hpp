@@ -8,12 +8,12 @@
 
 #include <libbr/config.hpp>
 #include <libbr/memory/address_of.hpp>
-#include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/conditional.hpp>
 #include <libbr/type_operate/enable_if.hpp>
 #include <libbr/type_operate/replace_template_argument.hpp>
 #include <libbr/type_operate/template_argument.hpp>
 #include <libbr/type_operate/type.hpp>
+#include <libbr/type_traits/has_member_type.hpp>
 #include <libbr/type_traits/is_void.hpp>
 
 namespace BR {
@@ -35,8 +35,7 @@ namespace PointerTraits {
 //
 // PointerTraits::Element
 //
-#define BR_TYPE_OPERATE_TYPE_NAME Element
-#include <libbr/type_traits/has_member_type.inc>
+BR_HAS_MEMBER_TYPE(Element)
 
 template< typename TPointer, bool = HasMemberTypeElement<TPointer>{} >
 struct TypeElement;
@@ -54,8 +53,7 @@ using Element = TypeUnwrap< TypeElement<TPointer> >;
 //
 // PointerTraits::Difference
 //
-#define BR_TYPE_OPERATE_TYPE_NAME Difference
-#include <libbr/type_traits/has_member_type.inc>
+BR_HAS_MEMBER_TYPE(Difference)
 
 template< typename TPointer, bool = HasMemberTypeDifference<TPointer>{} >
 struct TypeDifference;
@@ -73,8 +71,7 @@ using Difference = TypeUnwrap< TypeDifference<TPointer> >;
 //
 // PointerTraits::Rebind
 //
-#define BR_TYPE_OPERATE_TYPE_NAME Rebind
-#include <libbr/type_traits/has_member_type.inc>
+BR_HAS_MEMBER_TYPE(Rebind)
 
 template< typename TPointer, typename TElement, bool = HasMemberTypeRebind<TPointer>{} >
 struct TypeRebind;

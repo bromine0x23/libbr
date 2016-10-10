@@ -1,9 +1,8 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/utility/boolean_constant.hpp>
+#include <libbr/type_traits/has_member_function.hpp>
 #include <libbr/utility/forward.hpp>
-#include <libbr/utility/make_value.hpp>
 
 namespace BR {
 
@@ -15,8 +14,7 @@ inline void construct(TAllocator & allocator, TValue * pointer, TArguments && ..
 namespace Detail {
 namespace Memory {
 
-#define BR_TYPE_OPERATE_FUNCTION_NAME construct
-#include <libbr/type_traits/has_member_function.inc>
+BR_HAS_MEMBER_FUNCTION(construct)
 
 template< typename TAllocator, typename TValue, typename ... TArguments >
 inline void construct(BooleanTrue, TAllocator & allocator, TValue * pointer, TArguments && ... arguments) {

@@ -13,9 +13,12 @@
 #include <libbr/type_operate/add_lvalue_reference.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/conditional.hpp>
+#include <libbr/type_operate/conditional.hpp>
+#include <libbr/type_operate/dummy.hpp>
 #include <libbr/type_operate/remove_extent.hpp>
 #include <libbr/type_operate/remove_reference.hpp>
 #include <libbr/type_operate/type.hpp>
+#include <libbr/type_traits/has_member_type.hpp>
 #include <libbr/type_traits/is_array.hpp>
 #include <libbr/type_traits/is_assignable.hpp>
 #include <libbr/type_traits/is_convertible.hpp>
@@ -51,8 +54,7 @@ namespace Detail {
 namespace Memory {
 namespace UniquePointer {
 
-#define BR_TYPE_OPERATE_TYPE_NAME Pointer
-#include <libbr/type_traits/has_member_type.inc>
+BR_HAS_MEMBER_TYPE(Pointer)
 
 template< typename TElement, typename TDeleter, bool = HasMemberTypePointer<TDeleter>::value >
 struct TypePointer;

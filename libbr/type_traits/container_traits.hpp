@@ -8,7 +8,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/iterator/reverse_iterator.hpp>
-#include <libbr/type_operate/bool.hpp>
+#include <libbr/type_traits/has_member_type.hpp>
 
 namespace BR {
 
@@ -29,8 +29,7 @@ namespace ContainerTraits {
 //
 // ContainerTraits::Element
 //
-#define BR_TYPE_OPERATE_TYPE_NAME Element
-#include <libbr/type_traits/has_member_type.inc>
+BR_HAS_MEMBER_TYPE(Element)
 
 template< typename TContainer, bool = HasMemberTypeElement<TContainer>{} >
 struct TypeElement;
@@ -48,8 +47,7 @@ using Element = TypeUnwrap< TypeElement<TContainer> >;
 //
 // ContainerTraits::Iterator
 //
-#define BR_TYPE_OPERATE_TYPE_NAME Iterator
-#include <libbr/type_traits/has_member_type.inc>
+BR_HAS_MEMBER_TYPE(Iterator)
 
 template< typename TContainer, bool = HasMemberTypeIterator<TContainer>{} >
 struct TypeIterator;
@@ -67,8 +65,7 @@ using Iterator = TypeUnwrap< TypeIterator<TContainer> >;
 //
 // ContainerTraits::ConstIterator
 //
-#define BR_TYPE_OPERATE_TYPE_NAME ConstIterator
-#include <libbr/type_traits/has_member_type.inc>
+BR_HAS_MEMBER_TYPE(ConstIterator)
 
 template< typename TContainer, bool = HasMemberTypeConstIterator<TContainer>{} >
 struct TypeConstIterator;
@@ -86,8 +83,7 @@ using ConstIterator = TypeUnwrap< TypeConstIterator<TContainer> >;
 //
 // ContainerTraits::ReverseIterator
 //
-#define BR_TYPE_OPERATE_TYPE_NAME ReverseIterator
-#include <libbr/type_traits/has_member_type.inc>
+BR_HAS_MEMBER_TYPE(ReverseIterator)
 
 template< typename TContainer, bool = HasMemberTypeReverseIterator<TContainer>{} >
 struct TypeReverseIterator;
@@ -105,8 +101,7 @@ using ReverseIterator = TypeUnwrap< TypeReverseIterator<TContainer> >;
 //
 // ContainerTraits::ConstReverseIterator
 //
-#define BR_TYPE_OPERATE_TYPE_NAME ConstReverseIterator
-#include <libbr/type_traits/has_member_type.inc>
+BR_HAS_MEMBER_TYPE(ConstReverseIterator)
 
 template< typename TContainer, bool = HasMemberTypeReverseIterator<TContainer>{} >
 struct TypeConstReverseIterator;

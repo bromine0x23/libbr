@@ -12,6 +12,7 @@
 #include <libbr/type_operate/remove_reference.hpp>
 #include <libbr/type_traits/allocator_traits.hpp>
 #include <libbr/type_traits/allocator_constructor_usage.hpp>
+#include <libbr/type_traits/has_member_function.hpp>
 #include <libbr/type_traits/is_constructible.hpp>
 #include <libbr/type_traits/is_use_allocator.hpp>
 #include <libbr/utility/boolean_constant.hpp>
@@ -151,10 +152,9 @@ protected:
 
 }; // class Storage<TOuterAllocator>
 
-#define BR_TYPE_OPERATE_FUNCTION_NAME outer_allocator
-#include <libbr/type_traits/has_member_function.inc>
+BR_HAS_MEMBER_FUNCTION(outer_allocator)
 
-template< typename TAllocator, bool _dummy = HasMemberFunction_outer_allocator<TAllocator>::value >
+template< typename TAllocator, bool = HasMemberFunction_outer_allocator<TAllocator>{} >
 struct OuterMost;
 
 template< typename TAllocator >

@@ -36,6 +36,7 @@ BR_CONSTEXPR_AFTER_CXX11 auto make_enumerator(TIterator begin, TIterator end) no
 }
 
 
+
 namespace Detail {
 namespace Enumerator {
 

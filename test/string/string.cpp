@@ -351,9 +351,6 @@ TEST(String, Remove) {
 }
 
 TEST(String, Complex0) {
-	S p = "123456";
-	UInt32 u = 123456;
-
 	auto hash = [](UInt32 u, S p) {
 		UInt8 n[4] = {};
 		for (S::Size i = 0; i < p.size(); ++i) {

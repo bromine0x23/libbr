@@ -1,8 +1,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/utility/boolean_constant.hpp>
-#include <libbr/utility/make_value.hpp>
+#include <libbr/type_traits/has_member_function.hpp>
 
 namespace BR {
 
@@ -14,8 +13,7 @@ inline void destroy(TAllocator & allocator, TValue * pointer);
 namespace Detail {
 namespace Memory {
 
-#define BR_TYPE_OPERATE_FUNCTION_NAME destroy
-#include <libbr/type_traits/has_member_function.inc>
+BR_HAS_MEMBER_FUNCTION(destroy)
 
 template< typename TAllocator, typename TValue >
 inline void destroy(TAllocator & allocator, TValue * pointer, BooleanTrue) {
