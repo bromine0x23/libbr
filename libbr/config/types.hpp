@@ -195,6 +195,12 @@ using DFloat = double;
 
 using QFloat = long double;
 
+using Float32 = SFloat;
+
+using Float64 = DFloat;
+
+using Float128 = QFloat;
+
 } // namespace BR
 
 namespace BR {

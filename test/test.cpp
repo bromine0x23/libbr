@@ -1,5 +1,5 @@
 #include <cstdio>
-#include <gtest/gtest.h>
+#include "test.hpp"
 #include <libbr/libbr.hpp>
 
 auto main(int argc, char * argv[]) -> int {

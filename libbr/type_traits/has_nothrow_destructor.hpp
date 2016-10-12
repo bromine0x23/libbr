@@ -75,10 +75,10 @@ template< typename T >
 struct HasNothrowDestructorBasic : public BooleanConstant< noexcept(make_reference<T>().~T()) > {};
 
 template< typename T >
-using HasNothrowDestructor = BooleanAnd<
+struct HasNothrowDestructor : public BooleanAnd<
 	HasDestructor<T>,
 	HasNothrowDestructorBasic<T>
->;
+> {};
 
 #endif // defined(BR_HAS_NOTHROW_DESTRUCTOR)
 

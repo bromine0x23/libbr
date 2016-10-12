@@ -116,7 +116,7 @@ struct PairGetter<1> {
 } // namespace Detail
 
 template< typename TFirst, typename TSecond = TFirst >
-struct Pair {
+class Pair {
 
 public:
 	using First = TFirst;
@@ -238,7 +238,7 @@ private:
 	template< typename... TArgs0, typename... TArgs1, Size ... Idx0, Size ... Idx1 >
 	Pair(
 		PiecewiseConstructTag, Tuple<TArgs0...> & args0, Tuple<TArgs1...> & args1, IndexSequence<Idx0...>, IndexSequence<Idx1...>
-	) : first(forward<TArgs0>(args0.get<Idx0>())...), second(forward<TArgs1>(args1.get<Idx1>())...) {
+	) : first(forward<TArgs0>(args0.template get<Idx0>())...), second(forward<TArgs1>(args1.template get<Idx1>())...) {
 	}
 
 public:

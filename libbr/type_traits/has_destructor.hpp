@@ -85,10 +85,10 @@ struct HasDestructorTest {
 };
 
 template< typename T >
-using HasDestructorBasic = decltype(HasDestructorTest::test<T>(nullptr));
+struct HasDestructorBasic : public decltype(HasDestructorTest::test<T>(nullptr)) {};
 
 template< typename T >
-using HasDestructor = BooleanAnd<
+struct HasDestructor : public BooleanAnd<
 	NotVoid<T>,
 	NotArrayUnknownBounds<T>,
 	NotFunction<T>,
@@ -97,7 +97,7 @@ using HasDestructor = BooleanAnd<
 		IsScalar<T>,
 		HasDestructorBasic< RemoveAllExtents<T> >
 	>
->;
+> {};
 
 #endif
 

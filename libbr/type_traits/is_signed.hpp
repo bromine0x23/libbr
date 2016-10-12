@@ -67,7 +67,7 @@ template< typename T >
 struct IsSignedBasic : public BooleanConstant< (static_cast<T>(-1) < static_cast<T>(0)) > {};
 
 template< typename T >
-using IsSigned = BooleanAnd< BooleanOr< IsIntegral<T>, IsEnum<T> >, IsSignedBasic< RemoveConstVolatile<T> > >;
+struct IsSigned : public BooleanAnd< BooleanOr< IsIntegral<T>, IsEnum<T> >, IsSignedBasic< RemoveConstVolatile<T> > > {};
 
 } // namespace TypeTraits
 } // namespace Detail

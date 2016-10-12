@@ -71,7 +71,7 @@ template< typename TCallable, typename... TArgs >
 struct IsCallableBasic : public decltype(IsCallableTest::test(make_rvalue<TCallable>(), make_rvalue<TArgs>() ...)) {};
 
 template< typename TCallable, typename... TArgs >
-using IsCallable = BooleanAnd< NotVoid<TCallable>, IsCallableBasic< TCallable, TArgs... > >;
+struct IsCallable : public BooleanAnd< NotVoid<TCallable>, IsCallableBasic< TCallable, TArgs... > > {};
 
 } // namespace TypeTraits
 } // namespace Detail

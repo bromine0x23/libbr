@@ -86,7 +86,7 @@ if(LIBBR_INCLUDE_DOCUMENTATION)
 		message(FATAL_ERROR "Doxygen is needed to build the documentation.")
 	endif()
 
-	add_custom_target(doc
+	add_custom_target(document
 		COMMAND ${DOXYGEN_EXECUTABLE} "${PROJECT_SOURCE_DIR}/Doxyfile"
 		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
 		COMMENT "Generating API documentation with Doxygen"

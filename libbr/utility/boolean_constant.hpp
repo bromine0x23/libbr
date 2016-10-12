@@ -28,10 +28,10 @@ using BooleanTrue = BooleanConstant<true>;
 using BooleanFalse = BooleanConstant<false>;
 
 template< typename TB >
-using BooleanRewrapPositive = BooleanConstant< (TB{}()) >;
+using BooleanRewrapPositive = BooleanConstant< !!(TB()) > ;
 
 template< typename TB >
-using BooleanRewrapNegative = BooleanConstant< !(TB{}()) >;
+using BooleanRewrapNegative = BooleanConstant< !(TB()) > ;
 
 template< typename TB >
 using BooleanRewrap = BooleanRewrapPositive< TB >;

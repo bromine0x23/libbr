@@ -342,9 +342,6 @@ TEST(RawString, Remove) {
 }
 
 TEST(RawString, Complex0) {
-	NS p = "123456";
-	UInt32 u = 123456;
-
 	auto hash = [](UInt32 u, NS p) {
 		UInt8 n[4] = {};
 		for (NS::Size i = 0; i < p.size(); ++i) {

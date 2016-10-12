@@ -10,7 +10,7 @@ using S = String<UTF8Encoding>;
 using U8S = String<UTF8Encoding>;
 
 TEST(String, DefaultConstruct) {
-	S s();
+	auto s = S();
 }
 
 TEST(String, CopyConstruct) {

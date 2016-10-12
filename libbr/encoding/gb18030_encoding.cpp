@@ -72,10 +72,10 @@ auto GB18030Encoding::length(CodePoint code) -> Size {
 }
 
 auto GB18030Encoding::length(CodeUnit const * b) -> Size {
-	if (GB18030_LENGTH[*b] != CM) {
+	if (GB18030_LENGTH[MakeUnsigned<CodeUnit>(*b)] != CM) {
 		return Size(1);
 	}
-	switch (GB18030_LENGTH[*++b]) {
+	switch (GB18030_LENGTH[MakeUnsigned<CodeUnit>(*++b)]) {
 		case C1:
 			return Size(1);
 		case C2:
@@ -84,7 +84,9 @@ auto GB18030Encoding::length(CodeUnit const * b) -> Size {
 			return Size(4);
 		default:
 			BR_ASSERT(false);
+			break;
 	}
+	return 0;
 }
 
 } // namespace BR

@@ -93,7 +93,7 @@ template< typename TFrom, typename TTo >
 struct IsConvertibleBasic : public decltype(IsConvertibleTest::test< TFrom, TTo >(0)) {};
 
 template< typename TFrom, typename TTo >
-using IsConvertible = BooleanAnd<
+struct IsConvertible : public BooleanAnd<
 	NotArray<TTo>,
 	NotFunction<TTo>,
 	BooleanOr<
@@ -103,7 +103,7 @@ using IsConvertible = BooleanAnd<
 			IsConvertibleBasic< TFrom, TTo >
 		>
 	>
->;
+> {};
 
 #endif // BR_IS_CONVERTIBLE
 

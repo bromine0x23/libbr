@@ -15,15 +15,15 @@
 
 namespace BR {
 
-class ASCIIEncoding;
+struct ASCIIEncoding;
 
-class UTF8Encoding;
+struct UTF8Encoding;
 
-class UTF16Encoding;
+struct UTF16Encoding;
 
-class UTF16LEEncoding;
+struct UTF16LEEncoding;
 
-class GB18030Encoding;
+struct GB18030Encoding;
 
 using DefaultEncoding = BR_JOIN(BR_ENCODING, Encoding);
 

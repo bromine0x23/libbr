@@ -80,7 +80,7 @@ template< typename T, typename TArg >
 struct IsNothrowAssignableBasic : public BooleanConstant< noexcept(make_rvalue<T>() = make_rvalue<TArg>()) > {};
 
 template< typename T, typename TArg >
-using IsNothrowAssignable = BooleanAnd< IsAssignable< T, TArg >, IsNothrowAssignableBasic< T, TArg > >;
+struct IsNothrowAssignable : public BooleanAnd< IsAssignable< T, TArg >, IsNothrowAssignableBasic< T, TArg > > {};
 
 #endif
 

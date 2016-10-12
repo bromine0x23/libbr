@@ -58,13 +58,13 @@ void swap(Tuple< TElement ... > & lhs, Tuple< TElement ... > & rhs) noexcept(noe
 
 template< Size I, typename ... Tn > constexpr auto get(Tuple< Tn ... >        & t) noexcept -> TupleElement< I, Tuple< Tn ... > >        & { return t.template get<I>(); }
 template< Size I, typename ... Tn > constexpr auto get(Tuple< Tn ... > const  & t) noexcept -> TupleElement< I, Tuple< Tn ... > > const  & { return t.template get<I>(); }
-template< Size I, typename ... Tn > constexpr auto get(Tuple< Tn ... >       && t) noexcept -> TupleElement< I, Tuple< Tn ... > >       && { return t.template get<I>(); }
-template< Size I, typename ... Tn > constexpr auto get(Tuple< Tn ... > const && t) noexcept -> TupleElement< I, Tuple< Tn ... > > const && { return t.template get<I>(); }
+template< Size I, typename ... Tn > constexpr auto get(Tuple< Tn ... >       && t) noexcept -> TupleElement< I, Tuple< Tn ... > >       && { return move(t.template get<I>()); }
+template< Size I, typename ... Tn > constexpr auto get(Tuple< Tn ... > const && t) noexcept -> TupleElement< I, Tuple< Tn ... > > const && { return move(t.template get<I>()); }
 
 template< typename T, typename ... Tn > constexpr auto get(Tuple< Tn ... >        & t) noexcept -> T        & { return t.template get<T>(); }
 template< typename T, typename ... Tn > constexpr auto get(Tuple< Tn ... > const  & t) noexcept -> T const  & { return t.template get<T>(); }
-template< typename T, typename ... Tn > constexpr auto get(Tuple< Tn ... >       && t) noexcept -> T       && { return t.template get<T>(); }
-template< typename T, typename ... Tn > constexpr auto get(Tuple< Tn ... > const && t) noexcept -> T const && { return t.template get<T>(); }
+template< typename T, typename ... Tn > constexpr auto get(Tuple< Tn ... >       && t) noexcept -> T       && { return move(t.template get<T>()); }
+template< typename T, typename ... Tn > constexpr auto get(Tuple< Tn ... > const && t) noexcept -> T const && { return move(t.template get<T>()); }
 
 template< Size I, typename T0, typename T1 >
 constexpr auto get(Pair< T0, T1 > & P) noexcept -> TupleElement< I, Pair< T0, T1 > > &;
@@ -707,8 +707,8 @@ public:
 	///@{
 	template< Size I > BR_CONSTEXPR_AFTER_CXX11 auto get()        & noexcept -> TupleElement< I, Tuple >        & { return m_imp.template get<I>(); }
 	template< Size I > constexpr                auto get() const  & noexcept -> TupleElement< I, Tuple > const  & { return m_imp.template get<I>(); }
-	template< Size I > BR_CONSTEXPR_AFTER_CXX11 auto get()       && noexcept -> TupleElement< I, Tuple >       && { return m_imp.template get<I>(); }
-	template< Size I > constexpr                auto get() const && noexcept -> TupleElement< I, Tuple > const && { return m_imp.template get<I>(); }
+	template< Size I > BR_CONSTEXPR_AFTER_CXX11 auto get()       && noexcept -> TupleElement< I, Tuple >       && { return move(m_imp.template get<I>()); }
+	template< Size I > constexpr                auto get() const && noexcept -> TupleElement< I, Tuple > const && { return move(m_imp.template get<I>()); }
 	///@}
 
 	/**
@@ -717,8 +717,8 @@ public:
 	///@{
 	template< typename T > BR_CONSTEXPR_AFTER_CXX11 auto get()        & noexcept -> T        & { return m_imp.template get<T>(); }
 	template< typename T > constexpr                auto get() const  & noexcept -> T const  & { return m_imp.template get<T>(); }
-	template< typename T > BR_CONSTEXPR_AFTER_CXX11 auto get()       && noexcept -> T       && { return m_imp.template get<T>(); }
-	template< typename T > constexpr                auto get() const && noexcept -> T const && { return m_imp.template get<T>(); }
+	template< typename T > BR_CONSTEXPR_AFTER_CXX11 auto get()       && noexcept -> T       && { return move(m_imp.template get<T>()); }
+	template< typename T > constexpr                auto get() const && noexcept -> T const && { return move(m_imp.template get<T>()); }
 	///@}
 
 private:

@@ -69,7 +69,7 @@ auto UTF8Encoding::point_to_units(CodePoint code, CodeUnit * out) -> Size {
 
 auto UTF8Encoding::units_to_point(CodeUnit const * b, CodeUnit const * /*e*/) -> CodePoint {
 	Size l(length(b));
-	auto code = MakeUnsigned<CodeUnit>(*b++);
+	CodePoint code = MakeUnsigned<CodeUnit>(*b++);
 	if (l > 1) {
 		--l;
 		code &= (1 << (6 - l)) - 1;
@@ -78,7 +78,7 @@ auto UTF8Encoding::units_to_point(CodeUnit const * b, CodeUnit const * /*e*/) ->
 		}
 	} else {
 		if (code > 0xFDU) {
-			code = code == 0xFE ? 0xFFFFFFFEU : 0xFFFFFFFFU;
+			code = (code == 0xFEU) ? 0xFFFFFFFEU : 0xFFFFFFFFU;
 		}
 	}
 	return code;
@@ -112,11 +112,14 @@ auto UTF8Encoding::is_newline(CodeUnit const * b, CodeUnit const * e) -> bool {
 			return true; // '\n'
 		}
 		if (b + 1 < e) {
-			if (b[1] == 0x85 && b[0] == 0xC2) {
+			auto b0 = MakeUnsigned<CodeUnit>(b[0]);
+			auto b1 = MakeUnsigned<CodeUnit>(b[1]);
+			if (b0 == 0xC2U && b1 == 0x85U) {
 				return true; // U+0085
 			}
 			if (b + 2 < e) {
-				if ((b[2] == 0xA8 || b[2] == 0xA9) && b[1] == 0x80 && b[0] == 0xE2) {
+				auto b2 = MakeUnsigned<CodeUnit>(b[2]);
+				if ((b2 == 0xA8U || b2 == 0xA9U) && b0 == 0xE2U && b1 == 0x80U) {
 					return true; // U+2028, U+2029
 				}
 			}

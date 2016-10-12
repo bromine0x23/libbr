@@ -147,21 +147,27 @@ public:
 	}
 
 	auto index(CodePoint point, Size start = 0) const -> Index {
+		return 0;
 	}
 
 	auto index(String const & string, Size start = 0) const -> Index {
+		return 0;
 	}
 
 	auto index(StringView<Encoding> const & string, Size start = 0) const -> Index {
+		return 0;
 	}
 
 	auto rindex(CodePoint point, Size start = 0) const -> Index {
+		return 0;
 	}
 
 	auto rindex(String const & string, Size start = 0) const -> Index {
+		return 0;
 	}
 
 	auto rindex(StringView<Encoding> const & string, Size start = 0) const -> Index {
+		return 0;
 	}
 
 }; // class String

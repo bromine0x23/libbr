@@ -86,7 +86,7 @@ template< typename T >
 using IsEmptyBasic = BooleanConstant< sizeof(IsEmptyHelper0<T>) == sizeof(IsEmptyHelper1) >;
 
 template< typename T >
-using IsEmpty = BooleanAnd< IsClass<T>, IsEmptyBasic< RemoveConstVolatile<T> > >;
+struct IsEmpty : public BooleanAnd< IsClass<T>, IsEmptyBasic< RemoveConstVolatile<T> > > {};
 
 #endif // !BR_IS_EMPTY
 

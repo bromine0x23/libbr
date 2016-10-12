@@ -13,6 +13,8 @@
 #  define BR_STANDARD "C++11"
 #elif __cplusplus == 201402L
 #  define BR_STANDARD "C++14"
+#else
+#  define BR_STANDARD "C++03"
 #endif
 
 #if __cplusplus >= 201103L

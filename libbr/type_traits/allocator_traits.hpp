@@ -78,7 +78,7 @@ template< typename TAllocator >
 struct TypeConstPointer< TAllocator, true > : TypeWrapper< typename TAllocator::ConstPointer > {};
 
 template< typename TAllocator >
-struct TypeConstPointer< TAllocator, false > : TypeWrapper< typename PointerTraits< Pointer<TAllocator> >::template Rebind< Element<TAllocator> const > > {};
+struct TypeConstPointer< TAllocator, false > : TypeWrapper< typename BR::PointerTraits< Pointer<TAllocator> >::template Rebind< Element<TAllocator> const > > {};
 
 template< typename TAllocator >
 using ConstPointer = TypeUnwrap< TypeConstPointer<TAllocator> >;
@@ -96,7 +96,7 @@ template< typename TAllocator >
 struct TypeVoidPointer< TAllocator, true > : TypeWrapper< typename TAllocator::VoidPointer > {};
 
 template< typename TAllocator >
-struct TypeVoidPointer< TAllocator, false > : TypeWrapper< typename PointerTraits< Pointer<TAllocator> >::template Rebind< void > > {};
+struct TypeVoidPointer< TAllocator, false > : TypeWrapper< typename BR::PointerTraits< Pointer<TAllocator> >::template Rebind< void > > {};
 
 template< typename TAllocator >
 using VoidPointer = TypeUnwrap< TypeVoidPointer<TAllocator> >;
@@ -114,7 +114,7 @@ template< typename TAllocator >
 struct TypeConstVoidPointer< TAllocator, true > : TypeWrapper< typename TAllocator::ConstVoidPointer > {};
 
 template< typename TAllocator >
-struct TypeConstVoidPointer< TAllocator, false > : TypeWrapper< typename PointerTraits< Pointer<TAllocator> >::template Rebind< void const > > {};
+struct TypeConstVoidPointer< TAllocator, false > : TypeWrapper< typename BR::PointerTraits< Pointer<TAllocator> >::template Rebind< void const > > {};
 
 template< typename TAllocator >
 using ConstVoidPointer = TypeUnwrap< TypeVoidPointer<TAllocator> >;
@@ -132,7 +132,7 @@ template< typename TAllocator >
 struct TypeDifference< TAllocator, true > : TypeWrapper< typename TAllocator::Difference > {};
 
 template< typename TAllocator >
-struct TypeDifference< TAllocator, false > : TypeWrapper< typename PointerTraits< Pointer<TAllocator> >::Difference > {};
+struct TypeDifference< TAllocator, false > : TypeWrapper< typename BR::PointerTraits< Pointer<TAllocator> >::Difference > {};
 
 template< typename TAllocator >
 using Difference = TypeUnwrap< TypeDifference<TAllocator> >;

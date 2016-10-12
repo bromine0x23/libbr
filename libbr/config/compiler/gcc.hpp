@@ -53,3 +53,9 @@
 #if !defined(BR_CURRENT_FUNCTION)
 #  define BR_CURRENT_FUNCTION __PRETTY_FUNCTION__
 #endif
+
+#if defined(__x86_64__)
+#  define BR_64BIT
+#else
+#  define BR_32BIT
+#endif

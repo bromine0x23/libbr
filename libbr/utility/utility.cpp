@@ -61,7 +61,7 @@ static inline auto demangle_implement(CString<NChar> name) -> RawString<NChar> {
 
 #else
 
-static inline auto demangle_implement(CString<NChar> name) -> String<NChar> {
+static inline auto demangle_implement(CString<NChar> name) -> RawString<NChar> {
 	return name;
 }
 

@@ -63,7 +63,7 @@ auto UTF16LEEncoding::length(CodePoint code) -> Size {
 }
 
 auto UTF16LEEncoding::length(CodeUnit const * b) -> Size {
-	return Size(LENGTH[b[1]]);
+	return Size(LENGTH[MakeUnsigned<CodeUnit>(b[1])]);
 }
 
 auto UTF16LEEncoding::is_newline(CodePoint code) -> bool {
@@ -72,13 +72,15 @@ auto UTF16LEEncoding::is_newline(CodePoint code) -> bool {
 
 auto UTF16LEEncoding::is_newline(CodeUnit const * b, CodeUnit const * e) -> bool {
 	if (b + 1 < e) {
-		if (b[0] == 0x0A && b[1] == 0x00) {
+		auto b0 = MakeUnsigned<CodeUnit>(b[0]);
+		auto b1 = MakeUnsigned<CodeUnit>(b[1]);
+		if (b0 == 0x0AU && b1 == 0x00U) {
 			return true; // '\n'
 		}
-		if (b[0] == 0x85 && b[1] == 0x00) {
+		if (b0 == 0x85U && b1 == 0x00U) {
 			return true; // U+0085
 		}
-		if (b[1] == 0x20 && (b[0] == 0x29 || b[0] == 0x28)) {
+		if (b1 == 0x20U && (b0 == 0x29U || b0 == 0x28U)) {
 			return true; // U+2028, U+2029
 		}
 	}

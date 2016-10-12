@@ -10,11 +10,11 @@ using RS32 = RawString<Char32>;
 
 TEST(RawString, DefaultConstruct) {
 	{
-		RS8 s();
+		auto s = RS8();
 	} {
-		RS16 s();
+		auto s = RS16();
 	} {
-		RS32 s();
+		auto s = RS32();
 	}
 }
 
