@@ -36,6 +36,16 @@
 #  define BR_UINT128 unsigned __int128
 #endif
 
+#if !defined(BR_ARCHITECTURE)
+#  if defined(__i386__)
+#    define BR_ARCHITECTURE "i386"
+#    define BR_32BIT
+#  elif defined(__x86_64__)
+#    define BR_ARCHITECTURE "x86_64"
+#    define BR_64BIT
+#  endif
+#endif
+
 #if !defined(BR_BYTE_ORDER)
 #  if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 #    define BR_BYTE_ORDER "big endian"
@@ -52,10 +62,4 @@
 
 #if !defined(BR_CURRENT_FUNCTION)
 #  define BR_CURRENT_FUNCTION __PRETTY_FUNCTION__
-#endif
-
-#if defined(__x86_64__)
-#  define BR_64BIT
-#else
-#  define BR_32BIT
 #endif

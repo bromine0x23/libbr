@@ -15,6 +15,16 @@
 #  define BR_SYMBOL_IMPORT __declspec(dllimport)
 #endif
 
+#if !defined(BR_ARCHITECTURE)
+#  if defined(_M_IX86)
+#    define BR_ARCHITECTURE "i386"
+#    define BR_32BIT
+#  elif defined(_M_X64) || defined(_M_AMD64)
+#    define BR_ARCHITECTURE "x86_64"
+#    define BR_64BIT
+#  endif
+#endif
+
 #if !defined(BR_BYTE_ORDER)
 #  define BR_BYTE_ORDER "little endian"
 #  define BR_LITTLE_ENDIAN

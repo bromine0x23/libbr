@@ -30,7 +30,7 @@
 
 #include BR_USER_CONFIG
 
-#if 0
+#if false
 #  include <libbr/config/user.hpp>
 #endif // 0
 
@@ -50,6 +50,11 @@
 #  include BR_PLATFORM_CONFIG
 #endif
 
+#if !defined(BR_ARCHITECTURE)
+#  pragma message("unknown cpu architecture, set to i386")
+#  define BR_ARCHITECTURE "i386"
+#endif
+
 #if !defined(BR_BYTE_ORDER)
 #  pragma message("unknown byte order, set to little endian")
 #  define BR_BYTE_ORDER "little endian"
@@ -57,7 +62,7 @@
 #endif
 
 #if !defined(BR_ENCODING)
-#define BR_ENCODING UTF8
+#  define BR_ENCODING UTF8
 #endif
 
 #include <libbr/config/macros.hpp>

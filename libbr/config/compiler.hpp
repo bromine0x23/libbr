@@ -15,7 +15,7 @@
 #  error "Unknown compiler."
 #endif
 
-#if 0
+#if false
 #include <libbr/config/compiler/gcc.hpp>
 #include <libbr/config/compiler/msvc.hpp>
 #include <libbr/config/compiler/clang.hpp>

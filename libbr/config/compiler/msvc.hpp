@@ -23,9 +23,3 @@
 #if !defined(_CPPUNWIND) && !defined(BR_NO_EXCEPTIONS)
 #  define BR_NO_EXCEPTIONS
 #endif
-
-#if defined(_M_AMD64)
-#  define BR_64BIT
-#else
-#  define BR_32BIT
-#endif
