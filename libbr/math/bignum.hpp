@@ -20,7 +20,7 @@
 #include <libbr/utility/move.hpp>
 #include <libbr/utility/swap.hpp>
 
-#include <string>
+#include <libbr/string/string.hpp>
 
 namespace BR {
 
@@ -964,15 +964,15 @@ public:
 	}
 
 public:
-	std::string inspect() const {
+	String<> inspect() const {
 		return BignumAlgorithm::inspect(m_data);
 	}
 
-	std::string to_s(Digit base = 10, bool show_plus = false) const {
+	String<> to_s(Digit base = 10, bool show_plus = false) const {
 		return BignumAlgorithm::to_s(m_data, base, show_plus);
 	}
 
-	operator std::string() const {
+	operator String<>() const {
 		return to_s();
 	}
 

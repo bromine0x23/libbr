@@ -12,7 +12,7 @@
 #include <libbr/utility/integral_constant.hpp>
 #include <libbr/utility/swap.hpp>
 
-#include <string>
+#include <libbr/string/string.hpp>
 
 namespace BR {
 
@@ -855,11 +855,11 @@ public:
 		}
 	}
 
-	static std::string inspect(BignumData const & X);
+	static String<> inspect(BignumData const & X);
 
-	static std::string to_s(BignumData const & X, Digit b, bool show_plus);
+	static String<> to_s(BignumData const & X, Digit b, bool show_plus);
 
-	static BignumData parse(std::string s);
+	static BignumData parse(String<> s);
 
 }; // class BignumAlgorithm
 

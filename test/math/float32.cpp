@@ -3,19 +3,19 @@
 
 using namespace BR;
 
-static Float32 pos_zero = BR::Detail::Math::to_float32(0x00000000);
+static Float32 pos_zero = BR::Detail::Float::to_float32(0x00000000);
 static Float32 neg_zero = -pos_zero;
-static Float32 pos_min_subnormal = BR::Detail::Math::to_float32(0x0007FFFF);
+static Float32 pos_min_subnormal = BR::Detail::Float::to_float32(0x0007FFFF);
 static Float32 neg_min_subnormal = -pos_min_subnormal;
-static Float32 pos_max_subnormal = BR::Detail::Math::to_float32(0x00000001);
+static Float32 pos_max_subnormal = BR::Detail::Float::to_float32(0x00000001);
 static Float32 neg_max_subnormal = -pos_max_subnormal;
-static Float32 pos_min_normal = BR::Detail::Math::to_float32(0x00800000);
+static Float32 pos_min_normal = BR::Detail::Float::to_float32(0x00800000);
 static Float32 neg_min_normal = -pos_min_normal;
-static Float32 pos_max_normal = BR::Detail::Math::to_float32(0x7F7FFFFF);
+static Float32 pos_max_normal = BR::Detail::Float::to_float32(0x7F7FFFFF);
 static Float32 neg_max_normal = -pos_max_normal;
-static Float32 pos_inf = BR::Detail::Math::to_float32(0x7F800000);
+static Float32 pos_inf = BR::Detail::Float::to_float32(0x7F800000);
 static Float32 neg_inf = -pos_inf;
-static Float32 pos_nan = BR::Detail::Math::to_float32(0x7FFFFFFF);
+static Float32 pos_nan = BR::Detail::Float::to_float32(0x7FFFFFFF);
 
 TEST(TestFloat32, Classify) {
 	EXPECT_EQ(classify(pos_max_normal), FloatCategory::normal);

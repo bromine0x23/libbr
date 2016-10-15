@@ -1036,35 +1036,37 @@ void BignumAlgorithm::rsh(BignumData const & X, Digit n, BignumData & Z) {
 	}
 }
 
-std::string BignumAlgorithm::inspect(BignumData const & X) {
-	std::ostringstream oss;
+String<> BignumAlgorithm::inspect(BignumData const & X) {
+	String<> oss;
 
 	oss << sign_to_nchar(X.sign) << "0x";
 
 	for (Size i = X.length; i-- > 0;) {
-		oss << std::setfill('0') << std::setw(BIT_PER_DIGIT / 4) << std::hex << X.digits[i];
+		oss << X.digits[i];
+		// oss << std::setfill('0') << std::setw(BIT_PER_DIGIT / 4) << std::hex << X.digits[i];
 	}
 
-	return oss.str();
+	// return oss.str();
+	return oss;
 }
 
-std::string BignumAlgorithm::to_s(BignumData const & X, Digit b, bool show_plus) {
+String<> BignumAlgorithm::to_s(BignumData const & X, Digit b, bool show_plus) {
 	constexpr static auto ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyz";
 	static auto to_s_generic = [](BignumData const & X, Digit base) {
-		std::string s;
+		String<> s;
 		BignumData T; init(T); copy(T, X);
 		do {
-			s += ALPHABET[div_mod_d(T, base, T)];
+			s << ALPHABET[div_mod_d(T, base, T)];
 		} while (!is_zero(T));
 		clear(T);
-		return std::string(s.rbegin(), s.rend());
+		return String<>(s.rbegin(), s.rend());
 	};
 	static auto to_s_power_2 = [](BignumData const & X, Digit base) {
 		auto const xlength = X.length;
 		auto const bits_per_char = integral_log2(base);
 		auto mod_base_mask = (1 << bits_per_char) - 1;
 
-		std::string s; s.reserve((X.length * BIT_PER_DIGIT - count_leading_zeros(X.digits[X.length - 1]) + bits_per_char) / bits_per_char);
+		String<> s; s.reserve((X.length * BIT_PER_DIGIT - count_leading_zeros(X.digits[X.length - 1]) + bits_per_char) / bits_per_char);
 
 		auto xds = X.digits + xlength;
 		Digit buffer = *--xds;
@@ -1077,7 +1079,7 @@ std::string BignumAlgorithm::to_s(BignumData const & X, Digit b, bool show_plus)
 		for (auto xi = xlength - 1;;) {
 			bit_pos -= bits_per_char;
 			for (; bit_pos >= 0;) {
-				s += ALPHABET[(buffer >> bit_pos) & mod_base_mask];
+				s << ALPHABET[(buffer >> bit_pos) & mod_base_mask];
 				bit_pos -= bits_per_char;
 			}
 			if (xi-- <= 0) {
@@ -1086,7 +1088,7 @@ std::string BignumAlgorithm::to_s(BignumData const & X, Digit b, bool show_plus)
 			auto temp = (buffer << -bit_pos) & mod_base_mask;
 			buffer = *--xds;
 			bit_pos += BIT_PER_DIGIT;
-			s += ALPHABET[temp | (buffer >> bit_pos)];
+			s << ALPHABET[temp | (buffer >> bit_pos)];
 		}
 
 		return s;
@@ -1096,19 +1098,18 @@ std::string BignumAlgorithm::to_s(BignumData const & X, Digit b, bool show_plus)
 		throw ArgumentException(__func__);
 	}
 
-	std::string s;
+	String<> s;
 	if (X.sign == Sign::NEG) {
-		s += '-';
+		s << '-';
 	} else if (show_plus) {
-		s += '+';
+		s << '+';
 	}
 
 	if (is_zero(X)) {
 		return "0";
-	} else if (is_power_of_2(b)) {
-		return s + to_s_power_2(X, b);
 	} else {
-		return s + to_s_generic(X, b);
+		s << (is_power_of_2(b) ? to_s_power_2(X, b) : to_s_generic(X, b));
+		return s;
 	}
 }
 

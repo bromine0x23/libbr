@@ -1,13 +1,75 @@
 #include <libbr/math/complex.hpp>
 #include <libbr/math/float.hpp>
+#include <libbr/math/copy_sign.hpp>
+#include <libbr/math/is_finite.hpp>
+#include <libbr/math/is_infinite.hpp>
+#include <libbr/math/is_nan.hpp>
+#include <libbr/math/is_normal.hpp>
+#include <cmath>
+
+auto libbr_copy_sign_s(BR::SFloat x, BR::SFloat y) -> BR::SFloat {
+	return std::copysign(x, y);
+}
+
+auto libbr_copy_sign_d(BR::DFloat x, BR::DFloat y) -> BR::DFloat {
+	return std::copysign(x, y);
+}
+
+auto libbr_copy_sign_q(BR::QFloat x, BR::QFloat y) -> BR::QFloat {
+	return std::copysign(x, y);
+}
+
+#if !defined(BR_GCC)
+auto libbr_is_finite_s(BR::SFloat x) -> bool {
+	return std::isfinite(x);
+}
+
+auto libbr_is_finite_d(BR::DFloat x) -> bool {
+	return std::isfinite(x);
+}
+
+auto libbr_is_finite_q(BR::QFloat x) -> bool {
+	return std::isfinite(x);
+}
+#endif
+
+auto libbr_is_infinite_s(BR::SFloat x) -> bool {
+	return std::isinf(x);
+}
+
+auto libbr_is_infinite_d(BR::DFloat x) -> bool {
+	return std::isinf(x);
+}
+
+auto libbr_is_infinite_q(BR::QFloat x) -> bool {
+	return std::isinf(x);
+}
+
+auto libbr_is_nan_s(BR::SFloat x) -> bool {
+	return std::isnan(x);
+}
+
+auto libbr_is_nan_d(BR::DFloat x) -> bool {
+	return std::isnan(x);
+}
+
+auto libbr_is_nan_q(BR::QFloat x) -> bool {
+	return std::isnan(x);
+}
+
+auto libbr_is_normal_s(BR::SFloat x) -> bool {
+	return std::isnormal(x);
+}
+
+auto libbr_is_normal_d(BR::DFloat x) -> bool {
+	return std::isnormal(x);
+}
+
+auto libbr_is_normal_q(BR::QFloat x) -> bool {
+	return std::isnormal(x);
+}
 
 namespace BR {
-
-// template class Complex<SFloat>;
-// template class Complex<DFloat>;
-// template class Complex<QFloat>;
-
-// template class Complex<DFloat>;
 
 template auto Complex<SFloat>::operator*(Complex const & y) const -> Complex;
 template auto Complex<SFloat>::operator/(Complex const & y) const -> Complex;
@@ -29,7 +91,7 @@ static constexpr auto get_exponent64(SInt32 high) -> SInt32 {
 }
 
 auto ceil(Float32 f) -> Float32 {
-	SInt32 raw = Detail::Math::to_raw(f);
+	SInt32 raw = Detail::Float::to_raw(f);
 	SInt32 const exp = get_exponent32(raw);
 
 	if (exp < 0) { // |f| < 1
@@ -54,12 +116,12 @@ auto ceil(Float32 f) -> Float32 {
 	} else { // f is inf or NaN
 		return f + f;
 	}
-	return Detail::Math::to_float32(raw);
+	return Detail::Float::to_float32(raw);
 }
 
 auto ceil(Float64 f) -> Float64 {
-	SInt32 high = Detail::Math::get_high_part(f);
-	UInt32 low = Detail::Math::get_low_part(f);
+	SInt32 high = Detail::Float::get_high_part(f);
+	UInt32 low = Detail::Float::get_low_part(f);
 	SInt32 const exp = get_exponent64(high);
 
 	if (exp < 0) { // |f| < 1
@@ -104,11 +166,11 @@ auto ceil(Float64 f) -> Float64 {
 	} else { // f is inf or NaN
 		return f + f;
 	}
-	return Detail::Math::to_float64(high, low);
+	return Detail::Float::to_float64(high, low);
 }
 
 auto floor(Float32 f) -> Float32 {
-	SInt32 raw = Detail::Math::to_raw(f);
+	SInt32 raw = Detail::Float::to_raw(f);
 	SInt32 const exp = get_exponent32(raw);
 
 	if (exp < 0) { // |f| < 1
@@ -133,12 +195,12 @@ auto floor(Float32 f) -> Float32 {
 	} else { // f is inf or NaN
 		return f + f;
 	}
-	return Detail::Math::to_float32(raw);
+	return Detail::Float::to_float32(raw);
 }
 
 auto floor(Float64 f) -> Float64 {
-	SInt32 high = Detail::Math::get_high_part(f);
-	UInt32 low = Detail::Math::get_low_part(f);
+	SInt32 high = Detail::Float::get_high_part(f);
+	UInt32 low = Detail::Float::get_low_part(f);
 	SInt32 const exp = get_exponent64(high);
 	if (exp < 0) {
 		if (high > 0) { // f > 0
@@ -182,11 +244,11 @@ auto floor(Float64 f) -> Float64 {
 	} else { // f is inf or NaN
 		return f + f;
 	}
-	return Detail::Math::to_float64(high, low);
+	return Detail::Float::to_float64(high, low);
 }
 
 auto truncate(Float32 f) -> Float32 {
-	SInt32 raw = Detail::Math::to_raw(f);
+	SInt32 raw = Detail::Float::to_raw(f);
 	SInt32 const exp = get_exponent32(raw);
 	if (exp < 0) { // |f| < 1
 		raw &= 0x80000000;
@@ -197,12 +259,12 @@ auto truncate(Float32 f) -> Float32 {
 	} else { // f is inf or NaN
 		return f + f;
 	}
-	return Detail::Math::to_float32(raw);
+	return Detail::Float::to_float32(raw);
 }
 
 auto truncate(Float64 f) -> Float64 {
-	SInt32 high = Detail::Math::get_high_part(f);
-	UInt32 low = Detail::Math::get_low_part(f);
+	SInt32 high = Detail::Float::get_high_part(f);
+	UInt32 low = Detail::Float::get_low_part(f);
 	SInt32 const exp = get_exponent64(high);
 	if (exp < 0) { // |f| < 1
 		high &= 0x80000000;
@@ -217,11 +279,11 @@ auto truncate(Float64 f) -> Float64 {
 	} else { // f is inf or NaN
 		return f + f;
 	}
-	return Detail::Math::to_float64(high, low);
+	return Detail::Float::to_float64(high, low);
 }
 
 auto round(Float32 f) -> Float32 {
-	SInt32 raw = Detail::Math::to_raw(f);
+	SInt32 raw = Detail::Float::to_raw(f);
 	SInt32 const exp = get_exponent32(raw);
 	if (exp < 0) { // |f| < 1
 		raw &= 0x80000000;
@@ -240,12 +302,12 @@ auto round(Float32 f) -> Float32 {
 	} else { // f is inf or NaN
 		return f + f;
 	}
-	return Detail::Math::to_float32(raw);
+	return Detail::Float::to_float32(raw);
 }
 
 auto round(Float64 f) -> Float64 {
-	SInt32 high = Detail::Math::get_high_part(f);
-	UInt32 low = Detail::Math::get_low_part(f);
+	SInt32 high = Detail::Float::get_high_part(f);
+	UInt32 low = Detail::Float::get_low_part(f);
 	SInt32 const exp = get_exponent64(high);
 	if (exp < 0) { // |f| < 1
 		high &= 0x80000000;
@@ -277,7 +339,7 @@ auto round(Float64 f) -> Float64 {
 	} else { // f is inf or NaN
 		return f + f;
 	}
-	return Detail::Math::to_float64(high, low);
+	return Detail::Float::to_float64(high, low);
 }
 
 } // namespace BR
