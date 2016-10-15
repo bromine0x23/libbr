@@ -1,15 +1,29 @@
 # libbr
 
-An ugly C++ library.
+A bery ugly C++ library.
 
-## build
+## Build
 
-I don't known.
+Use [CMake](https://cmake.org/).
 
-## usage
+## Components
+
+- Algorithm
+- Container
+- Encoding
+- Exception
+- Functional
+- Memory
+- Optional
+- String
+- Type Operate
+- Type Traits
+- Utility
+
+## Usage
 
 I don't known.
 
 ## License
 
-This project is available under the WTFPL. See the LICENSE file for more info.
+This project is available under the [WTFPL](http://www.wtfpl.net/). See the LICENSE file for more info.
