@@ -16,6 +16,7 @@
 	CONSTANT_CHECK(expected_value, !(no_  ## traits< __VA_ARGS__ >));
 #else
 #  define IS_TRAITS_CHECK_CXX14(...)
+#  define HAS_TRAITS_CHECK_CXX14(...)
 #endif
 
 #define IS_TRAITS_CHECK(expected_value, Traits, traits, ...)\

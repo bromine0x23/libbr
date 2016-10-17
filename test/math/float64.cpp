@@ -3,19 +3,19 @@
 
 using namespace BR;
 
-static Float64 pos_zero = BR::Detail::Float::to_float64(0x00000000, 0x00000000U);
+static Float64 pos_zero = BR::Detail::Float::to_float(0x00000000U, 0x00000000U);
 static Float64 neg_zero = -pos_zero;
-static Float64 pos_min_subnormal = BR::Detail::Float::to_float64(0x00000000, 0x00000001U);
+static Float64 pos_min_subnormal = BR::Detail::Float::to_float(0x00000000U, 0x00000001U);
 static Float64 neg_min_subnormal = -pos_min_subnormal;
-static Float64 pos_max_subnormal = BR::Detail::Float::to_float64(0x000FFFFF, 0xFFFFFFFFU);
+static Float64 pos_max_subnormal = BR::Detail::Float::to_float(0x000FFFFFU, 0xFFFFFFFFU);
 static Float64 neg_max_subnormal = -pos_max_subnormal;
-static Float64 pos_min_normal = BR::Detail::Float::to_float64(0x00100000, 0x00000000U);
+static Float64 pos_min_normal = BR::Detail::Float::to_float(0x00100000U, 0x00000000U);
 static Float64 neg_min_normal = -pos_min_normal;
-static Float64 pos_max_normal = BR::Detail::Float::to_float64(0x7FEFFFFF, 0xFFFFFFFFU);
+static Float64 pos_max_normal = BR::Detail::Float::to_float(0x7FEFFFFFU, 0xFFFFFFFFU);
 static Float64 neg_max_normal = -pos_max_normal;
-static Float64 pos_inf = BR::Detail::Float::to_float64(0x7FF00000, 0x00000000U);
+static Float64 pos_inf = BR::Detail::Float::to_float(0x7FF00000U, 0x00000000U);
 static Float64 neg_inf = -pos_inf;
-static Float64 pos_nan = BR::Detail::Float::to_float64(0x7FFFFFFFFFFFFFFFLL);
+static Float64 pos_nan = BR::Detail::Float::to_float(0x7FFFFFFFFFFFFFFFULL);
 
 TEST(TestFloat64, Classify) {
 	EXPECT_EQ(classify(pos_max_normal), FloatCategory::normal);

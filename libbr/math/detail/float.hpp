@@ -1,11 +1,29 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/utility/bitwise_cast.hpp>
 
 namespace BR {
 namespace Detail {
 namespace Float {
+
+union Bind32 {
+	Float32 f;
+	UInt32 r;
+};
+
+union Bind64 {
+	Float64 f;
+	UInt64 r;
+	struct {
+#if defined(BR_LITTLE_ENDIAN)
+		UInt32 l;
+		UInt32 h;
+#else
+		UInt32 h
+		UInt32 l;
+#endif
+	};
+};
 
 template< typename TFrom, typename TTo >
 union Converter {
@@ -13,39 +31,46 @@ union Converter {
 	TTo t;
 };
 
-constexpr auto to_raw(Float32 f) -> SInt32 {
-	return Converter< Float32, SInt32 >{f}.t;
+constexpr auto to_raw(Float32 f) -> UInt32 {
+	return Bind32{f}.r;
 }
 
-constexpr auto to_raw(Float64 f) -> SInt64 {
-	return Converter< Float64, SInt64 >{f}.t;
+constexpr auto to_raw(Float64 f) -> UInt64 {
+	return Bind64{f}.r;
 }
 
-#if defined(BR_HAS_INT128)
-constexpr auto to_raw(Float128 f) -> SInt128 {
-	return Converter< Float128, SInt128 >{f}.t;
+constexpr auto to_raw_high(Float64 f) -> UInt32 {
+	return Bind64{f}.h;
 }
+
+constexpr auto to_raw_low(Float64 f) -> UInt32 {
+	return Bind64{f}.l;
+}
+
+constexpr auto to_float(UInt32 r) -> Float32 {
+	return Converter< UInt32, Float32 >{r}.t;
+}
+
+constexpr auto to_float(UInt64 r) -> Float64 {
+	return Converter< UInt64, Float64 >{r}.t;
+}
+
+struct Raw64 {
+#if defined(BR_LITTLE_ENDIAN)
+	UInt32 l, h;
 #else
+	UInt32 h, l;
 #endif
+};
 
-constexpr auto to_float32(SInt32 f) -> Float32 {
-	return Converter< SInt32, Float32 >{f}.t;
-}
-
-constexpr auto to_float64(SInt64 f) -> Float64 {
-	return Converter< SInt64, Float64 >{f}.t;
-}
-
-constexpr auto get_high_part(Float64 f) -> SInt32 {
-	return SInt32(to_raw(f) >> 32);
-}
-
-constexpr auto get_low_part(Float64 f) -> UInt32 {
-	return to_raw(f) & 0xFFFFFFFFU;
-}
-
-constexpr auto to_float64(SInt32 h, UInt32 l) -> Float64 {
-	return to_float64((SInt64(h) << 32) | l);
+constexpr auto to_float(UInt32 h, UInt32 l) -> Float64 {
+	return Converter< Raw64, Float64 >{
+#if defined(BR_LITTLE_ENDIAN)
+		l, h
+#else
+		h, l
+#endif
+		}.t;
 }
 
 } // namespace Float

@@ -9,6 +9,9 @@
 #include <libbr/config.hpp>
 #include <libbr/type_operate/enable_if.hpp>
 #include <libbr/type_traits/is_integral.hpp>
+#if !defined(BR_GCC)
+#  include <libbr/math/detail/float.hpp>
+#endif
 
 extern "C" {
 
@@ -18,27 +21,35 @@ extern "C" {
  * @return
  */
 //@{
-auto libbr_is_nan_s(BR::SFloat x) -> bool;
+#if defined(BR_GCC)
+constexpr auto libbr_is_nan_32(BR::Float32 f) -> bool {
+	return __builtin_isnan(f);
+}
 
-auto libbr_is_nan_d(BR::DFloat x) -> bool;
+constexpr auto libbr_is_nan_64(BR::Float64 f) -> bool {
+	return __builtin_isnan(f);
+}
+#else
+constexpr auto libbr_is_nan_32(BR::Float32 f) -> bool {
+	return ((0x7F800000U - (BR::Detail::Float::ToRaw32{f}.r & 0x7FFFFFFFU)) >> 31) != 0;
+}
 
-auto libbr_is_nan_q(BR::QFloat x) -> bool;
+constexpr auto libbr_is_nan_64(BR::Float64 f) -> bool {
+	return ((0x7FF00000U - (BR::Detail::Float::ToRaw64{f}.h & 0x7FFFFFFFU) | (BR::Detail::Float::ToRaw64{f}.l != 0)) >> 31) != 0;
+}
+#endif
 //@}
 
 }
 
 namespace BR {
 
-inline auto is_nan(SFloat x) -> bool {
-	return libbr_is_nan_s(x);
+constexpr auto is_nan(Float32 x) -> bool {
+	return libbr_is_nan_32(x);
 }
 
-inline auto is_nan(DFloat x) -> bool {
-	return libbr_is_nan_d(x);
-}
-
-inline auto is_nan(QFloat x) -> bool {
-	return libbr_is_nan_q(x);
+constexpr auto is_nan(Float64 x) -> bool {
+	return libbr_is_nan_64(x);
 }
 
 template< typename T >

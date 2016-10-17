@@ -38,11 +38,11 @@ public:
 	using ConstIterator = TConstIterator;
 
 public:
-	constexpr auto each() noexcept -> BR::Enumerator<Iterator> {
+	BR_CONSTEXPR_AFTER_CXX11 auto each() noexcept -> BR::Enumerator<Iterator> {
 		return make_enumerator(begin(), begin());
 	}
 
-	constexpr auto each() const noexcept -> BR::Enumerator<ConstIterator> {
+	BR_CONSTEXPR_AFTER_CXX11 auto each() const noexcept -> BR::Enumerator<ConstIterator> {
 		return make_enumerator(begin(), begin());
 	}
 
@@ -101,11 +101,11 @@ public:
 
 	using ConstReverseIterator = BR::ReverseIterator<ConstIterator>;
 
-	constexpr auto reverse_each() noexcept -> BR::Enumerator<ReverseIterator> {
+	BR_CONSTEXPR_AFTER_CXX11 auto reverse_each() noexcept -> BR::Enumerator<ReverseIterator> {
 		return make_enumerator(rbegin(), rbegin());
 	}
 
-	constexpr auto reverse_each() const noexcept -> BR::Enumerator<ConstReverseIterator> {
+	BR_CONSTEXPR_AFTER_CXX11 auto reverse_each() const noexcept -> BR::Enumerator<ConstReverseIterator> {
 		return make_enumerator(rbegin(), rbegin());
 	}
 

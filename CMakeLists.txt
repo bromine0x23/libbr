@@ -16,7 +16,7 @@ set(PACKAGE_STRING "${PACKAGE_NAME} ${PACKAGE_VERSION}")
 #===============================================================================
 # Setup CMake Options
 #===============================================================================
-option(LIBBR_ENABLE_CXX14 "Use c++14 language features if the compiler supports it." ON)
+option(LIBBR_ENABLE_CXX14 "Use c++14 language features if the compiler supports it." OFF)
 option(LIBBR_ENABLE_SHARED "Build libbr as a shared library." OFF)
 option(LIBBR_BUILD_32_BITS "Build 32 bit libbr" OFF)
 option(LIBBR_INCLUDE_DOCUMENTATION "Build the HTML based API documentation (requires Doxygen)" OFF)

@@ -8,6 +8,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/functional/less.hpp>
+#include <libbr/math/min.hpp>
 
 #if defined(min)
 #undef min

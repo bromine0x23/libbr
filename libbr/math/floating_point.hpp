@@ -124,7 +124,7 @@ private:
 } // namespace Math
 } // namespace Detail
 
-using Float32 = Detail::Math::Float< 8, 23 >;
-using Float64 = Detail::Math::Float< 11, 52 >;
+// using Float32 = Detail::Math::Float< 8, 23 >;
+// using Float64 = Detail::Math::Float< 11, 52 >;
 
 } // namespace BR

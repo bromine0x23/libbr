@@ -31,7 +31,7 @@ class Enumerator;
  * @return
  */
 template< typename TIterator >
-BR_CONSTEXPR_AFTER_CXX11 auto make_enumerator(TIterator begin, TIterator end) noexcept -> Enumerator<TIterator> {
+constexpr auto make_enumerator(TIterator begin, TIterator end) noexcept -> Enumerator<TIterator> {
 	return Enumerator<TIterator>(begin, end);
 }
 

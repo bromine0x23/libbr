@@ -14,11 +14,6 @@
 namespace BR {
 
 template< typename TIntegral, typename _TDummy = EnableIf< IsIntegral<TIntegral> > >
-constexpr auto abs(TIntegral i) -> TIntegral {
-	return i < 0 ? -i : i;
-};
-
-template< typename TIntegral, typename _TDummy = EnableIf< IsIntegral<TIntegral> > >
 constexpr auto div(TIntegral x, TIntegral y) -> Pair< TIntegral, TIntegral > {
 	return make_pair(x / y, x % y);
 };

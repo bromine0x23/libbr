@@ -189,17 +189,19 @@ using Char16 = char16_t;
  */
 using Char32 = char32_t;
 
+using SInt = SInt32;
+
+using UInt = UInt32;
+
 using SFloat = float;
 
 using DFloat = double;
 
 using QFloat = long double;
 
-using Float32 = SFloat;
+using Float32 = float;
 
-using Float64 = DFloat;
-
-using Float128 = QFloat;
+using Float64 = double;
 
 } // namespace BR
 
@@ -285,5 +287,8 @@ static_assert(BIT_PER_BYTE * sizeof(UInt64) == 64, "UInt64 isn't excatly 64 bits
 static_assert(BIT_PER_BYTE * sizeof(SInt128) == 128, "SInt128 isn't excatly 128 bits.");
 static_assert(BIT_PER_BYTE * sizeof(UInt128) == 128, "UInt128 isn't excatly 128 bits.");
 #endif // defined
+
+static_assert(BIT_PER_BYTE * sizeof(Float32) == 32, "Float32 isn't excatly 32 bits.");
+static_assert(BIT_PER_BYTE * sizeof(Float64) == 64, "Float64 isn't excatly 64 bits.");
 
 } // namespace BR

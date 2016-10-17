@@ -153,7 +153,7 @@ TEST(Tuple, TupleCat) {
 		//BR_FORCE_USE(t);
 	} {
 		Tuple<int> t0(1);
-		Tuple<int> t = tuple_cat(t0);
+		auto t = tuple_cat(t0);
 		EXPECT_EQ(t.get<0>(), 1);
 	}
 }

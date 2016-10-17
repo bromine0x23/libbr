@@ -2,10 +2,14 @@
 
 #include <libbr/config.hpp>
 #include <libbr/math/copy_sign.hpp>
+#include <libbr/math/infinity.hpp>
 #include <libbr/math/is_finite.hpp>
 #include <libbr/math/is_infinite.hpp>
 #include <libbr/math/is_nan.hpp>
-#include <cmath>
+#include <libbr/math/abs.hpp>
+#include <libbr/math/log2.hpp>
+#include <libbr/math/max.hpp>
+#include <libbr/math/scale.hpp>
 
 namespace BR {
 
@@ -235,8 +239,8 @@ auto Complex<TValue>::operator*(Complex const & y) const -> Complex {
 			recalculate = true;
 		}
 		if (recalculate) {
-			zr = Value(INFINITY) * (xr * yr - xi * yi);
-			zi = Value(INFINITY) * (xr * yi + xi * yr);
+			zr = Value(infinity<Value>()) * (xr * yr - xi * yi);
+			zi = Value(infinity<Value>()) * (xr * yi + xi * yr);
 		}
 	}
 	return Complex(zr, zi);
@@ -248,25 +252,25 @@ auto Complex<TValue>::operator/(Complex const & y) const -> Complex {
 	auto xi = imag();
 	auto yr = y.real();
 	auto yi = y.imag();
-	auto log2_y = logb(fmax(fabs(yr), fabs(yi)));
-	int i_log2_y = 0;
+	auto log2_y = log2(max(abs(yr), abs(yi)));
+	SInt i_log2_y = 0;
 	if (is_finite(log2_y)) {
-		i_log2_y = static_cast<int>(log2_y);
-		yr = scalbn(yr, -i_log2_y);
-		yi = scalbn(yi, -i_log2_y);
+		i_log2_y = static_cast<SInt>(log2_y);
+		yr = scale(yr, -i_log2_y);
+		yi = scale(yi, -i_log2_y);
 	}
 	auto norm_y = yr * yr + yi * yi;
-	auto zr = scalbn((xr * yr + xi * yi) / norm_y, -i_log2_y);
-	auto zi = scalbn((xi * yr - xr * yi) / norm_y, -i_log2_y);
+	auto zr = scale((xr * yr + xi * yi) / norm_y, -i_log2_y);
+	auto zi = scale((xi * yr - xr * yi) / norm_y, -i_log2_y);
 	if (is_nan(zr) && is_nan(zi)) {
 		if ((norm_y == Value(0)) && (!is_nan(xr) || !is_nan(xi))) {
-			zr = copy_sign(Value(INFINITY), yr) * xr;
-			zi = copy_sign(Value(INFINITY), yr) * xi;
+			zr = copy_sign(Value(infinity<Value>()), yr) * xr;
+			zi = copy_sign(Value(infinity<Value>()), yr) * xi;
 		} else if ((is_infinite(xr) || is_infinite(xi)) && is_finite(yr) && is_finite(yi)) {
 			xr = copy_sign(is_infinite(xr) ? Value(1) : Value(0), xr);
 			xi = copy_sign(is_infinite(xi) ? Value(1) : Value(0), xi);
-			zr = Value(INFINITY) * (xr * yr + xi * yi);
-			zi = Value(INFINITY) * (xi * yr - xr * yi);
+			zr = Value(infinity<Value>()) * (xr * yr + xi * yi);
+			zi = Value(infinity<Value>()) * (xi * yr - xr * yi);
 		} else if (is_infinite(log2_y) && log2_y > Value(0) && is_finite(xr) && is_finite(xi)) {
 			yr = copy_sign(is_infinite(yr) ? Value(1) : Value(0), yr);
 			yi = copy_sign(is_infinite(yi) ? Value(1) : Value(0), yi);
@@ -281,7 +285,5 @@ extern template auto Complex<SFloat>::operator*(Complex const & y) const -> Comp
 extern template auto Complex<SFloat>::operator/(Complex const & y) const -> Complex;
 extern template auto Complex<DFloat>::operator*(Complex const & y) const -> Complex;
 extern template auto Complex<DFloat>::operator/(Complex const & y) const -> Complex;
-extern template auto Complex<QFloat>::operator*(Complex const & y) const -> Complex;
-extern template auto Complex<QFloat>::operator/(Complex const & y) const -> Complex;
 
 } // namespace BR

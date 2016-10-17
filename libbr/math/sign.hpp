@@ -6,13 +6,14 @@
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/math/detail/float.hpp>
 
 namespace BR {
 
 /**
  * @brief 符号
  */
-enum class Sign {
+enum class Sign : bool {
 	NEG = false,  ///< 负
 	POS = true, ///< 0或正
 	ZPOS = POS
@@ -106,6 +107,14 @@ constexpr auto sign_to_nchar(Sign s) -> NChar {
  */
 constexpr auto sign_to_wchar(Sign s) -> WChar {
 	return s == Sign::POS ? L'+' : L'-';
+}
+
+constexpr auto sign(Float32 f) -> Sign {
+	return Detail::Float::to_raw(f) < 0x80000000U ? Sign::POS : Sign::NEG;
+}
+
+constexpr auto sign(Float64 f) -> Sign {
+	return Detail::Float::to_raw_high(f) < 0x80000000U ? Sign::POS : Sign::NEG;
 }
 
 } // namespace BR

@@ -161,7 +161,7 @@ struct TypeMakeTupleTypes : public TypeRewrap< TypeMakeTupleTypes< T, from + 1, 
 template< typename T, Size to, typename ... TTypes >
 struct TypeMakeTupleTypes< T, to, to, TTypes ... > : public TypeWrapper< TupleTypes< TTypes ... > > {};
 
-template< typename T, Size from = 0, Size to = TupleSize< RemoveReference<T> >::value >
+template< typename T, Size from = 0, Size to = TupleSize< RemoveReference<T> >{} >
 using MakeTupleTypes = TypeUnwrap< TypeMakeTupleTypes< T, from, to > >;
 
 template< typename TFrom, typename TTo >
@@ -172,7 +172,7 @@ struct IsTupleConvertibleBasic< TupleTypes< TFrom ... >, TupleTypes< TTo ... > >
 
 template< typename TFrom, typename TTo >
 struct IsTupleConvertibleApply : public BooleanAnd<
-	BooleanConstant< (TupleSize< RemoveReference<TFrom> >::value == TupleSize<TTo>::value) >,
+	BooleanConstant< (TupleSize< RemoveReference<TFrom> >{} == TupleSize<TTo>{}) >,
 	IsTupleConvertibleBasic< MakeTupleTypes<TFrom>, MakeTupleTypes<TTo> >
 > {};
 

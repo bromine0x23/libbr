@@ -9,6 +9,9 @@
 #include <libbr/config.hpp>
 #include <libbr/type_operate/enable_if.hpp>
 #include <libbr/type_traits/is_integral.hpp>
+#if !defined(BR_GCC)
+#  include <libbr/math/detail/float.hpp>
+#endif
 
 extern "C" {
 
@@ -18,27 +21,35 @@ extern "C" {
  * @return
  */
 //@{
-auto libbr_is_infinite_s(BR::SFloat f) -> bool;
+#if defined(BR_GCC)
+constexpr auto libbr_is_infinite_32(BR::Float32 f) -> bool {
+	return __builtin_isinf(f);
+}
 
-auto libbr_is_infinite_d(BR::DFloat f) -> bool;
+constexpr auto libbr_is_infinite_64(BR::Float64 f) -> bool {
+	return __builtin_isinf(f);
+}
+#else
+constexpr auto libbr_is_infinite_32(BR::Float32 f) -> bool {
+	return ((BR::Detail::Float::ToRaw32{f}.r & 0x7FFFFFFFU) ^ 0x7F800000U) == 0;
+}
 
-auto libbr_is_infinite_q(BR::QFloat f) -> bool;
+constexpr auto libbr_is_infinite_64(BR::Float64 f) -> bool {
+	return (BR::Detail::Float::ToRaw64{f}.l | ((BR::Detail::Float::ToRaw64{f}.h & 0x7FFFFFFFU) ^ 0x7FF00000U)) == 0;
+}
+#endif
 //@}
 
 }
 
 namespace BR {
 
-inline auto is_infinite(SFloat f) -> bool {
-	return libbr_is_infinite_s(f);
+constexpr auto is_infinite(Float32 f) -> bool {
+	return libbr_is_infinite_32(f);
 }
 
-inline auto is_infinite(DFloat f) -> bool {
-	return libbr_is_infinite_d(f);
-}
-
-inline auto is_infinite(QFloat f) -> bool {
-	return libbr_is_infinite_q(f);
+constexpr auto is_infinite(Float64 f) -> bool {
+	return libbr_is_infinite_64(f);
 }
 
 template< typename T >

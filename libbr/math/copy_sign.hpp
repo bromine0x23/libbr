@@ -7,36 +7,46 @@
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/math/detail/float.hpp>
 
 extern "C" {
 
 /**
- * like isinf
+ * like copysign
  * @param f
  * @return
  */
 //@{
-auto libbr_copy_sign_s(BR::SFloat x, BR::SFloat y) -> BR::SFloat;
+#if defined(BR_GCC)
+constexpr auto libbr_copy_sign_32(BR::Float32 x, BR::Float32 s) -> BR::Float32 {
+	return __builtin_copysignf(x, s);
+}
+#else
+constexpr auto libbr_copy_sign_32(BR::Float32 x, BR::Float32 s) -> BR::Float32 {
+	return BR::Detail::Float::to_float(
+		(BR::Detail::Float::to_raw(x) & 0x7FFFFFFFU) | (BR::Detail::Float::to_raw(s) & 0x80000000U)
+	);
+}
+#endif
 
-auto libbr_copy_sign_d(BR::DFloat x, BR::DFloat y) -> BR::DFloat;
-
-auto libbr_copy_sign_q(BR::QFloat x, BR::QFloat y) -> BR::QFloat;
+constexpr auto libbr_copy_sign_64(BR::Float64 x, BR::Float64 s) -> BR::Float64 {
+	return BR::Detail::Float::to_float(
+		(BR::Detail::Float::to_raw_high(x) & 0x7FFFFFFFU) | (BR::Detail::Float::to_raw_high(s) & 0x80000000U),
+		BR::Detail::Float::to_raw_low(x)
+	);
+}
 //@}
 
 }
 
 namespace BR {
 
-inline auto copy_sign(SFloat x, SFloat y) -> SFloat {
-	return libbr_copy_sign_s(x, y);
+constexpr auto copy_sign(Float32 x, Float32 s) -> Float32 {
+	return libbr_copy_sign_32(x, s);
 }
 
-inline auto copy_sign(DFloat x, DFloat y) -> DFloat {
-	return libbr_copy_sign_d(x, y);
-}
-
-inline auto copy_sign(QFloat x, QFloat y) -> QFloat {
-	return libbr_copy_sign_q(x, y);
+constexpr auto copy_sign(Float64 x, Float64 s) -> Float64 {
+	return libbr_copy_sign_64(x, s);
 }
 
 } // namespace BR
