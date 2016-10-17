@@ -20,3 +20,6 @@
 #
 bin/
 msvc/
+
+# CMake
+CMakeFiles/
