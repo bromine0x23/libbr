@@ -31,11 +31,11 @@ constexpr auto libbr_is_finite_64(BR::Float64 f) -> bool {
 }
 #else
 constexpr auto libbr_is_finite_32(BR::Float32 f) -> bool {
-	return (((BR::Detail::Float::ToRaw32{f}.r & 0x7FFFFFFFU) - 0x7F800000U) >> 31) != 0;
+	return (((BR::Detail::Float::to_raw(f) & 0x7FFFFFFFU) - 0x7F800000U) >> 31) != 0;
 }
 
 constexpr auto libbr_is_finite_64(BR::Float64 f) -> bool {
-	return (((BR::Detail::Float::ToRaw64{f}.h & 0x7FFFFFFFU) - 0x7FF00000U) >> 31) != 0;
+	return (((BR::Detail::Float::to_raw_high(f) & 0x7FFFFFFFU) - 0x7FF00000U) >> 31) != 0;
 }
 #endif
 //@}

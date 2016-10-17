@@ -31,11 +31,11 @@ constexpr auto libbr_is_nan_64(BR::Float64 f) -> bool {
 }
 #else
 constexpr auto libbr_is_nan_32(BR::Float32 f) -> bool {
-	return ((0x7F800000U - (BR::Detail::Float::ToRaw32{f}.r & 0x7FFFFFFFU)) >> 31) != 0;
+	return ((0x7F800000U - (BR::Detail::Float::to_raw(f) & 0x7FFFFFFFU)) >> 31) != 0;
 }
 
 constexpr auto libbr_is_nan_64(BR::Float64 f) -> bool {
-	return ((0x7FF00000U - (BR::Detail::Float::ToRaw64{f}.h & 0x7FFFFFFFU) | (BR::Detail::Float::ToRaw64{f}.l != 0)) >> 31) != 0;
+	return ((0x7FF00000U - (BR::Detail::Float::to_raw_high(f) & 0x7FFFFFFFU) | (BR::Detail::Float::to_raw_low(f) != 0)) >> 31) != 0;
 }
 #endif
 //@}

@@ -26,11 +26,11 @@ constexpr auto libbr_abs_64(BR::Float64 x) -> BR::Float64 {
 }
 #else
 constexpr auto libbr_abs_32(BR::Float32 f) -> BR::Float32 {
-	return BR::Detail::Float::ToFloat32{ BR::Detail::Float::ToRaw32{f}.r & 0x7FFFFFFFU }.f;
+	return BR::Detail::Float::ToFloat32{ BR::Detail::Float::to_raw(f) & 0x7FFFFFFFU }.f;
 }
 
 constexpr auto libbr_abs_64(BR::Float64 f) -> BR::Float64 {
-	return BR::Detail::Float::combine_float64(BR::Detail::Float::ToRaw64{f}.h & 0x7FFFFFFFU, BR::Detail::Float::ToRaw64{f}.l);
+	return BR::Detail::Float::combine_float64(BR::Detail::Float::to_raw_high(f) & 0x7FFFFFFFU, BR::Detail::Float::to_raw_low(f));
 }
 #endif
 

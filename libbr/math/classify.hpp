@@ -40,7 +40,7 @@ constexpr auto libbr_classify64(BR::Float64 x) -> BR::SInt {
 #else
 BR_CONSTEXPR_AFTER_CXX11 inline auto libbr_classify32(BR::Float32 x) -> BR::SInt {
 	auto category = BR::FloatCategory::normal;
-	auto r = BR::Detail::Float::ToRaw32{f}.r & 0x7FFFFFFFU;
+	auto r = BR::Detail::Float::to_raw(f) & 0x7FFFFFFFU;
 	if (r == 0x00000000U) {
 		category = BR::FloatCategory::zero;
 	} else if (r < 0x00800000U) {
@@ -55,8 +55,8 @@ BR_CONSTEXPR_AFTER_CXX11 inline auto libbr_classify32(BR::Float32 x) -> BR::SInt
 
 BR_CONSTEXPR_AFTER_CXX11 inline auto libbr_classify64(BR::Float64 x) -> BR::SInt {
 	auto category = BR::FloatCategory::normal;
-	auto h = BR::Detail::Float::ToRaw64{f}.h;
-	auto l = BR::Detail::Float::ToRaw64{f}.l;
+	auto h = BR::Detail::Float::to_raw_high(f);
+	auto l = BR::Detail::Float::to_raw_low(f);
 	UInt32 t = l | (h & 0x000FFFFFU);
 	UInt32 u = h & 0x7FF00000U;
 	if ((t | u) == 0x00000000U) {
