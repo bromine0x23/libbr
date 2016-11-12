@@ -6,9 +6,10 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/math/detail/float.hpp>
+#include <libbr/math/detail/bind.hpp>
 
 namespace BR {
+inline namespace Math {
 
 /**
  * @brief 符号
@@ -109,12 +110,13 @@ constexpr auto sign_to_wchar(Sign s) -> WChar {
 	return s == Sign::POS ? L'+' : L'-';
 }
 
-constexpr auto sign(Float32 f) -> Sign {
-	return Detail::Float::to_raw(f) < 0x80000000U ? Sign::POS : Sign::NEG;
+inline auto sign(Float32 f) -> Sign {
+	return Detail::Math::Bind32{f}.r < 0x80000000U ? Sign::POS : Sign::NEG;
 }
 
-constexpr auto sign(Float64 f) -> Sign {
-	return Detail::Float::to_raw_high(f) < 0x80000000U ? Sign::POS : Sign::NEG;
+inline auto sign(Float64 f) -> Sign {
+	return Detail::Math::Bind64{f}.h < 0x80000000U ? Sign::POS : Sign::NEG;
 }
 
+} // inline namespace Math
 } // namespace BR

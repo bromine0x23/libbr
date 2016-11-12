@@ -12,19 +12,22 @@
 
 extern "C" {
 
-#if defined(BR_GCC)
-constexpr auto libbr_round_32(BR::Float32 x) -> BR::Float32 {
-	return __builtin_roundf(x);
-}
-#else
+/**
+ * like std::round
+ * @param x
+ * @return
+ */
+//@{
 auto libbr_round_32(BR::Float32 x) -> BR::Float32;
-#endif
 
 auto libbr_round_64(BR::Float64 x) -> BR::Float64;
+//@}
 
 }
 
 namespace BR {
+inline namespace Math {
+inline namespace Function {
 
 inline auto round(Float32 x) -> Float32 {
 	return libbr_round_32(x);
@@ -46,4 +49,6 @@ constexpr auto round(T x) -> EnableIf< IsIntegral<T>, T > {
 }
 #endif
 
+} // inline namespace Function
+} // inline namespace Math
 } // namespace BR

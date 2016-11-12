@@ -4,7 +4,7 @@
 
 namespace BR {
 namespace Detail {
-namespace Float {
+namespace Math {
 
 union Bind32 {
 	Float32 f;
@@ -23,7 +23,9 @@ union Bind32 {
 		UInt mantissa:23;
 	};
 #endif
+
 	constexpr Bind32(Float32 f) : f(f) {}
+
 	constexpr Bind32(UInt32 r) : r(r) {}
 };
 
@@ -56,56 +58,14 @@ union Bind64 {
 		UInt mantissa1:32;
 	};
 #endif
+
+	constexpr Bind64(Float64 f) : f(f) {}
+
+	constexpr Bind64(UInt64 r) : r(r) {}
+
+	constexpr Bind64(UInt32 h, UInt32 l) : h(h), l(l) {}
 };
 
-template< typename TFrom, typename TTo >
-union Converter {
-	TFrom f;
-	TTo t;
-};
-
-inline auto to_raw(Float32 f) -> UInt32 {
-	return Bind32{f}.r;
-}
-
-inline auto to_raw(Float64 f) -> UInt64 {
-	return Bind64{f}.r;
-}
-
-inline auto to_raw_high(Float64 f) -> UInt32 {
-	return Bind64{f}.h;
-}
-
-inline auto to_raw_low(Float64 f) -> UInt32 {
-	return Bind64{f}.l;
-}
-
-inline auto to_float(UInt32 r) -> Float32 {
-	return Converter< UInt32, Float32 >{r}.t;
-}
-
-inline auto to_float(UInt64 r) -> Float64 {
-	return Converter< UInt64, Float64 >{r}.t;
-}
-
-struct Raw64 {
-#if defined(BR_LITTLE_ENDIAN)
-	UInt32 l, h;
-#else
-	UInt32 h, l;
-#endif
-};
-
-inline auto to_float(UInt32 h, UInt32 l) -> Float64 {
-	return Converter< Raw64, Float64 >{
-#if defined(BR_LITTLE_ENDIAN)
-		{ l, h }
-#else
-		{ h, l }
-#endif
-	}.t;
-}
-
-} // namespace Float
+} // namespace Math
 } // namespace Detail
 } // namespace BR

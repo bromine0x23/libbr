@@ -1,14 +1,14 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/math/copy_sign.hpp>
-#include <libbr/math/infinity.hpp>
-#include <libbr/math/is_finite.hpp>
-#include <libbr/math/is_infinite.hpp>
-#include <libbr/math/is_nan.hpp>
-#include <libbr/math/abs.hpp>
-#include <libbr/math/log2.hpp>
-#include <libbr/math/max.hpp>
+#include <libbr/math/function/copy_sign.hpp>
+#include <libbr/math/make_infinity.hpp>
+#include <libbr/math/function/is_finite.hpp>
+#include <libbr/math/function/is_infinite.hpp>
+#include <libbr/math/function/is_nan.hpp>
+#include <libbr/math/function/abs.hpp>
+#include <libbr/math/function/log2.hpp>
+#include <libbr/math/function/max.hpp>
 #include <libbr/math/scale.hpp>
 
 namespace BR {
@@ -239,8 +239,8 @@ auto Complex<TValue>::operator*(Complex const & y) const -> Complex {
 			recalculate = true;
 		}
 		if (recalculate) {
-			zr = Value(infinity<Value>()) * (xr * yr - xi * yi);
-			zi = Value(infinity<Value>()) * (xr * yi + xi * yr);
+			zr = Value(make_infinity<Value>()) * (xr * yr - xi * yi);
+			zi = Value(make_infinity<Value>()) * (xr * yi + xi * yr);
 		}
 	}
 	return Complex(zr, zi);
@@ -264,13 +264,13 @@ auto Complex<TValue>::operator/(Complex const & y) const -> Complex {
 	auto zi = scale((xi * yr - xr * yi) / norm_y, -i_log2_y);
 	if (is_nan(zr) && is_nan(zi)) {
 		if ((norm_y == Value(0)) && (!is_nan(xr) || !is_nan(xi))) {
-			zr = copy_sign(Value(infinity<Value>()), yr) * xr;
-			zi = copy_sign(Value(infinity<Value>()), yr) * xi;
+			zr = copy_sign(Value(make_infinity<Value>()), yr) * xr;
+			zi = copy_sign(Value(make_infinity<Value>()), yr) * xi;
 		} else if ((is_infinite(xr) || is_infinite(xi)) && is_finite(yr) && is_finite(yi)) {
 			xr = copy_sign(is_infinite(xr) ? Value(1) : Value(0), xr);
 			xi = copy_sign(is_infinite(xi) ? Value(1) : Value(0), xi);
-			zr = Value(infinity<Value>()) * (xr * yr + xi * yi);
-			zi = Value(infinity<Value>()) * (xi * yr - xr * yi);
+			zr = Value(make_infinity<Value>()) * (xr * yr + xi * yi);
+			zi = Value(make_infinity<Value>()) * (xi * yr - xr * yi);
 		} else if (is_infinite(log2_y) && log2_y > Value(0) && is_finite(xr) && is_finite(xi)) {
 			yr = copy_sign(is_infinite(yr) ? Value(1) : Value(0), yr);
 			yi = copy_sign(is_infinite(yi) ? Value(1) : Value(0), yi);

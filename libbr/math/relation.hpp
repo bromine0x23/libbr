@@ -8,6 +8,7 @@
 #include <libbr/config.hpp>
 
 namespace BR {
+inline namespace Math {
 
 /**
  * @brief 比较结果
@@ -30,4 +31,5 @@ constexpr auto to_relation(TIntegral const & x) -> Relation {
 	return x != TIntegral(0) ? (x < TIntegral(0) ? Relation::LT : Relation::GT) : Relation::EQ;
 }
 
+} // inline namespace Math
 } // namespace BR

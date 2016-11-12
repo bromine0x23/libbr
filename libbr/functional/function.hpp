@@ -29,8 +29,13 @@
 
 namespace BR {
 
+inline namespace Functional {
+
 template< typename TFunction >
 class Function;
+
+} // inline namespace Functional
+
 
 namespace Detail {
 namespace Functional {
@@ -156,8 +161,7 @@ auto Function< TDerivedFunction, TAllocator, TResult(TArguments ...) >::target_t
 } // namespace Functional
 } // namespace Detail
 
-template< typename TFunction >
-class Function;
+inline namespace Functional {
 
 template< typename TResult, typename ... TArguments >
 class Function<TResult(TArguments ...)> : BasicFunctor< TArguments ... > {
@@ -376,5 +380,7 @@ template< typename TResult, typename ... TArguments >
 inline void swap(Function<TResult(TArguments ...)> & x, Function<TResult(TArguments ...)> & y) noexcept {
 	return x.swap(y);
 }
+
+} // inline namespace Functional
 
 } // namespace BR

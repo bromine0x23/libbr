@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief common
+ * @brief div
  * @author Bromine0x23
  * @since 2015/11/2
  */
@@ -13,8 +13,8 @@
 
 namespace BR {
 
-template< typename TIntegral, typename _TDummy = EnableIf< IsIntegral<TIntegral> > >
-constexpr auto div(TIntegral x, TIntegral y) -> Pair< TIntegral, TIntegral > {
+template< typename T >
+constexpr auto div(T x, T y) -> EnableIf< IsIntegral<T>, Pair< TIntegral, TIntegral > > {
 	return make_pair(x / y, x % y);
 };
 

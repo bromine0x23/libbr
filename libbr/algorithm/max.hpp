@@ -8,7 +8,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/functional/less.hpp>
-#include <libbr/math/max.hpp>
+#include <libbr/math/function/max.hpp>
 
 #if defined(max)
 #undef max

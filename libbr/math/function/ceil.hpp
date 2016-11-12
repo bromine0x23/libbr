@@ -12,19 +12,22 @@
 
 extern "C" {
 
-#if defined(BR_GCC)
-constexpr auto libbr_ceil_32(BR::Float32 x) -> BR::Float32 {
-	return __builtin_ceilf(x);
-}
-#else
+/**
+ * like std::ceil
+ * @param x
+ * @return
+ */
+//@{
 auto libbr_ceil_32(BR::Float32 x) -> BR::Float32;
-#endif
 
 auto libbr_ceil_64(BR::Float64 x) -> BR::Float64;
+//@}
 
 }
 
 namespace BR {
+inline namespace Math {
+inline namespace Function {
 
 inline auto ceil(Float32 x) -> Float32 {
 	return libbr_ceil_32(x);
@@ -46,4 +49,6 @@ constexpr auto ceil(T x) -> EnableIf< IsIntegral<T>, T > {
 }
 #endif
 
+} // inline namespace Function
+} // inline namespace Math
 } // namespace BR

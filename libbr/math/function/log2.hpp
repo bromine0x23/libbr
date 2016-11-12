@@ -10,23 +10,31 @@
 #include <libbr/type_operate/enable_if.hpp>
 #include <libbr/type_traits/is_integral.hpp>
 
-#if defined(BR_GCC)
-constexpr auto libbr_log2_s(BR::SFloat x) -> BR::SFloat {
-	return __builtin_log2f(x);
+extern "C" {
+
+/**
+ * like std::log2
+ * @param x
+ * @return
+ */
+//@{
+auto libbr_log2_32(BR::Float32 x) -> BR::Float32;
+
+auto libbr_log2_64(BR::Float64 x) -> BR::Float64;
+//@}
+
 }
-#else
-extern "C" { auto libbr_log2_s(BR::SFloat x) -> BR::SFloat; }
-#endif
-extern "C" { auto libbr_log2_d(BR::DFloat x) -> BR::DFloat; }
 
 namespace BR {
+inline namespace Math {
+inline namespace Function {
 
-inline auto log2(SFloat x) -> SFloat {
-	return libbr_log2_s(x);
+inline auto log2(Float32 x) -> Float32 {
+	return libbr_log2_32(x);
 }
 
-inline auto log2(DFloat x) -> DFloat {
-	return libbr_log2_d(x);
+inline auto log2(Float64 x) -> Float64 {
+	return libbr_log2_64(x);
 }
 
 #if defined(BR_GCC)
@@ -41,4 +49,6 @@ constexpr auto log2(T x) -> EnableIf< IsIntegral<T>, T > {
 }
 #endif
 
+} // inline namespace Function
+} // inline namespace Math
 } // namespace BR

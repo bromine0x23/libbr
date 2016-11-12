@@ -12,19 +12,22 @@
 
 extern "C" {
 
-#if defined(BR_GCC)
-constexpr auto libbr_floor_32(BR::Float32 x) -> BR::Float32 {
-	return __builtin_floorf(x);
-}
-#else
+/**
+ * like std::floor
+ * @param x
+ * @return
+ */
+//@{
 auto libbr_floor_32(BR::Float32 x) -> BR::Float32;
-#endif
 
 auto libbr_floor_64(BR::Float64 x) -> BR::Float64;
+//@}
 
 }
 
 namespace BR {
+inline namespace Math {
+inline namespace Function {
 
 inline auto floor(Float32 x) -> Float32 {
 	return libbr_floor_32(x);
@@ -46,4 +49,6 @@ constexpr auto floor(T x) -> EnableIf< IsIntegral<T>, T > {
 }
 #endif
 
+} // inline namespace Function
+} // inline namespace Math
 } // namespace BR
