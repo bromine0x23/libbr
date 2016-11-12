@@ -93,11 +93,6 @@ using IsIntegral = IsIntegralBasic< RemoveConstVolatile<T> >;
 template< typename T >
 struct IsIntegral : public BooleanRewrapPositive< Detail::TypeTraits::IsIntegral<T> > {};
 
-/**
- * @brief IsIntegral 的否定
- * @tparam T 待检查类型
- * @see BR::IsIntegral
- */
 template< typename T >
 struct NotIntegral : public BooleanRewrapNegative< Detail::TypeTraits::IsIntegral<T> > {};
 

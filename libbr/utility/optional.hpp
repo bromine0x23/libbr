@@ -8,10 +8,8 @@
 
 #include <libbr/config.hpp>
 #include <libbr/container/initializer_list.hpp>
+#include <libbr/exception/logic_exception.hpp>
 #include <libbr/memory/address_of.hpp>
-#include <libbr/optional/in_place_tag.hpp>
-#include <libbr/optional/null_optional.hpp>
-#include <libbr/optional/throw_optional_access_exception.hpp>
 #include <libbr/type_operate/bool.hpp>
 #include <libbr/type_operate/decay.hpp>
 #include <libbr/type_operate/enable_if.hpp>
@@ -39,6 +37,26 @@ namespace BR {
 template< typename T >
 class Optional;
 
+struct InPlaceTag {
+};
+
+constexpr auto in_place_tag = InPlaceTag();
+
+struct NullOptional {
+	explicit constexpr NullOptional(int) noexcept {
+	}
+};
+
+constexpr auto null_optional = NullOptional(0);
+
+class OptionalAccessException : public LogicException {
+public:
+	OptionalAccessException() : LogicException("Bad optional Access") {
+	}
+
+	virtual ~OptionalAccessException() noexcept override;
+};
+
 template< typename T >
 inline void swap(Optional<T> & x, Optional<T> & y) noexcept(noexcept(x.swap(y))) {
 	x.swap(y);
@@ -52,7 +70,7 @@ constexpr inline auto make_optional(TValue && value) -> Optional< Decay<TValue> 
 namespace Detail {
 namespace Utility {
 
-template< typename T, bool = HasTrivialDestructor<T>::value >
+template< typename T, bool = HasTrivialDestructor<T>{} >
 class OptionalStorage;
 
 template< typename T >
@@ -60,7 +78,7 @@ class OptionalStorage< T, true > {
 	using Value = T;
 
 protected:
-	constexpr OptionalStorage() noexcept :  m_null_state('\0'), m_engaged(false) {
+	constexpr OptionalStorage() noexcept :  m_null_state(0), m_engaged(false) {
 	}
 
 	OptionalStorage(OptionalStorage const & storage) :  m_engaged(storage.m_engaged) {
@@ -69,7 +87,7 @@ protected:
 		}
 	}
 
-	OptionalStorage(OptionalStorage && storage) noexcept(HasNothrowMoveConstructor<Value>::value) :  m_engaged(storage.m_engaged) {
+	OptionalStorage(OptionalStorage && storage) noexcept(HasNothrowMoveConstructor<Value>{}) :  m_engaged(storage.m_engaged) {
 		if (m_engaged) {
 			::new(address_of(m_value)) Value(move(storage.m_value));
 		}
@@ -89,7 +107,7 @@ protected:
 
 protected:
 	union {
-		char m_null_state;
+		UInt8 m_null_state;
 		Value m_value;
 	};
 	bool m_engaged;
@@ -100,7 +118,7 @@ class OptionalStorage< T, false > {
 	using Value = T;
 
 protected:
-	constexpr OptionalStorage() noexcept :  m_null_state('\0'), m_engaged(false) {
+	constexpr OptionalStorage() noexcept :  m_null_state(0), m_engaged(false) {
 	}
 
 	OptionalStorage(OptionalStorage const & storage) :  m_engaged(storage.m_engaged) {
@@ -133,7 +151,7 @@ protected:
 
 protected:
 	union {
-		char m_null_state;
+		UInt8 m_null_state;
 		Value m_value;
 	};
 	bool m_engaged;
@@ -144,16 +162,17 @@ protected:
 
 template< typename T >
 class Optional : private Detail::Utility::OptionalStorage<T> {
+private:
 	using Base = Detail::Utility::OptionalStorage<T>;
 
 public:
 	using Value = T;
 
-	static_assert(NotReference<Value>::value, "Instantiation of Optional with a reference type is ill-formed.");
-	static_assert(NotSame< RemoveConstVolatile<Value>, InPlaceTag >::value, "Instantiation of optional with a in_place_t type is ill-formed.");
-	static_assert(NotSame< RemoveConstVolatile<Value>, NullOptional >::value, "Instantiation of optional with a in_place_t type is ill-formed.");
-	static_assert(IsObject<Value>::value, "Instantiation of optional with a non-object type is undefined behavior.");
-	static_assert(HasNothrowDestructor<Value>::value, "Instantiation of optional with an object type that is not noexcept destructible is undefined behavior.");
+	static_assert(NotReference<Value>{}, "Instantiation of Optional with a reference type is ill-formed.");
+	static_assert(NotSame< RemoveConstVolatile<Value>, InPlaceTag >{}, "Instantiation of optional with a in_place_t type is ill-formed.");
+	static_assert(NotSame< RemoveConstVolatile<Value>, NullOptional >{}, "Instantiation of optional with a in_place_t type is ill-formed.");
+	static_assert(IsObject<Value>{}, "Instantiation of optional with a non-object type is undefined behavior.");
+	static_assert(HasNothrowDestructor<Value>{}, "Instantiation of optional with an object type that is not noexcept destructible is undefined behavior.");
 
 	constexpr Optional() noexcept {
 	}
@@ -246,7 +265,7 @@ public:
 		this->m_engaged = true;
 	}
 
-	void swap(Optional & optional) noexcept(BooleanAnd< HasNothrowMoveConstructor<Value>, IsNothrowSwappable<Value> >::value) {
+	void swap(Optional & optional) noexcept(BooleanAnd< HasNothrowMoveConstructor<Value>, IsNothrowSwappable<Value> >{}) {
 		using BR::swap;
 		if (this->m_engaged == optional.m_engaged) {
 			if (this->m_engaged) {
@@ -264,6 +283,11 @@ public:
 		}
 	}
 
+	/**
+	 * ->
+	 * @return
+	 */
+	//@{
 	BR_CONSTEXPR_AFTER_CXX11 auto operator->() const -> Value const * {
 		BR_ASSERT(this->m_engaged);
 		return m_operator_arrow(HasOperatorAddressOf<Value>());
@@ -273,7 +297,13 @@ public:
 		BR_ASSERT(this->m_engaged);
 		return address_of(this->m_value);
 	}
+	//@}
 
+	/**
+	 * *
+	 * @return
+	 */
+	//@{
 	BR_CONSTEXPR_AFTER_CXX11 auto operator*() const & -> Value const & {
 		BR_ASSERT(this->m_engaged);
 		return this->m_value;
@@ -283,25 +313,50 @@ public:
 		BR_ASSERT(this->m_engaged);
 		return this->m_value;
 	}
+	//@}
 
 	constexpr explicit operator bool() const noexcept {
 		return this->m_engaged;
 	}
 
+	/**
+	 * @return
+	 */
+	//@{
 	BR_CONSTEXPR_AFTER_CXX11 auto value() const -> Value const & {
 		if (!this->m_engaged) {
-			throw_optional_access_exception();
+#if BR_NO_EXCEPTIONS
+			assert(!"bad optional access");
+#else
+			throw OptionalAccessException();
+#endif
 		}
 		return this->m_value;
 	}
+	//@}
 
+	/**
+	 * @return
+	 */
+	//@{
 	BR_CONSTEXPR_AFTER_CXX11 auto value() -> Value & {
 		if (!this->m_engaged) {
-			throw_optional_access_exception();
+#if BR_NO_EXCEPTIONS
+			assert(!"bad optional access");
+#else
+			throw OptionalAccessException();
+#endif
 		}
 		return this->m_value;
 	}
+	//@}
 
+	/**
+	 * @tparam TOtherValue
+	 * @param value
+	 * @return
+	 */
+	//@{
 	template< typename TOtherValue >
 	constexpr auto value_or(TOtherValue && value) const & -> Value {
 		static_assert(HasCopyConstructor<Value>{}, "Optional<T>::value_or: Value must be copy constructible");
@@ -310,12 +365,19 @@ public:
 	}
 
 	template< typename TOtherValue >
-	constexpr auto value_or(TOtherValue && value) && -> Value {
+	BR_CONSTEXPR_AFTER_CXX11 auto value_or(TOtherValue && value) && -> Value {
 		static_assert(HasCopyConstructor<Value>{}, "Optional<T>::value_or: Value must be copy constructible");
 		static_assert(IsConvertible< TOtherValue, Value>{}, "Optional<T>::value_or: TOtherValue must be convertible to Value");
 		return this->m_engaged ? move(this->m_value) : static_cast<Value>(forward<TOtherValue>(value));
 	}
+	//@}
 
+	/**
+	 * ==
+	 * @param y
+	 * @return
+	 */
+	//@{
 	constexpr auto operator==(Optional const & y) const -> bool {
 		return operator bool() == y.operator bool() && (!operator bool() || operator*() == y.operator*());
 	}
@@ -327,7 +389,14 @@ public:
 	constexpr auto operator==(Value value) const -> bool {
 		return operator bool() ? operator*() == value : false;
 	}
+	//@}
 
+	/**
+	 * !=
+	 * @param y
+	 * @return
+	 */
+	//@{
 	constexpr auto operator!=(Optional const & y) const -> bool {
 		return !operator==(y);
 	}
@@ -339,7 +408,14 @@ public:
 	constexpr auto operator!=(Value value) const -> bool {
 		return !operator==(value);
 	}
+	//@}
 
+	/**
+	 * <
+	 * @param y
+	 * @return
+	 */
+	//@{
 	constexpr auto operator<(Optional const & y) const -> bool {
 		return !y.operator bool() && (!operator bool() || operator*() < y.operator*());
 	}
@@ -351,11 +427,18 @@ public:
 	constexpr auto operator<(Value value) const -> bool {
 		return operator bool() ? operator*() < value : true;
 	}
+	//@}
 
 	constexpr auto operator>(Optional const & y) const -> bool {
 		return y.operator<(*this);
 	}
 
+	/**
+	 * >
+	 * @param y
+	 * @return
+	 */
+	//@{
 	constexpr auto operator>(NullOptional) const -> bool {
 		return operator bool();
 	}
@@ -363,7 +446,14 @@ public:
 	constexpr auto operator>(Value value) const -> bool {
 		return operator bool() ? value < operator*() : false;
 	}
+	//@}
 
+	/**
+	 * <=
+	 * @param y
+	 * @return
+	 */
+	//@{
 	constexpr auto operator<=(Optional const & y) const -> bool {
 		return !operator>(y);
 	}
@@ -375,7 +465,14 @@ public:
 	constexpr auto operator<=(Value value) const -> bool {
 		return !operator>(value);
 	}
+	//@}
 
+	/**
+	 * >=
+	 * @param y
+	 * @return
+	 */
+	//@{
 	constexpr auto operator>=(Optional const & y) const -> bool {
 		return !operator<(y);
 	}
@@ -387,6 +484,7 @@ public:
 	constexpr auto operator>=(Value value) const -> bool {
 		return !operator<(value);
 	}
+	//@}
 
 private:
 	auto m_operator_arrow(BooleanTrue) const -> Value const * {
@@ -399,5 +497,64 @@ private:
 
 }; // class Optional<T>
 
+template< typename T >
+constexpr auto operator==(NullOptional x, Optional<T> const & y) -> bool {
+	return y == x;
+}
+
+template< typename T >
+constexpr auto operator!=(NullOptional x, Optional<T> const & y) -> bool {
+	return y != x;
+}
+
+template< typename T >
+constexpr auto operator<(NullOptional x, Optional<T> const & y) -> bool {
+	return y > x;
+}
+
+template< typename T >
+constexpr auto operator>(NullOptional x, Optional<T> const & y) -> bool {
+	return y < x;
+}
+
+template< typename T >
+constexpr auto operator<=(NullOptional x, Optional<T> const & y) -> bool {
+	return y <= x;
+}
+
+template< typename T >
+constexpr auto operator>=(NullOptional x, Optional<T> const & y) -> bool {
+	return y >= x;
+}
+
+template< typename T >
+constexpr auto operator==(T x, Optional<T> const & y) -> bool {
+	return y == x;
+}
+
+template< typename T >
+constexpr auto operator!=(T x, Optional<T> const & y) -> bool {
+	return y != x;
+}
+
+template< typename T >
+constexpr auto operator<(T x, Optional<T> const & y) -> bool {
+	return y > x;
+}
+
+template< typename T >
+constexpr auto operator>(T x, Optional<T> const & y) -> bool {
+	return y < x;
+}
+
+template< typename T >
+constexpr auto operator<=(T x, Optional<T> const & y) -> bool {
+	return y <= x;
+}
+
+template< typename T >
+constexpr auto operator>=(T x, Optional<T> const & y) -> bool {
+	return y >= x;
+}
 
 } // namespace BR

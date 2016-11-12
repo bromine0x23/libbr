@@ -7,6 +7,8 @@ static bool is_even(int v) {
 	return v % 2 == 0;
 }
 
+template class BR::ForwardList<int>;
+
 TEST(ForwardList, Each) {
 
 	ForwardList<int> list{ 0, 1, 2, 3, 4 };

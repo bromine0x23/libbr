@@ -26,6 +26,49 @@ namespace BR {
 template< typename TElement, typename TComparator = Less<TElement>, typename TAllocator = Allocator<TElement> >
 class BinaryTree;
 
+namespace Detail {
+namespace Container {
+namespace BinaryTree {
+
+template< typename TElement, typename TVoidPointer >
+struct Node;
+
+template< typename TNodePointer >
+struct BasicNode;
+
+template< typename TElement, typename TVoidPointer >
+using HeadNode = BasicNode< typename PointerTraits<TVoidPointer>::template Rebind< Node<TElement, TVoidPointer> > >;
+
+template< typename TNodePointer >
+struct BasicNode {
+	using NodePointer = TNodePointer;
+
+	using BasicNodePointer = typename PointerTraits<NodePointer>::template Rebind<BasicNode>;
+
+	BasicNode() : parent(nullptr), left(self()), right(self()) {
+	}
+
+	auto self() -> NodePointer {
+		return static_cast<NodePointer>(PointerTraits<BasicNodePointer>::make_pointer(*this));
+	}
+
+	NodePointer parent;
+	NodePointer left;
+	NodePointer right;
+};
+
+template< typename TElement, typename TVoidPointer >
+struct Node : public HeadNode< TElement, TVoidPointer > {
+	using Element = TElement;
+
+	Element element;
+};
+
+} // namespace BinaryTree
+} // namespace Container
+} // namespace Detail
+
+
 template< typename TElement, typename TComparator, typename TAllocator >
 class BinaryTree : private Detail::Container::BinaryTree::Base< TElement, TComparator, TAllocator > {
 

@@ -61,14 +61,9 @@ namespace TypeTraits {
 template< typename T >
 struct IsFloatingPointBasic : public BooleanFalse {};
 
-template<>
-struct IsFloatingPointBasic<float> : public BooleanTrue {};
-
-template<>
-struct IsFloatingPointBasic<double> : public BooleanTrue {};
-
-template<>
-struct IsFloatingPointBasic<long double> : public BooleanTrue {};
+template<> struct IsFloatingPointBasic<float>       : public BooleanTrue {};
+template<> struct IsFloatingPointBasic<double>      : public BooleanTrue {};
+template<> struct IsFloatingPointBasic<long double> : public BooleanTrue {};
 
 template< typename T >
 using IsFloatingPoint = IsFloatingPointBasic< RemoveConstVolatile<T> >;

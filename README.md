@@ -14,7 +14,6 @@ Use [CMake](https://cmake.org/).
 - Exception
 - Functional
 - Memory
-- Optional
 - String
 - Type Operate
 - Type Traits

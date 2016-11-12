@@ -16,6 +16,7 @@
 #include <libbr/utility/integral_constant.hpp>
 #include <libbr/utility/make_value.hpp>
 #include <libbr/utility/move.hpp>
+#include <libbr/utility/optional.hpp>
 #include <libbr/utility/piecewise_construct_tag.hpp>
 #include <libbr/utility/swap.hpp>
 #include <libbr/utility/timer.hpp>

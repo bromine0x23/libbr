@@ -12,6 +12,7 @@
 #if !defined(BR_HAS_NOTHROW_DESTRUCTOR)
 #  include <libbr/type_operate/bool.hpp>
 #  include <libbr/type_traits/has_destructor.hpp>
+#  include <libbr/type_traits/is_array.hpp>
 #endif
 
 namespace BR {
@@ -72,13 +73,19 @@ using HasNothrowDestructor = BooleanConstant< BR_HAS_NOTHROW_DESTRUCTOR(T) >;
 #else
 
 template< typename T >
-struct HasNothrowDestructorBasic : public BooleanConstant< noexcept(make_reference<T>().~T()) > {};
+struct HasNothrowDestructorBasic : public BooleanConstant< noexcept(make_rvalue<T>().~T()) > {};
 
 template< typename T >
 struct HasNothrowDestructor : public BooleanAnd<
 	HasDestructor<T>,
 	HasNothrowDestructorBasic<T>
 > {};
+
+template< typename T, Size S >
+struct HasNothrowDestructor<T[S]> : public HasNothrowDestructor<T> {};
+
+template< typename T >
+struct HasNothrowDestructor<T&> : public HasNothrowDestructor<T> {};
 
 #endif // defined(BR_HAS_NOTHROW_DESTRUCTOR)
 

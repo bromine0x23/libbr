@@ -84,7 +84,7 @@ template< typename TNodeConstPointer >
 class ConstIterator;
 
 template< typename TNodePointer >
-class Iterator : public BasicIterator {
+class Iterator : public IteratorWithCategory< ReadableTag, WritableTag, ForwardTraversalTag > {
 private:
 	using NodePointer = TNodePointer;
 
@@ -99,9 +99,6 @@ private:
 	friend class ConstIterator;
 
 public:
-	struct Category : public IteratorTag, public ReadableTag, public WritableTag, public ForwardTraversalTag {
-	};
-
 	using Element = typename Node::Element;
 
 	using Pointer = typename NodePointerTraits::template Rebind<Element>;
@@ -149,7 +146,7 @@ private:
 }; // class Iterator<TNodePointer>
 
 template< typename TNodeConstPointer >
-class ConstIterator : BasicIterator {
+class ConstIterator : public IteratorWithCategory< ReadableTag, ForwardTraversalTag > {
 private:
 	using NodeConstPointer = TNodeConstPointer;
 
@@ -163,9 +160,6 @@ private:
 	friend class BR::ForwardList;
 
 public:
-	struct Category : public IteratorTag, public ReadableTag, public ForwardTraversalTag {
-	};
-
 	using Element = typename Node::Element;
 
 	using Pointer = typename NodeConstPointerTraits::template Rebind<Element const>;
@@ -216,7 +210,7 @@ public:
 	}
 
 private:
-	explicit ConstIterator(NodePointer pointer) noexcept : m_pointer(pointer) {}
+	explicit ConstIterator(NodeConstPointer pointer) noexcept : m_pointer(pointer) {}
 
 private:
 	NodeConstPointer m_pointer;
@@ -269,7 +263,7 @@ public:
 
 	using Iterator = ForwardList::Iterator<NodePointer>;
 
-	using ConstIterator = ForwardList::ConstIterator<NodePointer>;
+	using ConstIterator = ForwardList::ConstIterator<NodeConstPointer>;
 
 protected:
 	Base() noexcept(HasNothrowDefaultConstructor<NodeAllocator>{}) : m_impl() {

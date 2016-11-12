@@ -169,7 +169,7 @@ struct IsConstructibleManyTest {
 	template< typename T, typename... TArgs, typename = decltype(T(make_rvalue<TArgs>()...)) >
 	static auto test(int) -> BooleanTrue;
 
-	template< typename T, typename TArg >
+	template< typename T, typename... TArg >
 	static auto test(...) -> BooleanFalse;
 };
 

@@ -4,6 +4,9 @@
 
 namespace BR {
 
+struct UnreadableTag {
+};
+
 struct ReadableTag {
 };
 

@@ -14,9 +14,16 @@ namespace BR {
 /**
  * @brief 作为所有迭代器类的基类，空类
  */
-class BasicIterator {
+struct BasicIterator {
 public:
 	struct Category : public IteratorTag {
+	};
+};
+
+template< typename ... TCategories >
+struct IteratorWithCategory : public BasicIterator {
+public:
+	struct Category : public IteratorTag, TCategories... {
 	};
 };
 
