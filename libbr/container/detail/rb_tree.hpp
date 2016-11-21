@@ -1,7 +1,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/container/detail/binary_tree.hpp>
+#include <libbr/container/detail/binary_tree_node.hpp>
 #include <libbr/utility/move.hpp>
 
 namespace BR {
