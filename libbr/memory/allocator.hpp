@@ -13,12 +13,13 @@
 #include <libbr/utility/forward.hpp>
 
 namespace BR {
+inline namespace Memory {
 
 /**
  * @brief 默认分配器
  * @tparam TValue 元素类型
  */
-template< typename TElement >
+template<typename TElement>
 class Allocator;
 
 template<>
@@ -38,24 +39,24 @@ public:
 
 	using IsAlwaysEqual = BooleanTrue;
 
-	template< typename TOtherElement >
+	template<typename TOtherElement>
 	using Rebind = Allocator<TOtherElement>;
 
 	constexpr Allocator() noexcept = default;
 
-	template< typename TOtherElement >
+	template<typename TOtherElement>
 	BR_FORCE_INLINE auto operator==(Allocator<TOtherElement> const &) const noexcept -> bool {
 		return true;
 	}
 
-	template< typename TOtherElement >
+	template<typename TOtherElement>
 	BR_FORCE_INLINE auto operator!=(Allocator<TOtherElement> const &) const noexcept -> bool {
 		return false;
 	}
 
 }; // class Allocator< void >
 
-template< typename TElement >
+template<typename TElement>
 class Allocator {
 public:
 	using Element = TElement;
@@ -76,13 +77,13 @@ public:
 
 	using IsAlwaysEqual = BooleanTrue;
 
-	template< typename TOtherElement >
+	template<typename TOtherElement>
 	using Rebind = Allocator<TOtherElement>;
 
 	BR_FORCE_INLINE constexpr Allocator() noexcept {
 	}
 
-	template< typename TOtherElement >
+	template<typename TOtherElement>
 	BR_FORCE_INLINE constexpr Allocator(Allocator<TOtherElement> const &) noexcept {
 	}
 
@@ -106,8 +107,8 @@ public:
 		return Size(~0) / sizeof(Element);
 	}
 
-	template< typename TOtherElement, typename ... TArgs >
-	BR_FORCE_INLINE void construct(TOtherElement * pointer, TArgs && ... args) {
+	template<typename TOtherElement, typename ... TArgs>
+	BR_FORCE_INLINE void construct(TOtherElement *pointer, TArgs &&... args) {
 		::new(reinterpret_cast< void * >(pointer)) TOtherElement(forward<TArgs>(args) ...);
 	}
 
@@ -115,16 +116,17 @@ public:
 		pointer->~Value();
 	}
 
-	template< typename TOtherElement >
+	template<typename TOtherElement>
 	BR_FORCE_INLINE auto operator==(Allocator<TOtherElement> const &) const noexcept -> bool {
 		return true;
 	}
 
-	template< typename TOtherElement >
+	template<typename TOtherElement>
 	BR_FORCE_INLINE auto operator!=(Allocator<TOtherElement> const &) const noexcept -> bool {
 		return false;
 	}
 
 }; // class Allocator<TElement>
 
+} // namespace Memory
 } // namespace BR

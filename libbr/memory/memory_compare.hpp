@@ -12,27 +12,29 @@
 extern "C" {
 
 /**
- * @brief like C STL memcmp
+ * @brief like std::memcmp
  * @param[in] X
  * @param[in] Y
- * @param[in] n
+ * @param n
  */
 auto libbr_memory_compare(void const * X, void const * Y, BR::Size n) -> BR::Relation;
 
 }
 
 namespace BR {
+inline namespace Memory {
 
 /**
- * @brief like C STL memcmp
+ * @brief like std::memcmp
  * @param[in] X
  * @param[in] Y
- * @param[in] n
+ * @param n
  * @see libbr_memory_compare
  */
 inline auto memory_compare(void const * X, void const * Y, Size n) -> Relation {
 	return libbr_memory_compare(X, Y, n);
 }
 
+} // namespace Memory
 } // namespace BR
 

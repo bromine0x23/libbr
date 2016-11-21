@@ -11,8 +11,17 @@
 
 namespace BR {
 
-template< typename TX, typename TY >
-struct BinaryFunctor : public BasicFunctor< TX, TY > {
+inline namespace Functional {
+
+/**
+ * @tparam TFirst
+ * @tparam TSecond
+ */
+template< typename TFirst, typename TSecond >
+struct BinaryFunctor : public BasicFunctor< TFirst, TSecond > {
+	constexpr BinaryFunctor() noexcept = default;
 };
+
+} // namespace Functional
 
 } // namespace BR

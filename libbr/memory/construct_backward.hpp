@@ -11,8 +11,12 @@
 
 namespace BR {
 
+inline namespace Memory {
+
 template< typename TAllocator, typename TInputIterator, typename TValue >
 inline auto construct_backward(TAllocator & allocator, TInputIterator first, TInputIterator last, TValue * pointer) -> TValue *;
+
+} // namespace Memory
 
 
 

@@ -18,6 +18,8 @@
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * 指针特性类
  * @tparam TPointer 指针类型
@@ -25,7 +27,7 @@ namespace BR {
 template< typename TPointer >
 struct PointerTraits;
 
-
+} // inline namespace TypeTraits
 
 namespace Detail {
 namespace TypeTraits {
@@ -89,12 +91,10 @@ using Rebind = TypeUnwrap< TypeRebind< TPointer, TElement > >;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename TPointer >
 struct PointerTraits {
-private:
-	struct NAT {
-	};
-
 public:
 	/**
 	 * @brief 指针类型，即 \em TPointer
@@ -128,6 +128,10 @@ public:
 	template< typename TOtherElement >
 	using Rebind = Detail::TypeTraits::PointerTraits::Rebind< Pointer, TOtherElement >;
 
+private:
+	struct NAT {};
+
+public:
 	/**
 	 * @brief 包装引用为指针
 	 * @pre \em Element 不是 \em void
@@ -143,13 +147,10 @@ public:
 };
 
 /**
-* @brief 指针特性类对原生指针的特化
-*/
+ * @brief 指针特性类对原生指针的特化
+ */
 template< typename TElement >
 struct PointerTraits< TElement * > {
-private:
-	struct NAT {
-	};
 
 public:
 	using Element = TElement;
@@ -159,6 +160,10 @@ public:
 	template< typename TOtherElement >
 	using Rebind = TOtherElement *;
 
+private:
+	struct NAT {};
+
+public:
 	static Pointer make_pointer(Conditional< IsVoid<Element>, NAT, Element > & reference) {
 		return address_of(reference);
 	}
@@ -172,5 +177,7 @@ template< typename TPointer >
 inline auto pointer_to_raw(TPointer pointer) -> typename PointerTraits<TPointer>::Element * {
 	return PointerTraits<TPointer>::to_raw(pointer);
 }
+
+} // inline namespace TypeTraits
 
 } // namespace BR

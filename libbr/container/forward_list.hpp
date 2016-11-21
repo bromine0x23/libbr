@@ -37,6 +37,8 @@
 
 namespace BR {
 
+
+
 template< typename TElement, typename TAllocator = Allocator<TElement> >
 class ForwardList;
 
@@ -88,7 +90,7 @@ class Iterator : public IteratorWithCategory< ReadableTag, WritableTag, ForwardT
 private:
 	using NodePointer = TNodePointer;
 
-	using NodePointerTraits = PointerTraits<NodePointer>;
+	using NodePointerTraits = BR::PointerTraits<NodePointer>;
 
 	using Node = typename NodePointerTraits::Element;
 

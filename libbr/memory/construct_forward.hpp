@@ -11,8 +11,12 @@
 
 namespace BR {
 
+inline namespace Memory {
+
 template< typename TAllocator, typename TInputIterator, typename TValue >
 inline auto construct_forward(TAllocator & allocator, TInputIterator first, TInputIterator last, TValue * pointer) -> TValue *;
+
+} // namespace Memory
 
 
 
@@ -37,9 +41,13 @@ auto construct_forward(TAllocator & allocator, TInputValue * first, TInputValue 
 } // namespace Memory
 } // namespace Detail
 
+inline namespace Memory {
+
 template< typename TAllocator, typename TInputIterator, typename TValue >
 auto construct_forward(TAllocator & allocator, TInputIterator first, TInputIterator last, TValue * pointer) -> TValue * {
 	Detail::Memory::construct_forward(allocator, first, last, pointer);
 }
+
+} // namespace Memory
 
 } // namespace BR

@@ -22,8 +22,16 @@
 
 namespace BR {
 
+inline namespace Memory {
+
+/**
+ *
+ * @tparam TAllocators
+ */
 template< typename... TAllocators >
 class ScopedAllocatorAdaptor;
+
+} // namespace Memory
 
 namespace Detail {
 namespace Memory {
@@ -47,25 +55,25 @@ protected:
 	Storage() noexcept {
 	}
 
-	template< typename TOuter, typename _TDummy = EnableIf< IsConstructible< OuterAllocator, TOuter > > >
+	template< typename TOuter, typename = EnableIf< IsConstructible< OuterAllocator, TOuter > > >
 	Storage(
 		TOuter && outer,  TInnerAllocators const & ... inners
 	) noexcept : OuterAllocator(forward<TOuter>(outer)), m_inner(inners...) {
 	}
 
-	template< typename TOuter, typename _TDummy = EnableIf< IsConstructible< OuterAllocator, TOuter const & > > >
+	template< typename TOuter, typename = EnableIf< IsConstructible< OuterAllocator, TOuter const & > > >
 	Storage(
 		Storage< TOuter, TInnerAllocators... > const & other
 	) noexcept : OuterAllocator(other.outer_allocator()), m_inner(other.inner_allocator()) {
 	}
 
-	template< typename TOuter, typename _TDummy = EnableIf< IsConstructible< OuterAllocator, TOuter > > >
+	template< typename TOuter, typename = EnableIf< IsConstructible< OuterAllocator, TOuter > > >
 	Storage(
 		Storage< TOuter, TInnerAllocators... > && other
 	) noexcept : OuterAllocator(move(other.outer_allocator())), m_inner(move(other.inner_allocator())) {
 	}
 
-	template< typename TOuter, typename _TDummy = EnableIf< IsConstructible< OuterAllocator, TOuter > > >
+	template< typename TOuter, typename = EnableIf< IsConstructible< OuterAllocator, TOuter > > >
 	Storage(
 		TOuter && outer, InnerAllocator const & inner
 	) noexcept : OuterAllocator(forward<TOuter>(outer)), m_inner(inner) {
@@ -111,15 +119,15 @@ protected:
 	Storage() noexcept {
 	}
 
-	template< typename TOuter, typename _TDummy = EnableIf< IsConstructible< OuterAllocator, TOuter > > >
+	template< typename TOuter, typename = EnableIf< IsConstructible< OuterAllocator, TOuter > > >
 	Storage(TOuter && outer) noexcept : OuterAllocator(forward<TOuter>(outer)) {
 	}
 
-	template< typename TOuter, typename _TDummy = EnableIf< IsConstructible< OuterAllocator, TOuter const & > > >
+	template< typename TOuter, typename = EnableIf< IsConstructible< OuterAllocator, TOuter const & > > >
 	Storage(Storage<TOuter> const & other) noexcept : OuterAllocator(other.outer_allocator()) {
 	}
 
-	template< typename TOuter, typename _TDummy = EnableIf< IsConstructible< OuterAllocator, TOuter > > >
+	template< typename TOuter, typename = EnableIf< IsConstructible< OuterAllocator, TOuter > > >
 	Storage(Storage<TOuter> && other) noexcept : OuterAllocator(move(other.outer_allocator())) {
 	}
 
@@ -178,9 +186,8 @@ struct OuterMost< TAllocator, false > {
 } // namespace Memory
 } // namespace Detail
 
-/**
- * @brief ScopedAllocatorAdaptor
- */
+inline namespace Memory {
+
 template< typename TOuterAllocator, typename ... TInnerAllocators >
 class ScopedAllocatorAdaptor< TOuterAllocator, TInnerAllocators... > : public Detail::Memory::ScopedAllocatorAdaptor::Storage< TOuterAllocator, TInnerAllocators... > {
 
@@ -231,15 +238,15 @@ public:
 	ScopedAllocatorAdaptor() noexcept {
 	}
 
-	template< typename TOuter, typename _TDummy = EnableIf< IsConstructible< OuterAllocator, TOuter > > >
+	template< typename TOuter, typename = EnableIf< IsConstructible< OuterAllocator, TOuter > > >
 	ScopedAllocatorAdaptor(TOuter && outer,  TInnerAllocators const & ... inners) noexcept : Base(forward<TOuter>(outer), inners ...) {
 	}
 
-	template< typename TOuter, typename _TDummy = EnableIf< IsConstructible< OuterAllocator, TOuter const & > > >
+	template< typename TOuter, typename = EnableIf< IsConstructible< OuterAllocator, TOuter const & > > >
 	ScopedAllocatorAdaptor(ScopedAllocatorAdaptor< TOuter, TInnerAllocators ... > const & other) noexcept : Base(other) {
 	}
 
-	template< typename TOuter, typename _TDummy = EnableIf< IsConstructible< OuterAllocator, TOuter > > >
+	template< typename TOuter, typename = EnableIf< IsConstructible< OuterAllocator, TOuter > > >
 	ScopedAllocatorAdaptor(ScopedAllocatorAdaptor< TOuter, TInnerAllocators ... > && other) noexcept : Base(move(other)) {
 	}
 
@@ -308,31 +315,34 @@ private:
 	}
 
 	template< typename TValue, typename... TArguments>
-	void m_construct(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::not_used > _dummy, TValue * pointer, TArguments && ... arguments) {
+	void m_construct(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::not_used >, TValue * pointer, TArguments && ... arguments) {
 		using OM = Detail::Memory::ScopedAllocatorAdaptor::OuterMost<OuterAllocator>;
 		AllocatorTraits<OM>::construct(OM()(outer_allocator()), pointer, forward<TArguments>(arguments)...);
 	}
 
 	template< typename TValue, typename... TArguments>
-	void m_construct(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_with_tag > _dummy, TValue * pointer, TArguments && ... arguments) {
+	void m_construct(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_with_tag >, TValue * pointer, TArguments && ... arguments) {
 		using OM = Detail::Memory::ScopedAllocatorAdaptor::OuterMost<OuterAllocator>;
 		AllocatorTraits<OM>::construct(OM()(outer_allocator()), pointer, allocator_argument_tag, inner_allocator(), forward<TArguments>(arguments)...);
 	}
 
 	template< typename TValue, typename... TArguments>
-	void m_construct(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_without_tag > _dummy, TValue * pointer, TArguments && ... arguments) {
+	void m_construct(AllocatorConstructorUsageConstant< AllocatorConstructorUsageType::use_without_tag >, TValue * pointer, TArguments && ... arguments) {
 		using OM = Detail::Memory::ScopedAllocatorAdaptor::OuterMost<OuterAllocator>;
 		AllocatorTraits<OM>::construct(OM()(outer_allocator()), pointer, allocator_argument_tag, forward<TArguments>(arguments)..., inner_allocator());
 	}
 
-	auto m_equal(ScopedAllocatorAdaptor const & y, BooleanTrue _dummy) const noexcept -> bool {
+	auto m_equal(ScopedAllocatorAdaptor const & y, BooleanTrue) const noexcept -> bool {
 		return outer_allocator() == y.outer_allocator();
 	}
 
-	auto m_equal(ScopedAllocatorAdaptor const & y, BooleanFalse _dummy) const noexcept -> bool {
+	auto m_equal(ScopedAllocatorAdaptor const & y, BooleanFalse) const noexcept -> bool {
 		return outer_allocator() == y.outer_allocator() && inner_allocator() == y.inner_allocator();
 	}
 
 }; // class ScopedAllocatorAdaptor< TOuterAllocator, TInnerAllocators... >
+
+
+} // namespace Memory
 
 } // namespace BR

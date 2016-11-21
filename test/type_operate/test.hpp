@@ -3,6 +3,14 @@
 #include "../test.hpp"
 #include <libbr/config.hpp>
 
+
+#if defined(BR_SKIP_TYPE_OPERATE_TEST)
+
+#define OPERATE_CHECK(...)
+#define OPERATE_CHECKS(...)
+
+#else
+
 template< typename T0, typename T1 >
 struct IsSameType {
 	constexpr static auto value = false;
@@ -42,6 +50,8 @@ struct IsSameType< T, T > {
 	OPERATE_CHECK(     double        to_suffix, operate,      double        from_suffix);\
 	OPERATE_CHECK(long double        to_suffix, operate, long double        from_suffix);\
 	OPERATE_CHECK(UDT                to_suffix, operate, UDT                from_suffix);
+
+#endif
 
 struct UDT {
 	UDT();

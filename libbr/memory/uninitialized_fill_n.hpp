@@ -17,9 +17,22 @@
 
 namespace BR {
 
+inline namespace Memory {
+
+/**
+ *
+ * @tparam TForwardIterator
+ * @tparam TSize
+ * @tparam TValue
+ * @param[in,out] first
+ * @param count
+ * @param value
+ * @return
+ */
 template< typename TForwardIterator, typename TSize, typename TValue >
 inline auto uninitialized_fill_n(TForwardIterator first, TSize count, TValue const & value) -> TForwardIterator;
 
+} // namespace Memory
 
 
 namespace Detail {
@@ -59,9 +72,13 @@ inline auto uninitialized_fill_n(TForwardIterator first, TSize count, TValue con
 } // namespace Memory
 } // namespace Detail
 
+inline namespace Memory {
+
 template< typename TForwardIterator, typename TSize, typename TValue >
 auto uninitialized_fill_n(TForwardIterator first, TSize count, TValue const & value) -> TForwardIterator {
 	return Detail::Memory::uninitialized_fill_n(first, count, value);
 }
+
+} // namespace Memory
 
 } // namespace BR

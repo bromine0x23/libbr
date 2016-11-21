@@ -1,8 +1,8 @@
 /**
  * @file
- * @brief 一元函数对象基类
+ * @brief 变参函数对象基类
  * @author Bromine0x23
- * @since 2015/10/24
+ * @since 2016/11/21
  */
 #pragma once
 
@@ -14,11 +14,12 @@ namespace BR {
 inline namespace Functional {
 
 /**
- * @tparam TArgument
+ * 变参函数对象基类
  */
-template< typename TArgument >
-struct UnaryFunctor : public BasicFunctor< TArgument > {
-	constexpr UnaryFunctor() noexcept = default;
+struct VariadicFunctor : public BasicFunctor<> {
+	constexpr static SInt arity = -1;
+
+	constexpr VariadicFunctor() noexcept = default;
 };
 
 } // namespace Functional

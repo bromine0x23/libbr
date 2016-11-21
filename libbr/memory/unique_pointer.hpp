@@ -29,26 +29,57 @@
 
 namespace BR {
 
+inline namespace Memory {
+
+/**
+ * UniquePointer
+ * @tparam TElement
+ * @tparam TDeleter
+ */
 template< typename TElement, typename TDeleter = DefaultDeleter<TElement> >
 class UniquePointer;
 
+/**
+ *
+ * @tparam TElement
+ * @tparam TArgs
+ * @param args
+ * @return
+ */
 template< typename TElement, typename... TArgs >
 inline auto make_unique_pointer(TArgs &&... args) -> EnableIf< NotArray<TElement>, UniquePointer<TElement> > {
 	return UniquePointer<TElement>(new TElement(forward<TArgs>(args)...));
 }
 
+/**
+ *
+ * @tparam TElement
+ * @param count
+ * @return
+ */
 template< typename TElement >
 inline auto make_unique_pointer(Size count) -> EnableIf< IsArrayUnknownBounds<TElement>, UniquePointer<TElement> > {
 	return UniquePointer<TElement>(new RemoveExtent<TElement>[count]());
 }
 
+
 template< typename TElement, typename... TArgs >
 inline auto make_unique_pointer(TArgs &&... args) -> EnableIf< IsArrayKnownBounds<TElement> > = delete;
 
+/**
+ * swap for UniquePointer
+ * @tparam TElement
+ * @tparam TDeleter
+ * @param x
+ * @param y
+ */
 template< typename TElement, typename TDeleter >
 inline void swap(UniquePointer< TElement, TDeleter > & x, UniquePointer< TElement, TDeleter > & y) noexcept {
 	x.swap(y);
 }
+
+} // namespace Memory
+
 
 namespace Detail {
 namespace Memory {
@@ -56,8 +87,11 @@ namespace UniquePointer {
 
 BR_HAS_MEMBER_TYPE(Pointer)
 
-template< typename TElement, typename TDeleter, bool = HasMemberTypePointer<TDeleter>::value >
+template< typename TElement, typename TDeleter, bool = HasMemberTypePointer<TDeleter>{} >
 struct TypePointer;
+
+template< typename TElement, typename TDeleter >
+using Pointer = TypeUnwrap< TypePointer< TElement, TDeleter> >;
 
 template< typename TElement, typename TDeleter >
 struct TypePointer< TElement, TDeleter, true > : TypeWrapper< typename TDeleter::Pointer > {
@@ -66,9 +100,6 @@ struct TypePointer< TElement, TDeleter, true > : TypeWrapper< typename TDeleter:
 template< typename TElement, typename TDeleter >
 struct TypePointer< TElement, TDeleter, false > : TypeWrapper< TElement * > {
 };
-
-template< typename TElement, typename TDeleter >
-using Pointer = TypeUnwrap< TypePointer< TElement, TDeleter> >;
 
 template< typename TDeleter >
 using DeleterLValue = Conditional< IsReference<TDeleter>, TDeleter, TDeleter const & >;
@@ -79,6 +110,8 @@ using DeleterRValue = RemoveReference<TDeleter> &&;
 } // namespace UniquePointer
 } // namespace Memory
 } // namespace Detail
+
+inline namespace Memory {
 
 template< typename TElement, typename TDeleter >
 class UniquePointer {
@@ -467,5 +500,7 @@ private:
 	Tuple< Pointer, Deleter > m_impl;
 
 }; // class UniquePointer< TElement[], TDeleter >
+
+} // namespace Memory
 
 } // namespace BR

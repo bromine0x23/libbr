@@ -11,13 +11,21 @@
 
 namespace BR {
 
+inline namespace Functional {
+
+/**
+ *
+ * @tparam TArguments
+ */
 template< typename ... TArguments >
 struct BasicFunctor {
 	using Arguments = Types< TArguments... >;
 
-	constexpr static auto arity = sizeof...(TArguments);
+	constexpr static SInt arity = sizeof...(TArguments);
 
 	constexpr BasicFunctor() noexcept = default;
 };
+
+} // namespace Functional
 
 } // namespace BR

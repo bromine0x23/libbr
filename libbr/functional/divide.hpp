@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief class Divide
+ * @brief class Divide<TLhs, TRhs>
  * @author Bromine0x23
  * @since 2015/10/30
  */
@@ -12,38 +12,51 @@
 
 namespace BR {
 
-template< typename TX = void, typename TY = TX >
+inline namespace Functional {
+
+/**
+ * Functor for operator/
+ * @tparam TLhs
+ * @tparam TRhs
+ */
+template< typename TLhs = void, typename TRhs = TLhs >
 struct Divide;
 
-template< typename TX, typename TY >
-struct Divide : public BinaryFunctor< TX, TY > {
-	BR_CONSTEXPR_AFTER_CXX11 auto operator() (TX const & x, TY const & y) const -> decltype(x / y) {
-		return x / y;
+} // namespace Functional
+
+inline namespace Functional {
+
+template< typename TLhs, typename TRhs >
+struct Divide : public BinaryFunctor< TLhs, TRhs > {
+	constexpr auto operator() (TLhs const & lhs, TRhs const & rhs) const -> decltype(lhs / rhs) {
+		return lhs / rhs;
 	}
 };
 
-template< typename TX >
-struct Divide< TX, void > : public BinaryFunctor< TX, void > {
-	template< typename TY >
-	BR_CONSTEXPR_AFTER_CXX11 auto operator() (TX const & x, TY && y) const -> decltype(x / forward<TY>(y)) {
-		return x / forward<TY>(y);
+template< typename TLhs >
+struct Divide< TLhs, void > : public BinaryFunctor< TLhs, void > {
+	template< typename TRhs >
+	constexpr auto operator() (TLhs const & lhs, TRhs && rhs) const -> decltype(lhs / forward<TRhs>(rhs)) {
+		return lhs / forward<TRhs>(rhs);
 	}
 };
 
-template< typename TY >
-struct Divide< void, TY > : public BinaryFunctor< void, TY > {
-	template< typename TX >
-	BR_CONSTEXPR_AFTER_CXX11 auto operator() (TX && x, TY const & y) const -> decltype(forward<TX>(x) / y) {
-		return forward<TX>(x) / y;
+template< typename TRhs >
+struct Divide< void, TRhs > : public BinaryFunctor< void, TRhs > {
+	template< typename TLhs >
+	constexpr auto operator() (TLhs && lhs, TRhs const & rhs) const -> decltype(forward<TLhs>(lhs) / rhs) {
+		return forward<TLhs>(lhs) / rhs;
 	}
 };
 
 template<>
 struct Divide< void, void > : public BinaryFunctor< void, void > {
-	template< typename TX, typename TY >
-	BR_CONSTEXPR_AFTER_CXX11 auto operator() (TX && x, TY && y) const -> decltype(forward<TX>(x) / forward<TY>(y)) {
-		return forward<TX>(x) / forward<TY>(y);
+	template< typename TLhs, typename TRhs >
+	constexpr auto operator() (TLhs && lhs, TRhs && rhs) const -> decltype(forward<TLhs>(lhs) / forward<TRhs>(rhs)) {
+		return forward<TLhs>(lhs) / forward<TRhs>(rhs);
 	}
 };
+
+} // namespace Functional
 
 } // namespace BR

@@ -27,6 +27,8 @@
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * 分配器特性类
  * @tparam TAllocator 分配器类型
@@ -34,7 +36,7 @@ namespace BR {
 template< typename TAllocator >
 struct AllocatorTraits;
 
-
+} // namespace TypeTraits
 
 namespace Detail {
 namespace TypeTraits {
@@ -336,7 +338,9 @@ struct SelectOnContainerCopyConstructionBasic< false, TAllocator, TArguments ...
 } // namespace TypeTraits
 } // namespace Detail
 
-template< typename TAllocator >
+inline namespace TypeTraits {
+
+template<typename TAllocator>
 struct AllocatorTraits {
 	using Allocator        = TAllocator;
 	using Element          = Detail::TypeTraits::AllocatorTraits::Element<Allocator>;
@@ -352,7 +356,7 @@ struct AllocatorTraits {
 	using IsPropagateOnContainerSwap           = Detail::TypeTraits::AllocatorTraits::IsPropagateOnContainerSwap<Allocator>;
 	using IsAlwaysEqual                        = Detail::TypeTraits::AllocatorTraits::IsAlwaysEqual<Allocator>;
 
-	template< typename TElement >
+	template<typename TElement>
 	using Rebind = Detail::TypeTraits::AllocatorTraits::Rebind<TAllocator, TElement>;
 
 	static Pointer allocate(Allocator & allocator, Size size) {
@@ -360,7 +364,8 @@ struct AllocatorTraits {
 	}
 
 	static Pointer allocate(Allocator & allocator, Size size, ConstVoidPointer hint) {
-		return Detail::TypeTraits::AllocatorTraits::Allocate<Allocator, Size, ConstVoidPointer>::call(allocator, size, hint);
+		return Detail::TypeTraits::AllocatorTraits::Allocate<Allocator, Size, ConstVoidPointer>::call(allocator, size,
+		                                                                                              hint);
 	}
 
 	static void deallocate(Allocator & allocator, Pointer pointer, Size size) noexcept {
@@ -368,12 +373,12 @@ struct AllocatorTraits {
 	}
 
 	template<typename TElement, typename ... TArguments>
-	static void construct(Allocator & allocator, TElement * pointer, TArguments && ... arguments) {
+	static void construct(Allocator & allocator, TElement * pointer, TArguments &&... arguments) {
 		BR::construct(allocator, pointer, forward<TArguments>(arguments) ...);
 	}
 
 	template<typename TElement>
-	static void destroy(Allocator & allocator, TElement * pointer) {
+	static void destroy(Allocator &allocator, TElement *pointer) {
 		BR::destroy(allocator, pointer);
 	}
 
@@ -385,5 +390,7 @@ struct AllocatorTraits {
 		return Detail::TypeTraits::AllocatorTraits::SelectOnContainerCopyConstruction<Allocator>::call(allocator);
 	}
 };
+
+} // namespace TypeTraits
 
 } // namespace BR

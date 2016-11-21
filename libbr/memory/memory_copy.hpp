@@ -11,27 +11,29 @@
 extern "C" {
 
 /**
- * @brief like C STL memcpy
+ * @brief like std::memcpy
  * @param[out] D
  * @param[in] S
- * @param[in] n
+ * @param n
  */
 void libbr_memory_copy(void * D, void const * S, BR::Size n);
 
 }
 
 namespace BR {
+inline namespace Memory {
 
 /**
- * @brief like C STL memcpy
+ * @brief like std::memcpy
  * @param[out] D
  * @param[in] S
- * @param[in] n
+ * @param n
  * @see libbr_memory_copy
  */
 inline void memory_copy(void * D, void const * S, Size n) {
 	libbr_memory_copy(D, S, n);
 }
 
+} // namespace Memory
 } // namespace BR
 

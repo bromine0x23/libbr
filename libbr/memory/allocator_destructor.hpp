@@ -5,29 +5,33 @@
 #include <libbr/type_traits/allocator_traits.hpp>
 
 namespace BR {
+inline namespace Memory {
 
-template< typename Allocator >
-class AllocatorDestructor : public UnaryFunctor< typename AllocatorTraits<Allocator>::Pointer > {
+template< typename TAllocator >
+struct AllocatorDestructor : public UnaryFunctor<typename AllocatorTraits<TAllocator>::Pointer> {
 
-	using Traits = AllocatorTraits<Allocator>;
+	using Allocator = TAllocator;
+
+private:
+	using AllocatorTraits = BR::AllocatorTraits<Allocator>;
 
 public:
-	using Pointer = typename Traits::Pointer;
+	using Pointer = typename AllocatorTraits::Pointer;
 
-	using Size = typename Traits::Size;
+	using Size = typename AllocatorTraits::Size;
 
 public:
 	AllocatorDestructor(Allocator & allocator, Size size) noexcept : m_allocator(allocator), m_size(size) {}
 
 	void operator()(Pointer pointer) noexcept {
-		Traits::deallocate(m_allocator, pointer, m_size);
+		AllocatorTraits::deallocate(m_allocator, pointer, m_size);
 	}
 
 private:
 	Allocator & m_allocator;
-
 	Size m_size;
 };
 
+} // namespace Memory
 } // namespace BR
 

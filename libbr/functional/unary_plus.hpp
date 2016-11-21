@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief class UnaryPlus
+ * @brief class UnaryPlus<T>
  * @author Bromine0x23
  * @since 2015/10/30
  */
@@ -12,22 +12,34 @@
 
 namespace BR {
 
-template< typename TX = void >
+inline namespace Functional {
+
+/**
+ * Functor for unary operator+
+ * @tparam T
+ */
+template< typename T = void >
 struct UnaryPlus;
 
-template< typename TX >
-struct UnaryPlus : public UnaryFunctor< TX > {
-	BR_CONSTEXPR_AFTER_CXX11 auto operator() (TX const & x) const -> decltype(+x) {
-		return +x;
+} // namespace Functional
+
+inline namespace Functional {
+
+template< typename T >
+struct UnaryPlus : public UnaryFunctor< T > {
+	constexpr auto operator() (T const & t) const -> decltype(+t) {
+		return +t;
 	}
 };
 
 template<>
 struct UnaryPlus<void> : public UnaryFunctor< void > {
-	template< typename TX >
-	BR_CONSTEXPR_AFTER_CXX11 auto operator() (TX && x) const -> decltype(+forward<TX>(x)) {
-		return +forward<TX>(x);
+	template< typename T >
+	constexpr auto operator() (T && t) const -> decltype(+forward<T>(t)) {
+		return +forward<T>(t);
 	}
 };
+
+} // namespace Functional
 
 } // namespace BR

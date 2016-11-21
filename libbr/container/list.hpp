@@ -39,6 +39,13 @@
 
 namespace BR {
 
+inline namespace Container {
+
+/**
+ * @brief 双向链表
+ * @tparam TElement 元素类型
+ * @tparam TAllocator 分配器类型
+ */
 template< typename TElement, typename TAllocator = Allocator<TElement> >
 class List;
 
@@ -47,6 +54,7 @@ inline void swap(List< TElement, TAllocator > & x, List< TElement, TAllocator > 
 	x.swap(y);
 }
 
+} // inline namespace Container
 
 
 namespace Detail {
@@ -362,16 +370,9 @@ protected:
 
 	void m_clear() noexcept;
 
-	void m_swap(Base & list) noexcept(
-		BooleanOr< BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerSwap >, IsNothrowSwappable<NodeAllocator> >{}
-	);
+	void m_swap(Base & list) noexcept(typename NodeAllocatorTraits::IsAlwaysEqual{});
 
-	static void m_swap_allocator(NodeAllocator & x, NodeAllocator & y) noexcept(
-		BooleanOr<
-			BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerSwap >,
-			IsNothrowSwappable<NodeAllocator>
-		>{}
-	) {
+	static void m_swap_allocator(NodeAllocator & x, NodeAllocator & y) noexcept(typename NodeAllocatorTraits::IsAlwaysEqual{}) {
 		m_swap_allocator(x, y, typename NodeAllocatorTraits::IsPropagateOnContainerSwap{});
 	}
 
@@ -466,9 +467,7 @@ void Base< TElement, TAllocator >::m_insert_nodes_at_back(NodePointer f, NodePoi
 }
 
 template< typename TElement, typename TAllocator >
-void Base< TElement, TAllocator >::m_swap(Base & list) noexcept(
-	BooleanOr< BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerSwap >, IsNothrowSwappable<NodeAllocator> >{}
-) {
+void Base< TElement, TAllocator >::m_swap(Base & list) noexcept(typename NodeAllocatorTraits::IsAlwaysEqual{}) {
 	using BR::swap;
 	m_swap_allocator(m_allocator(), list.m_allocator());
 	swap(m_head()->next, list.m_head()->next);
@@ -482,11 +481,8 @@ void Base< TElement, TAllocator >::m_swap(Base & list) noexcept(
 } // namespace Container
 } // namespace Detail
 
-/**
- * @brief 双向链表
- * @tparam TElement 元素类型
- * @tparam TAllocator 分配器类型
- */
+inline namespace Container {
+
 template< typename TElement, typename TAllocator >
 class List : private Detail::Container::List::Base< TElement, TAllocator >,
 	public Enumerable<
@@ -598,8 +594,8 @@ public:
 	 * @brief 复制构造函数
 	 * @param[in] list 源容器
 	 */
-	List(List const & other) : Base(Allocator(NodeAllocatorTraits::select_on_container_copy_construction(other.m_allocator()))) {
-		for (auto i = other.begin(), e = other.end(); i != e; ++i) {
+	List(List const & list) : Base(Allocator(NodeAllocatorTraits::select_on_container_copy_construction(list.m_allocator()))) {
+		for (auto i = list.begin(), e = list.end(); i != e; ++i) {
 			insert_back(*i);
 		}
 	}
@@ -609,8 +605,8 @@ public:
 	 * @param[in] list 源容器
 	 * @param[in] allocator 分配器
 	 */
-	List(List const & other, Allocator const & allocator) : Base(allocator) {
-		for (auto i = other.begin(), e = other.end(); i != e; ++i) {
+	List(List const & list, Allocator const & allocator) : Base(allocator) {
+		for (auto i = list.begin(), e = list.end(); i != e; ++i) {
 			insert_back(*i);
 		}
 	}
@@ -619,8 +615,8 @@ public:
 	 * @brief 移动构造函数
 	 * @param[in,out] list 源容器
 	 */
-	List(List && other) noexcept(HasNothrowMoveConstructor<NodeAllocator>{}) : Base(Allocator(move(other.m_allocator()))) {
-		splice(end(), other);
+	List(List && list) noexcept(HasNothrowMoveConstructor<NodeAllocator>{}) : Base(Allocator(move(list.m_allocator()))) {
+		splice(end(), list);
 	}
 
 	/**
@@ -628,11 +624,11 @@ public:
 	 * @param[in,out] list 源容器
 	 * @param[in] allocator 分配器
 	 */
-	List(List && other, Allocator const & allocator) : Base(allocator) {
-		if (allocator == other.m_allocator()) {
-			splice(end(), other);
+	List(List && list, Allocator const & allocator) : Base(allocator) {
+		if (allocator == list.m_allocator()) {
+			splice(end(), list);
 		} else {
-			assign(make_move_iterator(other.begin()), make_move_iterator(other.end()));
+			assign(make_move_iterator(list.begin()), make_move_iterator(list.end()));
 		}
 	}
 
@@ -804,9 +800,6 @@ public:
 	 * @name 容量
 	 */
 	///@{
-	/**
-	 * @brief begin
-	 */
 	/**
 	 * @brief is empty
 	 */
@@ -1547,5 +1540,7 @@ auto List< TElement, TAllocator >::reverse() -> List & {
 		swap(e.m_pointer->prev, e.m_pointer->next);
 	}
 }
+
+} // inline namespace Container
 
 } // namespace BR

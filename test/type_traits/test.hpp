@@ -3,6 +3,16 @@
 #include "../test.hpp"
 #include <libbr/config.hpp>
 
+#if defined(BR_SKIP_TYPE_TRAITS_TEST)
+
+#define IS_TRAITS_CHECK(...)
+#define HAS_TRAITS_CHECK(...)
+#define IS_TRAITS_CHECK_CV(...)
+#define HAS_TRAITS_CHECK_CV(...)
+#define INTEGRAL_CHECK(...)
+
+#else
+
 #define CONSTANT_CHECK(expected_value, actual_value) EXPECT_EQ(expected_value, actual_value)
 
 #define TRAITS_APPLY(name, ...) ((name< __VA_ARGS__ >{})())
@@ -43,6 +53,8 @@
 
 #define INTEGRAL_CHECK(expected_value, Traits, traits, ...)\
 	CONSTANT_CHECK(expected_value,  TRAITS_APPLY(Traits, ##__VA_ARGS__));
+
+#endif
 
 class Class { public: int i; };
 

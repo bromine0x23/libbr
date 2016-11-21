@@ -5,9 +5,19 @@
 
 namespace BR {
 
+inline namespace Memory {
+
+/**
+ *
+ * @tparam TAllocator
+ * @tparam TValue
+ * @param allocator
+ * @param pointer
+ */
 template< typename TAllocator, typename TValue >
 inline void destroy(TAllocator & allocator, TValue * pointer);
 
+} // namespace Memory
 
 
 namespace Detail {
@@ -33,9 +43,13 @@ inline void destroy(TAllocator & allocator, TValue * pointer) {
 } // namespace Memory
 } // namespace Detail
 
+inline namespace Memory {
+
 template< typename TAllocator, typename TValue >
 void destroy(TAllocator & allocator, TValue * pointer) {
 	Detail::Memory::destroy(allocator, pointer);
 }
+
+} // namespace Memory
 
 } // namespace BR

@@ -17,12 +17,20 @@
 
 namespace BR {
 
-template< typename TInputIterator, typename TForwardIterator >
+inline namespace Memory {
+
+/**
+ * @tparam TInputIterator
+ * @tparam TForwardIterator
+ * @param[in] first
+ * @param[in] last
+ * @param[out] result
+ * @return
+ */
+template<typename TInputIterator, typename TForwardIterator>
 auto uninitialized_copy(TInputIterator first, TInputIterator last, TForwardIterator result) -> TForwardIterator;
 
-extern template auto uninitialized_copy(NChar * first, NChar * last, NChar * result) -> NChar *;
-
-
+} // namespace Memory
 
 namespace Detail {
 namespace Memory {
@@ -71,9 +79,13 @@ inline auto uninitialized_copy(TInputIterator first, TInputIterator last, TForwa
 } // namespace Memory
 } // namespace Detail
 
+inline namespace Memory {
+
 template< typename TInputIterator, typename TForwardIterator >
 auto uninitialized_copy(TInputIterator first, TInputIterator last, TForwardIterator result) -> TForwardIterator {
 	return Detail::Memory::uninitialized_copy(first, last, result);
 }
+
+} // namespace Memory
 
 } // namespace BR

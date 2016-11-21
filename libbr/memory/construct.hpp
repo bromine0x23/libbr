@@ -6,10 +6,21 @@
 
 namespace BR {
 
-template< typename TAllocator, typename TValue, typename ... TArguments >
-inline void construct(TAllocator & allocator, TValue * pointer, TArguments && ... arguments);
+inline namespace Memory {
 
+/**
+ *
+ * @tparam TAllocator
+ * @tparam TValue
+ * @tparam TArguments
+ * @param allocator
+ * @param pointer
+ * @param arguments
+ */
+template<typename TAllocator, typename TValue, typename ... TArguments>
+inline void construct(TAllocator &allocator, TValue *pointer, TArguments &&... arguments);
 
+} // namespace Memory
 
 namespace Detail {
 namespace Memory {
@@ -34,9 +45,13 @@ inline void construct(TAllocator & allocator, TValue * pointer, TArguments && ..
 } // namespace Memory
 } // namespace Detail
 
+inline namespace Memory {
+
 template< typename TAllocator, typename TValue, typename ... TArguments >
 void construct(TAllocator & allocator, TValue * pointer, TArguments && ... arguments) {
 	Detail::Memory::construct(allocator, pointer, forward<TArguments>(arguments) ...);
 }
+
+} // namespace Memory
 
 } // namespace BR

@@ -10,6 +10,7 @@
 #include <libbr/exception/exception.hpp>
 
 namespace BR {
+inline namespace Memory {
 
 class BadWeakPointer : public Exception {
 public:
@@ -18,4 +19,5 @@ public:
 	auto what() const noexcept -> Message override;
 };
 
+} // namespace Memory
 } // namespace BR

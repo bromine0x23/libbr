@@ -13,5 +13,8 @@ if(LIBBR_INCLUDE_TESTS)
 
 	target_link_libraries(br_test br ${GTEST_BOTH_LIBRARIES})
 
+	add_definitions(-DBR_SKIP_TYPE_OPERATE_TEST)
+	add_definitions(-DBR_SKIP_TYPE_TRAITS_TEST)
+
 	add_test(Test br_test)
 endif()

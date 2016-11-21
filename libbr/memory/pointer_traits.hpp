@@ -8,3 +8,11 @@
 
 #include <libbr/config.hpp>
 #include <libbr/type_traits/pointer_traits.hpp>
+
+namespace BR {
+inline namespace Memory {
+
+using TypeTraits::PointerTraits;
+
+} // inline namespace Memory
+} // namespace BR

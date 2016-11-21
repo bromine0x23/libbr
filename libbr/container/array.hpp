@@ -23,6 +23,8 @@
 
 namespace BR {
 
+inline namespace Container {
+
 /**
  * @brief C风格数组包装
  * @tparam TElement 数组元素类型
@@ -32,6 +34,21 @@ namespace BR {
  */
 template< typename T, Size N >
 class Array;
+
+
+/**
+ *
+ * @tparam T
+ * @tparam N
+ * @param x
+ * @param y
+ */
+template< typename T, Size N >
+void swap(Array< T, N > & x, Array< T, N > & y) noexcept(noexcept(x.swap(y))) {
+	x.swap(y);
+}
+
+} // namespace Container
 
 template< typename T, Size S >
 struct TupleSize< Array< T, S > > : IntegralConstant< Size, S > {};
@@ -63,10 +80,7 @@ constexpr inline auto get(Array< T, S > const && A) noexcept -> T const && {
 	return move(A[I]);
 }
 
-template< typename T, Size N >
-void swap(Array< T, N > & x, Array< T, N > & y) noexcept(noexcept(x.swap(y))) {
-	x.swap(y);
-}
+inline namespace Container {
 
 template< typename TElement, Size N >
 class Array : public Enumerable<
@@ -258,5 +272,7 @@ public:
 private:
 	Element m_elements[N > 0 ? N : 1];
 }; // struct Array< TElement, S >
+
+} // namespace Container
 
 } // namespace BR

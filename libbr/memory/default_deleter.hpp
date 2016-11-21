@@ -13,12 +13,13 @@
 #include <libbr/type_traits/is_void.hpp>
 
 namespace BR {
+inline namespace Memory {
 
 template< typename TElement >
-struct DefaultDeleter : public UnaryFunctor< TElement * > {
+struct DefaultDeleter : public UnaryFunctor<TElement *> {
 	constexpr DefaultDeleter() noexcept = default;
 
-	template< typename TOtherElement, typename _TDummy = EnableIf< IsConvertible< TOtherElement *, TElement * > > >
+	template< typename TOtherElement, typename = EnableIf< IsConvertible<TOtherElement *, TElement *> > >
 	DefaultDeleter(DefaultDeleter<TOtherElement> const & deleter) noexcept {
 	}
 
@@ -29,18 +30,19 @@ struct DefaultDeleter : public UnaryFunctor< TElement * > {
 };
 
 template< typename TElement >
-struct DefaultDeleter< TElement[] > : public UnaryFunctor< void > {
+struct DefaultDeleter<TElement[]> : public UnaryFunctor<void> {
 	constexpr DefaultDeleter() noexcept = default;
 
-	template< typename TOtherElement, typename _TDummy = EnableIf< IsConvertible< TOtherElement *, TElement * > > >
+	template< typename TOtherElement, typename = EnableIf< IsConvertible<TOtherElement *, TElement *> > >
 	DefaultDeleter(DefaultDeleter<TOtherElement> const & deleter) noexcept {
 	}
 
-	template< typename TOtherElement, typename _TDummy = EnableIf< IsConvertible< TOtherElement *, TElement * > > >
+	template< typename TOtherElement, typename = EnableIf< IsConvertible<TOtherElement *, TElement *> > >
 	void operator()(TOtherElement * pointer) const noexcept {
 		static_assert(sizeof(TElement) > 0 || NotVoid<TElement>(), "DefaultDeleter can not delete incomplete type");
-		delete pointer;
+		delete[] pointer;
 	}
 };
 
+} // namespace Memory
 } // namespace BR

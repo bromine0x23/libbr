@@ -15,9 +15,21 @@
 
 namespace BR {
 
+inline namespace Memory {
+
+/**
+ * @tparam TInputIterator
+ * @tparam TSize
+ * @tparam TForwardIterator
+ * @param[in] first
+ * @param n
+ * @param[out] result
+ * @return
+ */
 template< typename TInputIterator, typename TSize, typename TForwardIterator >
 inline auto uninitialized_copy_n(TInputIterator first, TSize n, TForwardIterator result) -> TForwardIterator;
 
+} // namespace Memory
 
 
 namespace Detail {
@@ -58,10 +70,13 @@ auto uninitialized_copy_n(TInputIterator first, TSize n, TForwardIterator result
 } // namespace Memory
 } // namespace Detail
 
+inline namespace Memory {
 
 template< typename TInputIterator, typename TSize, typename TForwardIterator >
 auto uninitialized_copy_n(TInputIterator first, TSize n, TForwardIterator result) -> TForwardIterator {
 	return Detail::Memory::uninitialized_copy_n(first, n, result);
 }
+
+} // namespace Memory
 
 } // namespace BR

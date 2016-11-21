@@ -11,19 +11,20 @@
 extern "C" {
 
 /**
- * @brief like C STL memmove
+ * @brief like std::memmove
  * @param[out] D
  * @param[in] S
  * @param[in] n
  */
-void libbr_memory_move(void * D, void const * S, ::BR::Size n);
+void libbr_memory_move(void * D, void const * S, BR::Size n);
 
 }
 
 namespace BR {
+inline namespace Memory {
 
 /**
- * @brief like C STL memmove
+ * @brief like std::memmove
  * @param[out] D
  * @param[in] S
  * @param[in] n
@@ -33,5 +34,6 @@ inline void memory_move(void * D, void const * S, Size n) {
 	return libbr_memory_move(D, S, n);
 }
 
+} // namespace Memory
 } // namespace BR
 

@@ -41,3 +41,13 @@
 #include <libbr/functional/function.hpp>
 #include <libbr/functional/member_pointer.hpp>
 #include <libbr/functional/bind.hpp>
+
+namespace BR {
+
+/**
+ * Functional
+ */
+inline namespace Functional {
+} // namespace Functional
+
+} // namespace BR
