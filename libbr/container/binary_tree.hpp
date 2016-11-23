@@ -512,6 +512,11 @@ protected:
 	}
 
 	template< typename TKey >
+	auto m_bounded_range(TKey const & lower_key, TKey const & upper_key, bool left_closed, bool right_closed) const -> Pair< NodePointer, NodePointer > {
+		return Algorithms::bounded_range(m_header(), lower_key, upper_key, m_comparator(), left_closed, right_closed);
+	}
+
+	template< typename TKey >
 	auto m_count(TKey const & key) const -> Size {
 		auto range = m_equal_range(key);
 		Size n = 0;
@@ -604,12 +609,8 @@ protected:
 	void m_swap(Base & tree) noexcept(BooleanAnd< typename NodeAllocatorTraits::IsAlwaysEqual, IsNothrowSwappable<Comparator> >{}) {
 		using BR::swap;
 		m_swap_allocator(m_allocator(), tree.m_allocator());
-		swap(m_header()->parent, tree.m_header()->parent);
-		swap(m_header()->left,   tree.m_header()->left);
-		swap(m_header()->right,  tree.m_header()->right);
+		Algorithms::swap(m_header(), tree.m_header());
 		swap(m_size(), tree.m_size());
-		m_swap_fix();
-		tree.m_swap_fix();
 	}
 
 	static void m_swap_allocator(NodeAllocator & x, NodeAllocator & y) noexcept(typename NodeAllocatorTraits::IsAlwaysEqual{}) {
@@ -731,14 +732,6 @@ private:
 	static void m_swap_allocator(NodeAllocator & x, NodeAllocator & y, BooleanTrue) noexcept(IsNothrowSwappable<NodeAllocator>{}) {
 		using BR::swap;
 		swap(x, y);
-	}
-
-	void m_swap_fix() {
-		if (m_size() == 0) {
-			m_header()->left = m_header()->right = m_header();
-		} else {
-			m_header()->parent->parent = m_header();
-		}
 	}
 
 private:
@@ -1262,6 +1255,34 @@ public:
 	///@}
 
 	/**
+	 * @name 查找边界
+	 * @return < lower_bound(e), upper_bound(e) >
+	 */
+	///@{
+	auto bounded_range(Element const & lower_key, Element const & upper_key, bool left_closed = true, bool right_closed = true) -> Pair< Iterator, Iterator > {
+		auto range = this->m_bounded_range(lower_key, upper_key, left_closed, right_closed);
+		return make_pair(Iterator(range.first), Iterator(range.second));
+	}
+
+	template< typename TKey >
+	auto bounded_range(TKey const & lower_key, TKey const & upper_key, bool left_closed = true, bool right_closed = true) -> Pair< Iterator, Iterator > {
+		auto range = this->m_bounded_range(lower_key, upper_key, left_closed, right_closed);
+		return make_pair(Iterator(range.first), Iterator(range.second));
+	}
+
+	auto bounded_range(Element const & lower_key, Element const & upper_key, bool left_closed = true, bool right_closed = true) const -> Pair< ConstIterator, ConstIterator > {
+		auto range = this->m_bounded_range(lower_key, upper_key, left_closed, right_closed);
+		return make_pair(ConstIterator(range.first), ConstIterator(range.second));
+	}
+
+	template< typename TKey >
+	auto bounded_range(TKey const & lower_key, TKey const & upper_key, bool left_closed = true, bool right_closed = true) const -> Pair< ConstIterator, ConstIterator > {
+		auto range = this->m_bounded_range(lower_key, upper_key, left_closed, right_closed);
+		return make_pair(ConstIterator(range.first), ConstIterator(range.second));
+	}
+	///@}
+
+	/**
 	 * @name 计数
 	 */
 	///@{
@@ -1389,13 +1410,17 @@ public:
 	 * @name 删除操作
 	 */
 	///@{
+	/**
+	 * @brief clear
+	 * @return
+	 */
 	auto clear() noexcept -> BinaryTree & {
 		this->m_clear();
 		return *this;
 	}
 
 	/**
-	 *
+	 * @brief erase
 	 * @param position Iterator to the element to remove.
 	 * @return Iterator following the removed element.
 	 */
@@ -1404,7 +1429,7 @@ public:
 	}
 
 	/**
-	 *
+	 * @brief erase
 	 * @param first,last Range of elements to remove.
 	 * @return Iterator following the last removed element.
 	 */
@@ -1417,7 +1442,7 @@ public:
 	}
 
 	/**
-	 *
+	 * @brief erase
 	 * @param element The elements to remove.
 	 * @return Number of elements removed.
 	 */

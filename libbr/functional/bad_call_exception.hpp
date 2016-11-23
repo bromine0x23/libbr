@@ -14,7 +14,7 @@ namespace BR {
 inline namespace Functional {
 
 /**
- * Exception for bad function call
+ * @brief Exception for bad function call
  */
 class BadCallException : public Exception {
 public:

@@ -15,7 +15,7 @@ namespace BR {
 inline namespace Functional {
 
 /**
- * Functor for operator~
+ * @brief Functor for operator~
  * @tparam T
  */
 template< typename T = void >

@@ -9,6 +9,7 @@
 #include <libbr/config.hpp>
 #include <libbr/functional/less.hpp>
 #include <libbr/math/function/min.hpp>
+#include <libbr/utility/forward.hpp>
 
 #if defined(min)
 #undef min
@@ -17,14 +18,44 @@
 
 namespace BR {
 
+inline namespace Algorithm {
+
+/**
+ * @brief like std::min
+ * @tparam T
+ * @tparam TComparator
+ * @param[in] x,y
+ * @param[in] comparator
+ * @return
+ */
 template< typename T, typename TComparator >
-BR_CONSTEXPR_AFTER_CXX11 auto min(T const & x, T const & y, TComparator && comparator) -> T const & {
-	return comparator(y, x) ? y : x;
+constexpr auto min(T const & x, T const & y, TComparator && comparator) -> T const &;
+
+/**
+ * @brief like std::min
+ * @tparam T
+ * @param[in] x,y
+ * @return
+ */
+template< typename T >
+constexpr auto min(T const & x, T const & y) -> T const &;
+
+} // namespace Algorithm
+
+
+
+inline namespace Algorithm {
+
+template< typename T, typename TComparator >
+constexpr auto min(T const & x, T const & y, TComparator && comparator) -> T const & {
+	return forward<TComparator>(comparator)(y, x) ? y : x;
 }
 
 template< typename T >
-BR_CONSTEXPR_AFTER_CXX11 auto min(T const & x, T const & y) -> T const & {
+constexpr auto min(T const & x, T const & y) -> T const & {
 	return min(x, y, Less<>());
 }
+
+} // namespace Algorithm
 
 } // namespace BR

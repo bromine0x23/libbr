@@ -14,7 +14,8 @@ namespace BR {
 inline namespace Functional {
 
 /**
- * @tparam TArgument
+ * @brief 一元函数对象基类
+ * @tparam TArgument 参数类型
  */
 template< typename TArgument >
 struct UnaryFunctor : public BasicFunctor< TArgument > {

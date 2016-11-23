@@ -113,3 +113,13 @@
 #include <libbr/algorithm/heap_push.hpp>
 #include <libbr/algorithm/heap_pop.hpp>
 #include <libbr/algorithm/heap_sort.hpp>
+
+namespace BR {
+
+/**
+ * @brief Algorithm
+ */
+inline namespace Algorithm {
+} // namespace Algorithm
+
+} // namespace BR

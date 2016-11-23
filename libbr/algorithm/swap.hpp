@@ -14,6 +14,36 @@
 
 namespace BR {
 
+inline namespace Algorithm {
+
+/**
+ * @brief like std::swap
+ * @tparam TForwardIterator0
+ * @tparam TForwardIterator1
+ * @param[in,out] first0,last0
+ * @param[in,out] first1
+ * @return
+ */
+template< typename TForwardIterator0, typename TForwardIterator1 >
+auto swap(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1) -> TForwardIterator1;
+
+/**
+ * @brief like std::swap
+ * @tparam TForwardIterator0
+ * @tparam TForwardIterator1
+ * @param[in,out] first0,last0
+ * @param[in,out] first1,last1
+ * @return
+ */
+template< typename TForwardIterator0, typename TForwardIterator1 >
+auto swap(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1) -> TForwardIterator1;
+
+} // namespace Algorithm
+
+
+
+inline namespace Algorithm {
+
 template< typename TForwardIterator0, typename TForwardIterator1 >
 inline auto swap(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1) -> TForwardIterator1 {
 	for(; first0 != last0; ++first0, (void)++first1) {
@@ -29,5 +59,7 @@ inline auto swap(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIter
 	}
 	return first1;
 }
+
+} // namespace Algorithm
 
 } // namespace BR

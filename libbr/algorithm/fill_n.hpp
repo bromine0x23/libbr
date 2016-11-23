@@ -14,18 +14,29 @@
 
 namespace BR {
 
+inline namespace Algorithm {
+
 /**
- * 填充
+ * @brief like std::fill_n
+ * @tparam TOutputIterator
+ * @tparam TValue
+ * @tparam TSize
+ * @param[in,out] first
+ * @param[in] n
+ * @param[in] value
+ * @return
  */
-template< typename TOutputIterator, typename TValue, typename TSize >
-inline auto fill_n(TOutputIterator first, TSize n, TValue const & value) -> TOutputIterator;
+template< typename TOutputIterator, typename TSize, typename TValue >
+auto fill_n(TOutputIterator first, TSize n, TValue const & value) -> TOutputIterator;
+
+} // namespace Algorithm
 
 
 
 namespace Detail {
 namespace Algorithm {
 
-template< typename TOutputIterator, typename TValue, typename TSize >
+template< typename TOutputIterator, typename TSize, typename TValue >
 inline auto fill_n(TOutputIterator first, TSize n, TValue const & value) -> TOutputIterator {
 	for (; n > 0; ++first, (void)--n) {
 		*first = value;
@@ -33,7 +44,7 @@ inline auto fill_n(TOutputIterator first, TSize n, TValue const & value) -> TOut
 	return first;
 }
 
-template< typename TOutputValue, typename TValue, typename TSize, typename = EnableIf< BooleanAnd< IsIntegral<TOutputValue>, BooleanConstant< sizeof(TOutputValue) == 1 >, NotSame< TOutputValue, bool >, IsIntegral<TValue>, BooleanConstant< sizeof(TValue) == 1 > > > >
+template< typename TOutputValue, typename TSize, typename TValue, typename = EnableIf< BooleanAnd< IsIntegral<TOutputValue>, BooleanConstant< sizeof(TOutputValue) == 1 >, NotSame< TOutputValue, bool >, IsIntegral<TValue>, BooleanConstant< sizeof(TValue) == 1 > > > >
 inline auto fill_n(TOutputValue * first, TSize n, TValue const & value) -> TOutputValue * {
 	if (n > 0) {
 		memory_set(first, value, n);
@@ -44,9 +55,13 @@ inline auto fill_n(TOutputValue * first, TSize n, TValue const & value) -> TOutp
 } // namespace Algorithm
 } // namespace Detail
 
-template< typename TOutputIterator, typename TValue, typename TSize >
-auto fill_n(TOutputIterator first, TSize n, TValue const & value) -> TOutputIterator {
+inline namespace Algorithm {
+
+template< typename TOutputIterator, typename TSize, typename TValue >
+inline auto fill_n(TOutputIterator first, TSize n, TValue const & value) -> TOutputIterator {
 	return Detail::Algorithm::fill_n(first, n, value);
 }
+
+} // namespace Algorithm
 
 } // namespace BR

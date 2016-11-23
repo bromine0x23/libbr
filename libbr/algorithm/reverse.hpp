@@ -13,8 +13,19 @@
 
 namespace BR {
 
+inline namespace Algorithm {
+
+/**
+ * @brief like std::reverse
+ * @tparam TBidirectionalIterator
+ * @param[in,out] first,last
+ */
 template< typename TBidirectionalIterator >
-inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last);
+void reverse(TBidirectionalIterator first, TBidirectionalIterator last);
+
+} // namespace Algorithm
+
+
 
 namespace Detail {
 namespace Algorithm {
@@ -42,9 +53,13 @@ inline void reverse(TRandomAccessIterator first, TRandomAccessIterator last, Ran
 } // namespace Algorithm
 } // namespace Detail
 
+inline namespace Algorithm {
+
 template< typename TBidirectionalIterator >
-void reverse(TBidirectionalIterator first, TBidirectionalIterator last) {
-	return Detail::Algorithm::reverse(first, last, IteratorTraits<TBidirectionalIterator>::category());
+inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last) {
+	return Detail::Algorithm::reverse(first, last, typename IteratorTraits<TBidirectionalIterator>::Category{});
 }
+
+} // namespace Algorithm
 
 } // namespace BR

@@ -12,6 +12,25 @@
 
 namespace BR {
 
+inline namespace Algorithm {
+
+/**
+ * @brief like std::remove
+ * @tparam TForwardIterator
+ * @tparam TValue
+ * @param[in,out] first,last
+ * @param[in] value
+ * @return
+ */
+template< typename TForwardIterator, typename TValue >
+auto remove(TForwardIterator first, TForwardIterator last, TValue const & value) -> TForwardIterator;
+
+} // namespace Algorithm
+
+
+
+inline namespace Algorithm {
+
 template< typename TForwardIterator, typename TValue >
 auto remove(TForwardIterator first, TForwardIterator last, TValue const & value) -> TForwardIterator {
 	first = find(first, last, value);
@@ -25,5 +44,7 @@ auto remove(TForwardIterator first, TForwardIterator last, TValue const & value)
 	}
 	return first;
 }
+
+} // namespace Algorithm
 
 } // namespace BR

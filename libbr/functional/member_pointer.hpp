@@ -18,7 +18,7 @@ namespace BR {
 inline namespace Functional {
 
 /**
- *
+ * @brief Functor for member function
  * @tparam TMember
  * @tparam TClass
  * @param member_pointer
@@ -27,9 +27,8 @@ inline namespace Functional {
 template< typename TMember, typename TClass >
 auto member_pointer(TMember TClass::* member_pointer) noexcept;
 
-
 } // namespace Functional
-#endif
+#endif // defined(BR_DOXYGEN)
 
 namespace Detail {
 namespace Functional {

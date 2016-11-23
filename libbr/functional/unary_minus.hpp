@@ -15,7 +15,7 @@ namespace BR {
 inline namespace Functional {
 
 /**
- * Functor for unary operator-
+ * @brief Functor for unary operator-
  * @tparam T
  */
 template< typename T = void >

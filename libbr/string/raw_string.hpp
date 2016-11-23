@@ -179,8 +179,14 @@ public:
 
 	static_assert(IsPOD<TCodeUnit>{}, "TCodeUnit must be a POD.");
 
+	/**
+	 * @brief CodeUnit
+	 */
 	using CodeUnit = TCodeUnit;
 
+	/**
+	 * @brief Element
+	 */
 	using Element = CodeUnit;
 
 	/**
@@ -507,7 +513,7 @@ public:
 
 	/**
 	 * @brief 从字符串视图构造
-	 * @param view 字符串视图
+	 * @param string 字符串视图
 	 * @param allocator 分配器
 	 */
 	RawString(RawStringView<CodeUnit> const & string, Allocator const & allocator = Allocator()) : m_impl(allocator) {
@@ -986,7 +992,6 @@ public:
 	/**
 	 * @brief 以码元序列赋值
 	 * @param string 序列
-	 * @param length 序列长度
 	 */
 	auto operator=(CString<CodeUnit> string) -> RawString & {
 		return assign(string, string_length(string));
@@ -995,10 +1000,14 @@ public:
 	auto assign(CString<CodeUnit> string) -> RawString & {
 		return assign(string, string_length(string));
 	}
-
-	auto assign(CString<CodeUnit> string, Size length) -> RawString &;
 	//@}
 
+	/**
+	 * @brief 以码元序列赋值
+	 * @param string 序列
+	 * @param length 序列长度
+	 */
+	auto assign(CString<CodeUnit> string, Size length) -> RawString &;
 
 	//@{
 	/**
@@ -1060,7 +1069,6 @@ public:
 	//@{
 	/**
 	 * @param string
-	 * @param length
 	 */
 	auto operator<<(CString<CodeUnit> string) -> RawString & {
 		return assign(string, string_length(string));
@@ -1070,23 +1078,32 @@ public:
 		return assign(string, string_length(string));
 	}
 
-	auto append(CString<CodeUnit> string, Size length) -> RawString &;
 	//@}
+
+	/**
+	 * @param string
+	 * @param length
+	 */
+	auto append(CString<CodeUnit> string, Size length) -> RawString &;
 
 	//@{
 	/**
 	 *
 	 * @param unit
-	 * @param count
 	 */
 	auto operator<<(CodeUnit unit) -> RawString & {
 		return append(unit);
 	}
 
 	auto append(CodeUnit unit) -> RawString &;
-
-	auto append(CodeUnit unit, Size n) -> RawString &;
 	//@}
+
+	/**
+	 *
+	 * @param unit
+	 * @param n
+	 */
+	auto append(CodeUnit unit, Size n) -> RawString &;
 
 	//@{
 	/**
@@ -1136,7 +1153,7 @@ public:
 
 	/**
 	 * @param index
-	 * @param units
+	 * @param string
 	 */
 	auto insert(Size index, CString<CodeUnit> string) -> RawString & {
 		return insert(index, string, string_length(string));
@@ -1176,7 +1193,7 @@ public:
 	/**
 	 * @param position
 	 * @param unit
-	 * @param count
+	 * @param n
 	 */
 	auto insert(ConstIterator position, CodeUnit unit, Size n) -> Iterator {
 		auto const index = position - begin();

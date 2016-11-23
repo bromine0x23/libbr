@@ -15,3 +15,13 @@
 #include <libbr/container/list.hpp>
 #include <libbr/container/pair.hpp>
 #include <libbr/container/tuple.hpp>
+
+namespace BR {
+
+/**
+ * @brief Container
+ */
+inline namespace Container {
+} // namespace Container
+
+} // namespace BR

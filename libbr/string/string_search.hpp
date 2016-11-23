@@ -12,9 +12,8 @@ extern "C" {
 
 /**
  * @brief like C STL strstr
- * @param[out] D
- * @param[in] c
- * @param[in] n
+ * @param[in] S
+ * @param[in] K
  */
 //@{
 auto libbr_nstring_search(BR::NChar * S, BR::CString<BR::NChar> K) -> BR::NChar *;

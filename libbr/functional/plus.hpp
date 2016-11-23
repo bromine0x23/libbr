@@ -15,9 +15,8 @@ namespace BR {
 inline namespace Functional {
 
 /**
- * Functor for operator+
- * @tparam TLhs
- * @tparam TRhs
+ * @brief Functor for operator+
+ * @tparam TLhs,TRhs
  */
 template< typename TLhs = void, typename TRhs = TLhs >
 struct Plus;

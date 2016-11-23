@@ -24,8 +24,8 @@ auto libbr_wstring_compare(BR::CString<BR::WChar> X, BR::CString<BR::WChar> Y) -
 
 /**
  * @brief like C STL strncmp
- * @param[out] D
- * @param[in] S
+ * @param[in] X
+ * @param[in] Y
  * @param[in] n
  */
 //@{

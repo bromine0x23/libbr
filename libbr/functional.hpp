@@ -45,7 +45,7 @@
 namespace BR {
 
 /**
- * Functional
+ * @brief Functional
  */
 inline namespace Functional {
 } // namespace Functional

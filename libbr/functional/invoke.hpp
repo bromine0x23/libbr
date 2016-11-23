@@ -20,6 +20,23 @@
 
 namespace BR {
 
+#if defined(BR_DOXYGEN)
+inline namespace Functional {
+
+/**
+ * @brief invoke callable object
+ * @tparam TCallable
+ * @tparam TArgs
+ * @param callable
+ * @param args
+ * @return
+ */
+template< typename TCallable, typename ... TArgs >
+auto invoke(TCallable && callable, TArgs && ... args);
+
+} // namespace Functional
+#endif // defined(BR_DOXYGEN)
+
 namespace Detail {
 namespace Functional {
 
@@ -58,7 +75,7 @@ struct InvokerMemberFunctionWithPointer {
 	}
 };
 
-template< typename TCallable, typename TArg, bool is_member_object_pointer = IsMemberObjectPointer<TCallable>{}(), bool is_member_function_pointer = IsMemberFunctionPointer<TCallable>{}() >
+template< typename TCallable, typename TArg, bool is_member_object_pointer = IsMemberObjectPointer<TCallable>{}, bool is_member_function_pointer = IsMemberFunctionPointer<TCallable>{} >
 struct InvokerBasic;
 
 template< typename TMemberObjectPointer, typename TDerived >
@@ -90,9 +107,13 @@ struct Invoker< TCallable, TArg, TArgs ... > : public InvokerBasic< Decay<TCalla
 } // namespace Functional
 } // namespace Detail
 
+inline namespace Functional {
+
 template< typename TCallable, typename ... TArgs >
 inline auto invoke(TCallable && callable, TArgs && ... args) -> decltype(Detail::Functional::Invoker< TCallable, TArgs ... >::invoke(forward<TCallable>(callable), forward<TArgs>(args)...)) {
 	return Detail::Functional::Invoker< TCallable, TArgs ... >::invoke(forward<TCallable>(callable), forward<TArgs>(args)...);
 }
 
-}
+} // namespace Functional
+
+} // namespace BR

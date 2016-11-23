@@ -10,16 +10,35 @@
 #include <libbr/algorithm/min_element.hpp>
 #include <libbr/algorithm/sort.hpp>
 #include <libbr/functional/less.hpp>
+#include <libbr/utility/forward.hpp>
 
 namespace BR {
 
-template< typename TRandomAccessIterator, typename TComparator >
-inline void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandomAccessIterator last, TComparator && comparator);
+inline namespace Algorithm {
 
+/**
+ * @brief like std::nth_element
+ * @tparam TRandomAccessIterator
+ * @tparam TComparator
+ * @param[in,out] first,last
+ * @param[in] nth
+ * @param[in] comparator
+ */
+template< typename TRandomAccessIterator, typename TComparator >
+void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandomAccessIterator last, TComparator && comparator);
+
+/**
+ * @brief like std::nth_element
+ * @tparam TRandomAccessIterator
+ * @param[in,out] first,last
+ * @param[in] nth
+ */
 template< typename TRandomAccessIterator >
-inline void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandomAccessIterator last) {
-	nth_element(first, nth, last, Less<void>());
-}
+void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandomAccessIterator last);
+
+} // namespace Algorithm
+
+
 
 namespace Detail {
 namespace Algorithm {
@@ -39,14 +58,14 @@ void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandom
 				return;
 			}
 			case 2: {
-				if (comparator(*--last, *first)) {
+				if (forward<TComparator>(comparator)(*--last, *first)) {
 					swap(*first, *last);
 				}
 				return;
 			}
 			case 3: {
 				auto middle = first;
-				sort3(first, ++middle, --last, comparator);
+				sort3(first, ++middle, --last, forward<TComparator>(comparator));
 				return;
 			}
 		}
@@ -54,7 +73,7 @@ void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandom
 			// selection sort
 			auto before_last = last;
 			for (--before_last; first != before_last; ++first) {
-				auto i = min_element(first, last, comparator);
+				auto i = min_element(first, last, forward<TComparator>(comparator));
 				if (i != first) {
 					swap(*first, *i);
 				}
@@ -64,22 +83,22 @@ void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandom
 
 		auto middle = first + length / 2;
 		auto before_last = last;
-		auto swap_count = sort3(first, middle, --before_last, comparator);
+		auto swap_count = sort3(first, middle, --before_last, forward<TComparator>(comparator));
 
 		auto i = first;
 		auto j = before_last;
 
-		if (!comparator(*i, *middle)) {
+		if (!forward<TComparator>(comparator)(*i, *middle)) {
 			for (; ;) {
 				if (i == --j) {
 					++i;
 					j = last;
-					if (!comparator(*first, *--j)) {
+					if (!forward<TComparator>(comparator)(*first, *--j)) {
 						for (; ; ++i) {
 							if (i == j) {
 								return;
 							}
-							if (comparator(*first, *i)) {
+							if (forward<TComparator>(comparator)(*first, *i)) {
 								swap(*i, *j);
 								++swap_count;
 								++i;
@@ -91,8 +110,8 @@ void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandom
 						return;
 					}
 					for (; ; ++i) {
-						for (; !comparator(*first, *i); ++i) { }
-						for (; comparator(*first, *--j);) { }
+						for (; !forward<TComparator>(comparator)(*first, *i); ++i) { }
+						for (; forward<TComparator>(comparator)(*first, *--j);) { }
 						if (i >= j) {
 							break;
 						}
@@ -105,7 +124,7 @@ void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandom
 					first = i;
 					goto RESTART;
 				}
-				if (comparator(*j, *middle)) {
+				if (forward<TComparator>(comparator)(*j, *middle)) {
 					swap(*i, *j);
 					++swap_count;
 					break;
@@ -115,8 +134,8 @@ void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandom
 
 		if (++i < j) {
 			for (; ; ++i) {
-				for (; comparator(*i, *middle); ++i) { }
-				for (; !comparator(*--j, *middle);) { }
+				for (; forward<TComparator>(comparator)(*i, *middle); ++i) { }
+				for (; !forward<TComparator>(comparator)(*--j, *middle);) { }
 				if (i >= j) {
 					break;
 				}
@@ -128,7 +147,7 @@ void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandom
 			}
 		}
 
-		if (i != middle && comparator(*middle, *i)) {
+		if (i != middle && forward<TComparator>(comparator)(*middle, *i)) {
 			swap(*i, *middle);
 			++swap_count;
 		}
@@ -140,14 +159,14 @@ void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandom
 		if (swap_count == 0) {
 			if (nth < i) {
 				for (j = middle = first; ++j != i; middle = j) {
-					if (comparator(*j, *middle)) {
+					if (forward<TComparator>(comparator)(*j, *middle)) {
 						goto NOT_SORTED;
 					}
 				}
 				return;
 			} else {
 				for (j = middle = i; ++j != last; middle = j) {
-					if (comparator(*j, *middle)) {
+					if (forward<TComparator>(comparator)(*j, *middle)) {
 						goto NOT_SORTED;
 					}
 				}
@@ -166,9 +185,18 @@ void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandom
 } // namespace Algorithm
 } // namespace Detail
 
+inline namespace Algorithm {
+
 template< typename TRandomAccessIterator, typename TComparator >
-void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandomAccessIterator last, TComparator && comparator) {
-	Detail::Algorithm::nth_element(first, nth, last, comparator);
+inline void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandomAccessIterator last, TComparator && comparator) {
+	Detail::Algorithm::nth_element(first, nth, last, forward<TComparator>(comparator));
 }
+
+template< typename TRandomAccessIterator >
+inline void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandomAccessIterator last) {
+	nth_element(first, nth, last, Less<void>());
+}
+
+} // namespace Algorithm
 
 } // namespace BR

@@ -16,8 +16,20 @@
 
 namespace BR {
 
+inline namespace Algorithm {
+
+/**
+ * @brief like std::move
+ * @tparam TInputIterator
+ * @tparam TOutputIterator
+ * @param[in] first,last
+ * @param[out] result
+ * @return
+ */
 template< typename TInputIterator, typename TOutputIterator >
-inline auto move(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator;
+auto move(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator;
+
+} // namespace Algorithm
 
 
 
@@ -42,10 +54,13 @@ inline auto move(TInputValue * first, TInputValue * last, TOutputValue * result)
 } // namespace Algorithm
 } // namespace Detail
 
+inline namespace Algorithm {
+
 template< typename TInputIterator, typename TOutputIterator >
-auto move(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator {
+inline auto move(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator {
 	return Detail::Algorithm::move(first, last, result);
 }
 
+} // namespace Algorithm
 
 } // namespace BR

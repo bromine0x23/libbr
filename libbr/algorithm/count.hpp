@@ -11,6 +11,25 @@
 
 namespace BR {
 
+inline namespace Algorithm {
+
+/**
+ * @brief like std::count
+ * @tparam TInputIterator
+ * @tparam TValue
+ * @param[in] first,last
+ * @param[in] value
+ * @return
+ */
+template< typename TInputIterator, typename TValue >
+auto count(TInputIterator first, TInputIterator last, TValue const & value) -> typename IteratorTraits<TInputIterator>::Difference;
+
+} // namespace Algorithm
+
+
+
+inline namespace Algorithm {
+
 template< typename TInputIterator, typename TValue >
 inline auto count(TInputIterator first, TInputIterator last, TValue const & value) -> typename IteratorTraits<TInputIterator>::Difference {
 	typename IteratorTraits<TInputIterator>::Difference result(0);
@@ -21,5 +40,7 @@ inline auto count(TInputIterator first, TInputIterator last, TValue const & valu
 	}
 	return result;
 }
+
+} // namespace Algorithm
 
 } // namespace BR

@@ -18,8 +18,20 @@
 
 namespace BR {
 
+inline namespace Algorithm {
+
+/**
+ * @brief like std::copy
+ * @tparam TInputIterator
+ * @tparam TOutputIterator
+ * @param[in] first,last
+ * @param[out] result
+ * @return
+ */
 template< typename TInputIterator, typename TOutputIterator >
-inline auto copy(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator;
+auto copy(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator;
+
+} // namespace Algorithm
 
 
 
@@ -59,9 +71,13 @@ inline auto copy(TInputValue * first, TInputValue * last, TOutputValue * result)
 } // namespace Algorithm
 } // namespace Detail
 
+inline namespace Algorithm {
+
 template< typename TInputIterator, typename TOutputIterator >
-auto copy(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator {
+inline auto copy(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator {
 	return Detail::Algorithm::copy(first, last, result);
 }
+
+} // namespace Algorithm
 
 } // namespace BR

@@ -9,26 +9,44 @@
 #include <libbr/config.hpp>
 #include <libbr/container/pair.hpp>
 #include <libbr/functional/less.hpp>
+#include <libbr/utility/forward.hpp>
 
 namespace BR {
 
-template< typename TForwardIterator, typename TComparator >
-inline auto min_max_element(TForwardIterator first, TForwardIterator last, TComparator && comparator) -> Pair< TForwardIterator, TForwardIterator >;
+inline namespace Algorithm {
 
+/**
+ * @brief like std::minmax_element
+ * @tparam TForwardIterator
+ * @tparam TComparator
+ * @param[in] first,last
+ * @param[in] comparator
+ * @return
+ */
+template< typename TForwardIterator, typename TComparator >
+auto min_max_element(TForwardIterator first, TForwardIterator last, TComparator && comparator) -> Pair< TForwardIterator, TForwardIterator >;
+
+/**
+ * @brief like std::minmax_element
+ * @tparam TForwardIterator
+ * @param[in] first,last
+ * @return
+ */
 template< typename TForwardIterator >
-inline auto min_max_element(TForwardIterator first, TForwardIterator last) -> Pair< TForwardIterator, TForwardIterator > {
-	return min_max_element(first, last, Less<>());
-}
+auto min_max_element(TForwardIterator first, TForwardIterator last) -> Pair< TForwardIterator, TForwardIterator >;
 
-namespace Detail {
-namespace Algorithm {
+} // namespace Algorithm
+
+
+
+inline namespace Algorithm {
 
 template< typename TForwardIterator, typename TComparator >
-auto min_max_element(TForwardIterator first, TForwardIterator last, TComparator & comparator) -> Pair< TForwardIterator, TForwardIterator > {
+auto min_max_element(TForwardIterator first, TForwardIterator last, TComparator && comparator) -> Pair< TForwardIterator, TForwardIterator > {
 	auto result = make_pair(first, first);
 	if (first != last) {
 		if (++first != last) {
-			if (comparator(*first, *result.first)) {
+			if (forward<TComparator>(comparator)(*first, *result.first)) {
 				result.first = first;
 			} else {
 				result.second = first;
@@ -36,26 +54,26 @@ auto min_max_element(TForwardIterator first, TForwardIterator last, TComparator 
 			for (; ++first != last;) {
 				auto i = first;
 				if (++first == last) {
-					if (comparator(*i, *result.first)) {
+					if (forward<TComparator>(comparator)(*i, *result.first)) {
 						result.first = i;
-					} else if (!comparator(*i, *result.second)) {
+					} else if (!forward<TComparator>(comparator)(*i, *result.second)) {
 						result.second = i;
 					} else {
 						break;
 					}
 				} else {
-					if (comparator(*first, *i)) {
-						if (comparator(*first, *result.first)) {
+					if (forward<TComparator>(comparator)(*first, *i)) {
+						if (forward<TComparator>(comparator)(*first, *result.first)) {
 							result.first = first;
 						}
-						if (!comparator(*i, *result.second)) {
+						if (!forward<TComparator>(comparator)(*i, *result.second)) {
 							result.second = i;
 						}
 					} else {
-						if (comparator(*i, *result.first)) {
+						if (forward<TComparator>(comparator)(*i, *result.first)) {
 							result.first = i;
 						}
-						if (!comparator(*first, *result.second)) {
+						if (!forward<TComparator>(comparator)(*first, *result.second)) {
 							result.second = first;
 						}
 					}
@@ -66,12 +84,11 @@ auto min_max_element(TForwardIterator first, TForwardIterator last, TComparator 
 	return result;
 }
 
-} // namespace Algorithm
-} // namespace Detail
-
-template< typename TForwardIterator, typename TComparator >
-auto min_max_element(TForwardIterator first, TForwardIterator last, TComparator && comparator) -> Pair< TForwardIterator, TForwardIterator > {
-	return Detail::Algorithm::min_max_element(first, last, comparator);
+template< typename TForwardIterator >
+inline auto min_max_element(TForwardIterator first, TForwardIterator last) -> Pair< TForwardIterator, TForwardIterator > {
+	return min_max_element(first, last, Less<>());
 }
+
+} // namespace Algorithm
 
 } // namespace BR

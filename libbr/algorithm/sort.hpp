@@ -14,40 +14,49 @@
 #include <libbr/type_traits/has_trivial_copy_constructor.hpp>
 #include <libbr/type_traits/has_trivial_copy_assignment.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>
+#include <libbr/utility/forward.hpp>
 #include <libbr/utility/move.hpp>
 #include <libbr/utility/swap.hpp>
 
 namespace BR {
 
+inline namespace Algorithm {
+
 /**
  * @brief 排序算法
+ * @tparam TRandomAccessIterator
+ * @tparam TComparator
  * @param[in,out] first,last 待排序区间
  * @param[in] comparator 比较器
  */
 template< typename TRandomAccessIterator, typename TComparator >
-inline void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator);
+void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator);
 
 /**
  * @brief 排序算法(使用BR::Less<>作比较器)
+ * @tparam TRandomAccessIterator
+ * @tparam TComparator
  * @param[in,out] first,last 待排序区间
  */
 template< typename TRandomAccessIterator >
-inline void sort(TRandomAccessIterator first, TRandomAccessIterator last)  {
-	sort(first, last, Less<>());
-}
+void sort(TRandomAccessIterator first, TRandomAccessIterator last);
+
+} // namespace Algorithm
+
+
 
 namespace Detail {
 namespace Algorithm {
 
 template< typename TForwardIterator, typename TComparator >
-inline auto sort3(TForwardIterator a, TForwardIterator b, TForwardIterator c, TComparator & comparator) -> UInt32 {
+inline auto sort3(TForwardIterator a, TForwardIterator b, TForwardIterator c, TComparator && comparator) -> UInt32 {
 	UInt32 swap_count = 0;
-	if (comparator(*b, *a)) {
-		if (comparator(*c, *b)) {
+	if (forward<TComparator>(comparator)(*b, *a)) {
+		if (forward<TComparator>(comparator)(*c, *b)) {
 			swap(*a, *c);
 			swap_count = 1;
 			// cba
-		} else if (comparator(*c, *a)) {
+		} else if (forward<TComparator>(comparator)(*c, *a)) {
 			swap(*a, *b);
 			swap(*b, *c);
 			swap_count = 2;
@@ -57,8 +66,8 @@ inline auto sort3(TForwardIterator a, TForwardIterator b, TForwardIterator c, TC
 			swap_count = 1;
 			// bac
 		}
-	} else if (comparator(*c, *b)) {
-		if (comparator(*c, *a)) {
+	} else if (forward<TComparator>(comparator)(*c, *b)) {
+		if (forward<TComparator>(comparator)(*c, *a)) {
 			swap(*b, *c);
 			swap(*a, *b);
 			swap_count = 2;
@@ -75,15 +84,15 @@ inline auto sort3(TForwardIterator a, TForwardIterator b, TForwardIterator c, TC
 }
 
 template< typename TForwardIterator, typename TComparator >
-inline auto sort4(TForwardIterator a, TForwardIterator b, TForwardIterator c, TForwardIterator d, TComparator & comparator) -> UInt32 {
-	auto swap_count = sort3(a, b, c, comparator);
-	if (comparator(*d, *c)) {
+inline auto sort4(TForwardIterator a, TForwardIterator b, TForwardIterator c, TForwardIterator d, TComparator && comparator) -> UInt32 {
+	auto swap_count = sort3(a, b, c, forward<TComparator>(comparator));
+	if (forward<TComparator>(comparator)(*d, *c)) {
 		swap(*c, *d);
 		++swap_count;
-		if (comparator(*c, *b)) {
+		if (forward<TComparator>(comparator)(*c, *b)) {
 			swap(*b, *c);
 			++swap_count;
-			if (comparator(*b, *a)) {
+			if (forward<TComparator>(comparator)(*b, *a)) {
 				swap(*a, *b);
 				++swap_count;
 			}
@@ -93,18 +102,18 @@ inline auto sort4(TForwardIterator a, TForwardIterator b, TForwardIterator c, TF
 }
 
 template< typename TForwardIterator, typename TComparator >
-inline auto sort5(TForwardIterator a, TForwardIterator b, TForwardIterator c, TForwardIterator d, TForwardIterator e, TComparator & comparator) -> UInt32 {
-	auto swap_count = sort4(a, b, c, d, comparator);
-	if (comparator(*e, *d)) {
+inline auto sort5(TForwardIterator a, TForwardIterator b, TForwardIterator c, TForwardIterator d, TForwardIterator e, TComparator && comparator) -> UInt32 {
+	auto swap_count = sort4(a, b, c, d, forward<TComparator>(comparator));
+	if (forward<TComparator>(comparator)(*e, *d)) {
 		swap(*d, *e);
 		++swap_count;
-		if (comparator(*d, *c)) {
+		if (forward<TComparator>(comparator)(*d, *c)) {
 			swap(*c, *d);
 			++swap_count;
-			if (comparator(*c, *b)) {
+			if (forward<TComparator>(comparator)(*c, *b)) {
 				swap(*b, *c);
 				++swap_count;
-				if (comparator(*b, *a)) {
+				if (forward<TComparator>(comparator)(*b, *a)) {
 					swap(*a, *b);
 					++swap_count;
 				}
@@ -115,28 +124,28 @@ inline auto sort5(TForwardIterator a, TForwardIterator b, TForwardIterator c, TF
 }
 
 template< typename TRandomAccessIterator, typename TComparator >
-inline auto sort_small(TRandomAccessIterator first, TRandomAccessIterator last, TComparator & comparator) -> bool {
+inline auto sort_small(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) -> bool {
 	switch (last - first) {
 		case 0:
 		case 1: {
 			return true;
 		}
 		case 2: {
-			if (comparator(*--last, *first)) {
+			if (forward<TComparator>(comparator)(*--last, *first)) {
 				swap(*first, *last);
 			}
 			return true;
 		}
 		case 3: {
-			sort3(first, first + 1, --last, comparator);
+			sort3(first, first + 1, --last, forward<TComparator>(comparator));
 			return true;
 		}
 		case 4: {
-			sort4(first, first + 1, first + 2, --last, comparator);
+			sort4(first, first + 1, first + 2, --last, forward<TComparator>(comparator));
 			return true;
 		}
 		case 5: {
-			sort5(first, first + 1, first + 2, first + 3, --last, comparator);
+			sort5(first, first + 1, first + 2, first + 3, --last, forward<TComparator>(comparator));
 			return true;
 		}
 		default: {
@@ -146,21 +155,21 @@ inline auto sort_small(TRandomAccessIterator first, TRandomAccessIterator last, 
 }
 
 template< typename TRandomAccessIterator, typename TComparator >
-inline auto insertion_sort_incomplete(TRandomAccessIterator first, TRandomAccessIterator last, TComparator & comparator) -> bool {
+inline auto insertion_sort_incomplete(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) -> bool {
 	constexpr auto move_threshold = 8;
-	if (!sort_small(first, last, comparator)) {
+	if (!sort_small(first, last, forward<TComparator>(comparator))) {
 		auto j = first + 2;
-		sort3(first, first + 1, j, comparator);
+		sort3(first, first + 1, j, forward<TComparator>(comparator));
 		auto move_count = 0;
 		for (auto i = j + 1; i != last; j = i, (void)++i) {
-			if (comparator(*i, *j)) {
+			if (forward<TComparator>(comparator)(*i, *j)) {
 				auto t = move(*i);
 				auto k = j;
 				j = i;
 				do {
 					*j = move(*k);
 					j = k;
-				} while (j != first && comparator(t, *--k));
+				} while (j != first && forward<TComparator>(comparator)(t, *--k));
 				*j = move(t);
 				if (++move_count == move_threshold) {
 					return ++i == last;
@@ -172,7 +181,7 @@ inline auto insertion_sort_incomplete(TRandomAccessIterator first, TRandomAccess
 }
 
 template< typename TRandomAccessIterator, typename TComparator >
-void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator & comparator) {
+void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) {
 	using Difference = typename IteratorTraits<TRandomAccessIterator>::Difference;
 	using Element = typename IteratorTraits<TRandomAccessIterator>::Element;
 	constexpr Difference insertion_sort_threshold = BooleanAnd< HasTrivialCopyConstructor<Element>, HasTrivialCopyAssignment<Element> >{} ? 30 : 6;
@@ -180,23 +189,23 @@ void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator &
 	for (;;) {
 		RESTART:
 
-		if (sort_small(first, last, comparator)) {
+		if (sort_small(first, last, forward<TComparator>(comparator))) {
 			return;
 		}
 		auto length = last - first;
 		if (length <= insertion_sort_threshold) {
 			// insertion sort
 			auto j = first + 2;
-			sort3(first, first + 1, j, comparator);
+			sort3(first, first + 1, j, forward<TComparator>(comparator));
 			for (auto i = j + 1; i != last; ++i) {
-				if (comparator(*i, *j)) {
+				if (forward<TComparator>(comparator)(*i, *j)) {
 					auto t = move(*i);
 					auto k = j;
 					j = i;
 					do {
 						*j = move(*k);
 						j = k;
-					} while (j != first && comparator(t, *--k));
+					} while (j != first && forward<TComparator>(comparator)(t, *--k));
 					*j = move(t);
 				}
 				j = i;
@@ -211,24 +220,24 @@ void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator &
 		UInt32 swap_count(0);
 		if (length >= pivot_select_threshold) {
 			auto delta = half_length / 2;
-			swap_count = sort5(first, first + delta, middle, middle + delta, before_last, comparator);
+			swap_count = sort5(first, first + delta, middle, middle + delta, before_last, forward<TComparator>(comparator));
 		} else {
-			swap_count = sort3(first, middle, before_last, comparator);
+			swap_count = sort3(first, middle, before_last, forward<TComparator>(comparator));
 		}
 
 		auto i = first;
 		auto j = before_last;
-		if (!comparator(*i, *middle)) {
+		if (!forward<TComparator>(comparator)(*i, *middle)) {
 			for (;;) {
 				if (i == --j) {
 					++i;
 					j = last;
-					if (!comparator(*first, *--j)) {
+					if (!forward<TComparator>(comparator)(*first, *--j)) {
 						for (;; ++i) {
 							if (i == j) {
 								return;
 							}
-							if (comparator(*first, *i)) {
+							if (forward<TComparator>(comparator)(*first, *i)) {
 								swap(*i, *j);
 								++swap_count;
 								++i;
@@ -240,8 +249,8 @@ void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator &
 						return;
 					}
 					for (;; ++i) {
-						for (; !comparator(*first, *i); ++i) {}
-						for (; comparator(*first, *--j);) {}
+						for (; !forward<TComparator>(comparator)(*first, *i); ++i) {}
+						for (; forward<TComparator>(comparator)(*first, *--j);) {}
 						if (i >= j) {
 							break;
 						}
@@ -251,7 +260,7 @@ void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator &
 					first = i;
 					goto RESTART;
 				}
-				if (comparator(*j, *middle)) {
+				if (forward<TComparator>(comparator)(*j, *middle)) {
 					swap(*i, *j);
 					++swap_count;
 					break;
@@ -261,8 +270,8 @@ void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator &
 
 		if (++i < j) {
 			for (;; ++i) {
-				for (; comparator(*i, *middle); ++i) {}
-				for (; !comparator(*--j, *middle);) {}
+				for (; forward<TComparator>(comparator)(*i, *middle); ++i) {}
+				for (; !forward<TComparator>(comparator)(*--j, *middle);) {}
 				if (i > j) {
 					break;
 				}
@@ -273,13 +282,13 @@ void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator &
 				}
 			}
 		}
-		if (i != middle && comparator(*middle, *i)) {
+		if (i != middle && forward<TComparator>(comparator)(*middle, *i)) {
 			swap(*i, *middle);
 			++swap_count;
 		}
 		if (swap_count == 0) {
-			bool finished = insertion_sort_incomplete(first, i, comparator);
-			if (insertion_sort_incomplete(i + 1, last, comparator)) {
+			bool finished = insertion_sort_incomplete(first, i, forward<TComparator>(comparator));
+			if (insertion_sort_incomplete(i + 1, last, forward<TComparator>(comparator))) {
 				if (finished) {
 					return;
 				}
@@ -293,10 +302,10 @@ void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator &
 			}
 		}
 		if (i - first < last - i) {
-			Algorithm::sort(first, i, comparator);
+			Algorithm::sort(first, i, forward<TComparator>(comparator));
 			first = ++i;
 		} else {
-			Algorithm::sort(i + 1, last, comparator);
+			Algorithm::sort(i + 1, last, forward<TComparator>(comparator));
 			last = i;
 		}
 	}
@@ -305,9 +314,16 @@ void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator &
 } // namespace Algorithm
 } // namespace Detail
 
+inline namespace Algorithm {
+
 template< typename TRandomAccessIterator, typename TComparator >
-void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) {
-	Detail::Algorithm::sort(first, last, comparator);
+inline void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) {
+	Detail::Algorithm::sort(first, last, forward<TComparator>(comparator));
+}
+
+template< typename TRandomAccessIterator >
+void sort(TRandomAccessIterator first, TRandomAccessIterator last) {
+	sort(first, last, Less<>());
 }
 
 extern template void sort(NChar * first, NChar * last, Less<NChar> && comparator);
@@ -330,10 +346,10 @@ extern template void sort(SInt64 * first, SInt64 * last, Less<SInt64> && compara
 
 extern template void sort(UInt64 * first, UInt64 * last, Less<UInt64> && comparator);
 
-extern template void sort(SFloat * first, SFloat * last, Less<SFloat> && comparator);
+extern template void sort(Float32 * first, Float32 * last, Less<Float32> && comparator);
 
-extern template void sort(DFloat * first, DFloat * last, Less<DFloat> && comparator);
+extern template void sort(Float64 * first, Float64 * last, Less<Float64> && comparator);
 
-extern template void sort(QFloat * first, QFloat * last, Less<QFloat> && comparator);
+} // namespace Algorithm
 
 } // namespace BR

@@ -634,7 +634,7 @@ public:
 
 	/**
 	 * @brief 构造具有指定长度的容器，元素以默认值初始化
-	 * @param[in] count 容器大小
+	 * @param[in] n 容器大小
 	 * @param[in] allocator 分配器
 	 */
 	explicit List(Size n, Allocator const & allocator = Allocator{}) : Base(allocator) {
@@ -645,8 +645,8 @@ public:
 
 	/**
 	 * @brief 构造具有指定长度的容器，元素以给定值初始化
-	 * @param[in] element 用于初始化的元素
-	 * @param[in] size 容器大小
+	 * @param[in] x 用于初始化的元素
+	 * @param[in] n 容器大小
 	 * @param[in] allocator 分配器
 	 */
 	List(ConstReference x, Size n, Allocator const & allocator = Allocator{}) : Base(allocator) {
@@ -673,8 +673,8 @@ public:
 	 * @param[in] list 初始化列表
 	 * @param[in] allocator 分配器
 	 */
-	List(InitializerList<Element> l, Allocator const & allocator = Allocator{}) : Base(allocator) {
-		for (auto i = l.begin(), e = l.end(); i != e; ++i) {
+	List(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : Base(allocator) {
+		for (auto i = list.begin(), e = list.end(); i != e; ++i) {
 			emplace_back(*i);
 		}
 	}
@@ -861,12 +861,12 @@ public:
 	///@{
 	/**
 	 * @brief 复制运算
-	 * @param[in] string 源链表
+	 * @param[in] list 源链表
 	 */
-	auto operator=(List const & other) -> List & {
-		if (this != &other) {
-			this->m_copy_assign_allocator(other);
-			assign(other.begin(), other.end());
+	auto operator=(List const & list) -> List & {
+		if (this != &list) {
+			this->m_copy_assign_allocator(list);
+			assign(list.begin(), list.end());
 		}
 		return *this;
 	}
@@ -875,8 +875,8 @@ public:
 	 * @brief 移动运算
 	 * @param[in] list 源链表
 	 */
-	auto operator=(List && other) noexcept(BooleanAnd< typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment, HasNothrowMoveAssignment<Allocator> >{}) -> List & {
-		m_move_assign(other, typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment{});
+	auto operator=(List && list) noexcept(BooleanAnd< typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment, HasNothrowMoveAssignment<Allocator> >{}) -> List & {
+		m_move_assign(list, typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment{});
 		return *this;
 	}
 
@@ -884,15 +884,15 @@ public:
 	 * @brief 从初始化列表复制
 	 * @param[in] list 初始化列表
 	 */
-	auto operator=(InitializerList<Element> l) -> List & {
-		assign(l.begin(), l.end());
+	auto operator=(InitializerList<Element> list) -> List & {
+		assign(list.begin(), list.end());
 		return *this;
 	}
 
 	/**
 	 * @brief 设置容器内容为 count 个给定元素的副本
-	 * @param[in] element 迭代器区间
-	 * @param[in] count 迭代器区间
+	 * @param[in] x 作为副本的元素
+	 * @param[in] n 鸽术
 	 */
 	auto assign(Element const & x, Size n) -> List &;
 

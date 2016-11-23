@@ -21,8 +21,21 @@
 
 namespace BR {
 
+inline namespace Algorithm {
+
+/**
+ * @brief like std::rotate
+ * @tparam TForwardIterator
+ * @param[in,out] first,last
+ * @param[in] middle
+ * @return
+ */
 template< typename TForwardIterator >
-inline auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIterator last) -> TForwardIterator;
+auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIterator last) -> TForwardIterator;
+
+} // namespace Algorithm
+
+
 
 namespace Detail {
 namespace Algorithm {
@@ -142,15 +155,19 @@ inline auto rotate(TRandomAccessIterator first, TRandomAccessIterator middle, TR
 } // namespace Algorithm
 } // namespace Detail
 
+inline namespace Algorithm {
+
 template< typename TForwardIterator >
-auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIterator last) -> TForwardIterator {
+inline auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIterator last) -> TForwardIterator {
 	if (first == middle) {
 		return last;
 	}
 	if (middle == last) {
 		return first;
 	}
-	return Detail::Algorithm::rotate(first, middle, last, IteratorTraits<TForwardIterator>::category());
+	return Detail::Algorithm::rotate(first, middle, last, typename IteratorTraits<TForwardIterator>::Category{});
 }
+
+} // namespace Algorithm
 
 } // namespace BR

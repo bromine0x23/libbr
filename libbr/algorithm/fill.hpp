@@ -13,8 +13,21 @@
 
 namespace BR {
 
+inline namespace Algorithm {
+
+/**
+ * @brief like std::fill
+ * @tparam TForwardIterator
+ * @tparam TValue
+ * @param[in,out] first,last
+ * @param[in] value
+ */
 template< typename TForwardIterator, typename TValue >
-inline void fill(TForwardIterator first, TForwardIterator last, TValue const & value);
+void fill(TForwardIterator first, TForwardIterator last, TValue const & value);
+
+} // namespace Algorithm
+
+
 
 namespace Detail {
 namespace Algorithm {
@@ -34,9 +47,13 @@ inline void fill(TRandomAccessIterator first, TRandomAccessIterator last, TValue
 } // namespace Algorithm
 } // namespace Detail
 
+inline namespace Algorithm {
+
 template< typename TForwardIterator, typename TValue >
-void fill(TForwardIterator first, TForwardIterator last, TValue const & value) {
-	Detail::Algorithm::fill(first, last, value, IteratorTraits<TForwardIterator>::category());
+inline void fill(TForwardIterator first, TForwardIterator last, TValue const & value) {
+	Detail::Algorithm::fill(first, last, value, typename IteratorTraits<TForwardIterator>::Category{});
 }
+
+} // namespace Algorithm
 
 } // namespace BR

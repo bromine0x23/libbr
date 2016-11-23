@@ -4,6 +4,7 @@
 #include <libbr/assert/assert.hpp>
 #include <libbr/container/pair.hpp>
 #include <libbr/memory/pointer_traits.hpp>
+#include <libbr/utility/swap.hpp>
 
 namespace BR {
 namespace Detail {
@@ -275,6 +276,32 @@ public:
 	static void erase(NodePointer const & header, NodePointer const & target) {
 		RebalanceData ignored;
 		erase(header, target, ignored);
+	}
+
+	static void swap(NodePointer const & header0, NodePointer const & header1) {
+		using BR::swap;
+
+		if (header0 == header1) {
+			return;
+		}
+
+		swap(header0->parent, header1->parent);
+		swap(header0->left,   header1->left);
+		swap(header0->right,  header1->right);
+
+		auto const parent0 = header0->parent;
+		if (parent0 != nullptr) {
+			parent0->parent = header0;
+		} else {
+			header0->left = header0->right = header0;
+		}
+
+		auto const parent1 = header1->parent;
+		if (parent1 != nullptr) {
+			parent1->parent = header1;
+		} else {
+			header1->left = header1->right = header1;
+		}
 	}
 
 protected:

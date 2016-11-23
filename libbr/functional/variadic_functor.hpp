@@ -14,9 +14,12 @@ namespace BR {
 inline namespace Functional {
 
 /**
- * 变参函数对象基类
+ * @brief 变参函数对象基类
  */
 struct VariadicFunctor : public BasicFunctor<> {
+	/**
+	 * @brief 元数
+	 */
 	constexpr static SInt arity = -1;
 
 	constexpr VariadicFunctor() noexcept = default;

@@ -14,8 +14,33 @@
 #include <libbr/iterator/distance.hpp>
 #include <libbr/iterator/next.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>
+#include <libbr/utility/forward.hpp>
 
 namespace BR {
+
+inline namespace Algorithm {
+
+/**
+ * @like std::inplace_merge
+ * @tparam TBidirectionalIterator
+ * @tparam TComparator
+ * @param[in,out] first,middle,last
+ * @param[in] comparator
+ */
+template< typename TBidirectionalIterator, typename TComparator >
+void merge_inplace(TBidirectionalIterator first, TBidirectionalIterator middle, TBidirectionalIterator last, TComparator && comparator);
+
+/**
+ * @like std::inplace_merge
+ * @tparam TBidirectionalIterator
+ * @param[in,out] first,middle,last
+ */
+template< typename TBidirectionalIterator >
+void merge_inplace(TBidirectionalIterator first, TBidirectionalIterator middle, TBidirectionalIterator last);
+
+} // namespace Algorithm
+
+
 
 namespace Detail {
 namespace Algorithm {
@@ -30,7 +55,7 @@ inline void merge_inplace(TBidirectionalIterator first, TBidirectionalIterator m
 			if (length0 == 0) {
 				return;
 			}
-			if (comparator(*middle, *first)) {
+			if (forward<TComparator>(comparator)(*middle, *first)) {
 				break;
 			}
 		}
@@ -41,7 +66,7 @@ inline void merge_inplace(TBidirectionalIterator first, TBidirectionalIterator m
 		if (length0 < length1) {
 			l10 = length1 / 2;
 			m1 = next(middle, l10);
-			m0 = upper_bound(first, middle, *m1, comparator);
+			m0 = upper_bound(first, middle, *m1, forward<TComparator>(comparator));
 			l00 = distance(first, m0);
 		} else {
 			if (length0 == 1) {
@@ -50,7 +75,7 @@ inline void merge_inplace(TBidirectionalIterator first, TBidirectionalIterator m
 			}
 			l00 = length0 / 2;
 			m0 = next(first, l00);
-			m1 = lower_bound(middle, last, *m0, comparator);
+			m1 = lower_bound(middle, last, *m0, forward<TComparator>(comparator));
 			l10 = distance(middle, m1);
 		}
 
@@ -59,13 +84,13 @@ inline void merge_inplace(TBidirectionalIterator first, TBidirectionalIterator m
 		middle = rotate(m0, middle, m1);
 
 		if (l00 + l10 < l01 + l11) {
-			merge_inplace(first, m0, middle, l00, l10, comparator);
+			merge_inplace(first, m0, middle, l00, l10, forward<TComparator>(comparator));
 			first = middle;
 			middle = m1;
 			length0 = l01;
 			length1 = l11;
 		} else {
-			merge_inplace(middle, m1, last, l01, l11, comparator);
+			merge_inplace(middle, m1, last, l01, l11, forward<TComparator>(comparator));
 			last = middle;
 			middle = m0;
 			length0 = l00;
@@ -77,14 +102,19 @@ inline void merge_inplace(TBidirectionalIterator first, TBidirectionalIterator m
 } // namespace Algorithm
 } // namespace Detail
 
+
+inline namespace Algorithm {
+
 template< typename TBidirectionalIterator, typename TComparator >
 inline void merge_inplace(TBidirectionalIterator first, TBidirectionalIterator middle, TBidirectionalIterator last, TComparator && comparator) {
-	return Detail::Algorithm::merge_inplace(first, middle, last, comparator);
-};
+	return Detail::Algorithm::merge_inplace(first, middle, last, forward<TComparator>(comparator));
+}
 
 template< typename TBidirectionalIterator >
 inline void merge_inplace(TBidirectionalIterator first, TBidirectionalIterator middle, TBidirectionalIterator last) {
 	return merge_inplace(first, middle, last, Less<void>());
-};
+}
+
+} // namespace Algorithm
 
 } // namespace BR

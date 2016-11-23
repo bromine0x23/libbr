@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief swap
+ * @author Bromine0x23
+ * @since 2015/6/16
+ */
 #pragma once
 
 #include <libbr/config.hpp>
@@ -8,31 +14,29 @@
 
 namespace BR {
 
-namespace Detail {
-namespace Utility {
-
+/**
+ * @tparam T
+ * @param a
+ * @param b
+ */
 template< typename T >
-inline void swap(T & a, T & b) noexcept(
-	BooleanAnd< HasNothrowMoveAssignment<T>, HasNothrowMoveConstructor<T> >::value
-) {
+inline void swap(T & a, T & b) noexcept(BooleanAnd< HasNothrowMoveAssignment<T>, HasNothrowMoveConstructor<T> >{}) {
 	T t = move(a);
 	a = move(b);
 	b = move(t);
 }
 
+/**
+ * @tparam T
+ * @tparam S
+ * @param lhs
+ * @param rhs
+ */
 template< typename T, Size S >
-inline void swap(T (&lhs)[S], T (&rhs)[S]) noexcept(noexcept(swap(*lhs, *rhs))) {
+inline void swap(CArray<T, S> & lhs, CArray<T, S> & rhs) noexcept(noexcept(swap(*lhs, *rhs))) {
 	for (Size i = 0; i < S; ++i) {
 		swap(lhs[i], rhs[i]);
 	}
-}
-
-} // namespace Utility
-} // namespace Detail
-
-template< typename T >
-inline void swap(T & lhs, T & rhs) noexcept(noexcept(Detail::Utility::swap(lhs, rhs))) {
-	Detail::Utility::swap(lhs, rhs);
 }
 
 } // namespace BR

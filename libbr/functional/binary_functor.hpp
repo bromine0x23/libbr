@@ -14,8 +14,8 @@ namespace BR {
 inline namespace Functional {
 
 /**
- * @tparam TFirst
- * @tparam TSecond
+ * @brief 二元函数对象基类
+ * @tparam TFirst,TSecond 参数类型
  */
 template< typename TFirst, typename TSecond >
 struct BinaryFunctor : public BasicFunctor< TFirst, TSecond > {

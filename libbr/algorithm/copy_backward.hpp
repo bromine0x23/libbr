@@ -16,8 +16,22 @@
 
 namespace BR {
 
+inline namespace Algorithm {
+
+/**
+ * @brief like std::copy_backward
+ * @tparam TInputIterator0
+ * @tparam TInputIterator1
+ * @param[in] first,last
+ * @param[out] result
+ * @return
+ */
 template< typename TInputIterator0, typename TInputIterator1 >
-inline auto copy_backward(TInputIterator0 first, TInputIterator0 last, TInputIterator1 result) -> TInputIterator1;
+auto copy_backward(TInputIterator0 first, TInputIterator0 last, TInputIterator1 result) -> TInputIterator1;
+
+} // namespace Algorithm
+
+
 
 namespace Detail {
 namespace Algorithm {
@@ -41,9 +55,13 @@ inline auto copy_backward(TInputValue * first, TInputValue * last, TOutputValue 
 } // namespace Algorithm
 } // namespace Detail
 
+inline namespace Algorithm {
+
 template< typename TInputIterator0, typename TInputIterator1 >
-auto copy_backward(TInputIterator0 first, TInputIterator0 last, TInputIterator1 result) -> TInputIterator1 {
+inline auto copy_backward(TInputIterator0 first, TInputIterator0 last, TInputIterator1 result) -> TInputIterator1 {
 	return Detail::Algorithm::copy_backward(first, last, result);
 }
+
+} // namespace Algorithm
 
 } // namespace BR

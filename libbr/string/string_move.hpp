@@ -13,7 +13,7 @@ extern "C" {
 /**
  * @brief like C STL memmove
  * @param[out] D
- * @param[in] c
+ * @param[in] S
  * @param[in] n
  */
 //@{

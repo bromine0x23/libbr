@@ -2,6 +2,8 @@
 
 namespace BR {
 
+inline namespace Algorithm {
+
 template void sort(NChar * first, NChar * last, Less<NChar> && comparator);
 
 template void sort(WChar * first, WChar * last, Less<WChar> && comparator);
@@ -22,10 +24,10 @@ template void sort(SInt64 * first, SInt64 * last, Less<SInt64> && comparator);
 
 template void sort(UInt64 * first, UInt64 * last, Less<UInt64> && comparator);
 
-template void sort(SFloat * first, SFloat * last, Less<SFloat> && comparator);
+template void sort(Float32 * first, Float32 * last, Less<Float32> && comparator);
 
-template void sort(DFloat * first, DFloat * last, Less<DFloat> && comparator);
+template void sort(Float64 * first, Float64 * last, Less<Float64> && comparator);
 
-template void sort(QFloat * first, QFloat * last, Less<QFloat> && comparator);
+} // namespace Algorithm
 
 } // namespace BR
