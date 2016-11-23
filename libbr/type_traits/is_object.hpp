@@ -8,12 +8,14 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/bool.hpp>
+#include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/is_function.hpp>
 #include <libbr/type_traits/is_reference.hpp>
 #include <libbr/type_traits/is_void.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief 检查 \em T 是否是对象类型
@@ -38,7 +40,7 @@ struct IsObject;
 template< typename T >
 struct NotObject;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsObject 的模板变量版本
@@ -47,7 +49,7 @@ struct NotObject;
  * @see not_object
  */
 template< typename T >
-constexpr auto is_object = bool_constant< IsObject<T> >;
+constexpr auto is_object = boolean_constant< IsObject<T> >;
 
 /**
  * @brief NotObject 的模板变量版本
@@ -56,9 +58,11 @@ constexpr auto is_object = bool_constant< IsObject<T> >;
  * @see is_object
  */
 template< typename T >
-constexpr auto not_object = bool_constant< NotObject<T> >;
+constexpr auto not_object = boolean_constant< NotObject<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -71,16 +75,15 @@ using IsObject = BooleanAnd< NotReference<T>, NotVoid<T>, NotFunction<T> >;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsObject : public BooleanRewrapPositive< Detail::TypeTraits::IsObject<T> > {};
 
-/**
- * @brief IsObject 的否定
- * @tparam T 待检查类型
- * @see IsObject
- */
 template< typename T >
 struct NotObject : public BooleanRewrapNegative< Detail::TypeTraits::IsObject<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR
 

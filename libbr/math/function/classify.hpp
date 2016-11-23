@@ -7,7 +7,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/math/float_category.hpp>
-#include <libbr/type_operate/enable_if.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/is_integral.hpp>
 #if !defined(BR_GCC)
 #  include <libbr/math/detail/bind.hpp>

@@ -9,16 +9,19 @@
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/functional/invoke.hpp>
-#include <libbr/type_operate/bool.hpp>
+#include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/is_void.hpp>
 #include <libbr/utility/make_value.hpp>
 #include <libbr/utility/forward.hpp>
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief IsCallable
- * @tparam T 待检查类型
+ * @tparam TCallable
+ * @tparam TArgs
  * @see IntegerConstant
  * @see NotCallable
  *
@@ -29,33 +32,40 @@ struct IsCallable;
 
 /**
  * @brief IsCallable 的否定
- * @tparam T 待检查类型
+ * @tparam TCallable
+ * @tparam TArgs
  * @see IsCallable
  */
 template< typename TCallable, typename... TArgs >
-using NotCallable = BooleanNot< IsCallable< TCallable, TArgs... > >;
+struct NotCallable;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsCallable 的模板变量版本
- * @tparam T 待检查类型
+ * @tparam TCallable
+ * @tparam TArgs
  * @see IsCallable
  * @see not_callable
  */
 template< typename TCallable, typename... TArgs >
-constexpr auto is_callable = bool_constant< IsCallable< TCallable, TArgs... > >;
+constexpr auto is_callable = boolean_constant< IsCallable< TCallable, TArgs... > >;
 
 /**
  * @brief NotCallable 的模板变量版本
- * @tparam T 待检查类型
+ * @tparam TCallable
+ * @tparam TArgs
  * @see NotCallable
  * @see is_callable
  */
 template< typename TCallable, typename... TArgs >
-constexpr auto not_callable = bool_constant< NotCallable< TCallable, TArgs... > >;
+constexpr auto not_callable = boolean_constant< NotCallable< TCallable, TArgs... > >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
+
+
 
 namespace Detail {
 namespace TypeTraits {
@@ -76,8 +86,14 @@ struct IsCallable : public BooleanAnd< NotVoid<TCallable>, IsCallableBasic< TCal
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename TCallable, typename... TArgs >
-struct IsCallable : public BooleanRewrap< Detail::TypeTraits::IsCallable< TCallable, TArgs... > > {
-};
+struct IsCallable : public BooleanRewrapPositive< Detail::TypeTraits::IsCallable< TCallable, TArgs... > > {};
+
+template< typename TCallable, typename... TArgs >
+struct NotCallable : public BooleanRewrapNegative< Detail::TypeTraits::IsCallable< TCallable, TArgs... > > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

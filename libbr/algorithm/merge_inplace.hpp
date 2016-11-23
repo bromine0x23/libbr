@@ -21,7 +21,7 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @like std::inplace_merge
+ * @brief like std::inplace_merge
  * @tparam TBidirectionalIterator
  * @tparam TComparator
  * @param[in,out] first,middle,last
@@ -31,7 +31,7 @@ template< typename TBidirectionalIterator, typename TComparator >
 void merge_inplace(TBidirectionalIterator first, TBidirectionalIterator middle, TBidirectionalIterator last, TComparator && comparator);
 
 /**
- * @like std::inplace_merge
+ * @brief like std::inplace_merge
  * @tparam TBidirectionalIterator
  * @param[in,out] first,middle,last
  */

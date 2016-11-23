@@ -9,7 +9,7 @@
 #include <libbr/config.hpp>
 #include <libbr/algorithm/fill.hpp>
 #include <libbr/memory/address_of.hpp>
-#include <libbr/type_operate/bool.hpp>
+#include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/has_copy_assignment.hpp>
 #include <libbr/type_traits/is_trivial.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>

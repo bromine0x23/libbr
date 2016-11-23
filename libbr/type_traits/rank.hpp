@@ -7,10 +7,12 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/remove_const_volatile.hpp>
+#include <libbr/type_traits/remove_const_volatile.hpp>
 #include <libbr/utility/integral_constant.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief 获取数组类型的维度
@@ -23,7 +25,7 @@ namespace BR {
 template< typename T >
 struct Rank;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief Rank 的模板变量版本
@@ -33,7 +35,9 @@ struct Rank;
 template< typename T >
 constexpr auto rank = integral_constant< Rank<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -52,7 +56,11 @@ struct Rank< T [S] > : public IntegralConstant< Size, (Rank< RemoveConstVolatile
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct Rank : public IntegralRewrap< Detail::TypeTraits::Rank<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

@@ -16,9 +16,9 @@
 #include <libbr/memory/allocator_argument_tag.hpp>
 #include <libbr/memory/allocator_destructor.hpp>
 #include <libbr/memory/unique_pointer.hpp>
-#include <libbr/type_operate/decay.hpp>
-#include <libbr/type_operate/enable_if.hpp>
 #include <libbr/type_traits/allocator_traits.hpp>
+#include <libbr/type_traits/decay.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/is_callable.hpp>
 #include <libbr/type_traits/is_convertible.hpp>
 #include <libbr/type_traits/is_same.hpp>

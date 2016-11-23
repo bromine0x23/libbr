@@ -1,11 +1,11 @@
 #pragma once
 
 #include <libbr/assert/assert.hpp>
-#include <libbr/type_operate/add_lvalue_reference.hpp>
-#include <libbr/type_operate/add_pointer.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/conditional.hpp>
-#include <libbr/type_operate/remove_extent.hpp>
+#include <libbr/type_traits/add_lvalue_reference.hpp>
+#include <libbr/type_traits/add_pointer.hpp>
+#include <libbr/type_traits/boolean.hpp>
+#include <libbr/type_traits/conditional.hpp>
+#include <libbr/type_traits/remove_extent.hpp>
 #include <libbr/type_traits/extent.hpp>
 #include <libbr/type_traits/is_array.hpp>
 #include <libbr/type_traits/is_void.hpp>

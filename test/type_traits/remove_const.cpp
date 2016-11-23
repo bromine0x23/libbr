@@ -1,0 +1,45 @@
+#include <libbr/type_traits/remove_const.hpp>
+
+#include "test.hpp"
+
+using namespace BR;
+
+TEST(TypeOperate, RemoveConst) {
+	TYPE_TRAITS_CHECKS(RemoveConst, BR_EMPTY, BR_EMPTY)
+	TYPE_TRAITS_CHECKS(RemoveConst, const, BR_EMPTY)
+	TYPE_TRAITS_CHECKS(RemoveConst, volatile, volatile)
+	TYPE_TRAITS_CHECKS(RemoveConst, const volatile, volatile)
+	TYPE_TRAITS_CHECKS(RemoveConst, *, *)
+	TYPE_TRAITS_CHECKS(RemoveConst, * const, *)
+	TYPE_TRAITS_CHECKS(RemoveConst, * volatile, * volatile)
+	TYPE_TRAITS_CHECKS(RemoveConst, * const volatile, * volatile)
+	TYPE_TRAITS_CHECKS(RemoveConst, const *, const *)
+	TYPE_TRAITS_CHECKS(RemoveConst, volatile *, volatile *)
+	TYPE_TRAITS_CHECKS(RemoveConst, const * const, const *)
+	TYPE_TRAITS_CHECKS(RemoveConst, const * volatile, const * volatile)
+	TYPE_TRAITS_CHECKS(RemoveConst, const * const volatile, const * volatile)
+	TYPE_TRAITS_CHECKS(RemoveConst, &, &)
+	TYPE_TRAITS_CHECKS(RemoveConst, const &, const &)
+	TYPE_TRAITS_CHECKS(RemoveConst, volatile &, volatile &)
+	TYPE_TRAITS_CHECKS(RemoveConst, const volatile &, const volatile &)
+	TYPE_TRAITS_CHECKS(RemoveConst, &&, &&)
+	TYPE_TRAITS_CHECKS(RemoveConst, const &&, const &&)
+	TYPE_TRAITS_CHECKS(RemoveConst, volatile &&, volatile &&)
+	TYPE_TRAITS_CHECKS(RemoveConst, const volatile &&, const volatile &&)
+	TYPE_TRAITS_CHECKS(RemoveConst, [2], [2])
+	TYPE_TRAITS_CHECKS(RemoveConst, const[2], [2])
+	TYPE_TRAITS_CHECKS(RemoveConst, volatile[2], volatile[2])
+	TYPE_TRAITS_CHECKS(RemoveConst, const volatile[2], volatile[2])
+	TYPE_TRAITS_CHECKS(RemoveConst, [2][3], [2][3])
+	TYPE_TRAITS_CHECKS(RemoveConst, const[2][3], [2][3])
+	TYPE_TRAITS_CHECKS(RemoveConst, volatile[2][3], volatile[2][3])
+	TYPE_TRAITS_CHECKS(RemoveConst, const volatile[2][3], volatile[2][3])
+	TYPE_TRAITS_CHECKS(RemoveConst, [][3], [][3])
+	TYPE_TRAITS_CHECKS(RemoveConst, const[][3], [][3])
+	TYPE_TRAITS_CHECKS(RemoveConst, volatile[][3], volatile[][3])
+	TYPE_TRAITS_CHECKS(RemoveConst, const volatile[][3], volatile[][3])
+	TYPE_TRAITS_CHECKS(RemoveConst, (&)[2], (&)[2])
+	TYPE_TRAITS_CHECKS(RemoveConst, (&&)[2], (&&)[2])
+	TYPE_TRAITS_CHECKS(RemoveConst, (&)[2][3], (&)[2][3])
+	TYPE_TRAITS_CHECKS(RemoveConst, (&&)[2][3], (&&)[2][3])
+}

@@ -1,0 +1,45 @@
+#include <libbr/type_traits/remove_const_volatile.hpp>
+
+#include "test.hpp"
+
+using namespace BR;
+
+TEST(TypeOperate, RemoveConstVolatile) {
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, BR_EMPTY, BR_EMPTY)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, const, BR_EMPTY)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, volatile, BR_EMPTY)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, const volatile, BR_EMPTY)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, *, *)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, * const, *)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, * volatile, *)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, * const volatile, *)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, const *, const *)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, volatile *, volatile *)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, const * const, const *)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, const * volatile, const *)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, const * const volatile, const *)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, &, &)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, const &, const &)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, volatile &, volatile &)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, const volatile &, const volatile &)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, &&, &&)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, const &&, const &&)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, volatile &&, volatile &&)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, const volatile &&, const volatile &&)
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, [2], [2])
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, const[2], [2])
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, volatile[2], [2])
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, const volatile[2], [2])
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, [2][3], [2][3])
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, const[2][3], [2][3])
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, volatile[2][3], [2][3])
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, const volatile[2][3], [2][3])
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, [][3], [][3])
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, const[][3], [][3])
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, volatile[][3], [][3])
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, const volatile[][3], [][3])
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, (&)[2], (&)[2])
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, (&&)[2], (&&)[2])
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, (&)[2][3], (&)[2][3])
+	TYPE_TRAITS_CHECKS(RemoveConstVolatile, (&&)[2][3], (&&)[2][3])
+}

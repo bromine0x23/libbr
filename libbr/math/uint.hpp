@@ -1,7 +1,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/conditional.hpp>
+#include <libbr/type_traits/conditional.hpp>
 #include <libbr/type_operate/is_unsigned.hpp>
 
 namespace BR {

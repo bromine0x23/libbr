@@ -8,7 +8,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/functional/unary_functor.hpp>
-#include <libbr/type_operate/enable_if.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/is_convertible.hpp>
 #include <libbr/type_traits/is_void.hpp>
 

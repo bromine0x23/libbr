@@ -16,9 +16,9 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/remove_const_volatile.hpp>
-#include <libbr/type_operate/remove_pointer.hpp>
-#include <libbr/type_operate/remove_reference.hpp>
+#include <libbr/type_traits/remove_const_volatile.hpp>
+#include <libbr/type_traits/remove_pointer.hpp>
+#include <libbr/type_traits/remove_reference.hpp>
 #include <libbr/type_traits/is_same.hpp>
 #include <libbr/type_traits/is_void.hpp>
 #include <libbr/utility/make_value.hpp>
@@ -102,15 +102,15 @@ struct BR_JOIN(NoOperator, BR_TYPE_OPERATE_OP_NAME_C) : BooleanRewrapNegative<
 	Detail::TypeTraits::BR_JOIN(BinaryOperator, BR_TYPE_OPERATE_OP_NAME_C)::HasOperator< TLhs, TRhs, TRet >
 > {};
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 template< typename TLhs, typename TRhs = TLhs, typename TRet = Detail::TypeTraits::BR_JOIN(BinaryOperator, BR_TYPE_OPERATE_OP_NAME_C)::NotCareTag >
-constexpr auto BR_JOIN(has_operator_, BR_TYPE_OPERATE_OP_NAME_V) = bool_constant< BR_JOIN(HasOperator, BR_TYPE_OPERATE_OP_NAME_C)< TLhs, TRhs, TRet > >;
+constexpr auto BR_JOIN(has_operator_, BR_TYPE_OPERATE_OP_NAME_V) = boolean_constant< BR_JOIN(HasOperator, BR_TYPE_OPERATE_OP_NAME_C)< TLhs, TRhs, TRet > >;
 
 template< typename TLhs, typename TRhs = TLhs, typename TRet = Detail::TypeTraits::BR_JOIN(BinaryOperator, BR_TYPE_OPERATE_OP_NAME_C)::NotCareTag >
-constexpr auto BR_JOIN(no_operator_, BR_TYPE_OPERATE_OP_NAME_V) = bool_constant< BR_JOIN(NoOperator, BR_TYPE_OPERATE_OP_NAME_C)< TLhs, TRhs, TRet > >;
+constexpr auto BR_JOIN(no_operator_, BR_TYPE_OPERATE_OP_NAME_V) = boolean_constant< BR_JOIN(NoOperator, BR_TYPE_OPERATE_OP_NAME_C)< TLhs, TRhs, TRet > >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
 
 } // namespace BR
 

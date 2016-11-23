@@ -10,7 +10,6 @@
 
 #include <libbr/type_traits/allocator_constructor_usage.hpp>
 #include <libbr/type_traits/allocator_traits.hpp>
-// #include <libbr/type_traits/char_traits.hpp>
 #include <libbr/type_traits/cv_traits.hpp>
 #include <libbr/type_traits/integer_traits.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>
@@ -138,3 +137,42 @@
 #include <libbr/type_traits/is_swappable.hpp>
 #include <libbr/type_traits/is_nothrow_swappable.hpp>
 #include <libbr/type_traits/is_use_allocator.hpp>
+
+#include <libbr/type_traits/boolean.hpp>
+
+#include <libbr/type_traits/conditional.hpp>
+#include <libbr/type_traits/enable_if.hpp>
+
+#include <libbr/type_traits/add_const.hpp>
+#include <libbr/type_traits/add_const_volatile.hpp>
+#include <libbr/type_traits/add_lvalue_reference.hpp>
+#include <libbr/type_traits/add_pointer.hpp>
+#include <libbr/type_traits/add_rvalue_reference.hpp>
+#include <libbr/type_traits/add_volatile.hpp>
+#include <libbr/type_traits/map_qualifier.hpp>
+#include <libbr/type_traits/remove_all_extents.hpp>
+#include <libbr/type_traits/remove_const.hpp>
+#include <libbr/type_traits/remove_const_volatile.hpp>
+#include <libbr/type_traits/remove_extent.hpp>
+#include <libbr/type_traits/remove_pointer.hpp>
+#include <libbr/type_traits/remove_reference.hpp>
+#include <libbr/type_traits/remove_volatile.hpp>
+
+#include <libbr/type_traits/make_signed.hpp>
+#include <libbr/type_traits/make_unsigned.hpp>
+
+#include <libbr/type_traits/call_result.hpp>
+#include <libbr/type_traits/common.hpp>
+#include <libbr/type_traits/decay.hpp>
+#include <libbr/type_traits/template_argument.hpp>
+#include <libbr/type_traits/variadic_get.hpp>
+
+namespace BR {
+
+/**
+ * @brief TypeTraits
+ */
+inline namespace TypeTraits {
+} // namespace TypeTraits
+
+} // namespace BR

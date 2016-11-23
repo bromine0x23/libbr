@@ -11,6 +11,8 @@
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 获取类型的对齐长度
  * @tparam T
@@ -21,7 +23,7 @@ namespace BR {
 template< typename T >
 using AlignmentOf = IntegralConstant< Size, alignof(T) >;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief AlignmentOf 的模板变量版本
@@ -31,6 +33,8 @@ using AlignmentOf = IntegralConstant< Size, alignof(T) >;
 template< typename T >
 constexpr auto alignment_of = integral_constant< AlignmentOf<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 } // namespace BR

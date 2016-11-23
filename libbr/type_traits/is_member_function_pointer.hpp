@@ -8,9 +8,11 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/remove_const_volatile.hpp>
+#include <libbr/type_traits/remove_const_volatile.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief 检查 \em T 是否是成员函数指针
@@ -31,7 +33,7 @@ struct IsMemberFunctionPointer;
 template< typename T >
 struct NotMemberFunctionPointer;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsMemberFunctionPointer 的模板变量版本
@@ -40,7 +42,7 @@ struct NotMemberFunctionPointer;
  * @see not_member_function_pointer
  */
 template< typename T >
-constexpr auto is_member_function_pointer = bool_constant< IsMemberFunctionPointer<T> >;
+constexpr auto is_member_function_pointer = boolean_constant< IsMemberFunctionPointer<T> >;
 
 /**
  * @brief NotMemberFunctionPointer 的模板变量版本
@@ -49,9 +51,11 @@ constexpr auto is_member_function_pointer = bool_constant< IsMemberFunctionPoint
  * @see is_member_function_pointer
  */
 template< typename T >
-constexpr auto not_member_function_pointer = bool_constant< NotMemberFunctionPointer<T> >;
+constexpr auto not_member_function_pointer = boolean_constant< NotMemberFunctionPointer<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -91,11 +95,15 @@ using IsMemberFunctionPointer = IsMemberFunctionPointerBasic< RemoveConstVolatil
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsMemberFunctionPointer : public BooleanRewrapPositive< Detail::TypeTraits::IsMemberFunctionPointer<T> > {};
 
 template< typename T >
 struct NotMemberFunctionPointer : public BooleanRewrapNegative< Detail::TypeTraits::IsMemberFunctionPointer<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR
 

@@ -12,12 +12,14 @@
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 是否可被默认构造
  * @tparam T 待检查类型
- * @see BR::IntegerConstant
- * @see BR::IsConstructible
- * @see BR::NoDefaultConstructor
+ * @see IntegerConstant
+ * @see IsConstructible
+ * @see NoDefaultConstructor
  *
  * 如果 \em T 可被默认构造，那么封装的值为 \em true ；否则为 \em false
  */
@@ -27,32 +29,34 @@ struct HasDefaultConstructor;
 /**
  * @brief HasDefaultConstructor 的否定
  * @tparam T 待检查类型
- * @see BR::HasDefaultConstructor
+ * @see HasDefaultConstructor
  */
 template< typename T >
 struct NoDefaultConstructor;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief HasDefaultConstructor 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::HasDefaultConstructor
- * @see BR::no_default_constructor
+ * @see HasDefaultConstructor
+ * @see no_default_constructor
  */
 template< typename T >
-constexpr auto has_default_constructor = bool_constant< HasDefaultConstructor<T> >;
+constexpr auto has_default_constructor = boolean_constant< HasDefaultConstructor<T> >;
 
 /**
  * @brief NoDefaultConstructor 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::NoDefaultConstructor
- * @see BR::has_default_constructor
+ * @see NoDefaultConstructor
+ * @see has_default_constructor
  */
 template< typename T >
-constexpr auto no_default_constructor = bool_constant< NoDefaultConstructor<T> >;
+constexpr auto no_default_constructor = boolean_constant< NoDefaultConstructor<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -65,10 +69,14 @@ using HasDefaultConstructor = IsConstructible<T>;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct HasDefaultConstructor : public BooleanRewrapPositive< Detail::TypeTraits::HasDefaultConstructor<T> > {};
 
 template< typename T >
 struct NoDefaultConstructor : public BooleanRewrapNegative< Detail::TypeTraits::HasDefaultConstructor<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

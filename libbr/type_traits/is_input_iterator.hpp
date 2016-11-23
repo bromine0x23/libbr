@@ -7,14 +7,16 @@
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/utility/boolean_constant.hpp>
 #include <libbr/iterator/category.hpp>
 #include <libbr/type_traits/is_convertible.hpp>
 #include <libbr/type_traits/is_iterator.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>
-#include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/remove_const_volatile.hpp>
+#include <libbr/type_traits/remove_const_volatile.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief IsInputIterator
@@ -34,7 +36,7 @@ struct IsInputIterator;
 template< typename T >
 struct NotInputIterator;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsInputIterator 的模板变量版本
@@ -43,7 +45,7 @@ struct NotInputIterator;
  * @see not_input_iterator
  */
 template< typename T >
-constexpr auto is_input_iterator = bool_constant< IsInputIterator<T> >;
+constexpr auto is_input_iterator = boolean_constant< IsInputIterator<T> >;
 
 /**
  * @brief NotInputIterator 的模板变量版本
@@ -52,9 +54,11 @@ constexpr auto is_input_iterator = bool_constant< IsInputIterator<T> >;
  * @see is_input_iterator
  */
 template< typename T >
-constexpr auto not_input_iterator = bool_constant< NotInputIterator<T> >;
+constexpr auto not_input_iterator = boolean_constant< NotInputIterator<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -73,10 +77,14 @@ using IsInputIterator = BooleanAnd< IsIterator<TIterator>, IsInputIteratorBasic<
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsInputIterator : public BooleanRewrapPositive< Detail::TypeTraits::IsInputIterator<T> > {};
 
 template< typename T >
 struct NotInputIterator : public BooleanRewrapNegative< Detail::TypeTraits::IsInputIterator<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

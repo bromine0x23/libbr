@@ -3,11 +3,9 @@
 #include <libbr/config.hpp>
 #include <libbr/assert/dummy_false.hpp>
 #include <libbr/container/detail/tuple_forward.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/decay.hpp>
-#include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/make_integral_sequence.hpp>
-#include <libbr/type_operate/type.hpp>
+#include <libbr/type_traits/boolean.hpp>
+#include <libbr/type_traits/decay.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/has_nothrow_copy_assignment.hpp>
 #include <libbr/type_traits/has_nothrow_copy_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_default_constructor.hpp>
@@ -21,10 +19,12 @@
 #include <libbr/type_traits/is_nothrow_assignable.hpp>
 #include <libbr/type_traits/is_nothrow_constructible.hpp>
 #include <libbr/type_traits/is_nothrow_swappable.hpp>
+#include <libbr/type_traits/make_integral_sequence.hpp>
 #include <libbr/utility/forward.hpp>
 #include <libbr/utility/move.hpp>
 #include <libbr/utility/piecewise_construct_tag.hpp>
 #include <libbr/utility/swap.hpp>
+#include <libbr/utility/type.hpp>
 
 namespace BR {
 

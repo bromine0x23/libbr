@@ -8,9 +8,11 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/remove_const_volatile.hpp>
+#include <libbr/type_traits/remove_const_volatile.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief 检查 \em T 是否是成员指针
@@ -33,7 +35,7 @@ struct IsMemberPointer;
 template< typename T >
 struct NotMemberPointer;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsMemberPointer 的模板变量版本
@@ -42,7 +44,7 @@ struct NotMemberPointer;
  * @see not_member_pointer
  */
 template< typename T >
-constexpr auto is_member_pointer = bool_constant< IsMemberPointer<T> >;
+constexpr auto is_member_pointer = boolean_constant< IsMemberPointer<T> >;
 
 /**
  * @brief NotMemberPointer 的模板变量版本
@@ -51,9 +53,11 @@ constexpr auto is_member_pointer = bool_constant< IsMemberPointer<T> >;
  * @see is_member_pointer
  */
 template< typename T >
-constexpr auto not_member_pointer = bool_constant< NotMemberPointer<T> >;
+constexpr auto not_member_pointer = boolean_constant< NotMemberPointer<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -72,10 +76,14 @@ using IsMemberPointer = IsMemberPointerBasic< RemoveConstVolatile<T> >;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsMemberPointer : public BooleanRewrapPositive< Detail::TypeTraits::IsMemberPointer<T> > {};
 
 template< typename T >
 struct NotMemberPointer : public BooleanRewrapNegative< Detail::TypeTraits::IsMemberPointer<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

@@ -7,13 +7,13 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/type.hpp>
-#include <libbr/type_operate/types.hpp>
-#include <libbr/type_operate/max_integer.hpp>
 #include <libbr/type_traits/alignment_of.hpp>
+#include <libbr/type_traits/max_integer.hpp>
 #include <libbr/type_traits/size_of.hpp>
 #include <libbr/utility/aligned_storage.hpp>
 #include <libbr/utility/integral_constant.hpp>
+#include <libbr/utility/type.hpp>
+#include <libbr/utility/types.hpp>
 
 namespace BR {
 

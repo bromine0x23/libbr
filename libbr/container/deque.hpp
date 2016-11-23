@@ -17,7 +17,7 @@
 #include <libbr/memory/allocator.hpp>
 #include <libbr/memory/allocator_traits.hpp>
 #include <libbr/memory/pointer_traits.hpp>
-#include <libbr/type_operate/bool.hpp>
+#include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/has_nothrow_default_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_move_assignment.hpp>
 #include <libbr/type_traits/has_nothrow_move_constructor.hpp>

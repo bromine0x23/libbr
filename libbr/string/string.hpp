@@ -9,7 +9,7 @@
 #include <libbr/config.hpp>
 #include <libbr/string/raw_string.hpp>
 #include <libbr/encoding/encoding.hpp>
-#include <libbr/type_operate/make_signed.hpp>
+#include <libbr/type_traits/make_signed.hpp>
 #include <libbr/utility/move.hpp>
 
 namespace BR {

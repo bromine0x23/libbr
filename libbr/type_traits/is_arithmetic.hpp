@@ -8,12 +8,13 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/bool.hpp>
+#include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/is_integral.hpp>
 #include <libbr/type_traits/is_floating_point.hpp>
 
 namespace BR {
 
+inline namespace TypeTraits {
 
 /**
  * @brief 检查 \em T 是否是算术类型
@@ -36,7 +37,7 @@ struct IsArithmetic;
 template< typename T >
 struct NotArithmetic;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsArithmetic 的模板变量版本
@@ -45,7 +46,7 @@ struct NotArithmetic;
  * @see not_arithmetic
  */
 template< typename T >
-constexpr auto is_arithmetic = bool_constant< IsArithmetic<T> >;
+constexpr auto is_arithmetic = boolean_constant< IsArithmetic<T> >;
 
 /**
  * @brief NotArithmetic 的模板变量版本
@@ -54,9 +55,11 @@ constexpr auto is_arithmetic = bool_constant< IsArithmetic<T> >;
  * @see is_arithmetic
  */
 template< typename T >
-constexpr auto not_arithmetic = bool_constant< NotArithmetic<T> >;
+constexpr auto not_arithmetic = boolean_constant< NotArithmetic<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -69,11 +72,15 @@ using IsArithmetic = BooleanOr< IsIntegral<T>, IsFloatingPoint<T> >;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsArithmetic : public BooleanRewrapPositive< Detail::TypeTraits::IsArithmetic<T> > {};
 
 template< typename T >
 struct NotArithmetic : public BooleanRewrapNegative< Detail::TypeTraits::IsArithmetic<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR
 

@@ -11,6 +11,8 @@
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 是否是模板类实例
  * @tparam T 待检查类型
@@ -30,7 +32,7 @@ struct IsTemplateInstance;
 template< typename T >
 struct NotTemplateInstance;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsTemplateInstance 的模板变量版本
@@ -39,7 +41,7 @@ struct NotTemplateInstance;
  * @see not_template_instance
  */
 template< typename T >
-constexpr auto is_template_instance = bool_constant< IsTemplateInstance<T> >;
+constexpr auto is_template_instance = boolean_constant< IsTemplateInstance<T> >;
 
 /**
  * @brief NotTemplateInstance 的模板变量版本
@@ -48,9 +50,11 @@ constexpr auto is_template_instance = bool_constant< IsTemplateInstance<T> >;
  * @see is_template_instance
  */
 template< typename T >
-constexpr auto not_template_instance = bool_constant< NotTemplateInstance<T> >;
+constexpr auto not_template_instance = boolean_constant< NotTemplateInstance<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -66,10 +70,14 @@ struct IsTemplateInstance< TemplateClass< TArgs... > > : public BooleanTrue {};
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsTemplateInstance : public BooleanRewrapPositive< Detail::TypeTraits::IsTemplateInstance<T> > {};
 
 template< typename T >
 struct NotTemplateInstance : public BooleanRewrapNegative< Detail::TypeTraits::IsTemplateInstance<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

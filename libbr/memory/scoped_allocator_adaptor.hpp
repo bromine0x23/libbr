@@ -7,14 +7,14 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/remove_reference.hpp>
 #include <libbr/type_traits/allocator_traits.hpp>
 #include <libbr/type_traits/allocator_constructor_usage.hpp>
+#include <libbr/type_traits/boolean.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/has_member_function.hpp>
 #include <libbr/type_traits/is_constructible.hpp>
 #include <libbr/type_traits/is_use_allocator.hpp>
+#include <libbr/type_traits/remove_reference.hpp>
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/utility/forward.hpp>
 #include <libbr/utility/make_value.hpp>

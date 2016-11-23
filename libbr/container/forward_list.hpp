@@ -25,13 +25,13 @@
 #include <libbr/memory/allocator_destructor.hpp>
 #include <libbr/memory/pointer_traits.hpp>
 #include <libbr/memory/unique_pointer.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/remove_const.hpp>
+#include <libbr/type_traits/boolean.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/has_nothrow_default_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_move_assignment.hpp>
 #include <libbr/type_traits/has_nothrow_move_constructor.hpp>
 #include <libbr/type_traits/is_nothrow_swappable.hpp>
+#include <libbr/type_traits/remove_const.hpp>
 #include <libbr/utility/forward.hpp>
 #include <libbr/utility/move.hpp>
 

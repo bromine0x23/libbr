@@ -12,6 +12,8 @@
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 是否重载了特定参数的赋值运算符
  * @tparam T 待检查类型
@@ -34,7 +36,7 @@ struct IsAssignable;
 template< typename T, typename TArg >
 struct NotAssignable;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsAssignable 的模板变量版本
@@ -44,7 +46,7 @@ struct NotAssignable;
  * @see not_assignable
  */
 template< typename T, typename TArg >
-constexpr auto is_assignable = bool_constant< IsAssignable< T, TArg > >;
+constexpr auto is_assignable = boolean_constant< IsAssignable< T, TArg > >;
 
 /**
  * @brief NotAssignable 的模板变量版本
@@ -54,9 +56,11 @@ constexpr auto is_assignable = bool_constant< IsAssignable< T, TArg > >;
  * @see is_assignable
  */
 template< typename T, typename TArg >
-constexpr auto not_assignable = bool_constant< NotAssignable< T, TArg > >;
+constexpr auto not_assignable = boolean_constant< NotAssignable< T, TArg > >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -77,10 +81,14 @@ using IsAssignable = decltype(IsAssignableTest::test< T, TArg >(0));
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T, typename TArg >
 struct IsAssignable : public BooleanRewrapPositive< Detail::TypeTraits::IsAssignable< T, TArg > > {};
 
 template< typename T, typename TArg >
 struct NotAssignable : public BooleanRewrapNegative< Detail::TypeTraits::IsAssignable< T, TArg > > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

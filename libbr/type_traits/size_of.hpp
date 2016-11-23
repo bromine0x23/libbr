@@ -11,6 +11,8 @@
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 获取类型的长度
  * @tparam T
@@ -21,7 +23,7 @@ namespace BR {
 template< typename T >
 using SizeOf = IntegralConstant< Size, sizeof(T) >;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief SizeOf 的模板变量版本
@@ -31,6 +33,8 @@ using SizeOf = IntegralConstant< Size, sizeof(T) >;
 template< typename T >
 constexpr auto size_of = integral_constant< SizeOf<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 } // namespace BR

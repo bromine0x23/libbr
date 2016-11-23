@@ -8,19 +8,21 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/add_lvalue_reference.hpp>
-#include <libbr/type_operate/add_rvalue_reference.hpp>
+#include <libbr/type_traits/add_lvalue_reference.hpp>
+#include <libbr/type_traits/add_rvalue_reference.hpp>
 #include <libbr/type_traits/is_trivially_assignable.hpp>
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 是否具有平凡的移动赋值运算符
  * @tparam T 待检查类型
- * @see BR::IntegerConstant
- * @see BR::IsTriviallyAssignable
- * @see BR::HasMoveAssignment
- * @see BR::NoTrivialMoveAssignment
+ * @see IntegerConstant
+ * @see IsTriviallyAssignable
+ * @see HasMoveAssignment
+ * @see NoTrivialMoveAssignment
  *
  * 如果 \em T 具有平凡的移动赋值运算符，那么封装的值为 \em true ；否则为 \em false
  */
@@ -30,12 +32,12 @@ struct HasTrivialMoveAssignment;
 /**
  * @brief HasTrivialMoveAssignment 的否定
  * @tparam T 待检查类型
- * @see BR::HasTrivialMoveAssignment
+ * @see HasTrivialMoveAssignment
  */
 template< typename T >
 struct NoTrivialMoveAssignment;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief HasTrivialMoveAssignment 的模板变量版本
@@ -44,7 +46,7 @@ struct NoTrivialMoveAssignment;
  * @see no_trivial_move_assignment
  */
 template< typename T >
-constexpr auto has_trivial_move_assignment = bool_constant< HasTrivialMoveAssignment<T> >;
+constexpr auto has_trivial_move_assignment = boolean_constant< HasTrivialMoveAssignment<T> >;
 
 /**
  * @brief NoTrivialMoveAssignment 的模板变量版本
@@ -53,9 +55,11 @@ constexpr auto has_trivial_move_assignment = bool_constant< HasTrivialMoveAssign
  * @see has_trivial_move_assignment
  */
 template< typename T >
-constexpr auto no_trivial_move_assignment = bool_constant< NoTrivialMoveAssignment<T> >;
+constexpr auto no_trivial_move_assignment = boolean_constant< NoTrivialMoveAssignment<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -68,10 +72,14 @@ using HasTrivialMoveAssignment = IsTriviallyAssignable < AddLValueReference<T>, 
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct HasTrivialMoveAssignment : public BooleanRewrapPositive< Detail::TypeTraits::HasTrivialMoveAssignment<T> > {};
 
 template< typename T >
 struct NoTrivialMoveAssignment : public BooleanRewrapNegative< Detail::TypeTraits::HasTrivialMoveAssignment<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

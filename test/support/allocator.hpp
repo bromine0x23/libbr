@@ -3,7 +3,7 @@
 #include <libbr/iterator/basic_iterator.hpp>
 #include <libbr/iterator/category.hpp>
 #include <libbr/memory/address_of.hpp>
-#include <libbr/type_operate/enable_if.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/is_const.hpp>
 
 template< typename TElement >

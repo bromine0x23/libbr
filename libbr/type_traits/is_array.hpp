@@ -8,9 +8,11 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/bool.hpp>
+#include <libbr/type_traits/boolean.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief 检查 \em T 是否是约束长度的数组类型(<tt>U[S]</tt>)
@@ -71,7 +73,7 @@ struct IsArray;
 template< typename T >
 struct NotArray;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsArrayKnownBounds 的模板变量版本
@@ -80,7 +82,7 @@ struct NotArray;
  * @see not_array_known_bounds
  */
 template< typename T >
-constexpr auto is_array_known_bounds = bool_constant< IsArrayKnownBounds<T> >;
+constexpr auto is_array_known_bounds = boolean_constant< IsArrayKnownBounds<T> >;
 
 /**
  * @brief NotArrayKnownBounds 的模板变量版本
@@ -89,7 +91,7 @@ constexpr auto is_array_known_bounds = bool_constant< IsArrayKnownBounds<T> >;
  * @see is_array_known_bounds
  */
 template< typename T >
-constexpr auto not_array_known_bounds = bool_constant< NotArrayKnownBounds<T> >;
+constexpr auto not_array_known_bounds = boolean_constant< NotArrayKnownBounds<T> >;
 
 /**
  * @brief IsArrayUnknownBounds 的模板变量版本
@@ -98,7 +100,7 @@ constexpr auto not_array_known_bounds = bool_constant< NotArrayKnownBounds<T> >;
  * @see not_array_unknown_bounds
  */
 template< typename T >
-constexpr auto is_array_unknown_bounds = bool_constant< IsArrayUnknownBounds<T> >;
+constexpr auto is_array_unknown_bounds = boolean_constant< IsArrayUnknownBounds<T> >;
 
 /**
  * @brief NotArrayUnknownBounds 的模板变量版本
@@ -107,7 +109,7 @@ constexpr auto is_array_unknown_bounds = bool_constant< IsArrayUnknownBounds<T> 
  * @see is_array_unknown_bounds
  */
 template< typename T >
-constexpr auto not_array_unknown_bounds = bool_constant< NotArrayUnknownBounds<T> >;
+constexpr auto not_array_unknown_bounds = boolean_constant< NotArrayUnknownBounds<T> >;
 
 /**
  * @brief IsArray 的模板变量版本
@@ -116,7 +118,7 @@ constexpr auto not_array_unknown_bounds = bool_constant< NotArrayUnknownBounds<T
  * @see not_array
  */
 template< typename T >
-constexpr auto is_array = bool_constant< IsArray<T> >;
+constexpr auto is_array = boolean_constant< IsArray<T> >;
 
 /**
  * @brief NotArray 的模板变量版本
@@ -125,9 +127,11 @@ constexpr auto is_array = bool_constant< IsArray<T> >;
  * @see is_array
  */
 template< typename T >
-constexpr auto not_array = bool_constant< NotArray<T> >;
+constexpr auto not_array = boolean_constant< NotArray<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -152,6 +156,8 @@ using IsArray = BooleanOr< IsArrayKnownBounds<T>, IsArrayUnknownBounds<T> >;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsArrayKnownBounds : public BooleanRewrapPositive< Detail::TypeTraits::IsArrayKnownBounds<T> > {};
 
@@ -169,5 +175,7 @@ struct IsArray : public BooleanRewrapPositive< Detail::TypeTraits::IsArray<T> > 
 
 template< typename T >
 struct NotArray : public BooleanRewrapNegative< Detail::TypeTraits::IsArray<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

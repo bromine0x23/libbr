@@ -8,15 +8,17 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/remove_const_volatile.hpp>
+#include <libbr/type_traits/remove_const_volatile.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief 检查 \em T 是否是整型类型
  * @tparam T 待检查类型
- * @see BR::IntegerConstant
- * @see BR::NotIntegral
+ * @see IntegerConstant
+ * @see NotIntegral
  *
  * 如果 \em T 是整型类型(\em bool、\em char、\em char16_t、\em char32_t、\em wchar_t、\em short、\em int、\em long、<em>long long</em>及扩展整型类型，包括 \em signed 和 \em unsigned 和带CV修饰的版本)，
  * 那么封装的值为 \em true ；否则为 \em false
@@ -27,32 +29,34 @@ struct IsIntegral;
 /**
  * @brief IsIntegral 的否定
  * @tparam T 待检查类型
- * @see BR::IsIntegral
+ * @see IsIntegral
  */
 template< typename T >
 struct NotIntegral;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsIntegral 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::IsIntegral
- * @see BR::not_integral
+ * @see IsIntegral
+ * @see not_integral
  */
 template< typename T >
-constexpr auto is_integral = bool_constant< IsIntegral<T> >;
+constexpr auto is_integral = boolean_constant< IsIntegral<T> >;
 
 /**
  * @brief NotInteger 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::NotIntegral
- * @see BR::is_integral
+ * @see NotIntegral
+ * @see is_integral
  */
 template< typename T >
-constexpr auto not_integral = bool_constant< NotIntegral<T> >;
+constexpr auto not_integral = boolean_constant< NotIntegral<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -90,10 +94,14 @@ using IsIntegral = IsIntegralBasic< RemoveConstVolatile<T> >;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsIntegral : public BooleanRewrapPositive< Detail::TypeTraits::IsIntegral<T> > {};
 
 template< typename T >
 struct NotIntegral : public BooleanRewrapNegative< Detail::TypeTraits::IsIntegral<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

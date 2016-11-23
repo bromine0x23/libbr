@@ -8,7 +8,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/memory/memory_set.hpp>
-#include <libbr/type_operate/enable_if.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/is_integral.hpp>
 #include <libbr/type_traits/is_same.hpp>
 

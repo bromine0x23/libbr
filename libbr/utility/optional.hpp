@@ -10,10 +10,9 @@
 #include <libbr/container/initializer_list.hpp>
 #include <libbr/exception/logic_exception.hpp>
 #include <libbr/memory/address_of.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/decay.hpp>
-#include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/remove_const_volatile.hpp>
+#include <libbr/type_traits/boolean.hpp>
+#include <libbr/type_traits/decay.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/has_copy_constructor.hpp>
 #include <libbr/type_traits/has_move_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_destructor.hpp>
@@ -28,6 +27,7 @@
 #include <libbr/type_traits/is_object.hpp>
 #include <libbr/type_traits/is_reference.hpp>
 #include <libbr/type_traits/is_same.hpp>
+#include <libbr/type_traits/remove_const_volatile.hpp>
 #include <libbr/utility/forward.hpp>
 #include <libbr/utility/move.hpp>
 #include <libbr/utility/swap.hpp>

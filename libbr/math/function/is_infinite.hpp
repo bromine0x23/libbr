@@ -1,13 +1,13 @@
 /**
  * @file
- * @brief is_inf
+ * @brief is_infinite
  * @author Bromine0x23
  * @since 2016/10/11
  */
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/enable_if.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/is_integral.hpp>
 #if !defined(BR_GCC)
 #  include <libbr/math/detail/bind.hpp>
@@ -30,11 +30,11 @@ constexpr auto libbr_is_infinite_64(BR::Float64 x) -> bool {
 	return __builtin_isinf(x);
 }
 #else
-inline auto libbr_is_infinite_32(BR::Float32 f) -> bool {
+inline auto libbr_is_infinite_32(BR::Float32 x) -> bool {
 	return ((BR::Detail::Math::Bind32{x}.r & 0x7FFFFFFFU) ^ 0x7F800000U) == 0;
 }
 
-inline auto libbr_is_infinite_64(BR::Float64 f) -> bool {
+inline auto libbr_is_infinite_64(BR::Float64 x) -> bool {
 	return (BR::Detail::Math::Bind64{x}.l | ((BR::Detail::Math::Bind64{x}.h & 0x7FFFFFFFU) ^ 0x7FF00000U)) == 0;
 }
 #endif
@@ -49,15 +49,15 @@ inline namespace Function {
 #if defined(BR_GCC)
 constexpr
 #endif // defined(BR_GCC)
-inline auto is_infinite(Float32 f) -> bool {
-	return libbr_is_infinite_32(f);
+inline auto is_infinite(Float32 x) -> bool {
+	return libbr_is_infinite_32(x);
 }
 
 #if defined(BR_GCC)
 constexpr
 #endif // defined(BR_GCC)
-inline auto is_infinite(Float64 f) -> bool {
-	return libbr_is_infinite_64(f);
+inline auto is_infinite(Float64 x) -> bool {
+	return libbr_is_infinite_64(x);
 }
 
 template< typename T >

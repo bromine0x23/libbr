@@ -7,15 +7,15 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/type.hpp>
-#include <libbr/type_operate/types.hpp>
-#include <libbr/type_operate/max_integer.hpp>
+#include <libbr/type_traits/max_integer.hpp>
 #include <libbr/type_traits/alignment_of.hpp>
+#include <libbr/utility/type.hpp>
+#include <libbr/utility/types.hpp>
 
 namespace BR {
 
 namespace Detail {
-namespace TypeOperate {
+namespace Utility {
 
 template< typename ...TTypes >
 using FindMaxAlignment = MaxInteger< AlignmentOf<TTypes>... >;
@@ -27,14 +27,14 @@ struct AlignedStorage {
 	alignas(alignment) unsigned char data[length];
 };
 
-} // namespace TypeOperate
+} // namespace Utility
 } // namespace Detail
 
-template< Size length, Size alignment = Detail::TypeOperate::GetMaxAlignment::value >
-struct TypeAlignedStorage : public TypeWrapper< Detail::TypeOperate::AlignedStorage< length, alignment > > {
+template< Size length, Size alignment = Detail::Utility::GetMaxAlignment::value >
+struct TypeAlignedStorage : public TypeWrapper< Detail::Utility::AlignedStorage< length, alignment > > {
 };
 
-template< Size length, Size alignment = Detail::TypeOperate::GetMaxAlignment::value >
+template< Size length, Size alignment = Detail::Utility::GetMaxAlignment::value >
 using AlignedStorage = TypeUnwrap< TypeAlignedStorage< length, alignment > >;
 
 } // namespace BR

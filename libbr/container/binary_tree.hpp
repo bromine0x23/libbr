@@ -21,7 +21,7 @@
 #include <libbr/memory/allocator_traits.hpp>
 #include <libbr/memory/pointer_traits.hpp>
 #include <libbr/memory/unique_pointer.hpp>
-#include <libbr/type_operate/bool.hpp>
+#include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/has_nothrow_default_constructor.hpp>
 #include <libbr/type_traits/is_constructible.hpp>
 #include <libbr/type_traits/is_input_iterator.hpp>

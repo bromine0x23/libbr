@@ -8,12 +8,14 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/remove_const_volatile.hpp>
+#include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/is_enum.hpp>
 #include <libbr/type_traits/is_integral.hpp>
+#include <libbr/type_traits/remove_const_volatile.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief 检查 \em T 是否是无符号整型类型
@@ -36,7 +38,7 @@ struct IsUnsigned;
 template< typename T >
 struct NotUnsigned;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsUnsigned 的模板变量版本
@@ -45,7 +47,7 @@ struct NotUnsigned;
  * @see not_unsigned
  */
 template< typename T >
-constexpr auto is_unsigned = bool_constant< IsUnsigned<T> >;
+constexpr auto is_unsigned = boolean_constant< IsUnsigned<T> >;
 
 /**
  * @brief NotUnsigned 的模板变量版本
@@ -54,9 +56,11 @@ constexpr auto is_unsigned = bool_constant< IsUnsigned<T> >;
  * @see is_unsigned
  */
 template< typename T >
-constexpr auto not_unsigned = bool_constant< NotUnsigned<T> >;
+constexpr auto not_unsigned = boolean_constant< NotUnsigned<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -72,10 +76,14 @@ struct IsUnsigned : public BooleanAnd< BooleanOr< IsIntegral<T>, IsEnum<T> >, Is
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsUnsigned : public BooleanRewrapPositive< Detail::TypeTraits::IsUnsigned<T> > {};
 
 template< typename T >
 struct NotUnsigned : public BooleanRewrapNegative< Detail::TypeTraits::IsUnsigned<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

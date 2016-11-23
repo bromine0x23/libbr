@@ -8,8 +8,8 @@
 
 #include <libbr/config.hpp>
 #include <libbr/math/function/is_nan.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/enable_if.hpp>
+#include <libbr/type_traits/boolean.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/is_arithmetic.hpp>
 
 extern "C" {

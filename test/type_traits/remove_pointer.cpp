@@ -1,0 +1,45 @@
+#include <libbr/type_traits/remove_pointer.hpp>
+
+#include "test.hpp"
+
+using namespace BR;
+
+TEST(TypeOperate, RemovePointer) {
+	TYPE_TRAITS_CHECKS(RemovePointer, BR_EMPTY, BR_EMPTY)
+	TYPE_TRAITS_CHECKS(RemovePointer, const, const)
+	TYPE_TRAITS_CHECKS(RemovePointer, volatile, volatile)
+	TYPE_TRAITS_CHECKS(RemovePointer, const volatile, const volatile)
+	TYPE_TRAITS_CHECKS(RemovePointer, *, BR_EMPTY)
+	TYPE_TRAITS_CHECKS(RemovePointer, * const, BR_EMPTY)
+	TYPE_TRAITS_CHECKS(RemovePointer, * volatile, BR_EMPTY)
+	TYPE_TRAITS_CHECKS(RemovePointer, * const volatile, BR_EMPTY)
+	TYPE_TRAITS_CHECKS(RemovePointer, const *, const)
+	TYPE_TRAITS_CHECKS(RemovePointer, volatile *, volatile)
+	TYPE_TRAITS_CHECKS(RemovePointer, const * const, const)
+	TYPE_TRAITS_CHECKS(RemovePointer, const * volatile, const)
+	TYPE_TRAITS_CHECKS(RemovePointer, const * const volatile, const)
+	TYPE_TRAITS_CHECKS(RemovePointer, &, &)
+	TYPE_TRAITS_CHECKS(RemovePointer, const &, const &)
+	TYPE_TRAITS_CHECKS(RemovePointer, volatile &, volatile &)
+	TYPE_TRAITS_CHECKS(RemovePointer, const volatile &, const volatile &)
+	TYPE_TRAITS_CHECKS(RemovePointer, &&, &&)
+	TYPE_TRAITS_CHECKS(RemovePointer, const &&, const &&)
+	TYPE_TRAITS_CHECKS(RemovePointer, volatile &&, volatile &&)
+	TYPE_TRAITS_CHECKS(RemovePointer, const volatile &&, const volatile &&)
+	TYPE_TRAITS_CHECKS(RemovePointer, [2], [2])
+	TYPE_TRAITS_CHECKS(RemovePointer, const[2], const[2])
+	TYPE_TRAITS_CHECKS(RemovePointer, volatile[2], volatile[2])
+	TYPE_TRAITS_CHECKS(RemovePointer, const volatile[2], const volatile[2])
+	TYPE_TRAITS_CHECKS(RemovePointer, [2][3], [2][3])
+	TYPE_TRAITS_CHECKS(RemovePointer, const[2][3], const[2][3])
+	TYPE_TRAITS_CHECKS(RemovePointer, volatile[2][3], volatile[2][3])
+	TYPE_TRAITS_CHECKS(RemovePointer, const volatile[2][3], const volatile[2][3])
+	TYPE_TRAITS_CHECKS(RemovePointer, [][3], [][3])
+	TYPE_TRAITS_CHECKS(RemovePointer, const[][3], const[][3])
+	TYPE_TRAITS_CHECKS(RemovePointer, volatile[][3], volatile[][3])
+	TYPE_TRAITS_CHECKS(RemovePointer, const volatile[][3], const volatile[][3])
+	TYPE_TRAITS_CHECKS(RemovePointer, (&)[2], (&)[2])
+	TYPE_TRAITS_CHECKS(RemovePointer, (&&)[2], (&&)[2])
+	TYPE_TRAITS_CHECKS(RemovePointer, (&)[2][3], (&)[2][3])
+	TYPE_TRAITS_CHECKS(RemovePointer, (&&)[2][3], (&&)[2][3])
+}

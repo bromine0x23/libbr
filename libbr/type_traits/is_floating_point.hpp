@@ -8,9 +8,11 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/remove_const_volatile.hpp>
+#include <libbr/type_traits/remove_const_volatile.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief 检查 \em T 是否是浮点类型
@@ -31,7 +33,7 @@ struct IsFloatingPoint;
 template< typename T >
 struct NotFloatingPoint;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsFloatingPoint 的模板变量版本
@@ -40,7 +42,7 @@ struct NotFloatingPoint;
  * @see not_floating_point
  */
 template< typename T >
-constexpr auto is_floating_point = bool_constant< IsFloatingPoint<T> >;
+constexpr auto is_floating_point = boolean_constant< IsFloatingPoint<T> >;
 
 /**
  * @brief NotFloatingPoint 的模板变量版本
@@ -49,9 +51,11 @@ constexpr auto is_floating_point = bool_constant< IsFloatingPoint<T> >;
  * @see is_floating_point
  */
 template< typename T >
-constexpr auto not_floating_point = bool_constant< NotFloatingPoint<T> >;
+constexpr auto not_floating_point = boolean_constant< NotFloatingPoint<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -71,10 +75,14 @@ using IsFloatingPoint = IsFloatingPointBasic< RemoveConstVolatile<T> >;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsFloatingPoint : public BooleanRewrapPositive< Detail::TypeTraits::IsFloatingPoint<T> > {};
 
 template< typename T >
 struct NotFloatingPoint : public BooleanRewrapNegative< Detail::TypeTraits::IsFloatingPoint<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

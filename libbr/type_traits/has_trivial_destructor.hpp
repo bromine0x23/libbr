@@ -10,21 +10,23 @@
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_HAS_TRIVIAL_DESTRUCTOR)
-#  include <libbr/type_operate/bool.hpp>
-#  include <libbr/type_operate/remove_all_extents.hpp>
+#  include <libbr/type_traits/boolean.hpp>
 #  include <libbr/type_traits/is_reference.hpp>
 #  include <libbr/type_traits/is_scalar.hpp>
+#  include <libbr/type_traits/remove_all_extents.hpp>
 #endif
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 是否具有平凡的析构函数
  * @tparam T 待检查类型
- * @see BR::IntegerConstant
+ * @see IntegerConstant
  * @see BR_HAS_TRIVIAL_DESTRUCTOR
- * @see BR::HasDestructor
- * @see BR::NoTrivialDestructor
+ * @see HasDestructor
+ * @see NoTrivialDestructor
  *
  * 如果 \em T 具有平凡的析构函数，那么封装的值为 \em true ；否则为 \em false
  */
@@ -34,32 +36,34 @@ struct HasTrivialDestructor;
 /**
  * @brief HasTrivialDestructor 的否定
  * @tparam T 待检查类型
- * @see BR::HasTrivialDestructor
+ * @see HasTrivialDestructor
  */
 template< typename T >
 struct NoTrivialDestructor;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief HasTrivialDestructor 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::HasTrivialDestructor
- * @see BR::no_trivial_destructor
+ * @see HasTrivialDestructor
+ * @see no_trivial_destructor
  */
 template< typename T >
-constexpr auto has_trivial_destructor = bool_constant< HasTrivialDestructor<T> >;
+constexpr auto has_trivial_destructor = boolean_constant< HasTrivialDestructor<T> >;
 
 /**
  * @brief NoTrivialDestructor 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::NoTrivialDestructor
- * @see BR::has_trivial_destructor
+ * @see NoTrivialDestructor
+ * @see has_trivial_destructor
  */
 template< typename T >
-constexpr auto no_trivial_destructor = bool_constant< NoTrivialDestructor<T> >;
+constexpr auto no_trivial_destructor = boolean_constant< NoTrivialDestructor<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -84,10 +88,14 @@ using HasTrivialDestructor = HasTrivialDestructorBasic< RemoveAllExtents<T> >;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct HasTrivialDestructor : public BooleanRewrapPositive< Detail::TypeTraits::HasTrivialDestructor<T> > {};
 
 template< typename T >
 struct NoTrivialDestructor : public BooleanRewrapNegative< Detail::TypeTraits::HasTrivialDestructor<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

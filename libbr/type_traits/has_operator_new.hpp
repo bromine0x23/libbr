@@ -10,15 +10,17 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/bool.hpp>
+#include <libbr/type_traits/boolean.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief 检查 \em T 是否重载了 \em new 操作符
  * @tparam T 待检查类型
- * @see BR::IntegerConstant
- * @see BR::NoOperatorNew
+ * @see IntegerConstant
+ * @see NoOperatorNew
  *
  * 如果 \em T 重载了 \em new 操作符，那么封装的值为 \em true ；否则为 \em false
  */
@@ -28,32 +30,34 @@ struct HasOperatorNew;
 /**
  * @brief HasOperatorNew 的否定
  * @tparam T 待检查类型
- * @see BR::HasOperatorNew
+ * @see HasOperatorNew
  */
 template< typename T >
 struct NoOperatorNew;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief HasOperatorNew 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::HasOperatorNew
- * @see BR::no_operator_new
+ * @see HasOperatorNew
+ * @see no_operator_new
  */
 template< typename T >
-constexpr auto has_operator_new = bool_constant< HasOperatorNew<T> >;
+constexpr auto has_operator_new = boolean_constant< HasOperatorNew<T> >;
 
 /**
  * @brief NoOperatorNew 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::NoOperatorNew
- * @see BR::has_operator_new
+ * @see NoOperatorNew
+ * @see has_operator_new
  */
 template< typename T >
-constexpr auto no_operator_new = bool_constant< NoOperatorNew<T> >;
+constexpr auto no_operator_new = boolean_constant< NoOperatorNew<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -124,10 +128,14 @@ struct HasOperatorNew : BooleanOr<
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct HasOperatorNew : BooleanRewrapPositive< Detail::TypeTraits::HasOperatorNew<T> > {};
 
 template< typename T >
 struct NoOperatorNew : BooleanRewrapNegative< Detail::TypeTraits::HasOperatorNew<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

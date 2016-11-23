@@ -21,7 +21,7 @@
 #include <libbr/memory/allocator_traits.hpp>
 #include <libbr/memory/construct_backward.hpp>
 #include <libbr/memory/pointer_traits.hpp>
-#include <libbr/type_operate/enable_if.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/has_nothrow_default_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_move_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_move_assignment.hpp>
@@ -382,13 +382,14 @@ public:
 	 * @name 赋值
 	 */
 	///@{
+
 	/**
 	 * @brief 复制运算
-	 * @param[in] string 源链表
+	 * @param[in] array 源链表
 	 */
-	auto operator=(DynamicArray const & other) -> DynamicArray &;
+	auto operator=(DynamicArray const & array) -> DynamicArray &;
 
-	auto operator=(DynamicArray && other) noexcept(BooleanOr< typename AllocatorTraits::IsPropagateOnContainerMoveAssignment, typename AllocatorTraits::IsAlwaysEqual >{}) -> DynamicArray & {
+	auto operator=(DynamicArray && array) noexcept(BooleanOr< typename AllocatorTraits::IsPropagateOnContainerMoveAssignment, typename AllocatorTraits::IsAlwaysEqual >{}) -> DynamicArray & {
 		m_move_assign(other, typename AllocatorTraits::IsPropagateOnContainerMoveAssignment{});
 		return *this;
 	};

@@ -8,7 +8,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/bool.hpp>
+#include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_IS_NOTHROW_CONSTRUCTIBLE)
 #  include <libbr/type_traits/is_constructible.hpp>
@@ -17,14 +17,16 @@
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 是否可从特定参数 \em nothrow 地构造
  * @tparam T 待检查类型
  * @tparam TArgs 构造函数参数
- * @see BR::IntegerConstant
+ * @see IntegerConstant
  * @see BR_IS_NOTHROW_CONSTRUCTIBLE
- * @see BR::IsConstructible
- * @see BR::NotNothrowConstructible
+ * @see IsConstructible
+ * @see NotNothrowConstructible
  *
  * 如果表达式 <tt>T(BR::make_rvalue<TArgs>()...)</tt> 是合法且不抛出异常的，那么封装的值为 \em true ；否则为 \em false
  */
@@ -35,34 +37,36 @@ struct IsNothrowConstructible;
  * @brief IsNothrowConstructible 的否定
  * @tparam T 待检查类型
  * @tparam TArgs 构造函数参数
- * @see BR::IsNothrowConstructible
+ * @see IsNothrowConstructible
  */
 template< typename T, typename... TArgs >
 struct NotNothrowConstructible;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsNothrowConstructible 的模板变量版本
  * @tparam T 待检查类型
  * @tparam TArgs 构造函数参数
- * @see BR::IsNothrowConstructible
- * @see BR::not_nothrow_constructible
+ * @see IsNothrowConstructible
+ * @see not_nothrow_constructible
  */
 template< typename T, typename... TArgs >
-constexpr auto is_nothrow_constructible = bool_constant< IsNothrowConstructible< T, TArgs... > >;
+constexpr auto is_nothrow_constructible = boolean_constant< IsNothrowConstructible< T, TArgs... > >;
 
 /**
  * @brief NotNothrowConstructible 的模板变量版本
  * @tparam T 待检查类型
  * @tparam TArgs 构造函数参数
- * @see BR::NotNothrowConstructible
- * @see BR::is_nothrow_constructible
+ * @see NotNothrowConstructible
+ * @see is_nothrow_constructible
  */
 template< typename T, typename... TArgs >
-constexpr auto not_nothrow_constructible = bool_constant< NotNothrowConstructible< T, TArgs... > >;
+constexpr auto not_nothrow_constructible = boolean_constant< NotNothrowConstructible< T, TArgs... > >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -96,10 +100,14 @@ using IsNothrowConstructible = BooleanAnd< IsConstructible< T, TArgs... >, IsNot
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T, typename... TArgs >
 struct IsNothrowConstructible : public BooleanRewrapPositive< Detail::TypeTraits::IsNothrowConstructible< T, TArgs... > > {};
 
 template< typename T, typename... TArgs >
 struct NotNothrowConstructible : public BooleanRewrapNegative< Detail::TypeTraits::IsNothrowConstructible< T, TArgs... > > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

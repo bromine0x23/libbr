@@ -8,11 +8,13 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/remove_const_volatile.hpp>
+#include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/is_member_pointer.hpp>
+#include <libbr/type_traits/remove_const_volatile.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief 检查 \em T 是否是指针类型
@@ -33,7 +35,7 @@ struct IsPointer;
 template< typename T >
 struct NotPointer;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsPointer 的模板变量版本
@@ -42,7 +44,7 @@ struct NotPointer;
  * @see not_pointer
  */
 template< typename T >
-constexpr auto is_pointer = bool_constant< IsPointer<T> >;
+constexpr auto is_pointer = boolean_constant< IsPointer<T> >;
 
 /**
  * @brief NotPointer 的模板变量版本
@@ -51,9 +53,11 @@ constexpr auto is_pointer = bool_constant< IsPointer<T> >;
  * @see is_pointer
  */
 template< typename T >
-constexpr auto not_pointer = bool_constant< NotPointer<T> >;
+constexpr auto not_pointer = boolean_constant< NotPointer<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -72,10 +76,14 @@ using IsPointer = BooleanAnd< IsPointerBasic< RemoveConstVolatile<T> >, NotMembe
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsPointer : public BooleanRewrapPositive< Detail::TypeTraits::IsPointer<T> > {};
 
 template< typename T >
 struct NotPointer : public BooleanRewrapNegative< Detail::TypeTraits::IsPointer<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

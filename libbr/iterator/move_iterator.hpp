@@ -6,8 +6,8 @@
 #include <libbr/algorithm/move.hpp>
 #include <libbr/algorithm/move_backward.hpp>
 #include <libbr/iterator/basic_iterator.hpp>
-#include <libbr/type_operate/add_rvalue_reference.hpp>
-#include <libbr/type_operate/conditional.hpp>
+#include <libbr/type_traits/add_rvalue_reference.hpp>
+#include <libbr/type_traits/conditional.hpp>
 #include <libbr/type_traits/is_reference.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>
 #include <libbr/utility/move.hpp>

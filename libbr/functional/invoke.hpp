@@ -7,15 +7,15 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/conditional.hpp>
-#include <libbr/type_operate/decay.hpp>
-#include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/remove_reference.hpp>
+#include <libbr/type_traits/boolean.hpp>
+#include <libbr/type_traits/conditional.hpp>
+#include <libbr/type_traits/decay.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/is_base_of.hpp>
 #include <libbr/type_traits/is_member_function_pointer.hpp>
 #include <libbr/type_traits/is_member_object_pointer.hpp>
 #include <libbr/type_traits/member_pointer_traits.hpp>
+#include <libbr/type_traits/remove_reference.hpp>
 #include <libbr/utility/forward.hpp>
 
 namespace BR {

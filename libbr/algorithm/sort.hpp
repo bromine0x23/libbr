@@ -10,7 +10,7 @@
 #include <libbr/assert/assert.hpp>
 #include <libbr/iterator/advance.hpp>
 #include <libbr/functional/less.hpp>
-#include <libbr/type_operate/bool.hpp>
+#include <libbr/type_traits/boolean_and.hpp>
 #include <libbr/type_traits/has_trivial_copy_constructor.hpp>
 #include <libbr/type_traits/has_trivial_copy_assignment.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>

@@ -8,7 +8,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/memory/address_of.hpp>
-#include <libbr/type_operate/type.hpp>
+#include <libbr/utility/type.hpp>
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/utility/forward.hpp>
 

@@ -8,12 +8,14 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/bool.hpp>
+#include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/is_base_of.hpp>
 #include <libbr/type_traits/is_lvalue_reference.hpp>
 #include <libbr/type_traits/is_same.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief 检查 \em TDerived 是否虚拟继承自 \em TBase
@@ -36,7 +38,7 @@ struct IsVirtualBaseOf;
 template< typename TBase, typename TDerived >
 struct NotVirtualBaseOf;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsVirtualBaseOf 的模板变量版本
@@ -46,7 +48,7 @@ struct NotVirtualBaseOf;
  * @see not_virtual_base_of
  */
 template< typename TBase, typename TDerived >
-constexpr auto is_virtual_base_of = bool_constant< IsVirtualBaseOf< TBase, TDerived > >;
+constexpr auto is_virtual_base_of = boolean_constant< IsVirtualBaseOf< TBase, TDerived > >;
 
 /**
  * @brief NotVirtualBaseOf 的模板变量版本
@@ -56,9 +58,13 @@ constexpr auto is_virtual_base_of = bool_constant< IsVirtualBaseOf< TBase, TDeri
  * @see is_virtual_base_of
  */
 template< typename TBase, typename TDerived >
-constexpr auto not_virtual_base_of = bool_constant< NotVirtualBaseOf< TBase, TDerived > >;
+constexpr auto not_virtual_base_of = boolean_constant< NotVirtualBaseOf< TBase, TDerived > >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
+
+
 
 namespace Detail {
 namespace TypeTraits {
@@ -112,10 +118,14 @@ struct IsVirtualBaseOf< TBase, TDerived, false > : public BooleanFalse {};
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename TBase, typename TDerived >
 struct IsVirtualBaseOf : public BooleanRewrapPositive< Detail::TypeTraits::IsVirtualBaseOf< TBase, TDerived > > {};
 
 template< typename TBase, typename TDerived >
 struct NotVirtualBaseOf : public BooleanRewrapNegative< Detail::TypeTraits::IsVirtualBaseOf< TBase, TDerived > > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

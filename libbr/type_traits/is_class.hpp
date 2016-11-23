@@ -10,20 +10,22 @@
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_IS_CLASS)
-#  include <libbr/type_operate/bool.hpp>
+#  include <libbr/type_traits/boolean.hpp>
 #  include <libbr/type_traits/is_union.hpp>
 #endif
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 是否是类
  * @tparam T 待检查类型
- * @see BR::IntegerConstant
+ * @see IntegerConstant
  * @see BR_IS_CLASS
- * @see BR::NotClass
+ * @see NotClass
  *
- * 如果 \em T 是类(\em struct 或 \em class)，那么封装的值为 \em true ；否则为 \em false
+ * 如果 \em T 是类类型(\em struct 或 \em class)，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T >
 struct IsClass;
@@ -31,32 +33,34 @@ struct IsClass;
 /**
  * @brief IsClass 的否定
  * @tparam T 待检查类型
- * @see BR::IsClass
+ * @see IsClass
  */
 template< typename T >
 struct NotClass;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsClass 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::IsClass
- * @see BR::not_class
+ * @see IsClass
+ * @see not_class
  */
 template< typename T >
-constexpr auto is_class = bool_constant< IsClass<T> >;
+constexpr auto is_class = boolean_constant< IsClass<T> >;
 
 /**
  * @brief NotClass 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::NotClass
- * @see BR::is_class
+ * @see NotClass
+ * @see is_class
  */
 template< typename T >
-constexpr auto not_class = bool_constant< NotClass<T> >;
+constexpr auto not_class = boolean_constant< NotClass<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -92,10 +96,14 @@ using IsClass = BooleanAnd<
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsClass : public BooleanRewrapPositive< Detail::TypeTraits::IsClass<T> > {};
 
 template< typename T >
 struct NotClass : public BooleanRewrapNegative< Detail::TypeTraits::IsClass<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

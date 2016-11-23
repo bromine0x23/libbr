@@ -7,7 +7,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/types.hpp>
+#include <libbr/utility/types.hpp>
 
 namespace BR {
 

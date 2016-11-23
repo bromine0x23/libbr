@@ -8,9 +8,11 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/remove_const_volatile.hpp>
+#include <libbr/type_traits/remove_const_volatile.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief 检查 \em T 是否是空指针类型
@@ -31,7 +33,7 @@ struct IsNullPointer;
 template< typename T >
 struct NotNullPointer;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsNullPointer 的模板变量版本
@@ -40,7 +42,7 @@ struct NotNullPointer;
  * @see not_null_pointer
  */
 template< typename T >
-constexpr auto is_null_pointer = bool_constant< IsNullPointer<T> >;
+constexpr auto is_null_pointer = boolean_constant< IsNullPointer<T> >;
 
 /**
  * @brief NotNullPointer 的模板变量版本
@@ -49,9 +51,11 @@ constexpr auto is_null_pointer = bool_constant< IsNullPointer<T> >;
  * @see is_null_pointer
  */
 template< typename T >
-constexpr auto not_null_pointer = bool_constant< NotNullPointer<T> >;
+constexpr auto not_null_pointer = boolean_constant< NotNullPointer<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -70,10 +74,14 @@ using IsNullPointer = IsNullPointerBasic< RemoveConstVolatile<T> >;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsNullPointer : public BooleanRewrapPositive< Detail::TypeTraits::IsNullPointer<T> > {};
 
 template< typename T >
 struct NotNullPointer: public BooleanRewrapNegative< Detail::TypeTraits::IsNullPointer<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

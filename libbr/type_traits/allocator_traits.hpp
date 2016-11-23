@@ -10,20 +10,20 @@
 #include <libbr/memory/construct.hpp>
 #include <libbr/memory/destroy.hpp>
 #include <libbr/memory/memory_copy.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/type.hpp>
-#include <libbr/type_operate/make_unsigned.hpp>
-#include <libbr/type_operate/replace_template_argument.hpp>
-#include <libbr/type_traits/has_trivial_move_constructor.hpp>
+#include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/integer_traits.hpp>
 #include <libbr/type_traits/is_empty.hpp>
 #include <libbr/type_traits/is_same.hpp>
 #include <libbr/type_traits/has_member_function.hpp>
 #include <libbr/type_traits/has_member_type.hpp>
+#include <libbr/type_traits/has_trivial_move_constructor.hpp>
+#include <libbr/type_traits/make_unsigned.hpp>
 #include <libbr/type_traits/pointer_traits.hpp>
+#include <libbr/type_traits/replace_template_argument.hpp>
 #include <libbr/utility/forward.hpp>
 #include <libbr/utility/make_value.hpp>
 #include <libbr/utility/move.hpp>
+#include <libbr/utility/type.hpp>
 
 namespace BR {
 
@@ -37,6 +37,8 @@ template< typename TAllocator >
 struct AllocatorTraits;
 
 } // namespace TypeTraits
+
+
 
 namespace Detail {
 namespace TypeTraits {

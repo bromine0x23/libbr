@@ -8,6 +8,19 @@
 
 namespace BR {
 
+inline namespace TypeTraits {
+
+/**
+ * @brief IntegerTraits
+ * @tparam T
+ */
+template< typename T >
+struct IntegerTraits;
+
+} // namespace TypeTraits
+
+
+
 namespace Detail {
 
 template< typename TInteger, TInteger min_val, TInteger max_val >
@@ -20,6 +33,8 @@ struct IntegerTraitsBasic {
 };
 
 } // namespace Detail
+
+inline namespace TypeTraits {
 
 template< typename T >
 struct IntegerTraits {
@@ -62,6 +77,8 @@ struct IntegerTraits< signed long long > : Detail::IntegerTraitsBasic< signed lo
 
 template<>
 struct IntegerTraits< unsigned long long > : Detail::IntegerTraitsBasic< unsigned long long, 0, ULLONG_MAX > {};
+
+} // namespace TypeTraits
 
 } // namespace BR
 

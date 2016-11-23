@@ -12,13 +12,15 @@
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 是否具有 \em nothrow 的默认构造函数
  * @tparam T 待检查类型
- * @see BR::IntegerConstant
- * @see BR::IsNothrowConstructible
- * @see BR::HasDefaultConstructor
- * @see BR::NoNothrowDefaultConstructor
+ * @see IntegerConstant
+ * @see IsNothrowConstructible
+ * @see HasDefaultConstructor
+ * @see NoNothrowDefaultConstructor
  *
  * 如果 \em T 具有 \em nothrow 的默认构造函数，那么封装的值为 \em true ；否则为 \em false
  */
@@ -28,32 +30,34 @@ struct HasNothrowDefaultConstructor;
 /**
  * @brief NoNothrowDefaultConstructor 的否定
  * @tparam T 待检查类型
- * @see BR::HasNothrowDefaultConstructor
+ * @see HasNothrowDefaultConstructor
  */
 template< typename T >
 struct NoNothrowDefaultConstructor;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief HasNothrowDefaultConstructor 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::HasNothrowDefaultConstructor
- * @see BR::no_nothrow_default_constructor
+ * @see HasNothrowDefaultConstructor
+ * @see no_nothrow_default_constructor
  */
 template< typename T >
-constexpr auto has_nothrow_default_constructor = bool_constant< HasNothrowDefaultConstructor<T> >;
+constexpr auto has_nothrow_default_constructor = boolean_constant< HasNothrowDefaultConstructor<T> >;
 
 /**
  * @brief NoNothrowDefaultConstructor 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::NoNothrowDefaultConstructor
- * @see BR::has_nothrow_default_constructor
+ * @see NoNothrowDefaultConstructor
+ * @see has_nothrow_default_constructor
  */
 template< typename T >
-constexpr auto no_nothrow_default_constructor = bool_constant< NoNothrowDefaultConstructor<T> >;
+constexpr auto no_nothrow_default_constructor = boolean_constant< NoNothrowDefaultConstructor<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -66,10 +70,14 @@ using HasNothrowDefaultConstructor = IsNothrowConstructible<T>;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct HasNothrowDefaultConstructor : public BooleanRewrapPositive< Detail::TypeTraits::HasNothrowDefaultConstructor<T> > {};
 
 template< typename T >
 struct NoNothrowDefaultConstructor : public BooleanRewrapNegative< Detail::TypeTraits::HasNothrowDefaultConstructor<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

@@ -23,7 +23,7 @@ BooleanOr< \
 >::value \
 /* BR_TYPE_OPERATE_FORBIDDEN_IF */
 
-#include <libbr/type_operate/bool.hpp>
+#include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/is_fundamental.hpp>
 #include <libbr/type_traits/is_pointer.hpp>
 #include <libbr/type_traits/detail/has_binary_operator.inc>

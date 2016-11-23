@@ -8,11 +8,11 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/move.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/remove_const.hpp>
+#include <libbr/type_traits/boolean_and.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/has_trivial_copy_assignment.hpp>
 #include <libbr/type_traits/is_same.hpp>
+#include <libbr/type_traits/remove_const.hpp>
 
 namespace BR {
 

@@ -8,13 +8,14 @@
 
 #include <libbr/config.hpp>
 #include <libbr/math/detail/bind.hpp>
-#include <libbr/type_operate/common.hpp>
+#include <libbr/type_traits/common.hpp>
 
 extern "C" {
 
 /**
- * like copysign
- * @param f
+ * @brief like copysign
+ * @param x
+ * @param s
  * @return
  */
 //@{

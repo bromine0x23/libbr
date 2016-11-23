@@ -2,12 +2,12 @@
 
 #include <libbr/config.hpp>
 #include <libbr/memory/address_of.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/remove_const_volatile.hpp>
-#include <libbr/type_operate/type.hpp>
-#include <libbr/type_operate/call_result.hpp>
+#include <libbr/type_traits/boolean.hpp>
+#include <libbr/type_traits/call_result.hpp>
+#include <libbr/type_traits/remove_const_volatile.hpp>
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/utility/forward.hpp>
+#include <libbr/utility/type.hpp>
 
 namespace BR {
 
@@ -49,10 +49,10 @@ struct NotWrappedReference;
 #if defined(BR_CXX14)
 
 template< typename T >
-constexpr auto is_wrapped_reference = bool_constant< IsWrappedReference<T> >;
+constexpr auto is_wrapped_reference = boolean_constant< IsWrappedReference<T> >;
 
 template< typename T >
-constexpr auto not_wrapped_reference = bool_constant< NotWrappedReference<T> >;
+constexpr auto not_wrapped_reference = boolean_constant< NotWrappedReference<T> >;
 
 #endif // defined(BR_CXX14)
 

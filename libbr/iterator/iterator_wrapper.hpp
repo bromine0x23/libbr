@@ -8,7 +8,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/iterator/iterator_traits.hpp>
-#include <libbr/type_operate/enable_if.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/is_convertible.hpp>
 
 namespace BR {

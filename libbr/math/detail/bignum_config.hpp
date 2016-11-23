@@ -6,8 +6,8 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/make_signed.hpp>
-#include <libbr/type_operate/make_unsigned.hpp>
+#include <libbr/type_traits/make_signed.hpp>
+#include <libbr/type_traits/make_unsigned.hpp>
 
 namespace BR {
 

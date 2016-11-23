@@ -15,8 +15,8 @@
 #include <libbr/enumerate/enumerable.hpp>
 #include <libbr/exception/throw.hpp>
 #include <libbr/iterator/reverse_iterator.hpp>
-#include <libbr/type_operate/remove_const_volatile.hpp>
 #include <libbr/type_traits/is_nothrow_swappable.hpp>
+#include <libbr/type_traits/remove_const_volatile.hpp>
 #include <libbr/utility/integral_constant.hpp>
 #include <libbr/utility/move.hpp>
 #include <libbr/utility/swap.hpp>

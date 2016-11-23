@@ -28,18 +28,22 @@ using BooleanTrue = BooleanConstant<true>;
 using BooleanFalse = BooleanConstant<false>;
 
 template< typename TB >
-using BooleanRewrapPositive = BooleanConstant< !!(TB()) > ;
+using BooleanRewrapPositive = BooleanConstant< !!(TB{}) > ;
 
 template< typename TB >
-using BooleanRewrapNegative = BooleanConstant< !(TB()) > ;
+using BooleanRewrapNegative = BooleanConstant< !(TB{}) > ;
 
 template< typename TB >
 using BooleanRewrap = BooleanRewrapPositive< TB >;
 
 #if defined(BR_CXX14)
 
+/**
+ * @brief boolean_constant
+ * @tparam TB
+ */
 template< typename TB >
-constexpr static bool bool_constant = integral_constant<TB>;
+constexpr static bool boolean_constant = integral_constant<TB>;
 
 #endif // defined(BR_CXX14)
 

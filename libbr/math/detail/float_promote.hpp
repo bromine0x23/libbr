@@ -1,7 +1,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/type.hpp>
+#include <libbr/utility/type.hpp>
 #include <libbr/type_traits/is_integral.hpp>
 
 namespace BR {

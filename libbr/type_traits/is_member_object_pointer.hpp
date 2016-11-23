@@ -8,11 +8,13 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/bool.hpp>
+#include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/is_member_pointer.hpp>
 #include <libbr/type_traits/is_member_function_pointer.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief 检查 \em T 是否是成员函数指针
@@ -33,7 +35,7 @@ struct IsMemberObjectPointer;
 template< typename T >
 struct NotMemberObjectPointer;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsMemberObjectPointer 的模板变量版本
@@ -42,7 +44,7 @@ struct NotMemberObjectPointer;
  * @see not_member_object_pointer
  */
 template< typename T >
-constexpr auto is_member_object_pointer = bool_constant< IsMemberObjectPointer<T> >;
+constexpr auto is_member_object_pointer = boolean_constant< IsMemberObjectPointer<T> >;
 
 /**
  * @brief NotMemberObjectPointer 的模板变量版本
@@ -51,9 +53,11 @@ constexpr auto is_member_object_pointer = bool_constant< IsMemberObjectPointer<T
  * @see is_member_object_pointer
  */
 template< typename T >
-constexpr auto not_member_object_pointer = bool_constant< NotMemberObjectPointer<T> >;
+constexpr auto not_member_object_pointer = boolean_constant< NotMemberObjectPointer<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -66,11 +70,14 @@ struct IsMemberObjectPointer : public BooleanAnd< IsMemberPointer<T>, NotMemberF
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsMemberObjectPointer : public BooleanRewrapPositive< Detail::TypeTraits::IsMemberObjectPointer<T> > {};
 
 template< typename T >
 struct NotMemberObjectPointer : public BooleanRewrapNegative< Detail::TypeTraits::IsMemberObjectPointer<T> > {};
 
+} // namespace TypeTraits
 
 } // namespace BR

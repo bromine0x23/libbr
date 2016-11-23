@@ -10,21 +10,23 @@
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_IS_POLYMORPHIC)
-#  include <libbr/type_operate/bool.hpp>
-#  include <libbr/type_operate/remove_const_volatile.hpp>
+#  include <libbr/type_traits/boolean.hpp>
 #  include <libbr/type_traits/is_class.hpp>
+#  include <libbr/type_traits/remove_const_volatile.hpp>
 #endif
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 是否是多态类型
  * @tparam T 待检查类型
- * @see BR::IntegerConstant
- * @see BR::BR_IS_POLYMORPHIC
- * @see BR::IsClass
- * @see BR::IsAbstract
- * @see BR::NotPolymorphic
+ * @see IntegerConstant
+ * @see BR_IS_POLYMORPHIC
+ * @see IsClass
+ * @see IsAbstract
+ * @see NotPolymorphic
  *
  * 如果 \em T 是多态类(声明或继承了至少一个虚函数的类)，那么封装的值为 \em true ；否则为 \em false
  */
@@ -34,32 +36,34 @@ struct IsPolymorphic;
 /**
  * @brief IsPolymorphic 的否定
  * @tparam T 待检查类型
- * @see BR::IsPolymorphic
+ * @see IsPolymorphic
  */
 template< typename T >
 struct NotPolymorphic;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsPolymorphic 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::IsPolymorphic
- * @see BR::not_polymorphic
+ * @see IsPolymorphic
+ * @see not_polymorphic
  */
 template< typename T >
-constexpr auto is_polymorphic = bool_constant< IsPolymorphic<T> >;
+constexpr auto is_polymorphic = boolean_constant< IsPolymorphic<T> >;
 
 /**
  * @brief NotPolymorphic 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::NotPolymorphic
- * @see BR::is_polymorphic
+ * @see NotPolymorphic
+ * @see is_polymorphic
  */
 template< typename T >
-constexpr auto not_polymorphic = bool_constant< NotPolymorphic<T> >;
+constexpr auto not_polymorphic = boolean_constant< NotPolymorphic<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -110,10 +114,14 @@ using IsPolymorphic = BooleanAnd< IsClass<T>, BooleanConstant< IsPolymorphicBasi
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsPolymorphic : public BooleanRewrapPositive< Detail::TypeTraits::IsPolymorphic<T> > {};
 
 template< typename T >
 struct NotPolymorphic : public BooleanRewrapNegative< Detail::TypeTraits::IsPolymorphic<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

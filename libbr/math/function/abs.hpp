@@ -7,7 +7,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/enable_if.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/is_integral.hpp>
 #if !defined(BR_GCC)
 #  include <libbr/math/detail/bind.hpp>
@@ -31,12 +31,12 @@ constexpr auto libbr_abs_64(BR::Float64 x) -> BR::Float64 {
 }
 #elif defined(BR_CLANG)
 inline auto libbr_abs_32(BR::Float32 x) -> BR::Float32 {
-	asm volatile("fabs":"=t"(x):"0"(x));
+	asm volatile("fabs" : "=t"(x) : "0"(x));
 	return x;
 }
 
 inline auto libbr_abs_64(BR::Float64 x) -> BR::Float64 {
-	asm volatile("fabs":"=t"(x):"0"(x));
+	asm volatile("fabs" : "=t"(x) : "0"(x));
 	return x;
 }
 #elif defined(BR_MSVC)

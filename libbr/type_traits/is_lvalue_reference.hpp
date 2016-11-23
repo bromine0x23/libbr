@@ -11,6 +11,8 @@
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 是否是左值引用类型
  * @tparam T 待检查类型
@@ -31,7 +33,7 @@ struct IsLValueReference;
 template< typename T >
 struct NotLValueReference;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsLValueReference 的模板变量版本
@@ -40,7 +42,7 @@ struct NotLValueReference;
  * @see not_lvalue_reference
  */
 template< typename T >
-constexpr auto is_lvalue_reference = bool_constant< IsLValueReference<T> >;
+constexpr auto is_lvalue_reference = boolean_constant< IsLValueReference<T> >;
 
 /**
  * @brief NotLValueReference 的模板变量版本
@@ -49,9 +51,11 @@ constexpr auto is_lvalue_reference = bool_constant< IsLValueReference<T> >;
  * @see is_lvalue_reference
  */
 template< typename T >
-constexpr auto not_lvalue_reference = bool_constant< NotLValueReference<T> >;
+constexpr auto not_lvalue_reference = boolean_constant< NotLValueReference<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -67,10 +71,14 @@ struct IsLValueReference< T & > : public BooleanTrue {};
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsLValueReference : public BooleanRewrapPositive< Detail::TypeTraits::IsLValueReference<T> > {};
 
 template< typename T >
 struct NotLValueReference : public BooleanRewrapNegative< Detail::TypeTraits::IsLValueReference<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

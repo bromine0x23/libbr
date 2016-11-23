@@ -7,16 +7,16 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/dummy.hpp>
 #include <libbr/utility/boolean_constant.hpp>
+#include <libbr/utility/dummy.hpp>
 
-#define BR_HAS_MEMBER_TYPE(TYPE_NAME)                                                      \
+#define BR_HAS_MEMBER_TYPE(TYPE_NAME)                                                       \
 namespace Detail {                                                                          \
 namespace BR_JOIN(MemberType, TYPE_NAME) {                                                  \
-	template< typename, typename = ::BR::Dummy<> >                                          \
-	struct HasMemberType : ::BR::BooleanFalse {};                                           \
+	template< typename, typename = BR::Dummy<> >                                            \
+	struct HasMemberType : BR::BooleanFalse {};                                             \
 	template< typename T >                                                                  \
-	struct HasMemberType< T, ::BR::Dummy< typename T::TYPE_NAME > > : ::BR::BooleanTrue {}; \
+	struct HasMemberType< T, BR::Dummy< typename T::TYPE_NAME > > : BR::BooleanTrue {};     \
 } /* namespace BR_JOIN(MemberType, TYPE_NAME) */                                            \
 } /* namespace Detail */                                                                    \
 template< typename T >                                                                      \

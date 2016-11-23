@@ -8,16 +8,18 @@
 
 #include <libbr/config.hpp>
 #include <libbr/iterator/category.hpp>
-#include <libbr/type_operate/add_lvalue_reference.hpp>
-#include <libbr/type_operate/add_pointer.hpp>
-#include <libbr/type_operate/remove_const.hpp>
-#include <libbr/type_operate/template_argument.hpp>
-#include <libbr/type_operate/type.hpp>
+#include <libbr/type_traits/add_lvalue_reference.hpp>
+#include <libbr/type_traits/add_pointer.hpp>
 #include <libbr/type_traits/is_convertible.hpp>
 #include <libbr/type_traits/is_empty.hpp>
 #include <libbr/type_traits/has_member_type.hpp>
+#include <libbr/type_traits/remove_const.hpp>
+#include <libbr/type_traits/template_argument.hpp>
+#include <libbr/utility/type.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * 迭代器特性类
@@ -25,6 +27,8 @@ namespace BR {
  */
 template< typename TIterator >
 struct IteratorTraits;
+
+} // namespace TypeTraits
 
 
 
@@ -159,6 +163,8 @@ struct Implement< TIterator, false > {
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename TIterator >
 struct IteratorTraits : Detail::TypeTraits::IteratorTraits::Implement<TIterator> {};
 
@@ -202,5 +208,7 @@ public:
 		return Category();
 	}
 };
+
+} // namespace TypeTraits
 
 } // namespace BR

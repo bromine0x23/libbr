@@ -10,22 +10,22 @@
 #include <libbr/container/tuple.hpp>
 #include <libbr/functional/less.hpp>
 #include <libbr/memory/default_deleter.hpp>
-#include <libbr/type_operate/add_lvalue_reference.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/conditional.hpp>
-#include <libbr/type_operate/conditional.hpp>
-#include <libbr/type_operate/dummy.hpp>
-#include <libbr/type_operate/remove_extent.hpp>
-#include <libbr/type_operate/remove_reference.hpp>
-#include <libbr/type_operate/type.hpp>
+#include <libbr/type_traits/add_lvalue_reference.hpp>
+#include <libbr/type_traits/boolean.hpp>
+#include <libbr/type_traits/conditional.hpp>
+#include <libbr/type_traits/conditional.hpp>
 #include <libbr/type_traits/has_member_type.hpp>
 #include <libbr/type_traits/is_array.hpp>
 #include <libbr/type_traits/is_assignable.hpp>
 #include <libbr/type_traits/is_convertible.hpp>
 #include <libbr/type_traits/is_reference.hpp>
 #include <libbr/type_traits/is_pointer.hpp>
+#include <libbr/type_traits/remove_extent.hpp>
+#include <libbr/type_traits/remove_reference.hpp>
+#include <libbr/utility/dummy.hpp>
 #include <libbr/utility/forward.hpp>
 #include <libbr/utility/move.hpp>
+#include <libbr/utility/type.hpp>
 
 namespace BR {
 

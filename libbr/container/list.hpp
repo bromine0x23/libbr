@@ -28,7 +28,7 @@
 #include <libbr/memory/allocator_traits.hpp>
 #include <libbr/memory/pointer_traits.hpp>
 #include <libbr/memory/unique_pointer.hpp>
-#include <libbr/type_operate/enable_if.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/has_nothrow_default_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_move_assignment.hpp>
 #include <libbr/type_traits/has_nothrow_move_constructor.hpp>

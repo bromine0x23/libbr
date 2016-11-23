@@ -10,10 +10,8 @@
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_IS_CONSTRUCTIBLE)
-#  include <libbr/type_operate/bool.hpp>
-#  include <libbr/type_operate/conditional.hpp>
-#  include <libbr/type_operate/remove_all_extents.hpp>
-#  include <libbr/type_operate/remove_reference.hpp>
+#  include <libbr/type_traits/boolean.hpp>
+#  include <libbr/type_traits/conditional.hpp>
 #  include <libbr/type_traits/has_destructor.hpp>
 #  include <libbr/type_traits/is_array.hpp>
 #  include <libbr/type_traits/is_base_of.hpp>
@@ -24,10 +22,14 @@
 #  include <libbr/type_traits/is_same.hpp>
 #  include <libbr/type_traits/is_static_castable.hpp>
 #  include <libbr/type_traits/is_void.hpp>
+#  include <libbr/type_traits/remove_all_extents.hpp>
+#  include <libbr/type_traits/remove_reference.hpp>
 #  include <libbr/utility/make_value.hpp>
 #endif
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief 检查 \em T 是否重载了特定参数的构造函数
@@ -51,7 +53,7 @@ struct IsConstructible;
 template< typename T, typename... TArgs >
 struct NotConstructible;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsConstructible 的模板变量版本
@@ -61,7 +63,7 @@ struct NotConstructible;
  * @see not_constructible
  */
 template< typename T, typename... TArgs >
-constexpr auto is_constructible = bool_constant< IsConstructible< T, TArgs... > >;
+constexpr auto is_constructible = boolean_constant< IsConstructible< T, TArgs... > >;
 
 /**
  * @brief NotConstructible 的模板变量版本
@@ -71,9 +73,11 @@ constexpr auto is_constructible = bool_constant< IsConstructible< T, TArgs... > 
  * @see is_constructible
  */
 template< typename T, typename... TArgs >
-constexpr auto not_constructible = bool_constant< NotConstructible< T, TArgs... > >;
+constexpr auto not_constructible = boolean_constant< NotConstructible< T, TArgs... > >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -195,10 +199,14 @@ struct IsConstructible : public IsConstructibleMany< T, TArgs... > {
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T, typename... TArgs >
 struct IsConstructible : public BooleanRewrapPositive< Detail::TypeTraits::IsConstructible< T, TArgs... > > {};
 
 template< typename T, typename... TArgs >
 struct NotConstructible : public BooleanRewrapNegative< Detail::TypeTraits::IsConstructible< T, TArgs... > > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

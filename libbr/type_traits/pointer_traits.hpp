@@ -8,13 +8,13 @@
 
 #include <libbr/config.hpp>
 #include <libbr/memory/address_of.hpp>
-#include <libbr/type_operate/conditional.hpp>
-#include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/replace_template_argument.hpp>
-#include <libbr/type_operate/template_argument.hpp>
-#include <libbr/type_operate/type.hpp>
+#include <libbr/type_traits/conditional.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/has_member_type.hpp>
 #include <libbr/type_traits/is_void.hpp>
+#include <libbr/type_traits/replace_template_argument.hpp>
+#include <libbr/type_traits/template_argument.hpp>
+#include <libbr/utility/type.hpp>
 
 namespace BR {
 

@@ -19,9 +19,8 @@
 #include <libbr/string/string_compare.hpp>
 #include <libbr/string/string_length.hpp>
 #include <libbr/string/string_move.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/max_integer.hpp>
+#include <libbr/type_traits/boolean.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/has_nothrow_default_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_copy_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_move_constructor.hpp>

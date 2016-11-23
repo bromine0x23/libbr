@@ -2,7 +2,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/functional/unary_functor.hpp>
-#include <libbr/type_operate/types.hpp>
+#include <libbr/utility/types.hpp>
 
 namespace BR {
 inline namespace Memory {

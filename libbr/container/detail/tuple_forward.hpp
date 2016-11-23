@@ -1,10 +1,10 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/add_const.hpp>
-#include <libbr/type_operate/add_const_volatile.hpp>
-#include <libbr/type_operate/add_volatile.hpp>
-#include <libbr/type_operate/type.hpp>
+#include <libbr/type_traits/add_const.hpp>
+#include <libbr/type_traits/add_const_volatile.hpp>
+#include <libbr/type_traits/add_volatile.hpp>
+#include <libbr/utility/type.hpp>
 #include <libbr/utility/integral_constant.hpp>
 
 namespace BR {

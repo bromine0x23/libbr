@@ -10,6 +10,5 @@
 #include <libbr/math.hpp>
 #include <libbr/memory.hpp>
 #include <libbr/string.hpp>
-#include <libbr/type_operate.hpp>
 #include <libbr/type_traits.hpp>
 #include <libbr/utility.hpp>

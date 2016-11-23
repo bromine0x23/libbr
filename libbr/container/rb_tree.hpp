@@ -18,8 +18,8 @@
 #include <libbr/memory/allocator.hpp>
 #include <libbr/memory/allocator_traits.hpp>
 #include <libbr/memory/pointer_traits.hpp>
-#include <libbr/type_operate/map_cv.hpp>
-#include <libbr/type_operate/remove_const.hpp>
+#include <libbr/type_traits/map_cv.hpp>
+#include <libbr/type_traits/remove_const.hpp>
 #include <libbr/utility/forward.hpp>
 
 namespace BR {

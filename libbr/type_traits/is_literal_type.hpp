@@ -10,21 +10,23 @@
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_IS_LITERAL_TYPE)
-#  include <libbr/type_operate/bool.hpp>
-#  include <libbr/type_operate/remove_const_volatile.hpp>
+#  include <libbr/type_traits/boolean.hpp>
 #  include <libbr/type_traits/is_scalar.hpp>
 #  include <libbr/type_traits/is_reference.hpp>
 #  include <libbr/type_traits/is_array.hpp>
+#  include <libbr/type_traits/remove_const_volatile.hpp>
 #endif
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 是否是 \em literal \em type
  * @tparam T 待检查类型
- * @see BR::IntegerConstant
+ * @see IntegerConstant
  * @see BR_IS_LITERAL_TYPE
- * @see BR::NotLiteralType
+ * @see NotLiteralType
  *
  * 如果 \em T 是 \em literal \em type ，那么封装的值为 \em true ；否则为 \em false
  */
@@ -34,32 +36,34 @@ struct IsLiteralType;
 /**
  * @brief IsLiteralType 的否定
  * @tparam T 待检查类型
- * @see BR::IsLiteralType
+ * @see IsLiteralType
  */
 template< typename T >
 struct NotLiteralType;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsLiteralType 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::IsLiteralType
- * @see BR::not_literal_type
+ * @see IsLiteralType
+ * @see not_literal_type
  */
 template< typename T >
-constexpr auto is_literal_type = bool_constant< IsLiteralType<T> >;
+constexpr auto is_literal_type = boolean_constant< IsLiteralType<T> >;
 
 /**
  * @brief NotLiteralType 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::NotLiteralType
- * @see BR::is_literal_type
+ * @see NotLiteralType
+ * @see is_literal_type
  */
 template< typename T >
-constexpr auto not_literal_type = bool_constant< NotLiteralType<T> >;
+constexpr auto not_literal_type = boolean_constant< NotLiteralType<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -84,15 +88,14 @@ using IsLiteralType = IsLiteralTypeBasic< RemoveConstVolatile<T> >;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsLiteralType : public BooleanRewrapPositive< Detail::TypeTraits::IsLiteralType<T> > {};
 
-/**
- * @brief IsLiteralType 的否定
- * @tparam T 待检查类型
- * @see BR::IsLiteralType
- */
 template< typename T >
 struct NotLiteralType : public BooleanRewrapNegative< Detail::TypeTraits::IsLiteralType<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

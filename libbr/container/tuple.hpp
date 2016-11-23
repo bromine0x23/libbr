@@ -9,19 +9,14 @@
 #include <libbr/config.hpp>
 #include <libbr/assert/dummy_false.hpp>
 #include <libbr/memory/allocator_argument_tag.hpp>
-#include <libbr/type_operate/add_const.hpp>
-#include <libbr/type_operate/add_const_volatile.hpp>
-#include <libbr/type_operate/add_lvalue_reference.hpp>
-#include <libbr/type_operate/add_volatile.hpp>
-#include <libbr/type_operate/conditional.hpp>
-#include <libbr/type_operate/decay.hpp>
-#include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/make_integral_sequence.hpp>
-#include <libbr/type_operate/map_qualifier.hpp>
-#include <libbr/type_operate/remove_reference.hpp>
-#include <libbr/type_operate/type.hpp>
-#include <libbr/type_operate/types.hpp>
+#include <libbr/type_traits/add_const.hpp>
+#include <libbr/type_traits/add_const_volatile.hpp>
+#include <libbr/type_traits/add_lvalue_reference.hpp>
+#include <libbr/type_traits/add_volatile.hpp>
 #include <libbr/type_traits/allocator_constructor_usage.hpp>
+#include <libbr/type_traits/conditional.hpp>
+#include <libbr/type_traits/decay.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/has_default_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_copy_assignment.hpp>
 #include <libbr/type_traits/has_nothrow_copy_constructor.hpp>
@@ -39,10 +34,15 @@
 #include <libbr/type_traits/is_reference.hpp>
 #include <libbr/type_traits/is_same.hpp>
 #include <libbr/type_traits/is_use_allocator.hpp>
+#include <libbr/type_traits/make_integral_sequence.hpp>
+#include <libbr/type_traits/map_qualifier.hpp>
+#include <libbr/type_traits/remove_reference.hpp>
 #include <libbr/utility/forward.hpp>
 #include <libbr/utility/integral_constant.hpp>
 #include <libbr/utility/integral_sequence.hpp>
 #include <libbr/utility/move.hpp>
+#include <libbr/utility/type.hpp>
+#include <libbr/utility/types.hpp>
 #include <libbr/utility/wrapped_reference.hpp>
 #include <libbr/container/detail/tuple_forward.hpp>
 
@@ -88,19 +88,11 @@ BR_CONSTEXPR_AFTER_CXX11 inline auto forward_as_tuple(T && ... t) noexcept -> Tu
 	return Tuple< T && ... >(forward<T>(t)...);
 }
 
-template< typename T, typename TAllocator >
-struct IsUseAllocator;
+template< typename ... T, typename TAllocator >
+struct IsUseAllocator< Tuple< T ... >, TAllocator > : public BooleanTrue {};
 
 template< typename ... T, typename TAllocator >
-struct IsUseAllocator< Tuple< T ... >, TAllocator > : public BooleanTrue {
-};
-
-template< typename T, typename TAllocator >
-struct NotUseAllocator;
-
-template< typename ... T, typename TAllocator >
-struct NotUseAllocator< Tuple< T ... >, TAllocator > : public BooleanFalse {
-};
+struct NotUseAllocator< Tuple< T ... >, TAllocator > : public BooleanFalse {};
 
 namespace Detail {
 namespace Container {

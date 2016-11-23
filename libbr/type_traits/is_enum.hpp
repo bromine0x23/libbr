@@ -8,11 +8,11 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/remove_const_volatile.hpp>
+#include <libbr/type_traits/remove_const_volatile.hpp>
 #include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_IS_ENUM)
-#  include <libbr/type_operate/add_lvalue_reference.hpp>
-#  include <libbr/type_operate/bool.hpp>
+#  include <libbr/type_traits/add_lvalue_reference.hpp>
+#  include <libbr/type_traits/boolean.hpp>
 #  include <libbr/type_traits/is_arithmetic.hpp>
 #  include <libbr/type_traits/is_array.hpp>
 #  include <libbr/type_traits/is_class.hpp>
@@ -24,12 +24,14 @@
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 是否是枚举类型
  * @tparam T 待检查类型
- * @see BR::IntegerConstant
+ * @see IntegerConstant
  * @see BR_IS_ENUM
- * @see BR::NotEnum
+ * @see NotEnum
  *
  * 如果 \em T 是枚举类型，那么封装的值为 \em true ；否则为 \em false
  */
@@ -39,32 +41,34 @@ struct IsEnum;
 /**
  * @brief IsEnum 的否定
  * @tparam T 待检查类型
- * @see BR::IsEnum
+ * @see IsEnum
  */
 template< typename T >
 struct NotEnum;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsEnum 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::IsEnum
- * @see BR::not_enum
+ * @see IsEnum
+ * @see not_enum
  */
 template< typename T >
-constexpr auto is_enum = bool_constant< IsEnum<T> >;
+constexpr auto is_enum = boolean_constant< IsEnum<T> >;
 
 /**
  * @brief NotEnum 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::NotEnum
- * @see BR::is_enum
+ * @see NotEnum
+ * @see is_enum
  */
 template< typename T >
-constexpr auto not_enum = bool_constant< NotEnum<T> >;
+constexpr auto not_enum = boolean_constant< NotEnum<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -104,10 +108,14 @@ using IsEnum = IsEnumBasic< RemoveConstVolatile<T> >;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsEnum : public BooleanRewrapPositive< Detail::TypeTraits::IsEnum<T> > {};
 
 template< typename T >
 struct NotEnum : public BooleanRewrapNegative< Detail::TypeTraits::IsEnum<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

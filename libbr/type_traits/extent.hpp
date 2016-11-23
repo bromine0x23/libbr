@@ -7,10 +7,12 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/remove_const_volatile.hpp>
+#include <libbr/type_traits/remove_const_volatile.hpp>
 #include <libbr/utility/integral_constant.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief 获取数组指定维度的大小
@@ -23,7 +25,7 @@ namespace BR {
 template< typename T, Size I = 0 >
 struct Extent;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief Rank 的模板变量版本
@@ -33,7 +35,9 @@ struct Extent;
 template< typename T, Size I = 0 >
 constexpr auto extent = integral_constant< Extent< T, I > >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -61,7 +65,11 @@ struct Extent< T [S], 0 > : public IntegralConstant< Size, S > {};
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T, Size I >
 struct Extent : public IntegralRewrap< Detail::TypeTraits::Extent< T, I > > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

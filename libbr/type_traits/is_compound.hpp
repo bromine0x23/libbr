@@ -12,6 +12,8 @@
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 是否是复合类型
  * @tparam T 待检查类型
@@ -33,7 +35,7 @@ struct IsCompound;
 template< typename T >
 struct NotCompound;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsCompound 的模板变量版本
@@ -42,7 +44,7 @@ struct NotCompound;
  * @see not_compound
  */
 template< typename T >
-constexpr auto is_compound = bool_constant< IsCompound<T> >;
+constexpr auto is_compound = boolean_constant< IsCompound<T> >;
 
 /**
  * @brief NotCompound 的模板变量版本
@@ -51,9 +53,11 @@ constexpr auto is_compound = bool_constant< IsCompound<T> >;
  * @see is_compound
  */
 template< typename T >
-constexpr auto not_compound = bool_constant< NotCompound<T> >;
+constexpr auto not_compound = boolean_constant< NotCompound<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -66,11 +70,15 @@ using IsCompound = BooleanNot< IsFundamental<T> >;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsCompound : public BooleanRewrapPositive< Detail::TypeTraits::IsCompound<T> > {};
 
 template< typename T >
 struct NotCompound : public BooleanRewrapNegative< Detail::TypeTraits::IsCompound<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR
 

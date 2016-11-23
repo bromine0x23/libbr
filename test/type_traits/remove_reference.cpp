@@ -1,0 +1,45 @@
+#include <libbr/type_traits/remove_reference.hpp>
+
+#include "test.hpp"
+
+using namespace BR;
+
+TEST(TypeOperate, RemoveReference) {
+	TYPE_TRAITS_CHECKS(RemoveReference, BR_EMPTY, BR_EMPTY)
+	TYPE_TRAITS_CHECKS(RemoveReference, const, const)
+	TYPE_TRAITS_CHECKS(RemoveReference, volatile, volatile)
+	TYPE_TRAITS_CHECKS(RemoveReference, const volatile, const volatile)
+	TYPE_TRAITS_CHECKS(RemoveReference, *, *)
+	TYPE_TRAITS_CHECKS(RemoveReference, * const, * const)
+	TYPE_TRAITS_CHECKS(RemoveReference, * volatile, * volatile)
+	TYPE_TRAITS_CHECKS(RemoveReference, * const volatile, * const volatile)
+	TYPE_TRAITS_CHECKS(RemoveReference, const *, const *)
+	TYPE_TRAITS_CHECKS(RemoveReference, volatile *, volatile *)
+	TYPE_TRAITS_CHECKS(RemoveReference, const * const, const * const)
+	TYPE_TRAITS_CHECKS(RemoveReference, const * volatile, const * volatile)
+	TYPE_TRAITS_CHECKS(RemoveReference, const * const volatile, const * const volatile)
+	TYPE_TRAITS_CHECKS(RemoveReference, &, BR_EMPTY)
+	TYPE_TRAITS_CHECKS(RemoveReference, const &, const)
+	TYPE_TRAITS_CHECKS(RemoveReference, volatile &, volatile)
+	TYPE_TRAITS_CHECKS(RemoveReference, const volatile &, const volatile)
+	TYPE_TRAITS_CHECKS(RemoveReference, &&, BR_EMPTY)
+	TYPE_TRAITS_CHECKS(RemoveReference, const &&, const)
+	TYPE_TRAITS_CHECKS(RemoveReference, volatile &&, volatile)
+	TYPE_TRAITS_CHECKS(RemoveReference, const volatile &&, const volatile)
+	TYPE_TRAITS_CHECKS(RemoveReference, [2], [2])
+	TYPE_TRAITS_CHECKS(RemoveReference, const[2], const[2])
+	TYPE_TRAITS_CHECKS(RemoveReference, volatile[2], volatile[2])
+	TYPE_TRAITS_CHECKS(RemoveReference, const volatile[2], const volatile[2])
+	TYPE_TRAITS_CHECKS(RemoveReference, [2][3], [2][3])
+	TYPE_TRAITS_CHECKS(RemoveReference, const[2][3], const[2][3])
+	TYPE_TRAITS_CHECKS(RemoveReference, volatile[2][3], volatile[2][3])
+	TYPE_TRAITS_CHECKS(RemoveReference, const volatile[2][3], const volatile[2][3])
+	TYPE_TRAITS_CHECKS(RemoveReference, [][3], [][3])
+	TYPE_TRAITS_CHECKS(RemoveReference, const[][3], const[][3])
+	TYPE_TRAITS_CHECKS(RemoveReference, volatile[][3], volatile[][3])
+	TYPE_TRAITS_CHECKS(RemoveReference, const volatile[][3], const volatile[][3])
+	TYPE_TRAITS_CHECKS(RemoveReference, (&)[2], [2])
+	TYPE_TRAITS_CHECKS(RemoveReference, (&&)[2], [2])
+	TYPE_TRAITS_CHECKS(RemoveReference, (&)[2][3], [2][3])
+	TYPE_TRAITS_CHECKS(RemoveReference, (&&)[2][3], [2][3])
+}

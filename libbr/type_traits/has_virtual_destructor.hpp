@@ -12,13 +12,15 @@
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 是否具有虚析构函数
  * @tparam T 待检查类型
- * @see BR::IntegerConstant
+ * @see IntegerConstant
  * @see BR_HAS_VIRTUAL_DESTRUCTOR
- * @see BR::HasDestructor
- * @see BR::NoVirtualDestructor
+ * @see HasDestructor
+ * @see NoVirtualDestructor
  *
  * 如果 \em T 具有虚析构函数，那么封装的值为 \em true ；否则为 \em false
  */
@@ -28,37 +30,39 @@ struct HasVirtualDestructor;
 /**
  * @brief HasVirtualDestructor 的否定
  * @tparam T 待检查类型
- * @see BR::HasVirtualDestructor
+ * @see HasVirtualDestructor
  */
 template< typename T >
 struct NoVirtualDestructor;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief HasVirtualDestructor 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::HasVirtualDestructor
- * @see BR::no_virtual_destructor
+ * @see HasVirtualDestructor
+ * @see no_virtual_destructor
  */
 template< typename T >
-constexpr auto has_virtual_destructor = bool_constant< HasVirtualDestructor<T> >;
+constexpr auto has_virtual_destructor = boolean_constant< HasVirtualDestructor<T> >;
 
 /**
  * @brief NoVirtualDestructor 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::NoVirtualDestructor
- * @see BR::has_virtual_destructor
+ * @see NoVirtualDestructor
+ * @see has_virtual_destructor
  */
 template< typename T >
-constexpr auto no_virtual_destructor = bool_constant< NoVirtualDestructor<T> >;
+constexpr auto no_virtual_destructor = boolean_constant< NoVirtualDestructor<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
 namespace Detail {
-namespace TypeOperate {
+namespace TypeTraits {
 
 #if defined(BR_HAS_VIRTUAL_DESTRUCTOR)
 
@@ -72,13 +76,17 @@ using HasVirtualDestructor = BooleanFalse;
 
 #endif // BR_HAS_VIRTUAL_DESTRUCTOR
 
-} // namespace TypeOperate
+} // namespace TypeTraits
 } // namespace Detail
 
-template< typename T >
-struct HasVirtualDestructor : public BooleanRewrapPositive< Detail::TypeOperate::HasVirtualDestructor<T> > {};
+inline namespace TypeTraits {
 
 template< typename T >
-struct NoVirtualDestructor : public BooleanRewrapNegative< Detail::TypeOperate::HasVirtualDestructor<T> > {};
+struct HasVirtualDestructor : public BooleanRewrapPositive< Detail::TypeTraits::HasVirtualDestructor<T> > {};
+
+template< typename T >
+struct NoVirtualDestructor : public BooleanRewrapNegative< Detail::TypeTraits::HasVirtualDestructor<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

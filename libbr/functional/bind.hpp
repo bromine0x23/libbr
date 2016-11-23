@@ -9,16 +9,16 @@
 #include <libbr/config.hpp>
 #include <libbr/container/tuple.hpp>
 #include <libbr/functional/invoke.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/call_result.hpp>
-#include <libbr/type_operate/decay.hpp>
-#include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/make_integral_sequence.hpp>
-#include <libbr/type_operate/remove_const.hpp>
-#include <libbr/type_operate/remove_reference.hpp>
+#include <libbr/type_traits/boolean_and.hpp>
+#include <libbr/type_traits/call_result.hpp>
+#include <libbr/type_traits/decay.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/is_callable.hpp>
 #include <libbr/type_traits/is_convertible.hpp>
 #include <libbr/type_traits/is_same.hpp>
+#include <libbr/type_traits/make_integral_sequence.hpp>
+#include <libbr/type_traits/remove_const.hpp>
+#include <libbr/type_traits/remove_reference.hpp>
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/utility/integral_constant.hpp>
 #include <libbr/utility/wrapped_reference.hpp>
@@ -147,7 +147,7 @@ public:
 
 	Bind(Bind && bind) = default;
 
-	template< typename TOtherCallable, typename ...TOtherBoundArgs, typename _TDummy = EnableIf< BooleanAnd< IsConvertible< TOtherCallable, Callable >, NotSame< RemoveReference<TOtherCallable>, Bind > > > >
+	template< typename TOtherCallable, typename ...TOtherBoundArgs, typename = EnableIf< BooleanAnd< IsConvertible< TOtherCallable, Callable >, NotSame< RemoveReference<TOtherCallable>, Bind > > > >
 	explicit Bind(
 		TOtherCallable && callable, TOtherBoundArgs && ... bound_args
 	) : m_callable(forward<TOtherCallable>(callable)), m_bound_args(forward<TOtherBoundArgs>(bound_args)...) {
@@ -192,7 +192,7 @@ public:
 
 	BindR(BindR && bind) = default;
 
-	template< typename TOtherCallable, typename ...TOtherBoundArgs, typename _TDummy = EnableIf< BooleanAnd< IsConvertible< TOtherCallable, Callable >, NotSame< RemoveReference<TOtherCallable>, BindR > > > >
+	template< typename TOtherCallable, typename ...TOtherBoundArgs, typename = EnableIf< BooleanAnd< IsConvertible< TOtherCallable, Callable >, NotSame< RemoveReference<TOtherCallable>, BindR > > > >
 	explicit BindR(
 		TOtherCallable && callable, TOtherBoundArgs && ... bound_args
 	) : Base(forward<TOtherCallable>(callable), forward<TOtherBoundArgs>(bound_args)...) {

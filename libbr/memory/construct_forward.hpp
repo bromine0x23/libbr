@@ -3,11 +3,11 @@
 #include <libbr/config.hpp>
 #include <libbr/memory/construct.hpp>
 #include <libbr/memory/memory_copy.hpp>
-#include <libbr/type_operate/bool.hpp>
-#include <libbr/type_operate/enable_if.hpp>
-#include <libbr/type_operate/remove_const.hpp>
+#include <libbr/type_traits/boolean.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/has_trivial_move_constructor.hpp>
 #include <libbr/type_traits/is_same.hpp>
+#include <libbr/type_traits/remove_const.hpp>
 
 namespace BR {
 

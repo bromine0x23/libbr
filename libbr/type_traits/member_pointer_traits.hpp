@@ -14,20 +14,27 @@
 
 namespace BR {
 
+inline namespace TypeTraits {
+
+/**
+ * @brief MemberPointerTraits
+ * @tparam T
+ */
 template< typename T >
 struct MemberPointerTraits;
 
 template< typename T >
-struct MemberPointerTraits< T const > : public MemberPointerTraits<T> {
-};
+struct MemberPointerTraits< T const > : public MemberPointerTraits<T> {};
 
 template< typename T >
-struct MemberPointerTraits< T volatile > : public MemberPointerTraits<T> {
-};
+struct MemberPointerTraits< T volatile > : public MemberPointerTraits<T> {};
 
 template< typename T >
-struct MemberPointerTraits< T const volatile > : public MemberPointerTraits<T> {
-};
+struct MemberPointerTraits< T const volatile > : public MemberPointerTraits<T> {};
+
+} // namespace TypeTraits
+
+
 
 namespace Detail {
 namespace TypeTraits {
@@ -51,8 +58,10 @@ struct MemberPointerTraits< TMember TClass::*, true > {
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
 template< typename T >
-struct MemberPointerTraits : public Detail::TypeTraits::MemberPointerTraits<T> {
-};
+struct MemberPointerTraits : public Detail::TypeTraits::MemberPointerTraits<T> {};
+
+} // namespace TypeTraits
 
 } // namespace BR

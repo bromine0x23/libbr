@@ -1,9 +1,9 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/add_lvalue_reference.hpp>
-#include <libbr/type_operate/add_rvalue_reference.hpp>
-#include <libbr/type_operate/add_pointer.hpp>
+#include <libbr/type_traits/add_lvalue_reference.hpp>
+#include <libbr/type_traits/add_rvalue_reference.hpp>
+#include <libbr/type_traits/add_pointer.hpp>
 
 namespace BR {
 

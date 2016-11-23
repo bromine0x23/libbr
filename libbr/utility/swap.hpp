@@ -7,7 +7,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/type_operate/bool.hpp>
+#include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/has_nothrow_move_assignment.hpp>
 #include <libbr/type_traits/has_nothrow_move_constructor.hpp>
 #include <libbr/utility/move.hpp>

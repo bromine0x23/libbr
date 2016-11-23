@@ -10,7 +10,7 @@
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_IS_POD)
-#  include <libbr/type_operate/bool.hpp>
+#  include <libbr/type_traits/boolean.hpp>
 #  include <libbr/type_traits/is_array.hpp>
 #  include <libbr/type_traits/is_scalar.hpp>
 #  include <libbr/type_traits/is_void.hpp>
@@ -18,12 +18,14 @@
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 是否是 \em POD 类型
  * @tparam T 待检查类型
- * @see BR::IntegerConstant
+ * @see IntegerConstant
  * @see BR_IS_POD
- * @see BR::NotPOD
+ * @see NotPOD
  *
  * 如果 \em T 是 \em POD 类型，那么封装的值为 \em true ；否则为 \em false
  */
@@ -33,32 +35,34 @@ struct IsPOD;
 /**
  * @brief IsPOD 的否定
  * @tparam T 待检查类型
- * @see BR::IsPOD
+ * @see IsPOD
  */
 template< typename T >
 struct NotPOD;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsPOD 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::IsPOD
- * @see BR::not_pod
+ * @see IsPOD
+ * @see not_pod
  */
 template< typename T >
-constexpr auto is_pod = bool_constant< IsPOD<T> >;
+constexpr auto is_pod = boolean_constant< IsPOD<T> >;
 
 /**
  * @brief NotPOD 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::NotPOD
- * @see BR::is_pod
+ * @see NotPOD
+ * @see is_pod
  */
 template< typename T >
-constexpr auto not_pod = bool_constant< NotPOD<T> >;
+constexpr auto not_pod = boolean_constant< NotPOD<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -80,10 +84,14 @@ using IsPOD = BooleanOr< IsArray<T>, IsScalar<T>, IsVoid<T> >;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsPOD : public BooleanRewrapPositive< Detail::TypeTraits::IsPOD<T> > {};
 
 template< typename T >
 struct NotPOD : public BooleanRewrapNegative< Detail::TypeTraits::IsPOD<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

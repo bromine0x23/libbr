@@ -10,18 +10,20 @@
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_IS_ABSTRACT)
-#  include <libbr/type_operate/bool.hpp>
+#  include <libbr/type_traits/boolean.hpp>
 #  include <libbr/type_traits/is_class.hpp>
 #endif
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 是否是抽象类
  * @tparam T 待检查类型
- * @see BR::IntegerConstant
+ * @see IntegerConstant
  * @see BR_IS_ABSTRACT
- * @see BR::NotAbstract
+ * @see NotAbstract
  *
  * 如果 \em T 是抽象类(含有至少一个纯虚函数声明的类)，那么封装的值为 \em true ；否则为 \em false
  */
@@ -31,32 +33,34 @@ struct IsAbstract;
 /**
  * @brief IsAbstract 的否定
  * @tparam T 待检查类型
- * @see BR::IsAbstract
+ * @see IsAbstract
  */
 template< typename T >
 struct NotAbstract;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsAbstract 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::IsAbstract
- * @see BR::not_abstract
+ * @see IsAbstract
+ * @see not_abstract
  */
 template< typename T >
-constexpr auto is_abstract = bool_constant< IsAbstract<T> >;
+constexpr auto is_abstract = boolean_constant< IsAbstract<T> >;
 
 /**
  * @brief NotAbstract 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::NotAbstract
- * @see BR::is_abstract
+ * @see NotAbstract
+ * @see is_abstract
  */
 template< typename T >
-constexpr auto not_abstract = bool_constant< NotAbstract<T> >;
+constexpr auto not_abstract = boolean_constant< NotAbstract<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -91,10 +95,14 @@ using IsAbstract = BooleanAnd< IsClass<T>, IsAbstractBasic<T> >;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsAbstract : public BooleanRewrapPositive< Detail::TypeTraits::IsAbstract<T> > {};
 
 template< typename T >
 struct NotAbstract : public BooleanRewrapNegative< Detail::TypeTraits::IsAbstract<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

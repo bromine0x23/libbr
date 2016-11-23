@@ -1,0 +1,45 @@
+#include <libbr/type_traits/remove_all_extents.hpp>
+
+#include "test.hpp"
+
+using namespace BR;
+
+TEST(TypeOperate, RemoveAllExtents) {
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, BR_EMPTY, BR_EMPTY)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, const, const)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, volatile, volatile)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, const volatile, const volatile)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, *, *)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, * const, * const)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, * volatile, * volatile)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, * const volatile, * const volatile)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, const *, const *)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, volatile *, volatile *)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, const * const, const * const)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, const * volatile, const * volatile)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, const * const volatile, const * const volatile)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, &, &)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, const &, const &)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, volatile &, volatile &)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, const volatile &, const volatile &)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, &&, &&)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, const &&, const &&)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, volatile &&, volatile &&)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, const volatile &&, const volatile &&)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, [2], BR_EMPTY)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, const[2], const)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, volatile[2], volatile)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, const volatile[2], const volatile)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, [2][3], BR_EMPTY)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, const[2][3], const)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, volatile[2][3], volatile)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, const volatile[2][3], const volatile)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, [][3], BR_EMPTY)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, const[][3], const)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, volatile[][3], volatile)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, const volatile[][3], const volatile)
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, (&)[2], (&)[2])
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, (&&)[2], (&&)[2])
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, (&)[2][3], (&)[2][3])
+	TYPE_TRAITS_CHECKS(RemoveAllExtents, (&&)[2][3], (&&)[2][3])
+}

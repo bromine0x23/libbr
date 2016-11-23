@@ -9,7 +9,7 @@
 #include <libbr/config.hpp>
 #include <libbr/functional/invoke.hpp>
 #include <libbr/functional/variadic_functor.hpp>
-#include <libbr/type_operate/call_result.hpp>
+#include <libbr/type_traits/call_result.hpp>
 #include <libbr/utility/forward.hpp>
 
 namespace BR {

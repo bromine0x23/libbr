@@ -1,0 +1,45 @@
+#include <libbr/type_traits/add_lvalue_reference.hpp>
+
+#include "test.hpp"
+
+using namespace BR;
+
+TEST(TypeOperate, AddLValueReference) {
+	TYPE_TRAITS_CHECKS(AddLValueReference, BR_EMPTY, &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, const, const &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, volatile, volatile &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, const volatile, const volatile &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, *, * &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, * const, * const &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, * volatile, * volatile &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, * const volatile, * const volatile &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, const *, const * &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, volatile *, volatile * &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, const * const, const * const &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, const * volatile, const * volatile &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, const * const volatile, const * const volatile &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, &, &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, const &, const &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, volatile &, volatile &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, const volatile &, const volatile &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, &&, &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, const &&, const &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, volatile &&, volatile &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, const volatile &&, const volatile &)
+	TYPE_TRAITS_CHECKS(AddLValueReference, [2], (&)[2])
+	TYPE_TRAITS_CHECKS(AddLValueReference, const[2], const(&)[2])
+	TYPE_TRAITS_CHECKS(AddLValueReference, volatile[2], volatile(&)[2])
+	TYPE_TRAITS_CHECKS(AddLValueReference, const volatile[2], const volatile(&)[2])
+	TYPE_TRAITS_CHECKS(AddLValueReference, [2][3], (&)[2][3])
+	TYPE_TRAITS_CHECKS(AddLValueReference, const[2][3], const(&)[2][3])
+	TYPE_TRAITS_CHECKS(AddLValueReference, volatile[2][3], volatile(&)[2][3])
+	TYPE_TRAITS_CHECKS(AddLValueReference, const volatile[2][3], const volatile(&)[2][3])
+	TYPE_TRAITS_CHECKS(AddLValueReference, [][3], (&)[][3])
+	TYPE_TRAITS_CHECKS(AddLValueReference, const[][3], const(&)[][3])
+	TYPE_TRAITS_CHECKS(AddLValueReference, volatile[][3], volatile(&)[][3])
+	TYPE_TRAITS_CHECKS(AddLValueReference, const volatile[][3], const volatile(&)[][3])
+	TYPE_TRAITS_CHECKS(AddLValueReference, (&)[2], (&)[2])
+	TYPE_TRAITS_CHECKS(AddLValueReference, (&&)[2], (&)[2])
+	TYPE_TRAITS_CHECKS(AddLValueReference, (&)[2][3], (&)[2][3])
+	TYPE_TRAITS_CHECKS(AddLValueReference, (&&)[2][3], (&)[2][3])
+}

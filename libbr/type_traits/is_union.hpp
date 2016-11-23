@@ -12,12 +12,14 @@
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 是否是联合类型
  * @tparam T 待检查类型
- * @see BR::IntegerConstant
+ * @see IntegerConstant
  * @see BR_IS_UNION
- * @see BR::NotUnion
+ * @see NotUnion
  *
  * 如果 \em T 是联合类型，那么封装的值为 \em true ；否则为 \em false
  */
@@ -27,32 +29,34 @@ struct IsUnion;
 /**
  * @brief IsUnion 的否定
  * @tparam T 待检查类型
- * @see BR::IsUnion
+ * @see IsUnion
  */
 template< typename T >
 struct NotUnion;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsUnion 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::IsUnion
- * @see BR::not_union
+ * @see IsUnion
+ * @see not_union
  */
 template< typename T >
-constexpr auto is_union = bool_constant< IsUnion<T> >;
+constexpr auto is_union = boolean_constant< IsUnion<T> >;
 
 /**
  * @brief NotUnion 的模板变量版本
  * @tparam T 待检查类型
- * @see BR::NotUnion
- * @see BR::is_union
+ * @see NotUnion
+ * @see is_union
  */
 template< typename T >
-constexpr auto not_union = bool_constant< NotUnion<T> >;
+constexpr auto not_union = boolean_constant< NotUnion<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -74,11 +78,15 @@ using IsUnion = BooleanFalse;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsUnion : public BooleanRewrapPositive< Detail::TypeTraits::IsUnion<T> > {};
 
 template< typename T >
 struct NotUnion : public BooleanRewrapNegative< Detail::TypeTraits::IsUnion<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR
 

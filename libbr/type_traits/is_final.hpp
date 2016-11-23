@@ -12,6 +12,8 @@
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 是否是 \em final 类
  * @tparam T 待检查类型
@@ -31,7 +33,7 @@ struct IsFinal;
 template< typename T >
 struct NotFinal;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsFinal 的模板变量版本
@@ -40,7 +42,7 @@ struct NotFinal;
  * @see not_final
  */
 template< typename T >
-constexpr auto is_final = bool_constant< IsFinal<T> >;
+constexpr auto is_final = boolean_constant< IsFinal<T> >;
 
 /**
  * @brief NotFinal 的模板变量版本
@@ -49,9 +51,11 @@ constexpr auto is_final = bool_constant< IsFinal<T> >;
  * @see is_final
  */
 template< typename T >
-constexpr auto not_final = bool_constant< NotFinal<T> >;
+constexpr auto not_final = boolean_constant< NotFinal<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -73,10 +77,14 @@ using IsFinal = BooleanFalse;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsFinal : public BooleanRewrapPositive< Detail::TypeTraits::IsFinal<T> > {};
 
 template< typename T >
 struct NotFinal : public BooleanRewrapNegative< Detail::TypeTraits::IsFinal<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

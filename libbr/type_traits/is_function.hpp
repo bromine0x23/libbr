@@ -8,10 +8,12 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/bool.hpp>
+#include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/is_reference.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief 检查 \em T 是否是函数类型
@@ -32,7 +34,7 @@ struct IsFunction;
 template< typename T >
 struct NotFunction;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsFunction 的模板变量版本
@@ -41,7 +43,7 @@ struct NotFunction;
  * @see not_function
  */
 template< typename T >
-constexpr auto is_function = bool_constant< IsFunction<T> >;
+constexpr auto is_function = boolean_constant< IsFunction<T> >;
 
 /**
  * @brief NotFunction 的模板变量版本
@@ -50,9 +52,11 @@ constexpr auto is_function = bool_constant< IsFunction<T> >;
  * @see is_function
  */
 template< typename T >
-constexpr auto not_function = bool_constant< NotFunction<T> >;
+constexpr auto not_function = boolean_constant< NotFunction<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -95,10 +99,14 @@ template< typename TResult, typename... TArgs > struct IsFunction<TResult(TArgs.
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsFunction : public BooleanRewrapPositive< Detail::TypeTraits::IsFunction<T> > {};
 
 template< typename T >
 struct NotFunction : public BooleanRewrapNegative< Detail::TypeTraits::IsFunction<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

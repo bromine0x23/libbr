@@ -8,9 +8,11 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/remove_const_volatile.hpp>
+#include <libbr/type_traits/remove_const_volatile.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief 检查 \em T 是否是 \em void 类型
@@ -31,7 +33,7 @@ struct IsVoid;
 template< typename T >
 struct NotVoid;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsVoid 的模板变量版本
@@ -40,7 +42,7 @@ struct NotVoid;
  * @see not_void
  */
 template< typename T >
-constexpr auto is_void = bool_constant< IsVoid<T> >;
+constexpr auto is_void = boolean_constant< IsVoid<T> >;
 
 /**
  * @brief NotVoid 的模板变量版本
@@ -49,9 +51,13 @@ constexpr auto is_void = bool_constant< IsVoid<T> >;
  * @see is_void
  */
 template< typename T >
-constexpr auto not_void = bool_constant< NotVoid<T> >;
+constexpr auto not_void = boolean_constant< NotVoid<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
+
+
 
 namespace Detail {
 namespace TypeTraits {
@@ -68,10 +74,14 @@ using IsVoid = IsVoidBasic< RemoveConstVolatile<T> >;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsVoid : public BooleanRewrapPositive< Detail::TypeTraits::IsVoid<T> > {};
 
 template< typename T >
 struct NotVoid : public BooleanRewrapNegative< Detail::TypeTraits::IsVoid<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

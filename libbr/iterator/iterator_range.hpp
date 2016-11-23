@@ -17,8 +17,8 @@
 #include <libbr/iterator/next.hpp>
 #include <libbr/iterator/prev.hpp>
 #include <libbr/iterator/reverse_iterator.hpp>
-#include <libbr/type_operate/conditional.hpp>
-#include <libbr/type_operate/enable_if.hpp>
+#include <libbr/type_traits/conditional.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/is_convertible.hpp>
 
 namespace BR {

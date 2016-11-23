@@ -10,20 +10,21 @@
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/type_traits/intrinsics.hpp>
 #if !defined(BR_HAS_NOTHROW_DESTRUCTOR)
-#  include <libbr/type_operate/bool.hpp>
+#  include <libbr/type_traits/boolean.hpp>
 #  include <libbr/type_traits/has_destructor.hpp>
-#  include <libbr/type_traits/is_array.hpp>
 #endif
 
 namespace BR {
 
+inline namespace TypeTraits {
+
 /**
  * @brief 检查 \em T 具有 \em nothrow 的析构函数
  * @tparam T 待检查类型
- * @see BR::IntegerConstant
+ * @see IntegerConstant
  * @see BR_HAS_NOTHROW_DESTRUCTOR
- * @see BR::HasDestructor
- * @see BR::NoNothrowDestructor
+ * @see HasDestructor
+ * @see NoNothrowDestructor
  *
  * 如果 \em T 具有 \em nothrow 的析构函数，那么封装的值为 \em true ；否则为 \em false
  */
@@ -33,12 +34,12 @@ struct HasNothrowDestructor;
 /**
  * @brief HasNothrowDestructor 的否定
  * @tparam T 待检查类型
- * @see BR::HasNothrowDestructor
+ * @see HasNothrowDestructor
  */
 template< typename T >
 struct NoNothrowDestructor;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief HasNothrowDestructor 的模板变量版本
@@ -47,7 +48,7 @@ struct NoNothrowDestructor;
  * @see BR::no_nothrow_destructor
  */
 template< typename T >
-constexpr auto has_nothrow_destructor = bool_constant< HasNothrowDestructor<T> >;
+constexpr auto has_nothrow_destructor = boolean_constant< HasNothrowDestructor<T> >;
 
 /**
  * @brief NoNothrowDestructor 的模板变量版本
@@ -56,9 +57,11 @@ constexpr auto has_nothrow_destructor = bool_constant< HasNothrowDestructor<T> >
  * @see BR::has_nothrow_destructor
  */
 template< typename T >
-constexpr auto no_nothrow_destructor = bool_constant< NoNothrowDestructor<T> >;
+constexpr auto no_nothrow_destructor = boolean_constant< NoNothrowDestructor<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -92,10 +95,14 @@ struct HasNothrowDestructor<T&> : public HasNothrowDestructor<T> {};
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct HasNothrowDestructor : public BooleanRewrapPositive< Detail::TypeTraits::HasNothrowDestructor<T> > {};
 
 template< typename T >
 struct NoNothrowDestructor : public BooleanRewrapNegative< Detail::TypeTraits::HasNothrowDestructor<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR

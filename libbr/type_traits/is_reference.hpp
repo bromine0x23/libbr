@@ -8,11 +8,13 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/type_operate/bool.hpp>
+#include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/is_lvalue_reference.hpp>
 #include <libbr/type_traits/is_rvalue_reference.hpp>
 
 namespace BR {
+
+inline namespace TypeTraits {
 
 /**
  * @brief 检查 \em T 是否是引用类型
@@ -35,7 +37,7 @@ struct IsReference;
 template< typename T >
 struct NotReference;
 
-#if defined(BR_CXX14)
+#if defined(BR_AFTER_CXX11)
 
 /**
  * @brief IsReference 的模板变量版本
@@ -44,7 +46,7 @@ struct NotReference;
  * @see not_reference
  */
 template< typename T >
-constexpr auto is_reference = bool_constant< IsReference<T> >;
+constexpr auto is_reference = boolean_constant< IsReference<T> >;
 
 /**
  * @brief NotReference 的模板变量版本
@@ -53,9 +55,11 @@ constexpr auto is_reference = bool_constant< IsReference<T> >;
  * @see is_reference
  */
 template< typename T >
-constexpr auto not_reference = bool_constant< NotReference<T> >;
+constexpr auto not_reference = boolean_constant< NotReference<T> >;
 
-#endif // defined(BR_CXX14)
+#endif // defined(BR_AFTER_CXX11)
+
+} // namespace TypeTraits
 
 
 
@@ -68,10 +72,14 @@ using IsReference = BooleanOr< IsLValueReference<T>, IsRValueReference<T> >;
 } // namespace TypeTraits
 } // namespace Detail
 
+inline namespace TypeTraits {
+
 template< typename T >
 struct IsReference : public BooleanRewrapPositive< Detail::TypeTraits::IsReference<T> > {};
 
 template< typename T >
 struct NotReference : public BooleanRewrapNegative< Detail::TypeTraits::IsReference<T> > {};
+
+} // namespace TypeTraits
 
 } // namespace BR
