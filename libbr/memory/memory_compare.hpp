@@ -2,7 +2,7 @@
  * @file
  * @brief memory_compare
  * @author Bromine0x23
- * @since 2015/11/5
+ * @since 1.0
  */
 #pragma once
 
