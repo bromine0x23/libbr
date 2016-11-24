@@ -2,7 +2,7 @@
  * @file
  * @brief DynamicArray
  * @author Bromine0x23
- * @since 2016/5/1
+ * @since 1.0
  */
 #pragma once
 

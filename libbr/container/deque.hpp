@@ -2,7 +2,7 @@
  * @file
  * @brief Deque
  * @author Bromine0x23
- * @since 2015/11/19
+ * @since 1.0
  */
 #pragma once
 
