@@ -2,7 +2,7 @@
  * @file
  * @brief 位运算实用函数
  * @author Bromine0x23
- * @since 2015/9/25
+ * @since 1.0
  */
 #pragma once
 

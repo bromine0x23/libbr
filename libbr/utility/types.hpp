@@ -2,7 +2,7 @@
  * @file
  * @brief class template Types
  * @author Bromine0x23
- * @since 2015/10/30
+ * @since 1.0
  */
 #pragma once
 
