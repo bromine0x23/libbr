@@ -2,7 +2,7 @@
  * @file
  * @brief 指针类型信息
  * @author Bromine0x23
- * @since 2015/11/19
+ * @since 1.0
  */
 #pragma once
 
