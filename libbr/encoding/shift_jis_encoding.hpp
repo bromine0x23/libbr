@@ -2,7 +2,7 @@
  * @file
  * @brief Shift-JIS编码
  * @author Bromine0x23
- * @since 2016/10/8
+ * @since 1.0
  */
 #pragma once
 

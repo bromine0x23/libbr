@@ -2,7 +2,7 @@
  * @file
  * @brief Encoding
  * @author Bromine0x23
- * @since 16/9/30
+ * @since 1.0
  */
 #pragma once
 

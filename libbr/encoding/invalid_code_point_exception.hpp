@@ -2,7 +2,7 @@
  * @file
  * @brief 无效码位异常
  * @author Bromine0x23
- * @since 2016/4/5
+ * @since 1.0
  */
 #pragma once
 

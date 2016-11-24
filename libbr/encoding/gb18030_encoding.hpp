@@ -2,7 +2,7 @@
  * @file
  * @brief GB18030编码
  * @author Bromine0x23
- * @since 2016/4/5
+ * @since 1.0
  */
 #pragma once
 

@@ -2,7 +2,7 @@
  * @file
  * @brief UTF16-LE
  * @author Bromine0x23
- * @since 2016/4/4
+ * @since 1.0
  */
 #pragma once
 

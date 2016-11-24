@@ -2,7 +2,7 @@
  * @file
  * @brief ASCII编码
  * @author Bromine0x23
- * @since 16/4/5
+ * @since 1.0
  */
 #pragma once
 
