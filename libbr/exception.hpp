@@ -2,7 +2,7 @@
  * @file
  * @brief 异常模块
  * @author Bromine0x23
- * @since 2015/10/2
+ * @since 1.0
  */
 #pragma once
 

@@ -15,7 +15,6 @@ Use [CMake](https://cmake.org/).
 - Functional
 - Memory
 - String
-- Type Operate
 - Type Traits
 - Utility
 

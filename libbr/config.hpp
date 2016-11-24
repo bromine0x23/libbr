@@ -1,14 +1,14 @@
 /**
  * @file
  * @author Bromine0x23
- * @since 2015/6/16
+ * @since 1.0
  */
 #pragma once
 
 /**
  * @brief 主名字空间
  * @author Bromine0x23
- * @since 2015/6/16
+ * @since 1.0
  */
 namespace BR {
 
