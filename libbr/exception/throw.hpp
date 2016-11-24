@@ -2,7 +2,7 @@
  * @file
  * @brief throw functions
  * @author Bromine0x23
- * @since 2015/11/6
+ * @since 1.0
  */
 #pragma once
 

@@ -2,7 +2,7 @@
  * @file
  * @brief 可枚举模块
  * @author Bromine0x23
- * @since 2016/10/8
+ * @since 1.0
  */
 #pragma once
 
