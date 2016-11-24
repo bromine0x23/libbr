@@ -101,7 +101,23 @@ TEST(Float32, IsNaN) {
 	EXPECT_TRUE(is_nan(pos_nan));
 }
 
+TEST(Float32, sqrt) {
+	EXPECT_TRUE(is_nan(sqrt(pos_nan)));
+	EXPECT_TRUE(is_infinite(sqrt(pos_inf)));
+	EXPECT_TRUE(is_nan(sqrt(neg_inf)));
+	EXPECT_EQ(pos_zero, sqrt(pos_zero));
+	EXPECT_EQ(neg_zero, sqrt(neg_zero));
+	EXPECT_TRUE(is_nan(sqrt(-4.0F)));
+	EXPECT_EQ(2.0F, sqrt(4.0F));
+	EXPECT_EQ(4.0F, sqrt(16.0F));
+}
+
 TEST(Float32, Exp2) {
 	EXPECT_EQ(4.0F, exp2(2.0F));
 	EXPECT_EQ(16.0F, exp2(4.0F));
+}
+
+TEST(Float32, Environment) {
+	FloatEnvironment environment;
+	get_float_environment(environment);
 }
