@@ -1,7 +1,7 @@
 /**
  * @file
  * @author Bromine0x23
- * @since 2015/9/24
+ * @since 1.0
  */
 #pragma once
 
@@ -14,7 +14,7 @@ namespace BR {
 /**
  * @brief Bignum 相关的配置
  * @author Bromine0x23
- * @since 2015/9/24
+ * @since 1.0
  */
 class BignumConfig {
 

@@ -1,7 +1,7 @@
 /**
  * @file
  * @author Bromine0x23
- * @since 2015/9/24
+ * @since 1.0
  */
 #pragma once
 
@@ -12,7 +12,7 @@ namespace BR {
 /**
  * @brief Bignum 的数据
  * @author Bromine0x23
- * @since 2015/9/24
+ * @since 1.0
  */
 struct BignumData : public BignumConfig  {
 	/**

@@ -2,7 +2,7 @@
  * @file
  * @brief float
  * @author Bromine0x23
- * @since 2015/11/2
+ * @since 1.0
  */
 #pragma once
 
@@ -12,6 +12,7 @@
 
 #include <libbr/math/float_category.hpp>
 #include <libbr/math/float_constants.hpp>
+#include <libbr/math/float_environment.hpp>
 
 #include <libbr/math/function/copy_sign.hpp>
 
@@ -40,8 +41,11 @@
 #include <libbr/math/function/max.hpp>
 #include <libbr/math/function/min.hpp>
 
+#include <libbr/math/function/sqrt.hpp>
 
+#include <libbr/math/function/exp.hpp>
 #include <libbr/math/function/exp2.hpp>
+#include <libbr/math/function/exp10.hpp>
 #include <libbr/math/function/log.hpp>
 #include <libbr/math/function/log2.hpp>
 #include <libbr/math/function/log10.hpp>

@@ -1,7 +1,7 @@
 /**
  * @file
  * @author Bromine0x23
- * @since 2015/9/24
+ * @since 1.0
  */
 #pragma once
 
@@ -14,7 +14,7 @@ namespace BR {
 /**
  * @brief Bignum 相关的帮助方法和常量
  * @author Bromine0x23
- * @since 2015/9/24
+ * @since 1.0
  *
  * BignumBasic 的静态方法和常量被导出到该名字空间中
  */

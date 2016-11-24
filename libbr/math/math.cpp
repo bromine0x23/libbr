@@ -3,29 +3,228 @@
 #include <libbr/math/float.hpp>
 #include <cmath>
 #include <cfloat>
+#include <cfenv>
 
 using namespace BR;
+using Detail::Math::Bind32;
+using Detail::Math::Bind64;
+
+namespace _32 {
+
+constexpr static Float32 _1  = 1.0; // 1
+
+constexpr static Float32 tiny  = 1E-30; // 1E-30
+
+static Float32 const _2_POW_P127  = Bind32(0x7F000000U).f; // 2 ^ +127
+
+static Float32 const _2_POW_M100  = Bind32(0x0D800000U).f; // 2 ^ -100
+
+static Float32 const _3_MUL_2_POW_P14 = Bind32(0x47400000U).f; // 3 * 2^+14
+
+static Float32 const _3_MUL_2_POW_P22 = Bind32(0x4b400000U).f; // 3 * 2^+22
+
+static Float32 const _3_MUL_2_POW_P42 = Bind32(0x42A80000U).f; // 3 * 2^+42
+
+static Float32 const _1_DIV_LN2 = Bind32(0x3FB8AA3BU).f; // 1 / ln(2)
+
+static Float32 const _LN2 = Bind32(0x3F317218U).f; // ln(2)
+
+} // inline namespace _32
+
+namespace _64 {
+
+static Float64 const _2_POW_P1023 = Bind64(0x7FE00000U, 0U).f; // 2 ^ +1023
+
+static Float64 const _2_POW_M1000  = Bind64(0x01700000U, 0U).f; // 2 ^ -1000
+
+static Float64 const _3_MUL_2_POW_P42 = Bind64(0x42A80000U, 0U).f; // 3 * 2^+42
+
+} // inline namespace _64
+
+#if !defined(BR_GCC) && !defined(BR_CLANG) && !defined(BR_MSVC)
+auto libbr_get_float_round_mode() -> FloatRoundMode {
+	return FloatRoundMode(std::fegetround());
+}
+
+auto libbr_set_float_round_mode(FloatRoundMode mode) -> bool {
+	return std::fesetround(to_i(mode)) == 0;
+}
+#endif
+
+auto libbr_sqrt_32(Float32 x) -> Float32 {
+	using namespace _32;
+
+	Bind32 b(x);
+	SInt32 m = b.exponent;
+	switch (classify(x)) {
+		case FloatCategory::NaN:
+			BR_FALLTHROUGH;
+		case FloatCategory::Infinite:
+			return x * x + x;
+		case FloatCategory::Zero:
+			return x;
+		case FloatCategory::Normal:
+			if (x < 0) {
+				return (x - x) / (x - x);
+			}
+			break;
+		case FloatCategory::SubNormal:
+			{
+				SInt i = 0;
+				for (i = 0; (b.r & 0x00800000U) == 0; ++i) {
+					b.r <<= 1;
+				}
+				m -= i - 1;
+			}
+			break;
+	}
+
+	m -= 127;
+	b.r = (b.r & 0x007FFFFFU) | 0x00800000U;
+	if ((m & 1) != 0) {
+		b.r += b.r;
+	}
+	m >>= 1;
+
+	b.r += b.r;
+
+	UInt32 q = 0;
+
+	for (SInt32  s = 0, r = 0x01000000U; r != 0; r >>= 1) {
+		SInt32 t = s + r;
+		if (t <= b.r) {
+			s    = t + r;
+			b.r -= t;
+			q   += r;
+		}
+		b.r += b.r;
+	}
+
+	if (b.r != 0) {
+		Float32 z = _1 - tiny;
+		if (z >= _1) {
+			z = _1 + tiny;
+			if (z > _1) {
+				q += 2;
+			} else {
+				q += (q & 1);
+			}
+		}
+	}
+
+	b.r = (q >> 1) + 0x3F000000U;
+	b.r += m << 23;
+	return b.f;
+}
+
+auto libbr_sqrt_64(Float64 x) -> Float64 {
+	using namespace _64;
+
+	Bind64 b(x);
+	SInt32 m = b.exponent;
+
+	switch (classify(x)) {
+		case FloatCategory::NaN:
+			BR_FALLTHROUGH;
+		case FloatCategory::Infinite:
+			return x * x + x;
+		case FloatCategory::Zero:
+			return x;
+		case FloatCategory::Normal:
+			if (x < 0) {
+				return (x - x) / (x - x);
+			}
+			break;
+		case FloatCategory::SubNormal:
+		{
+			SInt i = 0;
+			for (i = 0; (b.r & 0x00800000U) == 0; ++i) {
+				b.r <<= 1;
+			}
+			m -= i - 1;
+		}
+			break;
+	}
+
+	return b.f;
+}
+
+#include <libbr/math/function/detail/exp.inl>
+
+auto libbr_exp_32(Float32 x) -> Float32 {
+	using namespace _32;
+
+	static const Float32 HMARK = Bind32(0x42B17218U).f;
+	static const Float32 LMARK = Bind32(0xC2CFF1B5U).f;
+
+	if (is_less(x, HMARK)) {
+		if (!is_greater(x, LMARK)) {
+			if (is_infinite(x)) {
+				return 0; // x == -inf, e^-inf == 0
+			} else {
+				return _2_POW_M100 * _2_POW_M100; // underflow
+			}
+		}
+	} else {
+		return _2_POW_P127 * x; // Return x, if x is a NaN or Inf; or overflow, otherwise.
+	}
+
+	// x = n * ln(2) + t / 512 + delta[t] + x;
+
+	Float32 n = x * _1_DIV_LN2 + _3_MUL_2_POW_P22; n -= _3_MUL_2_POW_P22;
+
+	Float32 dx = x - n * _LN2;
+
+	Float32 t = dx + _3_MUL_2_POW_P42; t -= _3_MUL_2_POW_P42;
+
+	dx -= t;
+
+	auto i = SInt(t * 512.0F);
+
+	Float32 d;
+	if (t >= 0)
+		d = - EXP_32_DELTA[i];
+	else
+		d = EXP_32_DELTA[-i];
+
+	auto sx = Bind32(EXP_32_ACCURATE[i + 177]);
+	sx.exponent += SInt(n);
+
+	Float32 ux = (0.5000000496709180453F * dx + 1.0000001192102037084F) * dx + d;
+
+	Float32 result = ux * sx.f + sx.f;
+
+	return result;
+}
+
+auto libbr_exp_64(Float64 x) -> Float64 {
+	return std::exp(x);
+}
 
 #include <libbr/math/function/detail/exp2.inl>
 
 auto libbr_exp2_32(Float32 x) -> Float32 {
+	using namespace _32;
+
 	static constexpr Float32 HMARK = FLT_MAX_EXP;
 	static constexpr Float32 LMARK = FLT_MIN_EXP - FLT_MANT_DIG - 1;
-	static Float32 const THREE_TWO_P14 = Detail::Math::Bind32(0x47400000U).f; // 3 * 2^14
 
 	if (is_less(x, HMARK)) {
 		if (!is_greater(x, LMARK)) {
-			return 0;
+			if (is_infinite(x)) {
+				return 0; // x == -inf, e^-inf == 0
+			} else {
+				return _2_POW_M100 * _2_POW_M100; // underflow
+			}
 		}
 	} else {
-		return Detail::Math::Bind32(0x7F000000U).f * x; // x * 2 ^ +127
+		return _2_POW_P127 * x; // Return x, if x is a NaN or Inf; or overflow, otherwise.
 	}
 
 	// x = ex + t / 512 + r, -128 <= t < 128, -1/512 <= r <= 1/512
 
 	// mx = ex + t / 256
-	Float32 mx = x + THREE_TWO_P14;
-	mx -= THREE_TWO_P14;
+	Float32 mx = x + _3_MUL_2_POW_P14; mx -= _3_MUL_2_POW_P14;
 
 	// r
 	Float32 r = x - mx;
@@ -35,10 +234,10 @@ auto libbr_exp2_32(Float32 x) -> Float32 {
 
 	// x = ex + t / 256 + e + d, -7E-4 < e < 7E-4, 2^(t / 256 + e) === 2^-64
 
-	Float32 d = r - Detail::Math::Bind32(EXP2_32_DELTA[i & 0xFF]).f;
+	Float32 d = r - Bind32(EXP2_32_DELTA[i & 0xFF]).f;
 
 	// sx = 2^(t/255 + e + ex)
-	auto sx = Detail::Math::Bind32(EXP2_32_ACCURATE[i & 0xFF]);
+	auto sx = Bind32(EXP2_32_ACCURATE[i & 0xFF]);
 
 	i >>= 8;
 
@@ -51,30 +250,34 @@ auto libbr_exp2_32(Float32 x) -> Float32 {
 	if (!unsafe) {
 		return result;
 	} else {
-		auto scale = Detail::Math::Bind32(1.0F);
+		auto scale = Bind32(1.0F);
 		scale.exponent += i - (i >> unsafe);
 		return result * scale.f;
 	}
 }
 
 auto libbr_exp2_64(Float64 x) -> Float64 {
+	using namespace _64;
+
 	static constexpr Float64 HMARK = DBL_MAX_EXP;
 	static constexpr Float64 LMARK = DBL_MIN_EXP - DBL_MANT_DIG - 1;
-	static Float64 const THREE_TWO_P42 = Detail::Math::Bind64(0x42A80000U, 0U).f;
 
 	if (is_less(x, HMARK)) {
 		if (!is_greater(x, LMARK)) {
-			return 0;
+			if (is_infinite(x)) {
+				return 0; // x == -inf, e^-inf == 0
+			} else {
+				return _2_POW_M1000 * _2_POW_M1000; // underflow
+			}
 		}
 	} else {
-		return Detail::Math::Bind64(0x7FE00000U, 0U).f * x; // x * 2 ^ +127
+		return _2_POW_P1023 * x; // Return x, if x is a NaN or Inf; or overflow, otherwise.
 	}
 
 	// x = ex + t / 512 + r, -256 <= t < 256, -1/1024 <= r <= 1/1024
 
 	// mx = ex + t / 256
-	Float64 mx = x + THREE_TWO_P42;
-	mx -= THREE_TWO_P42;
+	Float64 mx = x + _3_MUL_2_POW_P42; mx -= _3_MUL_2_POW_P42;
 
 	// r
 	Float64 r = x - mx;
@@ -83,10 +286,10 @@ auto libbr_exp2_64(Float64 x) -> Float64 {
 	auto i = SInt(mx * 512.0 + 256.0);
 
 	// x = ex + t / 256 + e + d, -7E-4 < e < 7E-4, 2^(t / 256 + e) === 2^-64
-	Float64 d = r - Detail::Math::Bind64(EXP2_64_DELTA[i & 0x1FF], 0U).f;
+	Float64 d = r - Bind64(EXP2_64_DELTA[i & 0x1FF], 0U).f;
 
 	// sx = 2^(t/512 + e + ex)
-	auto sx = Detail::Math::Bind64(EXP2_64_ACCURATE[i & 0x1FF]);
+	auto sx = Bind64(EXP2_64_ACCURATE[i & 0x1FF]);
 
 	i >>= 9;
 
@@ -102,7 +305,7 @@ auto libbr_exp2_64(Float64 x) -> Float64 {
 	if (!unsafe) {
 		return f;
 	} else {
-		auto scale = Detail::Math::Bind64(1.0F);
+		auto scale = Bind64(1.0F);
 		scale.exponent += i - (i >> unsafe);
 		return f * scale.f;
 	}

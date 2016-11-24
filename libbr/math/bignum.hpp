@@ -27,7 +27,7 @@ namespace BR {
 /**
  * @brief 多精度整数类
  * @author Bromine0x23
- * @since 2015/9/24
+ * @since 1.0
  */
 class Bignum : public BignumBasic {
 

@@ -1,7 +1,7 @@
 /**
  * @file
  * @author Bromine0x23
- * @since 2015/9/24
+ * @since 1.0
  */
 #include <libbr/math/bignum.hpp>
 
