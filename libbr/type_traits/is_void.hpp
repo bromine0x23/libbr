@@ -2,7 +2,7 @@
  * @file
  * @brief \em void 类型检查
  * @author Bromine0x23
- * @since 2015/6/16
+ * @since 1.0
  */
 #pragma once
 

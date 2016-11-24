@@ -2,7 +2,7 @@
  * @file
  * @brief 获取类型的长度
  * @author Bromine0x23
- * @since 2015/6/16
+ * @since 1.0
  */
 #pragma once
 

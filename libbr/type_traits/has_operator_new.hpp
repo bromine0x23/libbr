@@ -2,7 +2,7 @@
  * @file
  * @brief 检查是否重载了 \em new 操作符
  * @author Bromine0x23
- * @since 2015/10/4
+ * @since 1.0
  */
 #pragma once
 

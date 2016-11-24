@@ -2,7 +2,7 @@
  * @file
  * @brief MemberPointerTraits
  * @author Bromine0x23
- * @since 2015/10/31
+ * @since 1.0
  */
 #pragma once
 

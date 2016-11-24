@@ -2,7 +2,7 @@
  * @file
  * @brief 检查是否具有析构函数
  * @author Bromine0x23
- * @since 2015/10/3
+ * @since 1.0
  */
 #pragma once
 

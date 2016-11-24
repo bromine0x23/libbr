@@ -2,7 +2,7 @@
  * @file
  * @brief 迭代器类型检查
  * @author Bromine0x23
- * @since 2015/10/6
+ * @since 1.0
  */
 #pragma once
 

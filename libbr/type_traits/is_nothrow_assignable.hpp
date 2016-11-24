@@ -2,7 +2,7 @@
  * @file
  * @brief 检查是否重载了 \em nothrow 的赋值运算符
  * @author Bromine0x23
- * @since 2015/6/16
+ * @since 1.0
  */
 #pragma once
 

@@ -2,7 +2,7 @@
  * @file
  * @brief 检查是否可从特定参数 \em nothrow 地构造
  * @author Bromine0x23
- * @since 2015/6/16
+ * @since 1.0
  */
 #pragma once
 

@@ -2,7 +2,7 @@
  * @file
  * @brief BR_HAS_MEMBER_FUNCTION
  * @author Bromine0x23
- * @since 2016/10/10
+ * @since 1.0
  */
 #pragma once
 

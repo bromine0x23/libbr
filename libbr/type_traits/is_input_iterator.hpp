@@ -2,7 +2,7 @@
  * @file
  * @brief IsInputIterator
  * @author Bromine0x23
- * @since 2016/6/26
+ * @since 1.0
  */
 #pragma once
 

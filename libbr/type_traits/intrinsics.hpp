@@ -2,7 +2,7 @@
  * @file
  * @brief 由编译期提供的检测特性的内部函数
  * @author Bromine0x23
- * @since 2015/10/4
+ * @since 1.0
  */
 #pragma once
 

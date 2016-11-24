@@ -2,7 +2,7 @@
  * @file
  * @brief 检查两个类型是否相同
  * @author Bromine0x23
- * @since 2015/6/16
+ * @since 1.0
  */
 #pragma once
 

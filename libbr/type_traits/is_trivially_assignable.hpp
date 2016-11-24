@@ -2,7 +2,7 @@
  * @file
  * @brief 检查是否具有 \em trivially 的赋值运算符
  * @author Bromine0x23
- * @since 2015/10/4
+ * @since 1.0
  */
 #pragma once
 

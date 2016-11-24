@@ -2,7 +2,7 @@
  * @file
  * @brief 根据布尔常量启用或禁用一种函数重载或模板特化
  * @author Bromine0x23
- * @since 2015/6/16
+ * @since 1.0
  */
 #pragma once
 

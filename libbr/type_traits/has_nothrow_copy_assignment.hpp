@@ -2,7 +2,7 @@
  * @file
  * @brief 检查是否具有 \em nothrow 的(复制)赋值运算符
  * @author Bromine0x23
- * @since 2015/6/16
+ * @since 1.0
  */
 #pragma once
 

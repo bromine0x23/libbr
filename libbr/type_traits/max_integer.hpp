@@ -2,7 +2,7 @@
  * @file
  * @brief MaxIntegerConstant
  * @author Bromine0x23
- * @since 2015/11/7
+ * @since 1.0
  */
 #pragma once
 

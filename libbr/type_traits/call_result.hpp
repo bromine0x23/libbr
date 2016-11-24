@@ -2,7 +2,7 @@
  * @file
  * @brief 函数调用结果
  * @author Bromine0x23
- * @since 2015/6/16
+ * @since 1.0
  */
 #pragma once
 
