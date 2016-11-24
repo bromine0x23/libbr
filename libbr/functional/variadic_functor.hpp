@@ -2,7 +2,7 @@
  * @file
  * @brief 变参函数对象基类
  * @author Bromine0x23
- * @since 2016/11/21
+ * @since 1.0
  */
 #pragma once
 
