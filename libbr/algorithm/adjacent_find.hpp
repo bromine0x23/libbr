@@ -2,7 +2,7 @@
  * @file
  * @brief adjacent_find
  * @author Bromine0x23
- * @since 2015/10/24
+ * @since 1.0
  */
 #pragma once
 

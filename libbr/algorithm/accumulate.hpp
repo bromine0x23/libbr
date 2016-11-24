@@ -2,7 +2,7 @@
  * @file
  * @brief accumulate
  * @author Bromine0x23
- * @since 2016/11/22
+ * @since 1.0
  */
 #pragma once
 
