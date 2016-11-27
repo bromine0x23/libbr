@@ -1,60 +1,60 @@
 #include "../test.hpp"
-#include <libbr/container/rb_tree.hpp>
+#include <libbr/container/avl_tree.hpp>
 #include <libbr/algorithm/accumulate.hpp>
 #include <libbr/iterator/begin.hpp>
 #include <libbr/iterator/end.hpp>
 
 using namespace BR;
 
-template class BR::RBTree<int>;
+template class BR::AVLTree<int>;
 
-TEST(RBTree, DefaultConstruct) {
-	RBTree<int> tree;
+TEST(AVLTree, DefaultConstruct) {
+	AVLTree<int> tree;
 	EXPECT_EQ(0, tree.size());
 }
 
-TEST(RBTree, InitializerListConstruct) {
-	RBTree<int> tree{1, 2, 3, 4, 5, 6, 7, 8, 9};
+TEST(AVLTree, InitializerListConstruct) {
+	AVLTree<int> tree{1, 2, 3, 4, 5, 6, 7, 8, 9};
 	ASSERT_TRUE(tree.verify());
 	EXPECT_EQ(9, tree.size());
 	EXPECT_EQ(45, accumulate(tree.begin(), tree.end(), 0));
 }
 
-TEST(RBTree, RangeConstruct) {
+TEST(AVLTree, RangeConstruct) {
 	int values[9] = { 1, 3, 5, 7, 9, 8, 6, 4, 2 };
-	RBTree<int> tree(begin(values), end(values));
+	AVLTree<int> tree(begin(values), end(values));
 	ASSERT_TRUE(tree.verify());
 	EXPECT_EQ(9, tree.size());
 }
 
-TEST(RBTree, InsertEqual) {
+TEST(AVLTree, InsertEqual) {
 	int values[9] = { 1, 3, 5, 7, 9, 8, 6, 4, 2 };
-	RBTree<int> tree;
+	AVLTree<int> tree;
 	tree.insert_equal(begin(values), end(values));
 	ASSERT_TRUE(tree.verify());
 	EXPECT_EQ(9, tree.size());
 }
 
-TEST(RBTree, CopyConstruct) {
-	RBTree<int> tree0{ 1, 3, 5, 7, 9, 8, 6, 4, 2 };
+TEST(AVLTree, CopyConstruct) {
+	AVLTree<int> tree0{ 1, 3, 5, 7, 9, 8, 6, 4, 2 };
 	ASSERT_TRUE(tree0.verify());
-	RBTree<int> tree1(tree0);
+	AVLTree<int> tree1(tree0);
 	ASSERT_TRUE(tree1.verify());
 	EXPECT_EQ(9, tree0.size());
 	EXPECT_EQ(9, tree1.size());
 }
 
-TEST(RBTree, MoveConstruct) {
-	RBTree<int> tree0{ 1, 3, 5, 7, 9, 8, 6, 4, 2 };
+TEST(AVLTree, MoveConstruct) {
+	AVLTree<int> tree0{ 1, 3, 5, 7, 9, 8, 6, 4, 2 };
 	ASSERT_TRUE(tree0.verify());
-	RBTree<int> tree1(move(tree0));
+	AVLTree<int> tree1(move(tree0));
 	ASSERT_TRUE(tree1.verify());
 	EXPECT_EQ(0, tree0.size());
 	EXPECT_EQ(9, tree1.size());
 }
 
-TEST(RBTree, Insert) {
-	RBTree<int> tree{5};
+TEST(AVLTree, Insert) {
+	AVLTree<int> tree{5};
 	ASSERT_TRUE(tree.verify());
 	tree.insert_unique(9);
 	ASSERT_TRUE(tree.verify());
@@ -67,8 +67,8 @@ TEST(RBTree, Insert) {
 	EXPECT_EQ(4, tree.size());
 }
 
-TEST(RBTree, Erase) {
-	RBTree<int> tree{3, 1, 5, 4, 2, 2, 4, 4, 2, 4, 2};
+TEST(AVLTree, Erase) {
+	AVLTree<int> tree{3, 1, 5, 4, 2, 2, 4, 4, 2, 4, 2};
 	ASSERT_TRUE(tree.verify());
 	tree.erase(4);
 	ASSERT_TRUE(tree.verify());

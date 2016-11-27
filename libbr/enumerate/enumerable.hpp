@@ -39,16 +39,16 @@ public:
 
 public:
 	BR_CONSTEXPR_AFTER_CXX11 auto each() noexcept -> BR::Enumerator<Iterator> {
-		return make_enumerator(begin(), begin());
+		return make_enumerator(as_derived().begin(), as_derived().end());
 	}
 
 	BR_CONSTEXPR_AFTER_CXX11 auto each() const noexcept -> BR::Enumerator<ConstIterator> {
-		return make_enumerator(begin(), begin());
+		return make_enumerator(as_derived().begin(), as_derived().end());
 	}
 
 	template< typename TFunctor, typename ... TArgs >
 	auto each(TFunctor functor, TArgs && ... args) -> Derived & {
-		for (auto iterator = begin(); iterator != end(); ++iterator) {
+		for (auto iterator = as_derived().begin(); iterator != as_derived().end(); ++iterator) {
 			invoke(functor, *iterator, forward<TArgs>(args)...);
 		}
 		return as_derived();
@@ -56,7 +56,7 @@ public:
 
 	template< typename TFunctor, typename ... TArgs >
 	auto each(TFunctor functor, TArgs && ... args) const -> Derived const & {
-		for (auto iterator = begin(); iterator != end(); ++iterator) {
+		for (auto iterator = as_derived().begin(); iterator != as_derived().end(); ++iterator) {
 			invoke(functor, *iterator, forward<TArgs>(args)...);
 		}
 		return as_derived();
@@ -68,22 +68,6 @@ protected:
 	}
 	auto as_derived() const -> Derived const & {
 		return *static_cast<Derived const *>(this);
-	}
-
-	auto begin() noexcept -> Iterator {
-		return as_derived().begin();
-	}
-
-	auto end() noexcept -> Iterator {
-		return as_derived().end();
-	}
-
-	auto begin() const noexcept -> ConstIterator {
-		return as_derived().begin();
-	}
-
-	auto end() const noexcept -> ConstIterator {
-		return as_derived().end();
 	}
 };
 
@@ -102,16 +86,16 @@ public:
 	using ConstReverseIterator = BR::ReverseIterator<ConstIterator>;
 
 	BR_CONSTEXPR_AFTER_CXX11 auto reverse_each() noexcept -> BR::Enumerator<ReverseIterator> {
-		return make_enumerator(rbegin(), rbegin());
+		return make_enumerator(this->as_derived().rbegin(), this->as_derived().rend());
 	}
 
 	BR_CONSTEXPR_AFTER_CXX11 auto reverse_each() const noexcept -> BR::Enumerator<ConstReverseIterator> {
-		return make_enumerator(rbegin(), rbegin());
+		return make_enumerator(this->as_derived().rbegin(), this->as_derived().rend());
 	}
 
 	template< typename TFunctor, typename ... TArgs >
 	auto reverse_each(TFunctor functor, TArgs && ... args) -> Derived & {
-		for (auto iterator = rbegin(); iterator != rend(); ++iterator) {
+		for (auto iterator = this->as_derived().rbegin(); iterator != this->as_derived().rend(); ++iterator) {
 			invoke(functor, *iterator, forward<TArgs>(args)...);
 		}
 		return this->as_derived();
@@ -119,27 +103,10 @@ public:
 
 	template< typename TFunctor, typename ... TArgs >
 	auto reverse_each(TFunctor functor, TArgs && ... args) const -> Derived const & {
-		for (auto iterator = rbegin(); iterator != rend(); ++iterator) {
+		for (auto iterator = this->as_derived().rbegin(); iterator != this->as_derived().rend(); ++iterator) {
 			invoke(functor, *iterator, forward<TArgs>(args)...);
 		}
 		return this->as_derived();
-	}
-
-private:
-	auto rbegin() noexcept -> ReverseIterator {
-		return this->as_derived().rbegin();
-	}
-
-	auto rend() noexcept -> ReverseIterator {
-		return this->as_derived().rend();
-	}
-
-	auto rbegin() const noexcept -> ConstReverseIterator {
-		return this->as_derived().rbegin();
-	}
-
-	auto rend() const noexcept -> ConstReverseIterator {
-		return this->as_derived().rend();
 	}
 };
 
@@ -151,7 +118,7 @@ struct Enumerable : public Detail::Enumerable::Base< TDerived, TIterator, TConst
 
 	template< typename TUnaryPredicate >
 	auto all(TUnaryPredicate predicate) const -> bool {
-		for (auto iterator = this->begin(); iterator != this->end(); ++iterator) {
+		for (auto iterator = this->as_derived().begin(); iterator != this->as_derived().end(); ++iterator) {
 			if (!invoke(predicate, *iterator)) {
 				return false;
 			}
@@ -161,7 +128,7 @@ struct Enumerable : public Detail::Enumerable::Base< TDerived, TIterator, TConst
 
 	template< typename TUnaryPredicate >
 	auto any(TUnaryPredicate predicate) const -> bool {
-		for (auto iterator = this->begin(); iterator != this->end(); ++iterator) {
+		for (auto iterator = this->as_derived().begin(); iterator != this->as_derived().end(); ++iterator) {
 			if (invoke(predicate, *iterator)) {
 				return true;
 			}
@@ -171,7 +138,7 @@ struct Enumerable : public Detail::Enumerable::Base< TDerived, TIterator, TConst
 
 	template< typename TUnaryPredicate >
 	auto none(TUnaryPredicate predicate) const -> bool {
-		for (auto iterator = this->begin(); iterator != this->end(); ++iterator) {
+		for (auto iterator = this->as_derived().begin(); iterator != this->as_derived().end(); ++iterator) {
 			if (invoke(predicate, *iterator)) {
 				return false;
 			}
@@ -181,7 +148,7 @@ struct Enumerable : public Detail::Enumerable::Base< TDerived, TIterator, TConst
 
 	template< typename TValue >
 	auto include(TValue const & value) const -> bool {
-		for (auto iterator = this->begin(); iterator != this->end(); ++iterator) {
+		for (auto iterator = this->as_derived().begin(); iterator != this->as_derived().end(); ++iterator) {
 			if (*iterator == value) {
 				return true;
 			}

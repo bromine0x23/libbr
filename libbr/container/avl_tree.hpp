@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief RBTree
+ * @brief AVLTree
  * @author Bromine0x23
  * @since 1.0
  */
@@ -8,7 +8,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/container/detail/binary_tree_implement.hpp>
-#include <libbr/container/detail/rb_tree_basic.hpp>
+#include <libbr/container/detail/avl_tree_basic.hpp>
 #include <libbr/container/initializer_list.hpp>
 #include <libbr/enumerate/enumerable.hpp>
 #include <libbr/functional/less.hpp>
@@ -27,18 +27,18 @@ namespace BR {
 inline namespace Container {
 
 /**
- * @brief red-black tree
+ * @brief avl tree
  * @tparam TElement
  * @tparam TComparator
  * @tparam TAllocator
  */
 template< typename TElement, typename TComparator = Less<TElement>, typename TAllocator = Allocator<TElement> >
-class RBTree :
-	public Detail::Container::BinaryTree::Implement< Detail::Container::RBTree::Basic<TElement, TComparator, TAllocator> >,
+class AVLTree :
+	public Detail::Container::BinaryTree::Implement< Detail::Container::AVLTree::Basic<TElement, TComparator, TAllocator> >,
 	public Enumerable<
-		RBTree< TElement, TComparator, TAllocator >,
-		typename Detail::Container::RBTree::Basic< TElement, TComparator, TAllocator >::Iterator,
-		typename Detail::Container::RBTree::Basic< TElement, TComparator, TAllocator >::ConstIterator
+		AVLTree< TElement, TComparator, TAllocator >,
+		typename Detail::Container::AVLTree::Basic< TElement, TComparator, TAllocator >::Iterator,
+		typename Detail::Container::AVLTree::Basic< TElement, TComparator, TAllocator >::ConstIterator
 	>
 {
 public:
@@ -58,7 +58,7 @@ public:
 	using Allocator = TAllocator;
 
 private:
-	using Base = Detail::Container::BinaryTree::Implement< Detail::Container::RBTree::Basic<TElement, TComparator, TAllocator> >;
+	using Base = Detail::Container::BinaryTree::Implement< Detail::Container::AVLTree::Basic<TElement, TComparator, TAllocator> >;
 
 public:
 	/**
@@ -125,7 +125,7 @@ public:
 	 *
 	 * @return
 	 */
-	RBTree() noexcept(BooleanAnd< HasNothrowDefaultConstructor<Comparator>, HasNothrowDefaultConstructor<NodeAllocator> >{}) : Base() {
+	AVLTree() noexcept(BooleanAnd< HasNothrowDefaultConstructor<Comparator>, HasNothrowDefaultConstructor<NodeAllocator> >{}) : Base() {
 	}
 
 	/**
@@ -133,7 +133,7 @@ public:
 	 * @param allocator
 	 * @return
 	 */
-	explicit RBTree(Allocator const & allocator) : Base(allocator) {
+	explicit AVLTree(Allocator const & allocator) : Base(allocator) {
 	}
 
 	/**
@@ -142,7 +142,7 @@ public:
 	 * @param allocator
 	 * @return
 	 */
-	explicit RBTree(Comparator const & comparator, Allocator const & allocator = Allocator{}) : Base(comparator, allocator) {
+	explicit AVLTree(Comparator const & comparator, Allocator const & allocator = Allocator{}) : Base(comparator, allocator) {
 	}
 
 	/**
@@ -150,24 +150,7 @@ public:
 	 * @param tree
 	 * @return
 	 */
-	RBTree(RBTree const & tree) : Base(tree) {
-	}
-
-	/**
-	 *
-	 * @param tree
-	 * @param allocator
-	 * @return
-	 */
-	RBTree(RBTree const & tree, Allocator const & allocator) : Base(tree, allocator) {
-	}
-
-	/**
-	 *
-	 * @param tree
-	 * @return
-	 */
-	RBTree(RBTree && tree) noexcept(BooleanAnd< HasNothrowMoveConstructor<Comparator>, HasNothrowMoveConstructor<NodeAllocator> >{}) : Base(move(tree)) {
+	AVLTree(AVLTree const & tree) : Base(tree) {
 	}
 
 	/**
@@ -176,7 +159,24 @@ public:
 	 * @param allocator
 	 * @return
 	 */
-	RBTree(RBTree && tree, Allocator const & allocator) : Base(move(tree), allocator) {
+	AVLTree(AVLTree const & tree, Allocator const & allocator) : Base(tree, allocator) {
+	}
+
+	/**
+	 *
+	 * @param tree
+	 * @return
+	 */
+	AVLTree(AVLTree && tree) noexcept(BooleanAnd< HasNothrowMoveConstructor<Comparator>, HasNothrowMoveConstructor<NodeAllocator> >{}) : Base(move(tree)) {
+	}
+
+	/**
+	 *
+	 * @param tree
+	 * @param allocator
+	 * @return
+	 */
+	AVLTree(AVLTree && tree, Allocator const & allocator) : Base(move(tree), allocator) {
 	}
 
 	/**
@@ -188,7 +188,7 @@ public:
 	 * @return
 	 */
 	template< typename TIterator >
-	RBTree(TIterator f, TIterator l, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : Base(f, l, allocator) {
+	AVLTree(TIterator f, TIterator l, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : Base(f, l, allocator) {
 	}
 
 	/**
@@ -201,18 +201,18 @@ public:
 	 * @return
 	 */
 	template< typename TIterator >
-	RBTree(TIterator f, TIterator l, Comparator comparator, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : Base(f, l, comparator, allocator) {
+	AVLTree(TIterator f, TIterator l, Comparator comparator, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : Base(f, l, comparator, allocator) {
 	}
 
 
-	RBTree(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : Base(list, allocator) {
+	AVLTree(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : Base(list, allocator) {
 	}
 	///@}
 
 	/**
 	 * @brief 析构函数
 	 */
-	~RBTree() = default;
+	~AVLTree() = default;
 
 	/**
 	 * @name 赋值操作
@@ -224,12 +224,12 @@ public:
 	 * @param tree
 	 * @return
 	 */
-	auto operator=(RBTree const & tree) -> RBTree & {
+	auto operator=(AVLTree const & tree) -> AVLTree & {
 		Base::operator=(tree);
 		return *this;
 	}
 
-	auto assign(RBTree const & tree) -> RBTree & {
+	auto assign(AVLTree const & tree) -> AVLTree & {
 		return *this = tree;
 	}
 	//@}
@@ -240,14 +240,14 @@ public:
 	 * @param tree
 	 * @return
 	 */
-	auto operator=(RBTree && tree) noexcept(
+	auto operator=(AVLTree && tree) noexcept(
 		BooleanAnd< typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment, HasNothrowMoveAssignment<Allocator>, HasNothrowMoveAssignment<Comparator> >{}
-	) -> RBTree & {
+	) -> AVLTree & {
 		Base::operator=(move(tree));
 		return *this;
 	}
 
-	auto assign(RBTree && tree) -> RBTree & {
+	auto assign(AVLTree && tree) -> AVLTree & {
 		return *this = move(tree);
 	}
 	//@}
@@ -260,7 +260,7 @@ public:
 	 * @return
 	 */
 	template< typename TIterator >
-	auto assign_unique(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator>, RBTree & > {
+	auto assign_unique(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator>, AVLTree & > {
 		Base::assign_unique(first, last);
 		return *this;
 	}
@@ -273,13 +273,13 @@ public:
 	 * @return
 	 */
 	template< typename TIterator >
-	auto assign_equal(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator>, RBTree & > {
+	auto assign_equal(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator>, AVLTree & > {
 		Base::assign_equal(first, last);
 		return *this;
 	}
 	///@}
 
-	void swap(RBTree & tree) noexcept(BooleanAnd< typename NodeAllocatorTraits::IsAlwaysEqual, IsNothrowSwappable<Comparator> >{}) {
+	void swap(AVLTree & tree) noexcept(BooleanAnd< typename NodeAllocatorTraits::IsAlwaysEqual, IsNothrowSwappable<Comparator> >{}) {
 		Base::swap(tree);
 	}
 
@@ -399,42 +399,42 @@ public:
 	 * @param y
 	 * @return x == y
 	 */
-	auto operator==(RBTree const & y) const -> bool;
+	auto operator==(AVLTree const & y) const -> bool;
 
 	/**
 	 * @brief x != y
 	 * @param y
 	 * @return x != y
 	 */
-	auto operator!=(RBTree const & y) const -> bool;
+	auto operator!=(AVLTree const & y) const -> bool;
 
 	/**
 	 * @brief x < y
 	 * @param y
 	 * @return x < y
 	 */
-	auto operator<(RBTree const & y) const -> bool;
+	auto operator<(AVLTree const & y) const -> bool;
 
 	/**
 	 * @brief x > y
 	 * @param y
 	 * @return x > y
 	 */
-	auto operator>(RBTree const & y) const -> bool;
+	auto operator>(AVLTree const & y) const -> bool;
 
 	/**
 	 * @brief x <= y
 	 * @param y
 	 * @return x <= y
 	 */
-	auto operator<=(RBTree const & y) const -> bool;
+	auto operator<=(AVLTree const & y) const -> bool;
 
 	/**
 	 * @brief x >= y
 	 * @param y
 	 * @return x >= y
 	 */
-	auto operator>=(RBTree const & y) const -> bool;
+	auto operator>=(AVLTree const & y) const -> bool;
 	///@}
 
 	/**
@@ -803,7 +803,7 @@ public:
 	void clear() noexcept;
 	///@}
 #endif // defined(BR_DOXYGEN)
-}; // class RBTree<TElement, TComparator, TAllocator>
+}; // class AVLTree<TElement, TComparator, TAllocator>
 
 } // namespace Container
 } // namespace BR

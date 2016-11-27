@@ -11,27 +11,10 @@ namespace Detail {
 namespace Container {
 namespace BinaryTree {
 
-
-template< typename TBasicNodePointer >
-struct BasicAlgorithms {
-
-	using NodePointer = TBasicNodePointer;
-
-
-};
-
 template< typename TNodePointer >
 struct Algorithms {
 public:
 	using NodePointer = TNodePointer;
-
-	using PointerTraits = BR::PointerTraits<NodePointer>;
-
-	using Node = typename PointerTraits::Element;
-
-	using BasicNode = typename Node::Base;
-
-	using BasicNodePointer = typename PointerTraits::template Rebind<BasicNode>;
 
 	struct InsertCommitData {
 		bool link_left;
@@ -218,59 +201,32 @@ public:
 		return Pair< NodePointer, bool >(prev, not_present);
 	}
 
-	template< typename TComparator >
-	static void insert_equal_check(NodePointer const & header, NodePointer const & hint, NodePointer const & new_node, TComparator comparator, InsertCommitData & data) {
-		if (hint == header || !comparator(hint->element, new_node->element)) {
-			auto prev = hint;
-			if (hint == header->left || !comparator(new_node->element, (prev = prev_node(hint))->element)) {
-				bool link_left = header->parent == nullptr || hint->left == nullptr;
-				data.link_left = link_left;
-				data.node = link_left ? hint : prev;
-			} else{
-				insert_equal_upper_bound_check(header, new_node, comparator, data);
-			}
-		} else {
-			insert_equal_lower_bound_check(header, new_node, comparator, data);
-		}
+	static void insert_unique_commit(NodePointer const & header, NodePointer const & new_node, InsertCommitData const & data) {
+		insert_commit(header, new_node, data);
 	}
 
 	template< typename TComparator >
-	static void insert_equal_lower_bound_check(NodePointer const & header, NodePointer const & new_node, TComparator comparator, InsertCommitData & data) {
-		auto node = header;
-		for (auto p = node->parent; p != nullptr; p = !comparator(p->element, new_node->element) ? p->left : p->right) {
-			node = p;
-		}
-		data.link_left = (node == header) || !comparator(node->element, new_node->element);
-		data.node = node;
+	static auto insert_equal(NodePointer const & header, NodePointer const & hint, NodePointer const & new_node, TComparator comparator) -> NodePointer {
+		InsertCommitData data;
+		insert_equal_check(header, hint, new_node, comparator, data);
+		insert_commit(header, new_node, data);
+		return new_node;
 	}
 
 	template< typename TComparator >
-	static void insert_equal_upper_bound_check(NodePointer const & header, NodePointer const & new_node, TComparator comparator, InsertCommitData & data) {
-		auto node = header;
-		for (auto p = node->parent; p != nullptr; p = comparator(new_node->element, p->element) ? p->left : p->right) {
-			node = p;
-		}
-		data.link_left = (node == header) || comparator(new_node->element, node->element);
-		data.node = node;
+	static auto insert_equal_lower_bound(NodePointer const & header, NodePointer const & new_node, TComparator comparator) -> NodePointer {
+		InsertCommitData data;
+		insert_equal_lower_bound_check(header, new_node, comparator, data);
+		insert_commit(header, new_node, data);
+		return new_node;
 	}
 
-	static void insert_commit(NodePointer const & header, NodePointer const & new_node, InsertCommitData & data) {
-		auto parent = data.node;
-		if (parent == header) {
-			header->parent = header->left = header->right = new_node;
-		} else if (data.link_left) {
-			parent->left = new_node;
-			if (parent == header->left) {
-				header->left = new_node;
-			}
-		} else {
-			parent->right = new_node;
-			if (parent == header->right) {
-				header->right = new_node;
-			}
-		}
-		new_node->parent = parent;
-		new_node->left = new_node->right = nullptr;
+	template< typename TComparator >
+	static auto insert_equal_upper_bound(NodePointer const & header, NodePointer const & new_node, TComparator comparator) -> NodePointer {
+		InsertCommitData data;
+		insert_equal_upper_bound_check(header, new_node, comparator, data);
+		insert_commit(header, new_node, data);
+		return new_node;
 	}
 
 	static void erase(NodePointer const & header, NodePointer const & target) {
@@ -331,6 +287,64 @@ protected:
 		return result;
 	}
 
+	template< typename TComparator >
+	static void insert_equal_check(NodePointer const & header, NodePointer const & hint, NodePointer const & new_node, TComparator comparator, InsertCommitData & data) {
+		if (hint == header || !comparator(hint->element, new_node->element)) {
+			auto prev = hint;
+			if (hint == header->left || !comparator(new_node->element, (prev = prev_node(hint))->element)) {
+				bool link_left = header->parent == nullptr || hint->left == nullptr;
+				data.link_left = link_left;
+				data.node = link_left ? hint : prev;
+			} else{
+				insert_equal_upper_bound_check(header, new_node, comparator, data);
+			}
+		} else {
+			insert_equal_lower_bound_check(header, new_node, comparator, data);
+		}
+	}
+
+	template< typename TComparator >
+	static void insert_equal_lower_bound_check(NodePointer const & header, NodePointer const & new_node, TComparator comparator, InsertCommitData & data) {
+		auto node = header;
+		for (auto p = node->parent; p != nullptr; p = !comparator(p->element, new_node->element) ? p->left : p->right) {
+			node = p;
+		}
+		data.link_left = (node == header) || !comparator(node->element, new_node->element);
+		data.node = node;
+	}
+
+	template< typename TComparator >
+	static void insert_equal_upper_bound_check(NodePointer const & header, NodePointer const & new_node, TComparator comparator, InsertCommitData & data) {
+		auto node = header;
+		for (auto p = node->parent; p != nullptr; p = comparator(new_node->element, p->element) ? p->left : p->right) {
+			node = p;
+		}
+		data.link_left = (node == header) || comparator(new_node->element, node->element);
+		data.node = node;
+	}
+
+	static void insert_commit(NodePointer const & header, NodePointer const & new_node, InsertCommitData const & data) {
+		auto parent = data.node;
+		if (parent == header) {
+			header->parent = new_node;
+			header->left   = new_node;
+			header->right  = new_node;
+		} else if (data.link_left) {
+			parent->left = new_node;
+			if (parent == header->left) {
+				header->left = new_node;
+			}
+		} else {
+			parent->right = new_node;
+			if (parent == header->right) {
+				header->right = new_node;
+			}
+		}
+		new_node->parent = parent;
+		new_node->left   = nullptr;
+		new_node->right  = nullptr;
+	}
+
 	static void erase(NodePointer const & header, NodePointer const & target, RebalanceData & data) {
 		auto const target_left = target->left, target_right = target->right;
 		NodePointer x, y = target;
@@ -383,13 +397,13 @@ protected:
 		data.y = y;
 	}
 
-	static void set_child(NodePointer const & header, NodePointer const & node, NodePointer const & child, bool const at_left) noexcept {
-		if (node == header) {
+	static void set_child(NodePointer const & header, NodePointer const parent, NodePointer const child, bool const at_left) noexcept {
+		if (parent == header) {
 			header->parent = child;
 		} else if (at_left) {
-			node->left = child;
+			parent->left = child;
 		} else {
-			node->right = child;
+			parent->right = child;
 		}
 	}
 
@@ -403,14 +417,14 @@ protected:
 		node->parent = right;
 	}
 
-	static void rotate_left(NodePointer const & header, NodePointer const & node, NodePointer const & parent, NodePointer const & right) noexcept {
+	static void rotate_left(NodePointer const & header, NodePointer const & node, NodePointer const right, NodePointer const parent) noexcept {
 		auto const was_left = parent->left == node;
 		rotate_left_no_parent_fix(node, right);
 		right->parent = parent;
 		set_child(header, parent, right, was_left);
 	}
 
-	static void rotate_right_no_parent_fix(NodePointer const & node, NodePointer const & left) noexcept {
+	static void rotate_right_no_parent_fix(NodePointer const & node, NodePointer const left) noexcept {
 		auto left_right = left->right;
 		node->left = left_right;
 		if (left_right != nullptr) {
@@ -420,7 +434,7 @@ protected:
 		node->parent = left;
 	}
 
-	static void rotate_right(NodePointer const & header, NodePointer const & node, NodePointer const & parent, NodePointer const & left) noexcept {
+	static void rotate_right(NodePointer const & header, NodePointer const & node, NodePointer const left, NodePointer const parent) noexcept {
 		auto const was_left = parent->left == node;
 		rotate_right_no_parent_fix(node, left);
 		left->parent = parent;
