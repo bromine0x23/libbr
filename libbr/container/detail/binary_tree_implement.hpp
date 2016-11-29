@@ -60,6 +60,8 @@ protected:
 
 	using NodeAllocatorTraits = typename Base::NodeAllocatorTraits;
 
+	using NodePointer = typename Base::NodePointer;
+
 public:
 	Implement() noexcept(BooleanAnd< HasNothrowDefaultConstructor<Comparator>, HasNothrowDefaultConstructor<NodeAllocator> >{}) : Base() {
 	}
@@ -89,7 +91,7 @@ public:
 	}
 
 	template< typename TIterator >
-	Implement(TIterator f, TIterator l, Comparator comparator, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : Base(comparator, allocator) {
+	Implement(TIterator f, TIterator l, Comparator const & comparator, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : Base(comparator, allocator) {
 		insert_equal(f, l);
 	}
 
@@ -460,6 +462,20 @@ public:
 	void clear() noexcept {
 		this->m_clear();
 	}
+
+protected:
+	static auto make_iterator(NodePointer pointer) -> Iterator {
+		return Iterator(pointer);
+	}
+
+	static auto make_const_iterator(NodePointer pointer) -> ConstIterator {
+		return ConstIterator(pointer);
+	}
+
+	static auto unwrap_iterator(Iterator iterator) {
+		return iterator.m_pointer;
+	}
+
 }; // Implement< TElement, TComparator, TAllocator, TBasic >
 
 } // namespace BinaryTree

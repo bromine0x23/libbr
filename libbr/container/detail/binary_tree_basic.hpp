@@ -512,15 +512,23 @@ private:
 		}
 	}
 
-	void m_destroy_subtree(NodePointer const & root) {
-		for (auto node = root; node != nullptr; ) {
-			auto const node_left = node->left;
-			auto const node_right = node->right;
-			auto & allocator = m_allocator();
-			NodeAllocatorTraits::destroy(allocator, address_of(node->element));
-			NodeAllocatorTraits::deallocate(allocator, node, 1);
-			m_destroy_subtree(node_left);
-			node = node_right;
+	void m_destroy_node(NodePointer node) {
+		auto & allocator = m_allocator();
+		NodeAllocatorTraits::destroy(allocator, address_of(node->element));
+		NodeAllocatorTraits::deallocate(allocator, node, 1);
+	}
+
+	void m_destroy_subtree(NodePointer node) {
+		for (; node != nullptr;) {
+			auto save = node->left;
+			if (save != nullptr) {
+				node->left = save->right;
+				save->right = node;
+			} else {
+				save = node->right;
+				m_destroy_node(node);
+			}
+			node = save;
 		}
 	}
 

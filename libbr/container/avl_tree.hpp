@@ -42,73 +42,47 @@ class AVLTree :
 	>
 {
 public:
-	/**
-	 * @brief Element
-	 */
+	/// @copydoc BR::Container::BinaryTree::Element
 	using Element = TElement;
 
-	/**
-	 * @brief Comparator
-	 */
+	/// @copydoc BR::Container::BinaryTree::Comparator
 	using Comparator = TComparator;
 
-	/**
-	 * @brief Allocator
-	 */
+	/// @copydoc BR::Container::BinaryTree::Allocator
 	using Allocator = TAllocator;
 
 private:
 	using Base = Detail::Container::BinaryTree::Implement< Detail::Container::AVLTree::Basic<TElement, TComparator, TAllocator> >;
 
 public:
-	/**
-	 * @brief Reference
-	 */
+	/// @copydoc BR::Container::BinaryTree::Reference
 	using Reference = typename Base::Reference;
 
-	/**
-	 * @brief ConstReference
-	 */
+	/// @copydoc BR::Container::BinaryTree::ConstReference
 	using ConstReference = typename Base::ConstReference;
 
-	/**
-	 * @brief Pointer
-	 */
+	/// @copydoc BR::Container::BinaryTree::Pointer
 	using Pointer = typename Base::Pointer;
 
-	/**
-	 * @brief ConstPointer
-	 */
+	/// @copydoc BR::Container::BinaryTree::ConstPointer
 	using ConstPointer = typename Base::ConstPointer;
 
-	/**
-	 * @brief Difference
-	 */
+	/// @copydoc BR::Container::BinaryTree::Difference
 	using Difference = typename Base::Difference;
 
-	/**
-	 * @brief Size
-	 */
+	/// @copydoc BR::Container::BinaryTree::Size
 	using Size = typename Base::Size;
 
-	/**
-	 * @brief Iterator
-	 */
+	/// @copydoc BR::Container::BinaryTree::Iterator
 	using Iterator = typename Base::Iterator;
 
-	/**
-	 * @brief ConstIterator
-	 */
+	/// @copydoc BR::Container::BinaryTree::ConstIterator
 	using ConstIterator = typename Base::ConstIterator;
 
-	/**
-	 * @brief ReverseIterator
-	 */
+	/// @copydoc BR::Container::BinaryTree::ReverseIterator
 	using ReverseIterator = typename Base::ReverseIterator;
 
-	/**
-	 * @brief ConstReverseIterator
-	 */
+	/// @copydoc BR::Container::BinaryTree::ConstReverseIterator
 	using ConstReverseIterator = typename Base::ConstReverseIterator;
 
 private:
@@ -121,125 +95,68 @@ public:
 	 * @name 构造函数
 	 */
 	///@{
-	/**
-	 *
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::BinaryTree()
 	AVLTree() noexcept(BooleanAnd< HasNothrowDefaultConstructor<Comparator>, HasNothrowDefaultConstructor<NodeAllocator> >{}) : Base() {
 	}
 
-	/**
-	 *
-	 * @param allocator
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::BinaryTree(Allocator const &)
 	explicit AVLTree(Allocator const & allocator) : Base(allocator) {
 	}
 
-	/**
-	 *
-	 * @param comparator
-	 * @param allocator
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::BinaryTree(Comparator const &, Allocator const &)
 	explicit AVLTree(Comparator const & comparator, Allocator const & allocator = Allocator{}) : Base(comparator, allocator) {
 	}
 
-	/**
-	 *
-	 * @param tree
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::BinaryTree(BinaryTree const &)
 	AVLTree(AVLTree const & tree) : Base(tree) {
 	}
 
-	/**
-	 *
-	 * @param tree
-	 * @param allocator
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::BinaryTree(BinaryTree const &, Allocator const &)
 	AVLTree(AVLTree const & tree, Allocator const & allocator) : Base(tree, allocator) {
 	}
 
-	/**
-	 *
-	 * @param tree
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::BinaryTree(BinaryTree &&)
 	AVLTree(AVLTree && tree) noexcept(BooleanAnd< HasNothrowMoveConstructor<Comparator>, HasNothrowMoveConstructor<NodeAllocator> >{}) : Base(move(tree)) {
 	}
 
-	/**
-	 *
-	 * @param tree
-	 * @param allocator
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::BinaryTree(BinaryTree &&, Allocator const &)
 	AVLTree(AVLTree && tree, Allocator const & allocator) : Base(move(tree), allocator) {
 	}
 
-	/**
-	 *
-	 * @tparam TIterator
-	 * @param f
-	 * @param l
-	 * @param allocator
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::BinaryTree(TIterator f, TIterator l, Allocator const &)
 	template< typename TIterator >
 	AVLTree(TIterator f, TIterator l, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : Base(f, l, allocator) {
 	}
 
-	/**
-	 *
-	 * @tparam TIterator
-	 * @param f
-	 * @param l
-	 * @param comparator
-	 * @param allocator
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::BinaryTree(TIterator f, TIterator l, Comparator, Allocator const &)
 	template< typename TIterator >
 	AVLTree(TIterator f, TIterator l, Comparator comparator, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : Base(f, l, comparator, allocator) {
 	}
 
-
+	/// @copydoc BR::Container::BinaryTree::BinaryTree(InitializerList<Element>, Allocator const &)
 	AVLTree(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : Base(list, allocator) {
 	}
 	///@}
 
-	/**
-	 * @brief 析构函数
-	 */
+	/// @copydoc BR::Container::BinaryTree::~BinaryTree()
 	~AVLTree() = default;
 
 	/**
 	 * @name 赋值操作
 	 */
 	///@{
-	//@{
-	/**
-	 * @brief copy assignment
-	 * @param tree
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::operator=(BinaryTree const &)
 	auto operator=(AVLTree const & tree) -> AVLTree & {
 		Base::operator=(tree);
 		return *this;
 	}
 
+	/// @copydoc BR::Container::BinaryTree::assign(BinaryTree const &)
 	auto assign(AVLTree const & tree) -> AVLTree & {
 		return *this = tree;
 	}
-	//@}
 
-	//@{
-	/**
-	 * @brief move assignment
-	 * @param tree
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::operator=(BinaryTree &&)
 	auto operator=(AVLTree && tree) noexcept(
 		BooleanAnd< typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment, HasNothrowMoveAssignment<Allocator>, HasNothrowMoveAssignment<Comparator> >{}
 	) -> AVLTree & {
@@ -247,31 +164,19 @@ public:
 		return *this;
 	}
 
+	/// @copydoc BR::Container::BinaryTree::assign(BinaryTree &&)
 	auto assign(AVLTree && tree) -> AVLTree & {
 		return *this = move(tree);
 	}
-	//@}
 
-	/**
-	 * @brief assign_unique
-	 * @tparam TIterator
-	 * @param first
-	 * @param last
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::assign_unique(TIterator, TIterator)
 	template< typename TIterator >
 	auto assign_unique(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator>, AVLTree & > {
 		Base::assign_unique(first, last);
 		return *this;
 	}
 
-	/**
-	 * @brief assign_equal
-	 * @tparam TIterator
-	 * @param first
-	 * @param last
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::assign_equal(TIterator, TIterator)
 	template< typename TIterator >
 	auto assign_equal(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator>, AVLTree & > {
 		Base::assign_equal(first, last);
@@ -279,12 +184,9 @@ public:
 	}
 	///@}
 
+	/// @copydoc BR::Container::BinaryTree::swap(BinaryTree &)
 	void swap(AVLTree & tree) noexcept(BooleanAnd< typename NodeAllocatorTraits::IsAlwaysEqual, IsNothrowSwappable<Comparator> >{}) {
 		Base::swap(tree);
-	}
-
-	auto verify() -> bool {
-		return this->m_verify();
 	}
 
 #if defined(BR_DOXYGEN)
@@ -292,16 +194,10 @@ public:
 	 *  @name 成员
 	 */
 	///@{
-	/**
-	 * @brief get allocator
-	 * @return allocator
-	 */
+	/// @copydoc BR::Container::BinaryTree::allocator() const
 	auto allocator() const noexcept -> Allocator;
 
-	/**
-	 * @brief get comparator
-	 * @return comparator
-	 */
+	/// @copydoc BR::Container::BinaryTree::comparator() const
 	auto comparator() const noexcept -> Comparator;
 	///@}
 
@@ -309,64 +205,40 @@ public:
 	 * @name 迭代器
 	 */
 	///@{
-	/**
-	 * @brief begin
-	 */
+	/// @copydoc BR::Container::BinaryTree::begin()
 	auto begin() noexcept -> Iterator;
 
-	/**
-	 * @brief begin
-	 */
+	/// @copydoc BR::Container::BinaryTree::begin() const
 	auto begin() const noexcept -> ConstIterator;
 
-	/**
-	 * @brief const begin
-	 */
+	/// @copydoc BR::Container::BinaryTree::cbegin() const
 	auto cbegin() const noexcept -> ConstIterator;
 
-	/**
-	 * @brief end
-	 */
+	/// @copydoc BR::Container::BinaryTree::end()
 	auto end() noexcept -> Iterator;
 
-	/**
-	 * @brief end
-	 */
+	/// @copydoc BR::Container::BinaryTree::end() const
 	auto end() const noexcept -> ConstIterator;
 
-	/**
-	 * @brief const end
-	 */
+	/// @copydoc BR::Container::BinaryTree::cend() const
 	auto cend() const noexcept -> ConstIterator;
 
-	/**
-	 * @brief reverse begin
-	 */
+	/// @copydoc BR::Container::BinaryTree::rbegin()
 	auto rbegin() noexcept -> ReverseIterator;
 
-	/**
-	 * @brief reverse begin
-	 */
+	/// @copydoc BR::Container::BinaryTree::rbegin() const
 	auto rbegin() const noexcept -> ConstReverseIterator;
 
-	/**
-	 * @brief const reverse begin
-	 */
+	/// @copydoc BR::Container::BinaryTree::crbegin() const
 	auto crbegin() const noexcept -> ConstReverseIterator;
 
-	/**
-	 * @brief reverse end
-	 */
+	/// @copydoc BR::Container::BinaryTree::rend()
 	auto rend() noexcept -> ReverseIterator;
 
-	/**
-	 * @brief reverse end
-	 */
+	/// @copydoc BR::Container::BinaryTree::rend() const
 	auto rend() const noexcept -> ConstReverseIterator;
 
-	/**
-	 * @brief const reverse end
-	 */
+	/// @copydoc BR::Container::BinaryTree::crend() const
 	auto crend() const noexcept -> ConstReverseIterator;
 	///@}
 
@@ -374,19 +246,13 @@ public:
 	 * @name 容量
 	 */
 	///@{
-	/**
-	 * @brief empty
-	 */
+	/// @copydoc BR::Container::BinaryTree::empty() const
 	auto empty() const noexcept -> bool;
 
-	/**
-	 * @brief size
-	 */
+	/// @copydoc BR::Container::BinaryTree::size() const
 	auto size() const noexcept -> Size;
 
-	/**
-	 * @brief max size
-	 */
+	/// @copydoc BR::Container::BinaryTree::max_size() const
 	auto max_size() const noexcept -> Size;
 	///@}
 
@@ -394,224 +260,128 @@ public:
 	 * @name 比较
 	 */
 	///@{
-	/**
-	 * @brief x == y
-	 * @param y
-	 * @return x == y
-	 */
-	auto operator==(AVLTree const & y) const -> bool;
+	/// @copydoc BR::Container::BinaryTree::operator==(BinaryTree const &) const
+	auto operator==(SplayTree const & y) const -> bool;
 
-	/**
-	 * @brief x != y
-	 * @param y
-	 * @return x != y
-	 */
-	auto operator!=(AVLTree const & y) const -> bool;
+	/// @copydoc BR::Container::BinaryTree::operator!=(BinaryTree const &) const
+	auto operator!=(SplayTree const & y) const -> bool;
 
-	/**
-	 * @brief x < y
-	 * @param y
-	 * @return x < y
-	 */
-	auto operator<(AVLTree const & y) const -> bool;
+	/// @copydoc BR::Container::BinaryTree::operator<(BinaryTree const &) const
+	auto operator<(SplayTree const & y) const -> bool;
 
-	/**
-	 * @brief x > y
-	 * @param y
-	 * @return x > y
-	 */
-	auto operator>(AVLTree const & y) const -> bool;
+	/// @copydoc BR::Container::BinaryTree::operator>(BinaryTree const &) const
+	auto operator>(SplayTree const & y) const -> bool;
 
-	/**
-	 * @brief x <= y
-	 * @param y
-	 * @return x <= y
-	 */
-	auto operator<=(AVLTree const & y) const -> bool;
+	/// @copydoc BR::Container::BinaryTree::operator<=(BinaryTree const &) const
+	auto operator<=(SplayTree const & y) const -> bool;
 
-	/**
-	 * @brief x >= y
-	 * @param y
-	 * @return x >= y
-	 */
-	auto operator>=(AVLTree const & y) const -> bool;
+	/// @copydoc BR::Container::BinaryTree::operator>=(BinaryTree const &) const
+	auto operator>=(SplayTree const & y) const -> bool;
 	///@}
 
 	/**
-	 * @name 查找（首个）匹配的元素
+	 * @name 查找元素
 	 */
 	///@{
-	//@{
-	/**
-	 * @brief find(element)
-	 * @param element
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::find(Element const &)
 	auto find(Element const & element) -> Iterator;
 
+	/// @copydoc BR::Container::BinaryTree::find(Element const &) const
 	auto find(Element const & element) const -> ConstIterator;
-	//@}
 
-	//@{
-	/**
-	 * @brief find(key)
-	 * @tparam TKey
-	 * @param key
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::find(TKey const &)
 	template< typename TKey >
 	auto find(TKey const & key) -> Iterator;
 
+	/// @copydoc BR::Container::BinaryTree::find(TKey const &) const
 	template< typename TKey >
 	auto find(TKey const & key) const -> ConstIterator;
-	//@}
 	///@}
 
 	/**
 	 * @name 查找下界
 	 */
 	///@{
-	//@{
-	/**
-	 * @brief lower_bound(element)
-	 * @param element
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::lower_bound(Element const &)
 	auto lower_bound(Element const & element) -> Iterator;
 
+	/// @copydoc BR::Container::BinaryTree::lower_bound(Element const &) const
 	auto lower_bound(Element const & element) const -> ConstIterator;
-	//@}
 
-	//@{
-	/**
-	 * @brief lower_bound(key)
-	 * @tparam TKey
-	 * @param key
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::lower_bound(TKey const &)
 	template< typename TKey >
 	auto lower_bound(TKey const & key) -> Iterator;
 
+	/// @copydoc BR::Container::BinaryTree::lower_bound(TKey const &) const
 	template< typename TKey >
 	auto lower_bound(TKey const & key) const -> ConstIterator;
-	//@}
 	///@}
 
 	/**
 	 * @name 查找上界
 	 */
 	///@{
-	//@{
-	/**
-	 * @brief upper_bound(element)
-	 * @param element
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::upper_bound(Element const &)
 	auto upper_bound(Element const & element) -> Iterator;
 
+	/// @copydoc BR::Container::BinaryTree::upper_bound(Element const &) const
 	auto upper_bound(Element const & element) const -> ConstIterator;
-	//@}
 
-	//@{
-	/**
-	 * @brief upper_bound(key)
-	 * @tparam TKey
-	 * @param key
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::upper_bound(TKey const &)
 	template< typename TKey >
 	auto upper_bound(TKey const & key) -> Iterator;
 
+	/// @copydoc BR::Container::BinaryTree::upper_bound(TKey const &) const
 	template< typename TKey >
 	auto upper_bound(TKey const & key) const -> ConstIterator;
-	//@}
 	///@}
 
 	/**
-	 * @name 查找边界
-	 * @return < lower_bound(e), upper_bound(e) >
+	 * @name 查找区间
 	 */
 	///@{
-	//@{
-	/**
-	 * @brief equal_range(element)
-	 * @param element
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::equal_range(Element const &)
 	auto equal_range(Element const & element) -> Pair< Iterator, Iterator >;
 
+	/// @copydoc BR::Container::BinaryTree::equal_range(Element const &) const
 	auto equal_range(Element const & element) const -> Pair< ConstIterator, ConstIterator >;
-	//@}
 
-	//@{
-	/**
-	 * @brief equal_range(key)
-	 * @tparam TKey
-	 * @param key
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::equal_range(TKey const &)
 	template< typename TKey >
 	auto equal_range(TKey const & key) -> Pair< Iterator, Iterator >;
 
+	/// @copydoc BR::Container::BinaryTree::equal_range(TKey const &) const
 	template< typename TKey >
 	auto equal_range(TKey const & key) const -> Pair< ConstIterator, ConstIterator >;
-	//@}
 	///@}
 
 	/**
 	 * @name 查找边界
-	 * @return < lower_bound(e), upper_bound(e) >
 	 */
 	///@{
-	//@{
-	/**
-	 * @brief bounded_range(lower_key, upper_key, left_closed = true, right_closed = true)
-	 * @param lower_key
-	 * @param upper_key
-	 * @param left_closed
-	 * @param right_closed
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::bounded_range(Element const &, Element const &, bool, bool)
 	auto bounded_range(Element const & lower_key, Element const & upper_key, bool left_closed = true, bool right_closed = true) -> Pair< Iterator, Iterator >;
 
+	/// @copydoc BR::Container::BinaryTree::bounded_range(Element const &, Element const &, bool, bool) const
 	auto bounded_range(Element const & lower_key, Element const & upper_key, bool left_closed = true, bool right_closed = true) const -> Pair< ConstIterator, ConstIterator >;
-	//@}
 
-	//@{
-	/**
-	 * @brief bounded_range(lower_key, upper_key, left_closed = true, right_closed = true)
-	 * @tparam TKey
-	 * @param lower_key
-	 * @param upper_key
-	 * @param left_closed
-	 * @param right_closed
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::bounded_range(TKey const &, TKey const &, bool, bool)
 	template< typename TKey >
 	auto bounded_range(TKey const & lower_key, TKey const & upper_key, bool left_closed = true, bool right_closed = true) -> Pair< Iterator, Iterator >;
 
+	/// @copydoc BR::Container::BinaryTree::bounded_range(TKey const &, TKey const &, bool, bool) const
 	template< typename TKey >
 	auto bounded_range(TKey const & lower_key, TKey const & upper_key, bool left_closed = true, bool right_closed = true) const -> Pair< ConstIterator, ConstIterator >;
-	//@}
 	///@}
 
 	/**
 	 * @name 计数
 	 */
 	///@{
-	/**
-	 * @brief count(element)
-	 * @param element
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::count(Element const &) const
 	auto count(Element const & element) const -> Size;
 
-	/**
-	 * @brief count(element)
-	 * @tparam TKey
-	 * @param key
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::count(TKey const &) const
 	template< typename TKey >
 	auto count(TKey const & key) const -> Size;
 	///@}
@@ -620,74 +390,35 @@ public:
 	 * @name 添加（唯一）
 	 */
 	///@{
-	/**
-	 * @brief emplace_unique(args...)
-	 * @tparam TArgs
-	 * @param args
-	 * @return
-	 */
-	template< typename ... TArgs >
-	auto emplace_unique(TArgs && ... args) -> Pair< Iterator, bool >;
+	/// @copydoc BR::Container::BinaryTree::emplace_unique(TArgs &&)
+	template< typename... TArgs >
+	auto emplace_unique(TArgs &&... args) -> Pair< Iterator, bool >;
 
-	//@{
-	/**
-	 * @brief insert_unique(element)
-	 * @param element
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::insert_unique(Element const &)
 	auto insert_unique(Element const & element) -> Pair< Iterator, bool >;
 
+	/// @copydoc BR::Container::BinaryTree::insert_unique(Element &&)
 	auto insert_unique(Element && element) -> Pair< Iterator, bool >;
-	//@}
 
-	/**
-	 * @brief insert_unique(value)
-	 * @tparam TValue
-	 * @param value
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::insert_unique(TValue &&)
 	template< typename TValue >
 	auto insert_unique(TValue && value) -> Pair< Iterator, bool >;
 
-	/**
-	 * @brief emplace_unique_hint(hint, args...)
-	 * @tparam TArgs
-	 * @param hint
-	 * @param args
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::emplace_unique_hint(ConstIterator, TArgs &&)
 	template< typename ... TArgs >
 	auto emplace_unique_hint(ConstIterator hint, TArgs && ... args) -> Iterator;
 
-	//@{
-	/**
-	 * @brief insert_unique(hint, element)
-	 * @param hint
-	 * @param element
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::insert_unique(ConstIterator, Element const &)
 	auto insert_unique(ConstIterator hint, Element const & element) -> Iterator;
 
+	/// @copydoc BR::Container::BinaryTree::insert_unique(ConstIterator, Element &&)
 	auto insert_unique(ConstIterator hint, Element && element) -> Iterator;
-	//@}
 
-	/**
-	 * @brief insert_unique(hint, value)
-	 * @tparam TValue
-	 * @param hint
-	 * @param value
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::insert_unique(ConstIterator, TValue &&)
 	template< typename TValue >
 	auto insert_unique(ConstIterator hint, TValue && value) -> EnableIf< IsConstructible<Element, TValue>, Iterator >;
 
-	/**
-	 * @brief insert_unique(first, last)
-	 * @tparam TIterator
-	 * @param first
-	 * @param last
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::insert_unique(TIterator, TIterator)
 	template< typename TIterator >
 	auto insert_unique(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator> >;
 	///@}
@@ -696,74 +427,35 @@ public:
 	 * @name 添加（可重复）
 	 */
 	///@{
-	/**
-	 * @brief emplace_equal(args...)
-	 * @tparam TArgs
-	 * @param args
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::emplace_equal(TArgs &&)
 	template< typename ... TArgs >
 	auto emplace_equal(TArgs && ... args) -> Iterator;
 
-	//@{
-	/**
-	 * @brief insert_equal(element)
-	 * @param element
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::insert_equal(Element const &)
 	auto insert_equal(Element const & element) -> Iterator;
 
+	/// @copydoc BR::Container::BinaryTree::insert_equal(Element &&)
 	auto insert_equal(Element && element) -> Iterator;
-	//@}
 
-	/**
-	 * @brief insert_equal(value)
-	 * @tparam TValue
-	 * @param value
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::insert_equal(TValue &&)
 	template< typename TValue >
 	auto insert_equal(TValue && value) -> Iterator;
 
-	/**
-	 * @brief emplace_equal_hint(hint, args...)
-	 * @tparam TArgs
-	 * @param hint
-	 * @param args
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::emplace_equal_hint(ConstIterator, TArgs &&)
 	template< typename ... TArgs >
 	auto emplace_equal_hint(ConstIterator hint, TArgs && ... args) -> Iterator;
 
-	//@{
-	/**
-	 * @brief insert_equal(hint, element)
-	 * @param hint
-	 * @param element
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::insert_equal(ConstIterator, Element const &)
 	auto insert_equal(ConstIterator hint, Element const & element) -> Iterator;
 
+	/// @copydoc BR::Container::BinaryTree::insert_equal(ConstIterator, Element &&)
 	auto insert_equal(ConstIterator hint, Element && element) -> Iterator;
-	//@}
 
-	/**
-	 * @brief insert_equal(hint, value)
-	 * @tparam TValue
-	 * @param hint
-	 * @param value
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::insert_equal(ConstIterator, TValue &&)
 	template< typename TValue >
 	auto insert_equal(ConstIterator hint, TValue && value) -> EnableIf< IsConstructible<Element, TValue>, Iterator >;
 
-	/**
-	 * @brief insert_equal(first, last)
-	 * @tparam TIterator
-	 * @param first
-	 * @param last
-	 * @return
-	 */
+	/// @copydoc BR::Container::BinaryTree::insert_equal(TIterator, TIterator)
 	template< typename TIterator >
 	auto insert_equal(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator> >;
 	///@}
@@ -772,36 +464,18 @@ public:
 	 * @name 删除操作
 	 */
 	///@{
-	/**
-	 * @brief clear
-	 * @return
-	 */
-	/**
-	 * @brief erase
-	 * @param position Iterator to the element to remove.
-	 * @return Iterator following the removed element.
-	 */
+	/// @copydoc BR::Container::BinaryTree::erase(ConstIterator)
 	auto erase(ConstIterator position) -> Iterator;
 
-	/**
-	 * @brief erase
-	 * @param first,last Range of elements to remove.
-	 * @return Iterator following the last removed element.
-	 */
+	/// @copydoc BR::Container::BinaryTree::erase(ConstIterator, ConstIterator)
 	auto erase(ConstIterator first, ConstIterator last) -> Iterator;
 
-	/**
-	 * @brief erase
-	 * @param element The elements to remove.
-	 * @return Number of elements removed.
-	 */
+	/// @copydoc BR::Container::BinaryTree::erase(Element const &)
 	auto erase(Element const & element) -> Size;
-
-	/**
-	 * @brief clear()
-	 */
-	void clear() noexcept;
 	///@}
+
+	/// @copydoc BR::Container::BinaryTree::clear()
+	void clear() noexcept;
 #endif // defined(BR_DOXYGEN)
 }; // class AVLTree<TElement, TComparator, TAllocator>
 

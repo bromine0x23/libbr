@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief RBTree
+ * @brief SplayTree
  * @author Bromine0x23
  * @since 1.0
  */
@@ -8,7 +8,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/container/detail/binary_tree_implement.hpp>
-#include <libbr/container/detail/rb_tree_basic.hpp>
+#include <libbr/container/detail/splay_tree_basic.hpp>
 #include <libbr/container/initializer_list.hpp>
 #include <libbr/enumerate/enumerable.hpp>
 #include <libbr/functional/less.hpp>
@@ -27,18 +27,16 @@ namespace BR {
 inline namespace Container {
 
 /**
- * @brief red-black tree
- * @tparam TElement
- * @tparam TComparator
- * @tparam TAllocator
+ * @brief Splay Tree
+ * @copydoc BR::Container::BinaryTree
  */
 template< typename TElement, typename TComparator = Less<TElement>, typename TAllocator = Allocator<TElement> >
-class RBTree :
-	public Detail::Container::BinaryTree::Implement< Detail::Container::RBTree::Basic<TElement, TComparator, TAllocator> >,
+class SplayTree :
+	public Detail::Container::BinaryTree::Implement< Detail::Container::SplayTree::Basic<TElement, TComparator, TAllocator> >,
 	public Enumerable<
-		RBTree< TElement, TComparator, TAllocator >,
-		typename Detail::Container::RBTree::Basic< TElement, TComparator, TAllocator >::Iterator,
-		typename Detail::Container::RBTree::Basic< TElement, TComparator, TAllocator >::ConstIterator
+		SplayTree< TElement, TComparator, TAllocator >,
+		typename Detail::Container::SplayTree::Basic< TElement, TComparator, TAllocator >::Iterator,
+		typename Detail::Container::SplayTree::Basic< TElement, TComparator, TAllocator >::ConstIterator
 	>
 {
 public:
@@ -52,7 +50,7 @@ public:
 	using Allocator = TAllocator;
 
 private:
-	using Base = Detail::Container::BinaryTree::Implement< Detail::Container::RBTree::Basic<TElement, TComparator, TAllocator> >;
+	using Base = Detail::Container::BinaryTree::Implement< Detail::Container::SplayTree::Basic<TElement, TComparator, TAllocator> >;
 
 public:
 	/// @copydoc BR::Container::BinaryTree::Reference
@@ -96,98 +94,117 @@ public:
 	 */
 	///@{
 	/// @copydoc BR::Container::BinaryTree::BinaryTree()
-	RBTree() noexcept(BooleanAnd< HasNothrowDefaultConstructor<Comparator>, HasNothrowDefaultConstructor<NodeAllocator> >{}) : Base() {
+	SplayTree() noexcept(BooleanAnd< HasNothrowDefaultConstructor<Comparator>, HasNothrowDefaultConstructor<NodeAllocator> >{}) : Base() {
 	}
 
 	/// @copydoc BR::Container::BinaryTree::BinaryTree(Allocator const &)
-	explicit RBTree(Allocator const & allocator) : Base(allocator) {
+	explicit SplayTree(Allocator const & allocator) : Base(allocator) {
 	}
 
 	/// @copydoc BR::Container::BinaryTree::BinaryTree(Comparator const &, Allocator const &)
-	explicit RBTree(Comparator const & comparator, Allocator const & allocator = Allocator{}) : Base(comparator, allocator) {
+	explicit SplayTree(Comparator const & comparator, Allocator const & allocator = Allocator{}) : Base(comparator, allocator) {
 	}
 
 	/// @copydoc BR::Container::BinaryTree::BinaryTree(BinaryTree const &)
-	RBTree(RBTree const & tree) : Base(tree) {
+	SplayTree(SplayTree const & tree) : Base(tree) {
 	}
 
 	/// @copydoc BR::Container::BinaryTree::BinaryTree(BinaryTree const &, Allocator const &)
-	RBTree(RBTree const & tree, Allocator const & allocator) : Base(tree, allocator) {
+	SplayTree(SplayTree const & tree, Allocator const & allocator) : Base(tree, allocator) {
 	}
 
 	/// @copydoc BR::Container::BinaryTree::BinaryTree(BinaryTree &&)
-	RBTree(RBTree && tree) noexcept(BooleanAnd< HasNothrowMoveConstructor<Comparator>, HasNothrowMoveConstructor<NodeAllocator> >{}) : Base(move(tree)) {
+	SplayTree(SplayTree && tree) noexcept(BooleanAnd< HasNothrowMoveConstructor<Comparator>, HasNothrowMoveConstructor<NodeAllocator> >{}) : Base(move(tree)) {
 	}
 
 	/// @copydoc BR::Container::BinaryTree::BinaryTree(BinaryTree &&, Allocator const &)
-	RBTree(RBTree && tree, Allocator const & allocator) : Base(move(tree), allocator) {
+	SplayTree(SplayTree && tree, Allocator const & allocator) : Base(move(tree), allocator) {
 	}
 
 	/// @copydoc BR::Container::BinaryTree::BinaryTree(TIterator f, TIterator l, Allocator const &)
 	template< typename TIterator >
-	RBTree(TIterator f, TIterator l, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : Base(f, l, allocator) {
+	SplayTree(TIterator f, TIterator l, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : Base(f, l, allocator) {
 	}
 
 	/// @copydoc BR::Container::BinaryTree::BinaryTree(TIterator f, TIterator l, Comparator, Allocator const &)
 	template< typename TIterator >
-	RBTree(TIterator f, TIterator l, Comparator comparator, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : Base(f, l, comparator, allocator) {
+	SplayTree(TIterator f, TIterator l, Comparator const & comparator, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : Base(f, l, comparator, allocator) {
 	}
 
 	/// @copydoc BR::Container::BinaryTree::BinaryTree(InitializerList<Element>, Allocator const &)
-	RBTree(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : Base(list, allocator) {
+	SplayTree(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : Base(list, allocator) {
 	}
 	///@}
 
 	/// @copydoc BR::Container::BinaryTree::~BinaryTree()
-	~RBTree() = default;
+	~SplayTree() = default;
 
 	/**
 	 * @name 赋值操作
 	 */
 	///@{
 	/// @copydoc BR::Container::BinaryTree::operator=(BinaryTree const &)
-	auto operator=(RBTree const & tree) -> RBTree & {
+	auto operator=(SplayTree const & tree) -> SplayTree & {
 		Base::operator=(tree);
 		return *this;
 	}
 
 	/// @copydoc BR::Container::BinaryTree::assign(BinaryTree const &)
-	auto assign(RBTree const & tree) -> RBTree & {
+	auto assign(SplayTree const & tree) -> SplayTree & {
 		return *this = tree;
 	}
 
 	/// @copydoc BR::Container::BinaryTree::operator=(BinaryTree &&)
-	auto operator=(RBTree && tree) noexcept(
+	auto operator=(SplayTree && tree) noexcept(
 		BooleanAnd< typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment, HasNothrowMoveAssignment<Allocator>, HasNothrowMoveAssignment<Comparator> >{}
-	) -> RBTree & {
+	) -> SplayTree & {
 		Base::operator=(move(tree));
 		return *this;
 	}
 
 	/// @copydoc BR::Container::BinaryTree::assign(BinaryTree &&)
-	auto assign(RBTree && tree) -> RBTree & {
+	auto assign(SplayTree && tree) -> SplayTree & {
 		return *this = move(tree);
 	}
 
 	/// @copydoc BR::Container::BinaryTree::assign_unique(TIterator, TIterator)
 	template< typename TIterator >
-	auto assign_unique(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator>, RBTree & > {
+	auto assign_unique(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator>, SplayTree & > {
 		Base::assign_unique(first, last);
 		return *this;
 	}
 
 	/// @copydoc BR::Container::BinaryTree::assign_equal(TIterator, TIterator)
 	template< typename TIterator >
-	auto assign_equal(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator>, RBTree & > {
+	auto assign_equal(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator>, SplayTree & > {
 		Base::assign_equal(first, last);
 		return *this;
 	}
+	///@}
 
 	/// @copydoc BR::Container::BinaryTree::swap(BinaryTree &)
-	void swap(RBTree & tree) noexcept(BooleanAnd< typename NodeAllocatorTraits::IsAlwaysEqual, IsNothrowSwappable<Comparator> >{}) {
+	void swap(SplayTree & tree) noexcept(BooleanAnd< typename NodeAllocatorTraits::IsAlwaysEqual, IsNothrowSwappable<Comparator> >{}) {
 		Base::swap(tree);
 	}
-	///@}
+
+	/**
+	 * @brief splay_up
+	 * @param iterator
+	 */
+	void splay_up(Iterator iterator) {
+		return this->m_splay_up(this->unwrap_iterator(iterator));
+	}
+
+	/**
+	 * @brief splay_down
+	 * @tparam TKey
+	 * @param key
+	 * @return
+	 */
+	template< typename TKey >
+	auto splay_down(TKey const & key) -> Iterator {
+		return this->make_iterator(this->m_splay_down(key));
+	}
 
 #if defined(BR_DOXYGEN)
 	/**
@@ -404,7 +421,7 @@ public:
 	template< typename TValue >
 	auto insert_unique(TValue && value) -> Pair< Iterator, bool >;
 
-	/// @copydoc BR::Container::BinaryTree::emplace_unique_hint(ConstIterator, TArgs &&)
+	/// @copydoc BR::Container::BinaryTree::emplace_unique_hint(ConstIterator, TArgs && ...)
 	template< typename ... TArgs >
 	auto emplace_unique_hint(ConstIterator hint, TArgs && ... args) -> Iterator;
 
@@ -477,7 +494,7 @@ public:
 	/// @copydoc BR::Container::BinaryTree::clear()
 	void clear() noexcept;
 #endif // defined(BR_DOXYGEN)
-}; // class RBTree<TElement, TComparator, TAllocator>
+}; // class SplayTree<TElement, TComparator, TAllocator>
 
 } // namespace Container
 } // namespace BR

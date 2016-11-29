@@ -188,7 +188,7 @@ public:
 	 * @return
 	 */
 	template< typename TIterator >
-	BinaryTree(TIterator f, TIterator l, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : Base(f, l, allocator) {
+	BinaryTree(TIterator f, TIterator l, Allocator const & allocator = Allocator{}) : Base(f, l, allocator) {
 	}
 
 	/**
@@ -201,10 +201,15 @@ public:
 	 * @return
 	 */
 	template< typename TIterator >
-	BinaryTree(TIterator f, TIterator l, Comparator comparator, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : Base(f, l, comparator, allocator) {
+	BinaryTree(TIterator f, TIterator l, Comparator comparator, Allocator const & allocator = Allocator{}) : Base(f, l, comparator, allocator) {
 	}
 
 
+	/**
+	 *
+	 * @param list
+	 * @param allocator
+	 */
 	BinaryTree(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : Base(list, allocator) {
 	}
 	///@}
@@ -218,7 +223,6 @@ public:
 	 * @name 赋值操作
 	 */
 	///@{
-	//@{
 	/**
 	 * @brief copy assignment
 	 * @param tree
@@ -229,12 +233,15 @@ public:
 		return *this;
 	}
 
+	/**
+	 * @brief copy assignment
+	 * @param tree
+	 * @return
+	 */
 	auto assign(BinaryTree const & tree) -> BinaryTree & {
 		return *this = tree;
 	}
-	//@}
 
-	//@{
 	/**
 	 * @brief move assignment
 	 * @param tree
@@ -247,10 +254,14 @@ public:
 		return *this;
 	}
 
+	/**
+	 * @brief move assignment
+	 * @param tree
+	 * @return
+	 */
 	auto assign(BinaryTree && tree) -> BinaryTree & {
 		return *this = move(tree);
 	}
-	//@}
 
 	/**
 	 * @brief assign_unique
@@ -279,6 +290,10 @@ public:
 	}
 	///@}
 
+	/**
+	 * @brief swap
+	 * @param tree
+	 */
 	void swap(BinaryTree & tree) noexcept(BooleanAnd< typename NodeAllocatorTraits::IsAlwaysEqual, IsNothrowSwappable<Comparator> >{}) {
 		Base::swap(tree);
 	}
@@ -434,10 +449,9 @@ public:
 	///@}
 
 	/**
-	 * @name 查找（首个）匹配的元素
+	 * @name 查找元素
 	 */
 	///@{
-	//@{
 	/**
 	 * @brief find(element)
 	 * @param element
@@ -445,10 +459,13 @@ public:
 	 */
 	auto find(Element const & element) -> Iterator;
 
+	/**
+	 * @brief find(element)
+	 * @param element
+	 * @return
+	 */
 	auto find(Element const & element) const -> ConstIterator;
-	//@}
 
-	//@{
 	/**
 	 * @brief find(key)
 	 * @tparam TKey
@@ -458,16 +475,20 @@ public:
 	template< typename TKey >
 	auto find(TKey const & key) -> Iterator;
 
+	/**
+	 * @brief find(key)
+	 * @tparam TKey
+	 * @param key
+	 * @return
+	 */
 	template< typename TKey >
 	auto find(TKey const & key) const -> ConstIterator;
-	//@}
 	///@}
 
 	/**
 	 * @name 查找下界
 	 */
 	///@{
-	//@{
 	/**
 	 * @brief lower_bound(element)
 	 * @param element
@@ -475,10 +496,13 @@ public:
 	 */
 	auto lower_bound(Element const & element) -> Iterator;
 
+	/**
+	 * @brief lower_bound(element)
+	 * @param element
+	 * @return
+	 */
 	auto lower_bound(Element const & element) const -> ConstIterator;
-	//@}
 
-	//@{
 	/**
 	 * @brief lower_bound(key)
 	 * @tparam TKey
@@ -488,16 +512,20 @@ public:
 	template< typename TKey >
 	auto lower_bound(TKey const & key) -> Iterator;
 
+	/**
+	 * @brief lower_bound(key)
+	 * @tparam TKey
+	 * @param key
+	 * @return
+	 */
 	template< typename TKey >
 	auto lower_bound(TKey const & key) const -> ConstIterator;
-	//@}
 	///@}
 
 	/**
 	 * @name 查找上界
 	 */
 	///@{
-	//@{
 	/**
 	 * @brief upper_bound(element)
 	 * @param element
@@ -505,10 +533,13 @@ public:
 	 */
 	auto upper_bound(Element const & element) -> Iterator;
 
+	/**
+	 * @brief upper_bound(element)
+	 * @param element
+	 * @return
+	 */
 	auto upper_bound(Element const & element) const -> ConstIterator;
-	//@}
 
-	//@{
 	/**
 	 * @brief upper_bound(key)
 	 * @tparam TKey
@@ -518,17 +549,20 @@ public:
 	template< typename TKey >
 	auto upper_bound(TKey const & key) -> Iterator;
 
+	/**
+	 * @brief upper_bound(key)
+	 * @tparam TKey
+	 * @param key
+	 * @return
+	 */
 	template< typename TKey >
 	auto upper_bound(TKey const & key) const -> ConstIterator;
-	//@}
 	///@}
 
 	/**
-	 * @name 查找边界
-	 * @return < lower_bound(e), upper_bound(e) >
+	 * @name 查找区间
 	 */
 	///@{
-	//@{
 	/**
 	 * @brief equal_range(element)
 	 * @param element
@@ -536,10 +570,13 @@ public:
 	 */
 	auto equal_range(Element const & element) -> Pair< Iterator, Iterator >;
 
+	/**
+	 * @brief equal_range(element)
+	 * @param element
+	 * @return
+	 */
 	auto equal_range(Element const & element) const -> Pair< ConstIterator, ConstIterator >;
-	//@}
 
-	//@{
 	/**
 	 * @brief equal_range(key)
 	 * @tparam TKey
@@ -549,17 +586,20 @@ public:
 	template< typename TKey >
 	auto equal_range(TKey const & key) -> Pair< Iterator, Iterator >;
 
+	/**
+	 * @brief equal_range(key)
+	 * @tparam TKey
+	 * @param key
+	 * @return
+	 */
 	template< typename TKey >
 	auto equal_range(TKey const & key) const -> Pair< ConstIterator, ConstIterator >;
-	//@}
 	///@}
 
 	/**
 	 * @name 查找边界
-	 * @return < lower_bound(e), upper_bound(e) >
 	 */
 	///@{
-	//@{
 	/**
 	 * @brief bounded_range(lower_key, upper_key, left_closed = true, right_closed = true)
 	 * @param lower_key
@@ -570,10 +610,16 @@ public:
 	 */
 	auto bounded_range(Element const & lower_key, Element const & upper_key, bool left_closed = true, bool right_closed = true) -> Pair< Iterator, Iterator >;
 
+	/**
+	 * @brief bounded_range(lower_key, upper_key, left_closed = true, right_closed = true)
+	 * @param lower_key
+	 * @param upper_key
+	 * @param left_closed
+	 * @param right_closed
+	 * @return
+	 */
 	auto bounded_range(Element const & lower_key, Element const & upper_key, bool left_closed = true, bool right_closed = true) const -> Pair< ConstIterator, ConstIterator >;
-	//@}
 
-	//@{
 	/**
 	 * @brief bounded_range(lower_key, upper_key, left_closed = true, right_closed = true)
 	 * @tparam TKey
@@ -586,9 +632,17 @@ public:
 	template< typename TKey >
 	auto bounded_range(TKey const & lower_key, TKey const & upper_key, bool left_closed = true, bool right_closed = true) -> Pair< Iterator, Iterator >;
 
+	/**
+	 * @brief bounded_range(lower_key, upper_key, left_closed = true, right_closed = true)
+	 * @tparam TKey
+	 * @param lower_key
+	 * @param upper_key
+	 * @param left_closed
+	 * @param right_closed
+	 * @return
+	 */
 	template< typename TKey >
 	auto bounded_range(TKey const & lower_key, TKey const & upper_key, bool left_closed = true, bool right_closed = true) const -> Pair< ConstIterator, ConstIterator >;
-	//@}
 	///@}
 
 	/**
@@ -625,7 +679,6 @@ public:
 	template< typename ... TArgs >
 	auto emplace_unique(TArgs && ... args) -> Pair< Iterator, bool >;
 
-	//@{
 	/**
 	 * @brief insert_unique(element)
 	 * @param element
@@ -633,8 +686,12 @@ public:
 	 */
 	auto insert_unique(Element const & element) -> Pair< Iterator, bool >;
 
+	/**
+	 * @brief insert_unique(element)
+	 * @param element
+	 * @return
+	 */
 	auto insert_unique(Element && element) -> Pair< Iterator, bool >;
-	//@}
 
 	/**
 	 * @brief insert_unique(value)
@@ -655,7 +712,6 @@ public:
 	template< typename ... TArgs >
 	auto emplace_unique_hint(ConstIterator hint, TArgs && ... args) -> Iterator;
 
-	//@{
 	/**
 	 * @brief insert_unique(hint, element)
 	 * @param hint
@@ -664,8 +720,13 @@ public:
 	 */
 	auto insert_unique(ConstIterator hint, Element const & element) -> Iterator;
 
+	/**
+	 * @brief insert_unique(hint, element)
+	 * @param hint
+	 * @param element
+	 * @return
+	 */
 	auto insert_unique(ConstIterator hint, Element && element) -> Iterator;
-	//@}
 
 	/**
 	 * @brief insert_unique(hint, value)
@@ -701,7 +762,6 @@ public:
 	template< typename ... TArgs >
 	auto emplace_equal(TArgs && ... args) -> Iterator;
 
-	//@{
 	/**
 	 * @brief insert_equal(element)
 	 * @param element
@@ -709,8 +769,12 @@ public:
 	 */
 	auto insert_equal(Element const & element) -> Iterator;
 
+	/**
+	 * @brief insert_equal(element)
+	 * @param element
+	 * @return
+	 */
 	auto insert_equal(Element && element) -> Iterator;
-	//@}
 
 	/**
 	 * @brief insert_equal(value)
@@ -731,7 +795,6 @@ public:
 	template< typename ... TArgs >
 	auto emplace_equal_hint(ConstIterator hint, TArgs && ... args) -> Iterator;
 
-	//@{
 	/**
 	 * @brief insert_equal(hint, element)
 	 * @param hint
@@ -740,8 +803,13 @@ public:
 	 */
 	auto insert_equal(ConstIterator hint, Element const & element) -> Iterator;
 
+	/**
+	 * @brief insert_equal(hint, element)
+	 * @param hint
+	 * @param element
+	 * @return
+	 */
 	auto insert_equal(ConstIterator hint, Element && element) -> Iterator;
-	//@}
 
 	/**
 	 * @brief insert_equal(hint, value)
@@ -769,10 +837,6 @@ public:
 	 */
 	///@{
 	/**
-	 * @brief clear
-	 * @return
-	 */
-	/**
 	 * @brief erase
 	 * @param position Iterator to the element to remove.
 	 * @return Iterator following the removed element.
@@ -792,12 +856,12 @@ public:
 	 * @return Number of elements removed.
 	 */
 	auto erase(Element const & element) -> Size;
+	///@}
 
 	/**
 	 * @brief clear()
 	 */
 	void clear() noexcept;
-	///@}
 #endif // defined(BR_DOXYGEN)
 };
 

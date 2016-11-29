@@ -3,6 +3,7 @@
 #include <libbr/algorithm/accumulate.hpp>
 #include <libbr/iterator/begin.hpp>
 #include <libbr/iterator/end.hpp>
+#include <iostream>
 
 using namespace BR;
 

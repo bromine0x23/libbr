@@ -122,6 +122,20 @@ public:
 		return node;
 	}
 
+	static auto depth(NodePointer node) -> Size {
+		Size depth = 0U;
+		for (NodePointer parent = node->parent; node != parent->parent; node = parent, (void)parent = node->parent) {
+			++depth;
+		}
+		return depth;
+	}
+
+	template< typename TKey, typename TComparator >
+	static auto find(NodePointer const & header, TKey const & key, TComparator comparator) -> NodePointer {
+		NodePointer y = lower_bound(header, key, comparator);
+		return (y == header || comparator(key, y->element)) ? header : y;
+	}
+
 	template< typename TKey, typename TComparator >
 	static auto lower_bound(NodePointer const & header, TKey const & key, TComparator comparator) -> NodePointer {
 		return lower_bound_loop(header->parent, header, key, comparator);
@@ -130,6 +144,11 @@ public:
 	template< typename TKey, typename TComparator >
 	static auto upper_bound(NodePointer const & header, TKey const & key, TComparator comparator) -> NodePointer {
 		return upper_bound_loop(header->parent, header, key, comparator);
+	}
+
+	template< typename TKey, typename TComparator >
+	static auto equal_range(NodePointer const & header, TKey const & key, TComparator comparator) -> Pair< NodePointer, NodePointer > {
+		return bounded_range(header, key, key, comparator, true, true);
 	}
 
 	template< typename TKey, typename TComparator >
@@ -149,17 +168,6 @@ public:
 			}
 		}
 		return Pair< NodePointer, NodePointer >(result, result);
-	}
-
-	template< typename TKey, typename TComparator >
-	static auto equal_range(NodePointer const & header, TKey const & key, TComparator comparator) -> Pair< NodePointer, NodePointer > {
-		return bounded_range(header, key, key, comparator, true, true);
-	}
-
-	template< typename TKey, typename TComparator >
-	static auto find(NodePointer const & header, TKey const & key, TComparator comparator) -> NodePointer {
-		NodePointer y = lower_bound(header, key, comparator);
-		return (y == header || comparator(key, y->element)) ? header : y;
 	}
 
 	template< typename TKey, typename TComparator >
