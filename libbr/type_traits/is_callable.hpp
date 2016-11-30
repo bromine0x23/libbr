@@ -25,7 +25,7 @@ inline namespace TypeTraits {
  * @see IntegerConstant
  * @see NotCallable
  *
- * 如果 \em T 包含顶层 \em const 修饰，那么封装的值为 \em true ；否则为 \em false
+ * 如果可以对 \em TCallable 以参数 \em TArgs 进行函数调用，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename TCallable, typename... TArgs >
 struct IsCallable;

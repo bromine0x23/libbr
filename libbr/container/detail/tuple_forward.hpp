@@ -9,6 +9,8 @@
 
 namespace BR {
 
+inline namespace Container {
+
 /**
  * @brief 元组
  * @tparam TTypes 各个内容类型
@@ -69,5 +71,23 @@ struct TypeTupleElement< I, T volatile > : public TypeAddVolatile< TupleElement<
 
 template< Size I, typename T >
 struct TypeTupleElement< I, T const volatile > : public TypeAddConstVolatile< TupleElement< I, T > > {};
+
+} // namespace Container
+
+inline namespace TypeTraits {
+
+using Container::TupleSize;
+
+#if defined(BR_CXX14)
+
+using Container::tuple_size;
+
+#endif // defined(BR_CXX14)
+
+using Container::TypeTupleElement;
+
+using Container::TupleElement;
+
+} // namespace TypeTraits
 
 } // namespace BR

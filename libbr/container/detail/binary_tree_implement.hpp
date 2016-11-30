@@ -22,6 +22,8 @@ namespace Detail {
 namespace Container {
 namespace BinaryTree {
 
+using BR::Pair;
+
 template< typename TBase >
 class Implement : protected TBase {
 private:
@@ -357,7 +359,7 @@ public:
 	}
 
 	template< typename TValue >
-	auto insert_unique(TValue && value) -> Pair< Iterator, bool > {
+	auto insert_unique(TValue && value) -> EnableIf< IsConstructible<Element, TValue>, Pair< Iterator, bool > > {
 		auto result = this->m_insert_unique(this->m_construct_node(forward<TValue>(value)));
 		return Pair< Iterator, bool >(Iterator(result.first), result.second);
 	}
@@ -383,7 +385,7 @@ public:
 	template< typename TIterator >
 	auto insert_unique(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator> > {
 		if (this->empty()) {
-			auto  end = this->end();
+			auto end = this->m_end();
 			for (; first != last; ++first) {
 				this->m_insert_unique(end, this->m_construct_node(*first));
 			}
@@ -452,6 +454,16 @@ public:
 
 	auto erase(Element const & element) -> Size {
 		auto range = this->m_equal_range(element);
+		Size n = 0;
+		for(; range.first != range.second; ++n) {
+			range.first = this->m_erase(range.first);
+		}
+		return n;
+	}
+
+	template< typename TKey >
+	auto erase(TKey const & key) -> Size {
+		auto range = this->m_equal_range(key);
 		Size n = 0;
 		for(; range.first != range.second; ++n) {
 			range.first = this->m_erase(range.first);

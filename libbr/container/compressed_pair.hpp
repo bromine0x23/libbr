@@ -1,13 +1,13 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/container/tuple.hpp>
+#include <libbr/container/detail/tuple_forward.hpp>
 #include <libbr/type_traits/boolean.hpp>
-#include <libbr/type_traits/make_integral_sequence.hpp>
 #include <libbr/type_traits/has_nothrow_move_constructor.hpp>
 #include <libbr/type_traits/is_empty.hpp>
 #include <libbr/type_traits/is_final.hpp>
 #include <libbr/type_traits/is_nothrow_swappable.hpp>
+#include <libbr/type_traits/make_integral_sequence.hpp>
 #include <libbr/type_traits/remove_reference.hpp>
 #include <libbr/utility/forward.hpp>
 #include <libbr/utility/integral_sequence.hpp>
@@ -15,14 +15,47 @@
 
 namespace BR {
 
+inline namespace Container {
+
+template< typename TFirst, typename TSecond >
+class CompressedPair;
+
+template< typename T0, typename T1 >
+struct TupleSize< CompressedPair< T0, T1 > > : public IntegralConstant< Size, 2 > {};
+
+template< typename T0, typename T1 >
+struct TypeTupleElement< 0, CompressedPair< T0, T1 > > : public TypeWrapper<T0> {};
+
+template< typename T0, typename T1 >
+struct TypeTupleElement< 1, CompressedPair< T0, T1 > > : public TypeWrapper<T1> {};
+
+template< Size I, typename T0, typename T1 > constexpr auto get(CompressedPair< T0, T1 >        & P) noexcept -> TupleElement< I, CompressedPair< T0, T1 > >        & { return P.template get<I>(); }
+template< Size I, typename T0, typename T1 > constexpr auto get(CompressedPair< T0, T1 > const  & P) noexcept -> TupleElement< I, CompressedPair< T0, T1 > > const  & { return P.template get<I>(); }
+template< Size I, typename T0, typename T1 > constexpr auto get(CompressedPair< T0, T1 >       && P) noexcept -> TupleElement< I, CompressedPair< T0, T1 > >       && { return P.template get<I>(); }
+template< Size I, typename T0, typename T1 > constexpr auto get(CompressedPair< T0, T1 > const && P) noexcept -> TupleElement< I, CompressedPair< T0, T1 > > const && { return P.template get<I>(); }
+
+template< typename T0, typename T1 > constexpr auto get(CompressedPair< T0, T1 >        & P) noexcept -> T0        & { return P.template get<0>(); }
+template< typename T0, typename T1 > constexpr auto get(CompressedPair< T0, T1 > const  & P) noexcept -> T0 const  & { return P.template get<0>(); }
+template< typename T0, typename T1 > constexpr auto get(CompressedPair< T0, T1 >       && P) noexcept -> T0       && { return P.template get<0>(); }
+template< typename T0, typename T1 > constexpr auto get(CompressedPair< T0, T1 > const && P) noexcept -> T0 const && { return P.template get<0>(); }
+
+template< typename T0, typename T1 > constexpr auto get(CompressedPair< T1, T0 >        & P) noexcept -> T0        & { return P.template get<1>(); }
+template< typename T0, typename T1 > constexpr auto get(CompressedPair< T1, T0 > const  & P) noexcept -> T0 const  & { return P.template get<1>(); }
+template< typename T0, typename T1 > constexpr auto get(CompressedPair< T1, T0 >       && P) noexcept -> T0       && { return P.template get<1>(); }
+template< typename T0, typename T1 > constexpr auto get(CompressedPair< T1, T0 > const && P) noexcept -> T0 const && { return P.template get<1>(); }
+
+} // namespace Container
+
+
+
 namespace Detail {
 namespace Container {
 
 template<
 	typename TFirst,
 	typename TSecond,
-	bool is_first_derivable  = BooleanAnd< IsEmpty<TFirst>, NotFinal<TFirst> >::value,
-	bool is_second_derivable = BooleanAnd< IsEmpty<TSecond>, NotFinal<TSecond> >::value
+	bool is_first_derivable  = BooleanAnd< IsEmpty<TFirst>, NotFinal<TFirst> >{},
+	bool is_second_derivable = BooleanAnd< IsEmpty<TSecond>, NotFinal<TSecond> >{}
 >
 class CompressedPairBasic;
 
@@ -69,19 +102,19 @@ public:
 
 	auto operator=(CompressedPairBasic &&) -> CompressedPairBasic & = default;
 
-	auto first() noexcept -> FirstReference {
+	BR_CONSTEXPR_AFTER_CXX11 auto first() noexcept -> FirstReference {
 		return m_first;
 	}
 
-	auto first() const noexcept -> FirstConstReference {
+	constexpr auto first() const noexcept -> FirstConstReference {
 		return m_first;
 	}
 
-	auto second() noexcept -> SecondReference {
+	BR_CONSTEXPR_AFTER_CXX11 auto second() noexcept -> SecondReference {
 		return m_second;
 	}
 
-	auto second() const noexcept -> SecondConstReference {
+	constexpr auto second() const noexcept -> SecondConstReference {
 		return m_second;
 	}
 
@@ -140,19 +173,19 @@ public:
 
 	auto operator=(CompressedPairBasic &&) -> CompressedPairBasic & = default;
 
-	auto first() noexcept -> FirstReference {
+	BR_CONSTEXPR_AFTER_CXX11 auto first() noexcept -> FirstReference {
 		return *this;
 	}
 
-	auto first() const noexcept -> FirstConstReference {
+	constexpr auto first() const noexcept -> FirstConstReference {
 		return *this;
 	}
 
-	auto second() noexcept -> SecondReference {
+	BR_CONSTEXPR_AFTER_CXX11 auto second() noexcept -> SecondReference {
 		return m_second;
 	}
 
-	auto second() const noexcept -> SecondConstReference {
+	constexpr auto second() const noexcept -> SecondConstReference {
 		return m_second;
 	}
 
@@ -210,19 +243,19 @@ public:
 
 	auto operator=(CompressedPairBasic &&) -> CompressedPairBasic & = default;
 
-	auto first() noexcept -> FirstReference {
+	BR_CONSTEXPR_AFTER_CXX11 auto first() noexcept -> FirstReference {
 		return m_first;
 	}
 
-	auto first() const noexcept -> FirstConstReference {
+	constexpr auto first() const noexcept -> FirstConstReference {
 		return m_first;
 	}
 
-	auto second() noexcept -> SecondReference {
+	BR_CONSTEXPR_AFTER_CXX11 auto second() noexcept -> SecondReference {
 		return *this;
 	}
 
-	auto second() const noexcept -> SecondConstReference {
+	constexpr auto second() const noexcept -> SecondConstReference {
 		return *this;
 	}
 
@@ -279,35 +312,83 @@ public:
 
 	auto operator=(CompressedPairBasic &&) -> CompressedPairBasic & = default;
 
-	auto first() noexcept -> FirstReference {
+	BR_CONSTEXPR_AFTER_CXX11 auto first() noexcept -> FirstReference {
 		return *this;
 	}
 
-	auto first() const noexcept -> FirstConstReference {
+	constexpr auto first() const noexcept -> FirstConstReference {
 		return *this;
 	}
 
-	auto second() noexcept -> SecondReference {
+	BR_CONSTEXPR_AFTER_CXX11 auto second() noexcept -> SecondReference {
 		return *this;
 	}
 
-	auto second() const noexcept -> SecondConstReference {
+	constexpr auto second() const noexcept -> SecondConstReference {
 		return *this;
 	}
 
 	void swap(CompressedPairBasic & pair) noexcept {
 	}
+}; // class CompressedPairBasic< TFirst, TSecond, true, true >
+
+template< Size I >
+struct CompressedPairGetter;
+
+template<>
+struct CompressedPairGetter<0> {
+	template< typename T0, typename T1 >
+	BR_CONSTEXPR_AFTER_CXX11 auto operator()(CompressedPair< T0, T1 > & p) const noexcept -> T0 & {
+		return p.first();
+	}
+
+	template< typename T0, typename T1 >
+	constexpr auto operator()(CompressedPair< T0, T1 > const & p) const noexcept -> T0 const & {
+		return p.first();
+	}
+
+	template< typename T0, typename T1 >
+	BR_CONSTEXPR_AFTER_CXX11 auto operator()(CompressedPair< T0, T1 > && p) const noexcept -> T0 && {
+		return move(p.first());
+	}
+
+	template< typename T0, typename T1 >
+	constexpr auto operator()(CompressedPair< T0, T1 > const && p) const noexcept -> T0 const && {
+		return move(p.first());
+	}
 };
 
-template< typename TFirst, typename TSecond >
-using CompressedPair = CompressedPairBasic< TFirst, TSecond >;
+template<>
+struct CompressedPairGetter<1> {
+	template< typename T0, typename T1 >
+	BR_CONSTEXPR_AFTER_CXX11 auto operator()(CompressedPair< T0, T1 > & p) const noexcept -> T1 & {
+		return p.second();
+	}
+
+	template< typename T0, typename T1 >
+	constexpr auto operator()(CompressedPair< T0, T1 > const & p) const noexcept -> T1 const & {
+		return p.second();
+	}
+
+	template< typename T0, typename T1 >
+	BR_CONSTEXPR_AFTER_CXX11 auto operator()(CompressedPair< T0, T1 > && p) const noexcept -> T1 && {
+		return move(p.second());
+	}
+
+	template< typename T0, typename T1 >
+	constexpr auto operator()(CompressedPair< T0, T1 > const && p) const noexcept -> T1 const && {
+		return move(p.second());
+	}
+};
 
 } // namespace Container
 } // namespace Detail
 
+inline namespace Container {
+
 template< typename TFirst, typename TSecond >
-class CompressedPair : private Detail::Container::CompressedPair< TFirst, TSecond > {
-	using Base = Detail::Container::CompressedPair< TFirst, TSecond >;
+class CompressedPair : private Detail::Container::CompressedPairBasic< TFirst, TSecond > {
+	using Base = Detail::Container::CompressedPairBasic< TFirst, TSecond >;
 
 public:
 	using First = TFirst;
@@ -369,10 +450,22 @@ public:
 		return Base::second();
 	}
 
+	template< Size I > BR_CONSTEXPR_AFTER_CXX11 auto get()       &  noexcept -> TupleElement< I, CompressedPair >       &  { return Detail::Container::CompressedPairGetter<I>{}(*this); }
+	template< Size I > constexpr                auto get() const &  noexcept -> TupleElement< I, CompressedPair > const &  { return Detail::Container::CompressedPairGetter<I>{}(*this); }
+	template< Size I > BR_CONSTEXPR_AFTER_CXX11 auto get()       && noexcept -> TupleElement< I, CompressedPair >       && { return Detail::Container::CompressedPairGetter<I>{}(*this); }
+	template< Size I > constexpr                auto get() const && noexcept -> TupleElement< I, CompressedPair > const && { return Detail::Container::CompressedPairGetter<I>{}(*this); }
+
+	template< typename T > BR_CONSTEXPR_AFTER_CXX11 auto get()        & noexcept -> T        & { return get<T>(*this); }
+	template< typename T > constexpr                auto get() const  & noexcept -> T const  & { return get<T>(*this); }
+	template< typename T > BR_CONSTEXPR_AFTER_CXX11 auto get()       && noexcept -> T       && { return get<T>(*this); }
+	template< typename T > constexpr                auto get() const && noexcept -> T const && { return get<T>(*this); }
+
 	void swap(CompressedPair & pair) noexcept(BooleanAnd< IsNothrowSwappable<First>, IsNothrowSwappable<Second> >()()) {
 		Base::swap(pair);
 	}
 
-};
+}; // class CompressedPair< TFirst, TSecond >
+
+} // namespace Container
 
 } // namespace BR

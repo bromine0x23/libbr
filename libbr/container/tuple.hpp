@@ -48,6 +48,8 @@
 
 namespace BR {
 
+inline namespace Container {
+
 template< typename TFirst, typename TSecond >
 class Pair;
 
@@ -88,11 +90,19 @@ BR_CONSTEXPR_AFTER_CXX11 inline auto forward_as_tuple(T && ... t) noexcept -> Tu
 	return Tuple< T && ... >(forward<T>(t)...);
 }
 
+} // namespace Container
+
+inline namespace TypeTraits {
+
 template< typename ... T, typename TAllocator >
 struct IsUseAllocator< Tuple< T ... >, TAllocator > : public BooleanTrue {};
 
 template< typename ... T, typename TAllocator >
 struct NotUseAllocator< Tuple< T ... >, TAllocator > : public BooleanFalse {};
+
+} // namespace TypeTraits
+
+
 
 namespace Detail {
 namespace Container {
@@ -507,6 +517,8 @@ public:
 } // namespace Container
 } // namespace Detail
 
+inline namespace Container {
+
 template < typename ... TElement >
 class Tuple {
 private:
@@ -735,6 +747,8 @@ public:
 	}
 }; // class Tuple<>
 
+} // namespace Container
+
 namespace Detail {
 namespace Container {
 
@@ -753,10 +767,14 @@ using MakeTupleReturn = TypeUnwrap< TypeMakeTupleReturn<T> >;
 } // namespace Container
 } // namespace Detail
 
+inline namespace Container {
+
 template< typename ... T >
 BR_CONSTEXPR_AFTER_CXX11 inline auto make_tuple(T && ... t) -> Tuple< Detail::Container::MakeTupleReturn<T> ... > {
 	return Tuple< Detail::Container::MakeTupleReturn<T> ... >(forward<T>(t) ...);
 }
+
+} // namespace Container
 
 namespace Detail {
 namespace Container {
@@ -771,7 +789,11 @@ struct IgnoreTag {
 } // namespace Container
 } // namespace Detail
 
+inline namespace Container {
+
 constexpr auto ignore_tag = Detail::Container::IgnoreTag();
+
+} // namespace Container
 
 namespace Detail {
 namespace Container {
@@ -805,6 +827,8 @@ struct TupleCompare<0> {
 } // namespace Container
 } // namespace Detail
 
+inline namespace Container {
+
 template< typename ... T0, typename ... T1 >
 BR_CONSTEXPR_AFTER_CXX11 auto operator==(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) -> bool {
 	return Detail::Container::TupleCompare< sizeof...(T0) >::equal(t0, t1);
@@ -834,6 +858,8 @@ template< typename ... T0, typename ... T1 >
 BR_CONSTEXPR_AFTER_CXX11 auto operator>=(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) -> bool {
 	return !(t0 < t1);
 }
+
+} // namespace Container
 
 namespace Detail {
 namespace Container {
@@ -919,6 +945,8 @@ struct TupleCat< Tuple< T ... >, IndexSequence< IHead ... >, IndexSequence< ITai
 } // namespace Container
 } // namespace Detail
 
+inline namespace Container {
+
 BR_CONSTEXPR_AFTER_CXX11 inline auto tuple_cat() -> Tuple<> {
 	return Tuple<>();
 }
@@ -931,5 +959,7 @@ BR_CONSTEXPR_AFTER_CXX11 inline auto tuple_cat(TTuple0 && tuple0, TTuples ... tu
 		Tuple<>(), forward<TTuple0>(tuple0), forward<TTuples>(tuples) ...
 	);
 }
+
+} // namespace Container
 
 } // namespace BR

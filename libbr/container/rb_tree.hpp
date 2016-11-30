@@ -123,14 +123,14 @@ public:
 	RBTree(RBTree && tree, Allocator const & allocator) : Base(move(tree), allocator) {
 	}
 
-	/// @copydoc BR::Container::BinaryTree::BinaryTree(TIterator f, TIterator l, Allocator const &)
+	/// @copydoc BR::Container::BinaryTree::BinaryTree(TIterator, TIterator, Allocator const &)
 	template< typename TIterator >
 	RBTree(TIterator f, TIterator l, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : Base(f, l, allocator) {
 	}
 
-	/// @copydoc BR::Container::BinaryTree::BinaryTree(TIterator f, TIterator l, Comparator, Allocator const &)
+	/// @copydoc BR::Container::BinaryTree::BinaryTree(TIterator, TIterator, Comparator, Allocator const &)
 	template< typename TIterator >
-	RBTree(TIterator f, TIterator l, Comparator comparator, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : Base(f, l, comparator, allocator) {
+	RBTree(TIterator f, TIterator l, Comparator const & comparator, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : Base(f, l, comparator, allocator) {
 	}
 
 	/// @copydoc BR::Container::BinaryTree::BinaryTree(InitializerList<Element>, Allocator const &)
@@ -472,6 +472,10 @@ public:
 
 	/// @copydoc BR::Container::BinaryTree::erase(Element const &)
 	auto erase(Element const & element) -> Size;
+
+	/// @copydoc BR::Container::BinaryTree::erase(TKey const &)
+	template< typename TKey >
+	auto erase(TKey const & key) -> Size;
 	///@}
 
 	/// @copydoc BR::Container::BinaryTree::clear()

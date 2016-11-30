@@ -489,6 +489,10 @@ public:
 
 	/// @copydoc BR::Container::BinaryTree::erase(Element const &)
 	auto erase(Element const & element) -> Size;
+
+	/// @copydoc BR::Container::BinaryTree::erase(TKey const &)
+	template< typename TKey >
+	auto erase(TKey const & key) -> Size;
 	///@}
 
 	/// @copydoc BR::Container::BinaryTree::clear()

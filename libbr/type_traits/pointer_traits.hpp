@@ -136,7 +136,7 @@ public:
 	 * @brief 包装引用为指针
 	 * @pre \em Element 不是 \em void
 	 */
-	static Pointer make_pointer(Conditional< IsVoid<Element>, NAT, Element > & reference) {
+	static auto make_pointer(Conditional< IsVoid<Element>, NAT, Element > & reference) -> Pointer {
 		return Pointer::make_pointer(reference);
 	}
 
@@ -164,7 +164,7 @@ private:
 	struct NAT {};
 
 public:
-	static Pointer make_pointer(Conditional< IsVoid<Element>, NAT, Element > & reference) {
+	static auto make_pointer(Conditional< IsVoid<Element>, NAT, Element > & reference) -> Pointer {
 		return address_of(reference);
 	}
 

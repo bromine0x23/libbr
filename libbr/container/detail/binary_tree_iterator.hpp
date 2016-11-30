@@ -52,6 +52,7 @@ public:
 
 	using Difference = typename NodePointerTraits::Difference;
 
+public:
 	Iterator() noexcept : m_pointer(nullptr) {
 	}
 
@@ -60,7 +61,7 @@ public:
 	}
 
 	auto operator->() const -> Pointer {
-		return NodePointerTraits::make_pointer(m_pointer->element);
+		return PointerTraits<Pointer>::make_pointer(m_pointer->element);
 	}
 
 	auto operator++() -> Iterator & {
@@ -130,6 +131,7 @@ public:
 
 	using Difference = typename NodePointerTraits::Difference;
 
+public:
 	ConstIterator() noexcept : m_pointer(nullptr) {
 	}
 
@@ -141,7 +143,7 @@ public:
 	}
 
 	auto operator->() const -> Pointer {
-		return NodePointerTraits::make_pointer(m_pointer->element);
+		return PointerTraits<Pointer>::make_pointer(m_pointer->element);
 	}
 
 	auto operator++() -> ConstIterator & {
@@ -196,7 +198,7 @@ inline auto operator==(Iterator<TNodePointer> const & x, ConstIterator<TNodePoin
 }
 
 template< typename TNodePointer >
-auto operator!=(Iterator<TNodePointer> const & x, ConstIterator<TNodePointer> const & y) -> bool {
+inline auto operator!=(Iterator<TNodePointer> const & x, ConstIterator<TNodePointer> const & y) -> bool {
 	return y != x;
 }
 

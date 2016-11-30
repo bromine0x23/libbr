@@ -201,7 +201,7 @@ public:
 	 * @return
 	 */
 	template< typename TIterator >
-	BinaryTree(TIterator f, TIterator l, Comparator comparator, Allocator const & allocator = Allocator{}) : Base(f, l, comparator, allocator) {
+	BinaryTree(TIterator f, TIterator l, Comparator const & comparator, Allocator const & allocator = Allocator{}) : Base(f, l, comparator, allocator) {
 	}
 
 
@@ -300,7 +300,7 @@ public:
 
 #if defined(BR_DOXYGEN)
 	/**
-	 *  @name 成员
+	 *   @name 成员
 	 */
 	///@{
 	/**
@@ -856,6 +856,16 @@ public:
 	 * @return Number of elements removed.
 	 */
 	auto erase(Element const & element) -> Size;
+
+
+	/**
+	 * @brief erase
+	 * @tparam TKey
+	 * @param key
+	 * @return Number of elements removed.
+	 */
+	template< typename TKey >
+	auto erase(TKey const & key) -> Size;
 	///@}
 
 	/**

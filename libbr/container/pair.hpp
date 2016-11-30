@@ -28,6 +28,8 @@
 
 namespace BR {
 
+inline namespace Container {
+
 template< typename TFirst, typename TSecond >
 class Pair;
 
@@ -60,6 +62,10 @@ template< typename T0, typename T1 > constexpr auto get(Pair< T1, T0 > const  & 
 template< typename T0, typename T1 > constexpr auto get(Pair< T1, T0 >       && P) noexcept -> T0       && { return P.template get<1>(); }
 template< typename T0, typename T1 > constexpr auto get(Pair< T1, T0 > const && P) noexcept -> T0 const && { return P.template get<1>(); }
 
+} // namespace Container
+
+
+
 namespace Detail {
 namespace Container {
 
@@ -69,51 +75,53 @@ struct PairGetter;
 template<>
 struct PairGetter<0> {
 	template< typename T0, typename T1 >
-	constexpr auto operator()(Pair< T0, T1 > & P) const noexcept -> T0 & {
-		return P.first;
+	constexpr auto operator()(Pair< T0, T1 > & p) const noexcept -> T0 & {
+		return p.first;
 	}
 
 	template< typename T0, typename T1 >
-	constexpr auto operator()(Pair< T0, T1 > const & P) const noexcept -> T0 const & {
-		return P.first;
+	constexpr auto operator()(Pair< T0, T1 > const & p) const noexcept -> T0 const & {
+		return p.first;
 	}
 
 	template< typename T0, typename T1 >
-	constexpr auto operator()(Pair< T0, T1 > && P) const noexcept -> T0 && {
-		return P.first;
+	constexpr auto operator()(Pair< T0, T1 > && p) const noexcept -> T0 && {
+		return move(p.first);
 	}
 
 	template< typename T0, typename T1 >
-	constexpr auto operator()(Pair< T0, T1 > const && P) const noexcept -> T0 const && {
-		return P.first;
+	constexpr auto operator()(Pair< T0, T1 > const && p) const noexcept -> T0 const && {
+		return move(p.first);
 	}
 };
 
 template<>
 struct PairGetter<1> {
 	template< typename T0, typename T1 >
-	constexpr auto operator()(Pair< T0, T1 > & P) const noexcept -> T1 & {
-		return P.second;
+	constexpr auto operator()(Pair< T0, T1 > & p) const noexcept -> T1 & {
+		return p.second;
 	}
 
 	template< typename T0, typename T1 >
-	constexpr auto operator()(Pair< T0, T1 > const & P) const noexcept -> T1 const & {
-		return P.second;
+	constexpr auto operator()(Pair< T0, T1 > const & p) const noexcept -> T1 const & {
+		return p.second;
 	}
 
 	template< typename T0, typename T1 >
-	constexpr auto operator()(Pair< T0, T1 > && P) const noexcept -> T1 && {
-		return P.second;
+	constexpr auto operator()(Pair< T0, T1 > && p) const noexcept -> T1 && {
+		return move(p.second);
 	}
 
 	template< typename T0, typename T1 >
-	constexpr auto operator()(Pair< T0, T1 > const && P) const noexcept -> T1 const && {
-		return P.second;
+	constexpr auto operator()(Pair< T0, T1 > const && p) const noexcept -> T1 const && {
+		return move(p.second);
 	}
 };
 
 } // namespace Container
 } // namespace Detail
+
+inline namespace Container {
 
 template< typename TFirst, typename TSecond = TFirst >
 class Pair {
@@ -125,7 +133,7 @@ public:
 
 private:
 	template< typename TOtherFirst, typename TOtherSecond >
-	using IsParticipateOverload = BooleanAnd< IsConvertible< TOtherFirst const &, First >, IsConvertible< TOtherSecond const &, Second > >;
+	using IsParticipateOverload = BooleanAnd< IsConvertible< TOtherFirst, First >, IsConvertible< TOtherSecond, Second > >;
 
 public:
 	template< typename = EnableIf< BooleanAnd< HasDefaultConstructor<First>, HasDefaultConstructor<Second> > > >
@@ -147,8 +155,8 @@ public:
 	BR_CONSTEXPR_AFTER_CXX11 Pair(Pair< TOtherFirst, TOtherSecond > const & pair) : first(pair.first), second(pair.second) {
 	}
 
-	template< typename TOtherFirst, typename TOtherSecond, typename = EnableIf< IsParticipateOverload< TOtherFirst, TOtherSecond > > >
-	BR_CONSTEXPR_AFTER_CXX11 Pair(Pair< TOtherFirst, TOtherSecond > && pair) : first(forward<TOtherFirst>(pair.first)), second(forward<TOtherSecond>(pair.second)) {
+	template< typename TOtherFirst, typename TOtherSecond >
+	BR_CONSTEXPR_AFTER_CXX11 Pair(Pair< TOtherFirst, TOtherSecond > && pair, EnableIf< BooleanAnd< IsConvertible< TOtherFirst, First >, IsConvertible< TOtherSecond, Second > > > * = nullptr) : first(forward<TOtherFirst>(pair.first)), second(forward<TOtherSecond>(pair.second)) {
 	}
 
 	template< typename TOtherFirst, typename TOtherSecond, typename = EnableIf< IsParticipateOverload< TOtherFirst, TOtherSecond > > >
@@ -157,7 +165,7 @@ public:
 
 	template< typename... TArgs0, typename... TArgs1 >
 	Pair(PiecewiseConstructTag, Tuple<TArgs0...> args0, Tuple<TArgs1...> args1) : Pair(
-		piecewise_construct_tag, move(args0), move(args1), MakeIndexSequence< 0, sizeof...(TArgs0) >{}, MakeIndexSequence< 0, sizeof...(TArgs1) >{}
+		piecewise_construct_tag, args0, args1, MakeIndexSequence< 0, sizeof...(TArgs0) >{}, MakeIndexSequence< 0, sizeof...(TArgs1) >{}
 	) {
 	}
 
@@ -226,13 +234,13 @@ public:
 
 	template< Size I > BR_CONSTEXPR_AFTER_CXX11 auto get()       &  noexcept -> TupleElement< I, Pair >       &  { return Detail::Container::PairGetter<I>{}(*this); }
 	template< Size I > constexpr                auto get() const &  noexcept -> TupleElement< I, Pair > const &  { return Detail::Container::PairGetter<I>{}(*this); }
-	template< Size I > BR_CONSTEXPR_AFTER_CXX11 auto get()       && noexcept -> TupleElement< I, Pair >       && { return Detail::Container::PairGetter<I>{}(*this); }
-	template< Size I > constexpr                auto get() const && noexcept -> TupleElement< I, Pair > const && { return Detail::Container::PairGetter<I>{}(*this); }
+	template< Size I > BR_CONSTEXPR_AFTER_CXX11 auto get()       && noexcept -> TupleElement< I, Pair >       && { return Detail::Container::PairGetter<I>{}(move(*this)); }
+	template< Size I > constexpr                auto get() const && noexcept -> TupleElement< I, Pair > const && { return Detail::Container::PairGetter<I>{}(move(*this)); }
 
 	template< typename T > BR_CONSTEXPR_AFTER_CXX11 auto get()        & noexcept -> T        & { return get<T>(*this); }
 	template< typename T > constexpr                auto get() const  & noexcept -> T const  & { return get<T>(*this); }
-	template< typename T > BR_CONSTEXPR_AFTER_CXX11 auto get()       && noexcept -> T       && { return get<T>(*this); }
-	template< typename T > constexpr                auto get() const && noexcept -> T const && { return get<T>(*this); }
+	template< typename T > BR_CONSTEXPR_AFTER_CXX11 auto get()       && noexcept -> T       && { return get<T>(move(*this)); }
+	template< typename T > constexpr                auto get() const && noexcept -> T const && { return get<T>(move(*this)); }
 
 private:
 	template< typename... TArgs0, typename... TArgs1, Size ... Idx0, Size ... Idx1 >
@@ -246,5 +254,7 @@ public:
 	Second second;
 
 }; // class Pair< TFirst, TSecond >
+
+} // namespace Container
 
 } // namespace BR
