@@ -72,7 +72,7 @@ struct IsInputIteratorBasic : BooleanAnd<
 > {};
 
 template< typename TIterator >
-using IsInputIterator = BooleanAnd< IsIterator<TIterator>, IsInputIteratorBasic<TIterator> >;
+struct IsInputIterator : public BooleanAnd< IsIterator<TIterator>, IsInputIteratorBasic<TIterator> > {};
 
 } // namespace TypeTraits
 } // namespace Detail
