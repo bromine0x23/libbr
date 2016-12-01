@@ -6,8 +6,9 @@
 
 using namespace BR;
 
+#if defined(BR_DEBUG)
 template class BR::SplayTree<int>;
-
+#endif
 
 TEST(SplayTree, DefaultConstruct) {
 	SplayTree<int> tree;
@@ -60,4 +61,13 @@ SplayTree<int> tree{3, 1, 5, 4, 2, 2, 4, 4, 2, 4, 2};
 	tree.erase(4);
 	tree.erase(2);
 	EXPECT_EQ(9, accumulate(tree.begin(), tree.end(), 0));
+}
+
+TEST(SplayTree, Merge) {
+	SplayTree<int> tree0{1, 3, 5, 7, 9};
+	SplayTree<int> tree1{2, 4, 6, 8, 10};
+
+	tree0.merge_equal(tree1);
+	EXPECT_EQ(55, accumulate(tree0.begin(), tree0.end(), 0));
+	EXPECT_EQ(0, accumulate(tree1.begin(), tree1.end(), 0));
 }

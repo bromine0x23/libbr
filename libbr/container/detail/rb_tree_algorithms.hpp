@@ -56,6 +56,25 @@ public:
 		return new_node;
 	}
 
+	template< typename TComparator >
+	static auto transfer_unique(NodePointer const & header0, NodePointer const & header1, NodePointer const & node, TComparator comparator) -> bool {
+		typename Base::RebalanceData data;
+		bool const transferred = Base::transfer_unique(header0, header1, node, comparator, data);
+		if (transferred) {
+			rebalance_after_erasure(header1, node, data);
+			rebalance_after_insertion(header0, node);
+		}
+		return transferred;
+	}
+
+	template< typename TComparator >
+	static void transfer_equal(NodePointer const & header0, NodePointer const & header1, NodePointer const & node, TComparator comparator) {
+		typename Base::RebalanceData data;
+		Base::transfer_equal(header0, header1, node, comparator, data);
+		rebalance_after_erasure(header1, node, data);
+		rebalance_after_insertion(header0, node);
+	}
+
 	static auto erase(NodePointer const & header, NodePointer const & target) -> NodePointer {
 		typename Base::RebalanceData data;
 		Base::erase(header, target, data);
@@ -76,85 +95,7 @@ public:
 	}
 
 protected:
-	static auto verify_recursion(NodePointer node) -> Size {
-		if (node == nullptr) {
-			return 1;
-		}
-		if (node->left != nullptr && node->left->parent != node) {
-			BR_ASSERT(false);
-			return 0;
-		}
-		if (node->right != nullptr && node->right->parent != node) {
-			BR_ASSERT(false);
-			return 0;
-		}
-		if (node->left == node->right && node->left != nullptr) {
-			BR_ASSERT(false);
-			return 0;
-		}
-		if (node->color == Color::red) {
-			if (node->left != nullptr && node->left->color == Color::red) {
-				BR_ASSERT(false);
-				return 0;
-			}
-			if (node->right != nullptr && node->right->color == Color::red) {
-				BR_ASSERT(false);
-				return 0;
-			}
-		}
-		auto height = verify_recursion(node->left);
-		if (height == 0U) {
-			return 0U;
-		}
-		if (height != verify_recursion(node->right)) {
-			BR_ASSERT(false);
-			return 0U;
-		}
-		if (node->color == Color::black) {
-			++height;
-		}
-		return height;
-	}
-
-	static void rebalance_after_insertion(NodePointer const & header, NodePointer node) {
-		node->color = Color::red;
-		for (;;) {
-			auto parent = node->parent;
-			auto const grandparent = parent->parent;
-			if (parent == header || parent->color == Color::black || grandparent == header) {
-				break;
-			}
-
-			grandparent->color = Color::red;
-			auto const grandparent_left = grandparent->left;
-			auto const parent_is_left_child = parent == grandparent_left;
-			auto const parent_brother = parent_is_left_child ? grandparent->right : grandparent_left;
-
-			if (parent_brother != nullptr && parent_brother->color == Color::red) {
-				parent->color = Color::black;
-				parent_brother->color = Color::black;
-				node = grandparent;
-			} else {
-				auto const node_is_left_child = parent->left == node;
-				if (parent_is_left_child) {
-					if (!node_is_left_child) {
-						Base::rotate_left_no_parent_fix(parent, node);
-						parent = node;
-					}
-					Base::rotate_right(header, grandparent, parent, grandparent->parent);
-				} else {
-					if (node_is_left_child) {
-						Base::rotate_right_no_parent_fix(parent, node);
-						parent = node;
-					}
-					Base::rotate_left(header, grandparent, parent, grandparent->parent);
-				}
-				parent->color = Color::black;
-				break;
-			}
-		}
-		header->parent->color = Color::black;
-	}
+	static void rebalance_after_insertion(NodePointer const & header, NodePointer node);
 
 	static void rebalance_after_erasure(NodePointer const & header, NodePointer const & target, typename Base::RebalanceData const & data) {
 		Color target_color;
@@ -169,81 +110,168 @@ protected:
 		}
 	}
 
-	static void rebalance_after_erasure_restore_invariants(NodePointer const & header, NodePointer node, NodePointer parent) {
-		for(;;) {
-			if (parent == header || (node != nullptr && node->color != Color::black)) {
-				break;
-			}
-			auto const parent_left = parent->left;
-			if (node == parent_left) {
-				auto w = parent->right;
-				if (w->color == Color::red) {
-					w->color = Color::black;
-					parent->color = Color::red;
-					Base::rotate_left(header, parent, w, parent->parent);
-					w = parent->right;
-				}
-				auto const w_left = w->left;
-				auto const w_right = w->right;
-				if ((w_left == nullptr || w_left->color == Color::black) && (w_right == nullptr || w_right->color == Color::black)) {
-					w->color = Color::red;
-					node = parent;
-					parent = parent->parent;
-				} else {
-					if (w_right == nullptr || w_right->color == Color::black) {
-						w_left->color = Color::black;
-						w->color = Color::red;
-						Base::rotate_right(header, w, w_left, w->parent);
-						w = parent->right;
-					}
-					w->color = parent->color;
-					parent->color = Color::black;
-					auto const w_right_new = w->right;
-					if (w_right_new != nullptr) {
-						w_right_new->color = Color::black;
-					}
-					Base::rotate_left(header, parent, parent->right, parent->parent);
-					break;
-				}
-			} else {
-				auto w = parent_left;
-				if (w->color == Color::red) {
-					w->color = Color::black;
-					parent->color = Color::red;
-					Base::rotate_right(header, parent, w, parent->parent);
-					w = parent->left;
-				}
-				auto const w_left = w->left;
-				auto const w_right = w->right;
-				if ((w_left == nullptr || w_left->color == Color::black) && (w_right == nullptr || w_right->color == Color::black)) {
-					w->color = Color::red;
-					node = parent;
-					parent = parent->parent;
-				} else {
-					if (w_left == nullptr || w_left->color == Color::black) {
-						w_right->color = Color::black;
-						w->color = Color::red;
-						Base::rotate_left(header, w, w_right, w->parent);
-						w = parent->left;
-					}
+	static void rebalance_after_erasure_restore_invariants(NodePointer const & header, NodePointer node, NodePointer parent);
 
-					w->color = parent->color;
-					parent->color = Color::black;
-					auto const w_left_new = w->left;
-					if (w_left_new != nullptr) {
-						w_left_new->color = Color::black;
-					}
-					Base::rotate_right(header, parent, parent->right, parent->parent);
-					break;
-				}
-			}
-		}
-		if (node != nullptr) {
-			node->color = Color::black;
-		}
-	}
+	static auto verify_recursion(NodePointer node) -> Size;
 
 }; // struct Algorithms<TNodePointer>
+
+template< typename TNodePointer >
+void Algorithms<TNodePointer>::rebalance_after_insertion(NodePointer const & header, NodePointer node) {
+	node->color = Color::red;
+	for (;;) {
+		auto parent = node->parent;
+		auto const grandparent = parent->parent;
+		if (parent == header || parent->color == Color::black || grandparent == header) {
+			break;
+		}
+
+		grandparent->color = Color::red;
+		auto const grandparent_left = grandparent->left;
+		auto const parent_is_left_child = parent == grandparent_left;
+		auto const parent_brother = parent_is_left_child ? grandparent->right : grandparent_left;
+
+		if (parent_brother != nullptr && parent_brother->color == Color::red) {
+			parent->color = Color::black;
+			parent_brother->color = Color::black;
+			node = grandparent;
+		} else {
+			auto const node_is_left_child = parent->left == node;
+			if (parent_is_left_child) {
+				if (!node_is_left_child) {
+					Base::rotate_left_no_parent_fix(parent, node);
+					parent = node;
+				}
+				Base::rotate_right(header, grandparent, parent, grandparent->parent);
+			} else {
+				if (node_is_left_child) {
+					Base::rotate_right_no_parent_fix(parent, node);
+					parent = node;
+				}
+				Base::rotate_left(header, grandparent, parent, grandparent->parent);
+			}
+			parent->color = Color::black;
+			break;
+		}
+	}
+	header->parent->color = Color::black;
+}
+
+template< typename TNodePointer >
+void Algorithms<TNodePointer>::rebalance_after_erasure_restore_invariants(NodePointer const & header, NodePointer node, NodePointer parent) {
+	for(;;) {
+		if (parent == header || (node != nullptr && node->color != Color::black)) {
+			break;
+		}
+		auto const parent_left = parent->left;
+		if (node == parent_left) {
+			auto w = parent->right;
+			if (w->color == Color::red) {
+				w->color = Color::black;
+				parent->color = Color::red;
+				Base::rotate_left(header, parent, w, parent->parent);
+				w = parent->right;
+			}
+			auto const w_left = w->left;
+			auto const w_right = w->right;
+			if ((w_left == nullptr || w_left->color == Color::black) && (w_right == nullptr || w_right->color == Color::black)) {
+				w->color = Color::red;
+				node = parent;
+				parent = parent->parent;
+			} else {
+				if (w_right == nullptr || w_right->color == Color::black) {
+					w_left->color = Color::black;
+					w->color = Color::red;
+					Base::rotate_right(header, w, w_left, w->parent);
+					w = parent->right;
+				}
+				w->color = parent->color;
+				parent->color = Color::black;
+				auto const w_right_new = w->right;
+				if (w_right_new != nullptr) {
+					w_right_new->color = Color::black;
+				}
+				Base::rotate_left(header, parent, parent->right, parent->parent);
+				break;
+			}
+		} else {
+			auto w = parent_left;
+			if (w->color == Color::red) {
+				w->color = Color::black;
+				parent->color = Color::red;
+				Base::rotate_right(header, parent, w, parent->parent);
+				w = parent->left;
+			}
+			auto const w_left = w->left;
+			auto const w_right = w->right;
+			if ((w_left == nullptr || w_left->color == Color::black) && (w_right == nullptr || w_right->color == Color::black)) {
+				w->color = Color::red;
+				node = parent;
+				parent = parent->parent;
+			} else {
+				if (w_left == nullptr || w_left->color == Color::black) {
+					w_right->color = Color::black;
+					w->color = Color::red;
+					Base::rotate_left(header, w, w_right, w->parent);
+					w = parent->left;
+				}
+
+				w->color = parent->color;
+				parent->color = Color::black;
+				auto const w_left_new = w->left;
+				if (w_left_new != nullptr) {
+					w_left_new->color = Color::black;
+				}
+				Base::rotate_right(header, parent, parent->right, parent->parent);
+				break;
+			}
+		}
+	}
+	if (node != nullptr) {
+		node->color = Color::black;
+	}
+}
+
+template< typename TNodePointer >
+auto Algorithms<TNodePointer>::verify_recursion(NodePointer node) -> Size {
+	if (node == nullptr) {
+		return 1;
+	}
+	if (node->left != nullptr && node->left->parent != node) {
+		BR_ASSERT(false);
+		return 0;
+	}
+	if (node->right != nullptr && node->right->parent != node) {
+		BR_ASSERT(false);
+		return 0;
+	}
+	if (node->left == node->right && node->left != nullptr) {
+		BR_ASSERT(false);
+		return 0;
+	}
+	if (node->color == Color::red) {
+		if (node->left != nullptr && node->left->color == Color::red) {
+			BR_ASSERT(false);
+			return 0;
+		}
+		if (node->right != nullptr && node->right->color == Color::red) {
+			BR_ASSERT(false);
+			return 0;
+		}
+	}
+	auto height = verify_recursion(node->left);
+	if (height == 0U) {
+		return 0U;
+	}
+	if (height != verify_recursion(node->right)) {
+		BR_ASSERT(false);
+		return 0U;
+	}
+	if (node->color == Color::black) {
+		++height;
+	}
+	return height;
+}
 
 } // namespace RBTree
 } // namespace Container

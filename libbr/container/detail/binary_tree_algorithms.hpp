@@ -184,7 +184,7 @@ public:
 		if (hint == header || comparator(new_node->element, hint->element)) {
 			NodePointer prev = hint;
 			if (hint == header->left || comparator((prev = prev_node(hint))->element, new_node->element)) {
-				bool link_left = header->parent != nullptr || hint->left == nullptr;
+				bool link_left = header->parent == nullptr || hint->left == nullptr;
 				data.link_left = link_left;
 				data.node = link_left ? hint : prev;
 			}
@@ -237,36 +237,24 @@ public:
 		return new_node;
 	}
 
+	template< typename TComparator >
+	static auto transfer_unique(NodePointer const & header0, NodePointer const & header1, NodePointer const & node, TComparator comparator) -> bool {
+		RebalanceData ignored;
+		return transfer_unique(header0, header1, node, comparator, ignored);
+	}
+
+	template< typename TComparator >
+	static void transfer_equal(NodePointer const & header0, NodePointer const & header1, NodePointer const & node, TComparator comparator) {
+		RebalanceData ignored;
+		return transfer_equal(header0, header1, node, comparator, ignored);
+	}
+
 	static void erase(NodePointer const & header, NodePointer const & target) {
 		RebalanceData ignored;
 		erase(header, target, ignored);
 	}
 
-	static void swap(NodePointer const & header0, NodePointer const & header1) {
-		using BR::swap;
-
-		if (header0 == header1) {
-			return;
-		}
-
-		swap(header0->parent, header1->parent);
-		swap(header0->left,   header1->left);
-		swap(header0->right,  header1->right);
-
-		auto const parent0 = header0->parent;
-		if (parent0 != nullptr) {
-			parent0->parent = header0;
-		} else {
-			header0->left = header0->right = header0;
-		}
-
-		auto const parent1 = header1->parent;
-		if (parent1 != nullptr) {
-			parent1->parent = header1;
-		} else {
-			header1->left = header1->right = header1;
-		}
-	}
+	static void swap(NodePointer const & header0, NodePointer const & header1);
 
 protected:
 	template< typename TKey, typename TComparator >
@@ -331,79 +319,28 @@ protected:
 		data.node = node;
 	}
 
-	static void insert_commit(NodePointer const & header, NodePointer const & new_node, InsertCommitData const & data) {
-		auto parent = data.node;
-		if (parent == header) {
-			header->parent = new_node;
-			header->left   = new_node;
-			header->right  = new_node;
-		} else if (data.link_left) {
-			parent->left = new_node;
-			if (parent == header->left) {
-				header->left = new_node;
-			}
-		} else {
-			parent->right = new_node;
-			if (parent == header->right) {
-				header->right = new_node;
-			}
+	static void insert_commit(NodePointer const & header, NodePointer const & new_node, InsertCommitData const & data);
+
+	template< typename TComparator >
+	static auto transfer_unique(NodePointer const & header0, NodePointer const & header1, NodePointer const & node, TComparator comparator, RebalanceData & rebalance_data) -> bool {
+		InsertCommitData commit_data;
+		bool const transferable = insert_unique_check(header0, node, comparator, commit_data).second;
+		if (transferable) {
+			erase(header1, node, rebalance_data);
+			insert_commit(header1, node, commit_data);
 		}
-		new_node->parent = parent;
-		new_node->left   = nullptr;
-		new_node->right  = nullptr;
+		return transferable;
 	}
 
-	static void erase(NodePointer const & header, NodePointer const & target, RebalanceData & data) {
-		auto const target_left = target->left, target_right = target->right;
-		NodePointer x, y = target;
-		if (target_left == nullptr) {
-			x = target_right;
-		} else if (target_right == nullptr) {
-			x = target_left;
-		} else {
-			y = find_left_most(target_right);
-			x = y->right;
-		}
-		NodePointer x_parent;
-		auto const target_parent = target->parent;
-		auto const target_is_left_child = target_parent->left == target;
-		if (y != target) {
-			y->left = target_left;
-			target_left->parent = y;
-			if (y != target_right) {
-				y->right = target_right;
-				target_right->parent = y;
-				x_parent = y->parent;
-				BR_ASSERT(x_parent->left == y);
-				if (x != nullptr) {
-					x->parent = x_parent;
-				}
-				x_parent->left = x;
-			} else {
-				x_parent = y;
-			}
-			y->parent = target_parent;
-			set_child(header, target_parent, y, target_is_left_child);
-		} else {
-			x_parent = target_parent;
-			if (x != nullptr) {
-				x->parent = target_parent;
-			}
-			set_child(header, target_parent, x, target_is_left_child);
-			if (header->left == target) {
-				BR_ASSERT(target_left == nullptr);
-				header->left = target_right != nullptr ? find_left_most(target_right) : target_parent;
-			}
-			if (header->right == target) {
-				BR_ASSERT(target_right == nullptr);
-				header->right = target_left != nullptr ? find_right_most(target_left) : target_parent;
-			}
-		}
-
-		data.x = x;
-		data.x_parent = x_parent;
-		data.y = y;
+	template< typename TComparator >
+	static void transfer_equal(NodePointer const & header0, NodePointer const & header1, NodePointer const & node, TComparator comparator, RebalanceData & rebalance_data) {
+		InsertCommitData commit_data;
+		insert_equal_upper_bound_check(header0, node, comparator, commit_data);
+		erase(header1, node, rebalance_data);
+		insert_commit(header0, node, commit_data);
 	}
+
+	static void erase(NodePointer const & header, NodePointer const & target, RebalanceData & data);
 
 	static void set_child(NodePointer const & header, NodePointer const parent, NodePointer const child, bool const at_left) noexcept {
 		if (parent == header) {
@@ -448,7 +385,110 @@ protected:
 		left->parent = parent;
 		set_child(header, parent, left, was_left);
 	}
-};
+}; // struct Algorithms<TNodePointer>
+
+template< typename TNodePointer >
+void Algorithms<TNodePointer>::swap(NodePointer const & header0, NodePointer const & header1) {
+	using BR::swap;
+
+	if (header0 == header1) {
+		return;
+	}
+
+	swap(header0->parent, header1->parent);
+	swap(header0->left,   header1->left);
+	swap(header0->right,  header1->right);
+
+	auto const parent0 = header0->parent;
+	if (parent0 != nullptr) {
+		parent0->parent = header0;
+	} else {
+		header0->left = header0->right = header0;
+	}
+
+	auto const parent1 = header1->parent;
+	if (parent1 != nullptr) {
+		parent1->parent = header1;
+	} else {
+		header1->left = header1->right = header1;
+	}
+}
+
+template< typename TNodePointer >
+void Algorithms<TNodePointer>::insert_commit(NodePointer const & header, NodePointer const & new_node, InsertCommitData const & data) {
+	auto parent = data.node;
+	if (parent == header) {
+		header->parent = new_node;
+		header->left   = new_node;
+		header->right  = new_node;
+	} else if (data.link_left) {
+		parent->left = new_node;
+		if (parent == header->left) {
+			header->left = new_node;
+		}
+	} else {
+		parent->right = new_node;
+		if (parent == header->right) {
+			header->right = new_node;
+		}
+	}
+	new_node->parent = parent;
+	new_node->left   = nullptr;
+	new_node->right  = nullptr;
+}
+
+template< typename TNodePointer >
+void Algorithms<TNodePointer>::erase(NodePointer const & header, NodePointer const & target, RebalanceData & data) {
+	auto const target_left = target->left, target_right = target->right;
+	NodePointer x, y = target;
+	if (target_left == nullptr) {
+		x = target_right;
+	} else if (target_right == nullptr) {
+		x = target_left;
+	} else {
+		y = find_left_most(target_right);
+		x = y->right;
+	}
+	NodePointer x_parent;
+	auto const target_parent = target->parent;
+	auto const target_is_left_child = target_parent->left == target;
+	if (y != target) {
+		y->left = target_left;
+		target_left->parent = y;
+		if (y != target_right) {
+			y->right = target_right;
+			target_right->parent = y;
+			x_parent = y->parent;
+			BR_ASSERT(x_parent->left == y);
+			if (x != nullptr) {
+				x->parent = x_parent;
+			}
+			x_parent->left = x;
+		} else {
+			x_parent = y;
+		}
+		y->parent = target_parent;
+		set_child(header, target_parent, y, target_is_left_child);
+	} else {
+		x_parent = target_parent;
+		if (x != nullptr) {
+			x->parent = target_parent;
+		}
+		set_child(header, target_parent, x, target_is_left_child);
+		if (header->left == target) {
+			BR_ASSERT(target_left == nullptr);
+			header->left = target_right != nullptr ? find_left_most(target_right) : target_parent;
+		}
+		if (header->right == target) {
+			BR_ASSERT(target_right == nullptr);
+			header->right = target_left != nullptr ? find_right_most(target_left) : target_parent;
+		}
+	}
+
+	data.x = x;
+	data.x_parent = x_parent;
+	data.y = y;
+}
 
 } // namespace BinaryTree
 } // namespace Container

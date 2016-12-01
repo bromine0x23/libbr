@@ -24,10 +24,10 @@ namespace BinaryTree {
 
 using BR::Pair;
 
-template< typename TBase >
-class Implement : protected TBase {
+template< template< typename, typename, typename, typename...> class TBasic, typename TElement, typename TComparator, typename TAllocator, typename... TClassArgs >
+class Implement : protected TBasic< TElement, TComparator, TAllocator, TClassArgs... > {
 private:
-	using Base = TBase;
+	using Base = TBasic< TElement, TComparator, TAllocator, TClassArgs... >;
 
 public:
 	using Element = typename Base::Element;
@@ -342,7 +342,7 @@ public:
 		return this->m_count(key);
 	}
 
-	template< typename ... TArgs >
+	template< typename... TArgs >
 	auto emplace_unique(TArgs && ... args) -> Pair< Iterator, bool > {
 		auto result = this->m_insert_unique(this->m_construct_node(forward<TArgs>(args)...));
 		return Pair< Iterator, bool >(Iterator(result.first), result.second);
@@ -396,7 +396,7 @@ public:
 		}
 	}
 
-	template< typename ... TArgs >
+	template< typename... TArgs >
 	auto emplace_equal(TArgs && ... args) -> Iterator {
 		return Iterator(this->m_insert_equal(this->m_construct_node(forward<TArgs>(args)...)));
 	}
@@ -414,7 +414,7 @@ public:
 		return Iterator(this->m_insert_equal(this->m_construct_node(forward<TValue>(value))));
 	}
 
-	template< typename ... TArgs >
+	template< typename... TArgs >
 	auto emplace_equal_hint(ConstIterator hint, TArgs && ... args) -> Iterator {
 		return Iterator(this->m_insert_equal(hint.m_pointer, this->m_construct_node(forward<TArgs>(args)...)));
 	}
@@ -438,6 +438,16 @@ public:
 		for (; first != last; ++first) {
 			this->m_insert_equal(end, this->m_construct_node(*first));
 		}
+	}
+
+	template< typename TOtherComparator >
+	void merge_unique(Implement< TBasic, TElement, TOtherComparator, TAllocator, TClassArgs... > & tree) {
+		this->m_merge_unique(tree);
+	}
+
+	template< typename TOtherComparator >
+	void merge_equal(Implement< TBasic, TElement, TOtherComparator, TAllocator, TClassArgs... > & tree) {
+		this->m_merge_equal(tree);
 	}
 
 	auto erase(ConstIterator position) -> Iterator {
@@ -488,7 +498,7 @@ protected:
 		return iterator.m_pointer;
 	}
 
-}; // Implement< TElement, TComparator, TAllocator, TBasic >
+}; // Implement< TBasic, TElement, TComparator, TAllocator, TArgs... >
 
 } // namespace BinaryTree
 } // namespace Container

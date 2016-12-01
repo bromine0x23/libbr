@@ -53,6 +53,25 @@ public:
 		return new_node;
 	}
 
+	template< typename TComparator >
+	static auto transfer_unique(NodePointer const & header0, NodePointer const & header1, NodePointer const & node, TComparator comparator) -> bool {
+		typename Base::RebalanceData data;
+		bool const transferred = Base::transfer_unique(header0, header1, node, comparator, data);
+		if (transferred) {
+			rebalance_after_erasure(header1, node, data);
+			rebalance_after_insertion(header0, node);
+		}
+		return transferred;
+	}
+
+	template< typename TComparator >
+	static void transfer_equal(NodePointer const & header0, NodePointer const & header1, NodePointer const & node, TComparator comparator) {
+		typename Base::RebalanceData data;
+		Base::transfer_equal(header0, header1, node, comparator, data);
+		rebalance_after_erasure(header1, node, data);
+		rebalance_after_insertion(header0, node);
+	}
+
 	static auto erase(NodePointer const & header, NodePointer const & target) -> NodePointer {
 		typename Base::RebalanceData data;
 		Base::erase(header, target, data);
@@ -66,77 +85,7 @@ public:
 	}
 
 protected:
-	static auto verify_recursion(NodePointer node, Size & height) -> bool  {
-		if (node == nullptr) {
-			height = 0;
-			return true;
-		}
-		Size left_height, right_height;
-		if (!verify_recursion(node->left, left_height) || !verify_recursion(node->right, right_height)) {
-			return false;
-		}
-		height = 1U + (left_height > right_height ? left_height : right_height);
-		if (left_height == right_height) {
-			if (node->balance != Balance::zero) {
-				BR_ASSERT(false);
-				return false;
-			}
-		} else if (left_height < right_height) {
-			if (right_height - left_height > 1) {
-				BR_ASSERT(false);
-				return false;
-			} else if (node->balance != Balance::positive) {
-				BR_ASSERT(false);
-				return false;
-			}
-		} else {
-			if (left_height - right_height > 1) {
-				BR_ASSERT(false);
-				return false;
-			} else if (node->balance != Balance::negative) {
-				BR_ASSERT(false);
-				return false;
-			}
-		}
-		return true;
-	}
-
-	static void rebalance_after_insertion(NodePointer const & header, NodePointer node) {
-		node->balance = Balance::zero;
-		for (auto root = header->parent; node != root; root = header->parent) {
-			auto const parent = node->parent;
-			auto const is_left_child = node == parent->left;
-
-			switch (parent->balance) {
-				case Balance::zero:
-					parent->balance = is_left_child ? Balance::negative : Balance::positive;
-					node = parent;
-					break;
-				case Balance::negative:
-					if (is_left_child) {
-						if (node->balance == Balance::positive) {
-							rotate_left_right(header, parent, node);
-						} else {
-							rotate_right(header, parent, node, parent->parent);
-						}
-					} else {
-						parent->balance = Balance::zero;
-					}
-					return;
-				case Balance::positive:
-					if (is_left_child) {
-						parent->balance = Balance::zero;
-					} else {
-						if (node->balance == Balance::negative) {
-							rotate_right_left(header, parent, node);
-						} else {
-							rotate_left(header, parent, node, parent->parent);
-						}
-					}
-					return;
-			}
-		}
-	}
+	static void rebalance_after_insertion(NodePointer const & header, NodePointer node);
 
 	static void rebalance_after_erasure(NodePointer const & header, NodePointer const & target, typename Base::RebalanceData const & data) {
 		if (data.y != target) {
@@ -145,51 +94,7 @@ protected:
 		rebalance_after_erasure_restore_invariants(header, data.x, data.x_parent);
 	}
 
-	static void rebalance_after_erasure_restore_invariants(NodePointer const & header, NodePointer x, NodePointer x_parent) {
-		for (auto root = header->parent; x != root; root = header->parent) {
-			auto const x_parent_balance = x_parent->balance;
-			auto const x_parent_left = x_parent->left;
-			auto const x_parent_right = x_parent->right;
-			switch (x_parent_balance) {
-				case Balance::zero:
-					x_parent->balance = (x == x_parent_right ? Balance::negative : Balance::positive);
-					return;
-				case Balance::negative:
-					if (x == x_parent_left) {
-						x_parent->balance = Balance::zero;
-						x = x_parent;
-					} else {
-						if (x_parent_left->balance == Balance::positive) {
-							x = rotate_left_right(header, x_parent, x_parent_left);
-						} else {
-							rotate_right(header, x_parent, x_parent_left, x_parent->parent);
-							x = x_parent_left;
-						}
-						if (x->balance == Balance::positive) {
-							return;
-						}
-					}
-					break;
-				case Balance::positive:
-					if (x == x_parent_right) {
-						x_parent->balance = Balance::zero;
-						x = x_parent;
-					} else {
-						if (x_parent_right->balance == Balance::negative) {
-							x = rotate_right_left(header, x_parent, x_parent_right);
-						} else {
-							rotate_left(header, x_parent, x_parent_right, x_parent->parent);
-							x = x_parent_right;
-						}
-						if (x->balance == Balance::negative) {
-							return;
-						}
-					}
-					break;
-			}
-			x_parent = x->parent;
-		}
-	}
+	static void rebalance_after_erasure_restore_invariants(NodePointer const & header, NodePointer x, NodePointer x_parent);
 
 	static void left_right_balancing(NodePointer const & parent, NodePointer const & l, NodePointer const & r) {
 		auto const c_balance = parent->balance;
@@ -248,7 +153,130 @@ protected:
 		}
 	}
 
+	static auto verify_recursion(NodePointer node, Size & height) -> bool;
+
 }; // struct Algorithms<TNodePointer>
+
+template< typename TNodePointer >
+void Algorithms<TNodePointer>::rebalance_after_insertion(NodePointer const & header, NodePointer node) {
+	node->balance = Balance::zero;
+	for (auto root = header->parent; node != root; root = header->parent) {
+		auto const parent = node->parent;
+		auto const is_left_child = node == parent->left;
+
+		switch (parent->balance) {
+			case Balance::zero:
+				parent->balance = is_left_child ? Balance::negative : Balance::positive;
+				node = parent;
+				break;
+			case Balance::negative:
+				if (is_left_child) {
+					if (node->balance == Balance::positive) {
+						rotate_left_right(header, parent, node);
+					} else {
+						rotate_right(header, parent, node, parent->parent);
+					}
+				} else {
+					parent->balance = Balance::zero;
+				}
+				return;
+			case Balance::positive:
+				if (is_left_child) {
+					parent->balance = Balance::zero;
+				} else {
+					if (node->balance == Balance::negative) {
+						rotate_right_left(header, parent, node);
+					} else {
+						rotate_left(header, parent, node, parent->parent);
+					}
+				}
+				return;
+		}
+	}
+}
+
+template< typename TNodePointer >
+void Algorithms<TNodePointer>::rebalance_after_erasure_restore_invariants(NodePointer const & header, NodePointer x, NodePointer x_parent) {
+	for (auto root = header->parent; x != root; root = header->parent) {
+		auto const x_parent_balance = x_parent->balance;
+		auto const x_parent_left = x_parent->left;
+		auto const x_parent_right = x_parent->right;
+		switch (x_parent_balance) {
+			case Balance::zero:
+				x_parent->balance = (x == x_parent_right ? Balance::negative : Balance::positive);
+				return;
+			case Balance::negative:
+				if (x == x_parent_left) {
+					x_parent->balance = Balance::zero;
+					x = x_parent;
+				} else {
+					if (x_parent_left->balance == Balance::positive) {
+						x = rotate_left_right(header, x_parent, x_parent_left);
+					} else {
+						rotate_right(header, x_parent, x_parent_left, x_parent->parent);
+						x = x_parent_left;
+					}
+					if (x->balance == Balance::positive) {
+						return;
+					}
+				}
+				break;
+			case Balance::positive:
+				if (x == x_parent_right) {
+					x_parent->balance = Balance::zero;
+					x = x_parent;
+				} else {
+					if (x_parent_right->balance == Balance::negative) {
+						x = rotate_right_left(header, x_parent, x_parent_right);
+					} else {
+						rotate_left(header, x_parent, x_parent_right, x_parent->parent);
+						x = x_parent_right;
+					}
+					if (x->balance == Balance::negative) {
+						return;
+					}
+				}
+				break;
+		}
+		x_parent = x->parent;
+	}
+}
+
+template< typename TNodePointer >
+auto Algorithms<TNodePointer>::verify_recursion(NodePointer node, Size & height) -> bool {
+	if (node == nullptr) {
+		height = 0;
+		return true;
+	}
+	Size left_height, right_height;
+	if (!verify_recursion(node->left, left_height) || !verify_recursion(node->right, right_height)) {
+		return false;
+	}
+	height = 1U + (left_height > right_height ? left_height : right_height);
+	if (left_height == right_height) {
+		if (node->balance != Balance::zero) {
+			BR_ASSERT(false);
+			return false;
+		}
+	} else if (left_height < right_height) {
+		if (right_height - left_height > 1) {
+			BR_ASSERT(false);
+			return false;
+		} else if (node->balance != Balance::positive) {
+			BR_ASSERT(false);
+			return false;
+		}
+	} else {
+		if (left_height - right_height > 1) {
+			BR_ASSERT(false);
+			return false;
+		} else if (node->balance != Balance::negative) {
+			BR_ASSERT(false);
+			return false;
+		}
+	}
+	return true;
+}
 
 } // namespace RBTree
 } // namespace Container

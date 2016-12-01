@@ -225,32 +225,30 @@ protected:
 	template< typename TInputIterator >
 	void m_assign_unique(TInputIterator first, TInputIterator last) {
 		if (m_size() != 0) {
-			if (m_size() != 0) {
-				NodePointer cache = m_detach();
+			NodePointer cache = m_detach();
 #if !defined(BR_NO_EXCEPTIONS)
-				try {
+			try {
 #endif
-					for (; cache != nullptr && first != last; ) {
-						cache->element = *first;
-						NodePointer next = m_detach(cache);
-						m_insert_unique(cache);
-						cache = next;
-					}
+				for (; cache != nullptr && first != last; ++first) {
+					cache->element = *first;
+					NodePointer next = m_detach(cache);
+					m_insert_unique(cache);
+					cache = next;
+				}
 #if !defined(BR_NO_EXCEPTIONS)
-				} catch (...) {
-					for (; cache->parent != nullptr; cache = cache->parent) {}
-					m_destroy_subtree(cache);
-					throw;
-				}
+			} catch (...) {
+				for (; cache->parent != nullptr; cache = cache->parent) {}
+				m_destroy_subtree(cache);
+				throw;
+			}
 #endif
-				if (cache != nullptr) {
-					for (; cache->parent != nullptr; cache = cache->parent) {}
-					m_destroy_subtree(cache);
-				}
+			if (cache != nullptr) {
+				for (; cache->parent != nullptr; cache = cache->parent) {}
+				m_destroy_subtree(cache);
 			}
-			for (; first != last; ++first) {
-				m_insert_unique(m_construct_node(*first));
-			}
+		}
+		for (; first != last; ++first) {
+			m_insert_unique(m_construct_node(*first));
 		}
 	}
 
@@ -330,7 +328,9 @@ protected:
 
 	auto m_insert_unique(NodeHolder holder) -> Pair< NodePointer, bool > {
 		auto result = m_insert_unique(holder.get());
-		holder.release();
+		if (result.second) {
+			holder.release();
+		}
 		return result;
 	}
 
@@ -348,7 +348,9 @@ protected:
 
 	auto m_insert_unique(NodePointer hint, NodeHolder holder) -> NodePointer {
 		auto result = m_insert_unique(hint, holder.get());
-		holder.release();
+		if (holder.get() == result) {
+			holder.release();
+		}
 		return result;
 	}
 
@@ -386,6 +388,33 @@ protected:
 		auto result = Algorithms::insert_equal(m_header(), hint, node, m_comparator());
 		++m_size();
 		return result;
+	}
+
+	template< typename TOtherComparator >
+	void m_merge_unique(Basic< Element, TOtherComparator, Allocator, Traits > & tree) {
+		BR_ASSERT(m_allocator() == tree.m_allocator());
+		auto begin = tree.m_begin();
+		for (auto const end = tree.m_end(); begin != end;) {
+			auto const node = begin;
+			begin = Algorithms::next_node(begin);
+			if (Algorithms::transfer_unique(m_header(), tree.m_header(), node, m_comparator())) {
+				--tree.m_size();
+				++m_size();
+			}
+		}
+	}
+
+	template< typename TOtherComparator >
+	void m_merge_equal(Basic< Element, TOtherComparator, Allocator, Traits > & tree) {
+		BR_ASSERT(m_allocator() == tree.m_allocator());
+		auto begin = tree.m_begin();
+		for (auto const end = tree.m_end(); begin != end;) {
+			auto const node = begin;
+			begin = Algorithms::next_node(begin);
+			Algorithms::transfer_equal(m_header(), tree.m_header(), node, m_comparator());
+			--tree.m_size();
+			++m_size();
+		}
 	}
 
 	auto m_erase(NodePointer pointer) -> NodePointer {

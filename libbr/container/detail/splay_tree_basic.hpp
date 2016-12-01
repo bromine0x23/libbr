@@ -14,9 +14,15 @@ namespace Detail {
 namespace Container {
 namespace SplayTree {
 
+template< typename TNodePointer >
+struct BasicNode : public BinaryTree::BasicNode<TNodePointer> {};
+
+template< typename TElement, typename TVoidPointer >
+using Node = BinaryTree::Node< TElement, TVoidPointer, BasicNode >;
+
 struct Traits {
 	template< typename TElement, typename TVoidPointer >
-	using Node = BinaryTree::Node<TElement, TVoidPointer>;
+	using Node = SplayTree::Node<TElement, TVoidPointer>;
 
 	template< typename TNodePointer >
 	using Algorithms = SplayTree::Algorithms<TNodePointer>;

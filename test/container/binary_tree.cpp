@@ -7,7 +7,9 @@
 
 using namespace BR;
 
+#if defined(BR_DEBUG)
 template class BR::BinaryTree<int>;
+#endif
 
 TEST(BinaryTree, DefaultConstruct) {
 	BinaryTree<int> tree;
@@ -53,4 +55,13 @@ TEST(BinaryTree, Erase) {
 	tree.erase(4);
 	tree.erase(2);
 	EXPECT_EQ(9, accumulate(tree.begin(), tree.end(), 0));
+}
+
+TEST(BinaryTree, Merge) {
+	BinaryTree<int> tree0{1, 3, 5, 7, 9};
+	BinaryTree<int> tree1{2, 4, 6, 8, 10};
+
+	tree0.merge_equal(tree1);
+	EXPECT_EQ(55, accumulate(tree0.begin(), tree0.end(), 0));
+	EXPECT_EQ(0, accumulate(tree1.begin(), tree1.end(), 0));
 }

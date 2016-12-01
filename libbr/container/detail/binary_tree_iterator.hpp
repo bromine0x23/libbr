@@ -11,7 +11,7 @@ namespace Detail {
 namespace Container {
 namespace BinaryTree {
 
-template< typename TBase >
+template< template< typename, typename, typename, typename...> class TBasic, typename TElement, typename TComparator, typename TAllocator, typename... TClassArgs >
 class Implement;
 
 template< typename TNodePointer >
@@ -35,7 +35,7 @@ private:
 
 	using Algorithms = BinaryTree::Algorithms<NodePointer>;
 
-	template< typename >
+	template< template< typename, typename, typename, typename...> class, typename, typename, typename, typename... >
 	friend class Implement;
 
 	template< typename >
@@ -117,7 +117,7 @@ private:
 
 	using Algorithms = BinaryTree::Algorithms<NodePointer>;
 
-	template< typename >
+	template< template< typename, typename, typename, typename...> class, typename, typename, typename, typename... >
 	friend class Implement;
 
 public:

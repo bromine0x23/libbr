@@ -34,7 +34,7 @@ inline namespace Container {
  */
 template< typename TElement, typename TComparator = Less<TElement>, typename TAllocator = Allocator<TElement> >
 class AVLTree :
-	public Detail::Container::BinaryTree::Implement< Detail::Container::AVLTree::Basic<TElement, TComparator, TAllocator> >,
+	public Detail::Container::BinaryTree::Implement< Detail::Container::AVLTree::Basic, TElement, TComparator, TAllocator >,
 	public Enumerable<
 		AVLTree< TElement, TComparator, TAllocator >,
 		typename Detail::Container::AVLTree::Basic< TElement, TComparator, TAllocator >::Iterator,
@@ -52,7 +52,7 @@ public:
 	using Allocator = TAllocator;
 
 private:
-	using Base = Detail::Container::BinaryTree::Implement< Detail::Container::AVLTree::Basic<TElement, TComparator, TAllocator> >;
+	using Base = Detail::Container::BinaryTree::Implement< Detail::Container::AVLTree::Basic, TElement, TComparator, TAllocator >;
 
 public:
 	/// @copydoc BR::Container::BinaryTree::Reference

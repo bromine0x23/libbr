@@ -57,10 +57,6 @@ protected:
 
 	~Basic() = default;
 
-	auto m_verify() -> bool {
-		return Algorithms::verify(this->m_header());
-	}
-
 }; // class Basic< TElement, TComparator, TAllocator >
 
 } // namespace RBTree
