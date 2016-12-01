@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief tree_map
+ * @brief tree_set
  * @author Bromine0x23
  * @since 1.0
  */
@@ -36,22 +36,20 @@ inline namespace Container {
 
 /**
  *
- * @tparam TKey
- * @tparam TValue
- * @tparam TKeyComparator
+ * @tparam TElement
+ * @tparam TComparator
  * @tparam TAllocator
  * @tparam TTree
  * @tparam TOtherTreeArgs
  */
 template<
-	typename TKey,
-	typename TValue,
-	typename TKeyComparator = Less<TKey>,
-	typename TAllocator = Allocator< Pair<TKey, TValue> >,
+	typename TElement,
+	typename TComparator = Less<TElement>,
+	typename TAllocator = Allocator<TElement>,
 	template< typename, typename, typename, typename ...> class TTree = RBTree,
 	typename ... TOtherTreeArgs
 >
-class TreeMap;
+class TreeSet;
 
 } // namespace Container
 
@@ -59,99 +57,7 @@ class TreeMap;
 
 namespace Detail {
 namespace Container {
-namespace TreeMap {
-
-template<typename TKey, class TPair, class TKeyComparator, bool = BooleanAnd< IsEmpty<TKeyComparator>, NotFinal<TKeyComparator> >{} >
-class Comparator : private TKeyComparator {
-private:
-	using KeyComparator = TKeyComparator;
-
-public:
-	Comparator() noexcept(HasNothrowDefaultConstructor<KeyComparator>{}): KeyComparator() {}
-
-	Comparator(KeyComparator comparator) noexcept(HasNothrowCopyConstructor<KeyComparator>{}) : KeyComparator(comparator) {}
-
-	auto key_comparator() const noexcept -> KeyComparator const & {
-		return *this;
-	}
-
-	auto operator()(TPair const & x, TPair const & y) const -> bool {
-		return key_comparator()(x.template get<0>(), y.template get<0>());
-	}
-
-	auto operator()(TKey const & x, TPair const & y) const -> bool {
-		return key_comparator()(x, y.template get<0>());
-	}
-
-	auto operator()(TPair const & x, TKey const & y) const -> bool {
-		return key_comparator()(x.template get<0>(), y);
-	}
-
-	void swap(Comparator & comparator) noexcept (IsNothrowSwappable<KeyComparator>{}) {
-		using BR::swap;
-		swap(static_cast<KeyComparator &>(*this), static_cast<KeyComparator &>(comparator));
-	}
-
-	template< typename TOtherKey >
-	auto operator () (TOtherKey const & x, TPair const & y) const -> EnableIf< IsCallable< KeyComparator, TOtherKey const &, TPair const & >, bool > {
-		return key_comparator()(x, y.template get<0>());
-	}
-
-	template< typename TOtherKey >
-	auto operator () (TPair const & x, TOtherKey const & y) const -> EnableIf< IsCallable< KeyComparator, TPair const &, TOtherKey const & >, bool > {
-		return key_comparator()(x.template get<0>(), y);
-	}
-};
-
-template<typename TKey, class TPair, class TKeyComparator >
-class Comparator< TKey, TPair, TKeyComparator, false > {
-private:
-	using KeyComparator = TKeyComparator;
-
-public:
-	Comparator() noexcept(HasNothrowDefaultConstructor<KeyComparator>{}): _comparator_() {}
-
-	Comparator(KeyComparator comparator) noexcept(HasNothrowCopyConstructor<KeyComparator>{}) : _comparator_(comparator) {}
-
-	auto key_comparator() const noexcept -> KeyComparator const & {
-		return _comparator_;
-	}
-
-	auto operator()(TPair const & x, TPair const & y) const -> bool {
-		return key_comparator()(x.template get<0>(), y.template get<0>());
-	}
-
-	auto operator()(TKey const & x, TPair const & y) const -> bool {
-		return key_comparator()(x, y.template get<0>());
-	}
-
-	auto operator()(TPair const & x, TKey const & y) const -> bool {
-		return key_comparator()(x.template get<0>(), y);
-	}
-
-	void swap(Comparator & comparator) noexcept (IsNothrowSwappable<KeyComparator>{}) {
-		using BR::swap;
-		swap(_comparator_, comparator._comparator_);
-	}
-
-	template< typename TOtherKey >
-	auto operator () (TOtherKey const & x, TPair const & y) const -> EnableIf< IsCallable< KeyComparator, TOtherKey const &, TPair const & >, bool > {
-		return key_comparator()(x, y.template get<0>());
-	}
-
-	template< typename TOtherKey >
-	auto operator () (TPair const & x, TOtherKey const & y) const -> EnableIf< IsCallable< KeyComparator, TPair const &, TOtherKey const & >, bool > {
-		return key_comparator()(x.template get<0>(), y);
-	}
-
-private:
-	KeyComparator _comparator_;
-};
-
-template<typename TKey, class TPair, class TKeyComparator, bool b >
-inline void swap(Comparator<TKey, TPair, TKeyComparator, b> & x, Comparator<TKey, TPair, TKeyComparator, b> & y) noexcept(noexcept(x.swap(y))) {
-	x.swap(y);
-}
+namespace TreeSet {
 
 template< typename TTreeIterator >
 class Iterator;
@@ -176,8 +82,8 @@ public:
 	using Difference = typename TreeIterator::Difference;
 
 private:
-	template<typename, typename, typename, typename, template< typename, typename, typename, typename ...> class, typename ...>
-	friend class BR::TreeMap;
+	template<typename, typename, typename, template< typename, typename, typename, typename ...> class, typename ...>
+	friend class BR::TreeSet;
 
 	template <typename>
 	friend class ConstIterator;
@@ -248,8 +154,8 @@ public:
 	using Difference = typename TreeIterator::Difference;
 
 private:
-	template<typename, typename, typename, typename, template< typename, typename, typename, typename ...> class, typename ...>
-	friend class BR::TreeMap;
+	template<typename, typename, typename, template< typename, typename, typename, typename ...> class, typename ...>
+	friend class BR::TreeSet;
 
 public:
 	ConstIterator() noexcept {
@@ -322,28 +228,22 @@ inline auto operator!=(Iterator<TTreeIterator> const & x, ConstIterator<TTreeIte
 	return y != x;
 }
 
-} // namespace TreeMap
+} // namespace TreeSet
 } // namespace Container
 } // namespace Detail
 
 inline namespace Container {
 
-template<typename TKey, typename TValue, typename TKeyComparator, typename TAllocator, template< typename, typename, typename, typename ...> class TTree, typename ... TOtherTreeArgs>
-class TreeMap {
+template<typename TElement, typename TComparator, typename TAllocator, template< typename, typename, typename, typename ...> class TTree, typename ... TOtherTreeArgs >
+class TreeSet {
 
 public:
-	using Key           = TKey;
-	using Value         = TValue;
-	using KeyComparator = TKeyComparator;
-	using Allocator     = TAllocator;
-	using Element       = Pair<Key, Value>;
+	using Element    = TElement;
+	using Comparator = TComparator;
+	using Allocator  = TAllocator;
 
 private:
-	using Comparator = Detail::Container::TreeMap::Comparator< Key, Element, KeyComparator >;
-
 	using Tree = TTree< Element, Comparator, Allocator, TOtherTreeArgs... >;
-
-	using AllocatorTraits = BR::AllocatorTraits<Allocator>;
 
 public:
 	using Reference = typename Tree::Reference;
@@ -358,84 +258,68 @@ public:
 
 	using Difference = typename Tree::Difference;
 
-	using Iterator = typename Detail::Container::TreeMap::Iterator< typename Tree::Iterator >;
+	using Iterator = typename Detail::Container::TreeSet::Iterator< typename Tree::Iterator >;
 
-	using ConstIterator = typename Detail::Container::TreeMap::ConstIterator< typename Tree::ConstIterator >;
+	using ConstIterator = typename Detail::Container::TreeSet::ConstIterator< typename Tree::ConstIterator >;
 
 	using ReverseIterator = BR::ReverseIterator<Iterator>;
 
 	using ConstReverseIterator = BR::ReverseIterator<ConstIterator>;
 
-	class ElementComparator : public BinaryFunctor< Element, Element > {
-		friend class TreeMap;
-
-	public:
-		auto operator()(Element const & x, Element const & y) const -> bool {
-			return _key_comparator_(x.template get<0>(), y.template get<0>());
-		}
-
-	protected:
-		ElementComparator(KeyComparator key_comparator) : _key_comparator_(key_comparator) {
-		}
-
-	protected:
-		KeyComparator _key_comparator_;
-	};
-
 public:
-	TreeMap() noexcept(HasNothrowDefaultConstructor<Tree>{}): _tree_(Comparator()) {
+	TreeSet() noexcept(HasNothrowDefaultConstructor<Tree>{}): _tree_() {
 	}
 
-	explicit TreeMap(Allocator const & allocator) : _tree_(typename Tree::Allocator(allocator)) {
+	explicit TreeSet(Allocator const & allocator) : _tree_(allocator) {
 	}
 
-	explicit TreeMap(KeyComparator const & comparator, Allocator const & allocator = Allocator{}) : _tree_(Comparator(comparator), typename Tree::Allocator(allocator)) {
+	explicit TreeSet(Comparator const & comparator, Allocator const & allocator = Allocator{}) : _tree_(comparator, allocator) {
 	}
 
-	TreeMap(TreeMap const & map) : _tree_(map._tree_) {
-		insert(map.begin(), map.end());
+	TreeSet(TreeSet const & set) : _tree_(set._tree_) {
+		insert(set.begin(), set.end());
 	}
 
-	TreeMap(TreeMap const & map, Allocator const & allocator) : _tree_(map._tree_, typename Tree::Allocator(allocator)) {
+	TreeSet(TreeSet const & set, Allocator const & allocator) : _tree_(set._tree_, allocator) {
 	}
 
-	TreeMap(TreeMap && map) noexcept(HasNothrowMoveConstructor<Tree>{}): _tree_(move(map._tree_)) {
+	TreeSet(TreeSet && set) noexcept(HasNothrowMoveConstructor<Tree>{}): _tree_(move(set._tree_)) {
 	}
 
-	TreeMap(TreeMap && map, Allocator const & allocator) : _tree_(move(map._tree_), typename Tree::Allocator(allocator)) {
+	TreeSet(TreeSet && set, Allocator const & allocator) : _tree_(move(set._tree_), allocator) {
 	}
 
 	template< typename TIterator >
-	TreeMap(TIterator first, TIterator last, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : _tree_(typename Tree::Allocator(allocator)) {
+	TreeSet(TIterator first, TIterator last, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : _tree_(allocator) {
 		insert(first, last);
 	}
 
 	template< typename TIterator >
-	TreeMap(TIterator first, TIterator last, KeyComparator const & comparator, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : _tree_(Comparator(comparator), typename Tree::Allocator(allocator)) {
+	TreeSet(TIterator first, TIterator last, Comparator const & comparator, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : _tree_(comparator, allocator) {
 		insert(first, last);
 	}
 
-	TreeMap(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : _tree_(typename Tree::Allocator(allocator)) {
+	TreeSet(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : _tree_(allocator) {
 		insert(list.begin(), list.end());
 	}
 
-	TreeMap(InitializerList<Element> list, KeyComparator const & comparator, Allocator const & allocator = Allocator{}) : _tree_(Comparator(comparator), typename Tree::Allocator(allocator)) {
+	TreeSet(InitializerList<Element> list, Comparator const & comparator, Allocator const & allocator = Allocator{}) : _tree_(comparator, allocator) {
 		insert(list.begin(), list.end());
 	}
 
-	~TreeMap() = default;
+	~TreeSet() = default;
 
-	auto operator=(TreeMap const & map) -> TreeMap & {
-		_tree_ = map._tree_;
+	auto operator=(TreeSet const & set) -> TreeSet & {
+		_tree_ = set._tree_;
 		return *this;
 	}
 
-	auto operator=(TreeMap && map) noexcept(HasNothrowMoveAssignment<Tree>{}) -> TreeMap & {
-		_tree_ = move(map._tree_);
+	auto operator=(TreeSet && set) noexcept(HasNothrowMoveAssignment<Tree>{}) -> TreeSet & {
+		_tree_ = move(set._tree_);
 		return *this;
 	}
 
-	auto operator=(InitializerList<Element> list) -> TreeMap & {
+	auto operator=(InitializerList<Element> list) -> TreeSet & {
 		_tree_.assign_unique(list.begin(), list.end());
 		return *this;
 	}
@@ -444,12 +328,8 @@ public:
 		return _tree_.allocator();
 	}
 
-	auto element_comparator() const noexcept -> ElementComparator {
-		return ElementComparator(_tree_.comparator().key_comparator());
-	}
-
-	auto key_comparator() const noexcept -> KeyComparator {
-		return _tree_.comparator().key_comparator();
+	auto comparator() const noexcept -> Comparator {
+		return _tree_.comparator();
 	}
 
 	auto begin() noexcept -> Iterator {
@@ -512,60 +392,32 @@ public:
 		return _tree_.max_size();
 	}
 
-	auto operator[](Key const & key) -> Value & {
-		return _tree_.emplace_unique(piecewise_construct_tag, forward_as_tuple(key), forward_as_tuple()).template get<0>()->template get<1>();
-	}
-
-	auto operator[](Key && key) -> Value & {
-		return _tree_.emplace_unique(piecewise_construct_tag, forward_as_tuple(key), forward_as_tuple()).template get<0>()->template get<1>();
-	}
-
-	auto at(Key const & key) -> Value & {
-		auto result = _tree_.find(key);
-#if !defined(BR_NO_EXCEPTIONS)
-		if (result == _tree_.end()) {
-			throw IndexException("TreeMap::at: Key not found.");
-		}
-#endif
-		return result->template get<1>();
-	}
-
-	auto at(Key const & key) const -> Value const & {
-		auto result = _tree_.find(key);
-#if !defined(BR_NO_EXCEPTIONS)
-		if (result == _tree_.end()) {
-			throw IndexException("TreeMap::at: Key not found.");
-		}
-#endif
-		return result->template get<1>();
-	}
-
-	auto operator==(TreeMap const & y) const -> bool {
+	auto operator==(TreeSet const & y) const -> bool {
 		return _tree_.operator==(y._tree_);
 	}
 
-	auto operator!=(TreeMap const & y) const -> bool {
+	auto operator!=(TreeSet const & y) const -> bool {
 		return !operator==(y);
 	}
 
-	auto operator<(TreeMap const & y) const -> bool {
+	auto operator<(TreeSet const & y) const -> bool {
 		return _tree_.operator<(y._tree_);
 	}
 
-	auto operator>(TreeMap const & y) const -> bool {
+	auto operator>(TreeSet const & y) const -> bool {
 		return y.operator<(*this);
 	}
 
-	auto operator<=(TreeMap const & y) const -> bool {
+	auto operator<=(TreeSet const & y) const -> bool {
 		return !y.operator<(*this);
 	}
 
-	auto operator>=(TreeMap const & y) const -> bool {
+	auto operator>=(TreeSet const & y) const -> bool {
 		return !operator<(y);
 	}
 
-	auto find(Key const & key) -> Iterator {
-		return Iterator(_tree_.find(key));
+	auto find(Element const & element) -> Iterator {
+		return Iterator(_tree_.find(element));
 	}
 
 	template< typename TOtherKey >
@@ -573,8 +425,8 @@ public:
 		return Iterator(_tree_.find(key));
 	}
 
-	auto find(Key const & key) const -> ConstIterator {
-		return ConstIterator(_tree_.find(key));
+	auto find(Element const & element) const -> ConstIterator {
+		return ConstIterator(_tree_.find(element));
 	}
 
 	template< typename TOtherKey >
@@ -582,8 +434,8 @@ public:
 		return ConstIterator(_tree_.find(key));
 	}
 
-	auto lower_bound(Key const & key) -> Iterator {
-		return Iterator(_tree_.lower_bound(key));
+	auto lower_bound(Element const & element) -> Iterator {
+		return Iterator(_tree_.lower_bound(element));
 	}
 
 	template< typename TOtherKey >
@@ -591,8 +443,8 @@ public:
 		return Iterator(_tree_.lower_bound(key));
 	}
 
-	auto lower_bound(Key const & key) const -> ConstIterator {
-		return ConstIterator(_tree_.lower_bound(key));
+	auto lower_bound(Element const & element) const -> ConstIterator {
+		return ConstIterator(_tree_.lower_bound(element));
 	}
 
 	template< typename TOtherKey >
@@ -600,8 +452,8 @@ public:
 		return ConstIterator(_tree_.lower_bound(key));
 	}
 
-	auto upper_bound(Key const & key) -> Iterator {
-		return Iterator(_tree_.upper_bound(key));
+	auto upper_bound(Element const & element) -> Iterator {
+		return Iterator(_tree_.upper_bound(element));
 	}
 
 	template< typename TOtherKey >
@@ -609,8 +461,8 @@ public:
 		return Iterator(_tree_.upper_bound(key));
 	}
 
-	auto upper_bound(Key const & key) const -> ConstIterator {
-		return ConstIterator(_tree_.upper_bound(key));
+	auto upper_bound(Element const & element) const -> ConstIterator {
+		return ConstIterator(_tree_.upper_bound(element));
 	}
 
 	template< typename TOtherKey >
@@ -618,8 +470,8 @@ public:
 		return ConstIterator(_tree_.upper_bound(key));
 	}
 
-	auto equal_range(Key const & key) -> Pair< Iterator, Iterator > {
-		auto pair = _tree_.equal_range(key);
+	auto equal_range(Element const & element) -> Pair< Iterator, Iterator > {
+		auto pair = _tree_.equal_range(element);
 		return Pair< Iterator, Iterator >(pair.template get<0>(), pair.template get<1>());
 	}
 
@@ -629,8 +481,8 @@ public:
 		return Pair< Iterator, Iterator >(pair.template get<0>(), pair.template get<1>());
 	}
 
-	auto equal_range(Key const & key) const -> Pair< ConstIterator, ConstIterator > {
-		auto pair = _tree_.equal_range(key);
+	auto equal_range(Element const & element) const -> Pair< ConstIterator, ConstIterator > {
+		auto pair = _tree_.equal_range(element);
 		return Pair< ConstIterator, ConstIterator >(pair.template get<0>(), pair.template get<1>());
 	}
 
@@ -640,7 +492,7 @@ public:
 		return Pair< ConstIterator, ConstIterator >(pair.template get<0>(), pair.template get<1>());
 	}
 
-	auto bounded_range(Key const & lower_key, Key const & upper_key, bool left_closed = true, bool right_closed = true) -> Pair< Iterator, Iterator > {
+	auto bounded_range(Element const & lower_key, Element const & upper_key, bool left_closed = true, bool right_closed = true) -> Pair< Iterator, Iterator > {
 		auto pair = _tree_.bounded_range(lower_key, upper_key, left_closed, right_closed);
 		return Pair< Iterator, Iterator >(pair.template get<0>(), pair.template get<1>());
 	}
@@ -651,7 +503,7 @@ public:
 		return Pair< Iterator, Iterator >(pair.template get<0>(), pair.template get<1>());
 	}
 
-	auto bounded_range(Key const & lower_key, Key const & upper_key, bool left_closed = true, bool right_closed = true) const -> Pair< ConstIterator, ConstIterator > {
+	auto bounded_range(Element const & lower_key, Element const & upper_key, bool left_closed = true, bool right_closed = true) const -> Pair< ConstIterator, ConstIterator > {
 		auto pair = _tree_.bounded_range(lower_key, upper_key, left_closed, right_closed);
 		return Pair< ConstIterator, ConstIterator >(pair.template get<0>(), pair.template get<1>());
 	}
@@ -662,13 +514,13 @@ public:
 		return Pair< ConstIterator, ConstIterator >(pair.template get<0>(), pair.template get<1>());
 	}
 
-	auto count(Key const & key) const -> Size {
-		return _tree_.count(key);
+	auto exist(Element const & element) const -> bool {
+		return _tree_.find(element) != _tree_.cend();
 	}
 
 	template< typename TOtherKey >
-	auto count(TOtherKey const & key) const -> Size {
-		return _tree_.count(key);
+	auto exist(TOtherKey const & key) const -> bool {
+		return _tree_.find(key) != _tree_.cend();
 	}
 
 	template< typename ... TArgs >
@@ -716,9 +568,9 @@ public:
 		_tree_.insert_unique(first, last);
 	}
 
-	template< typename TOtherKeyComparator >
-	void merge(TreeMap<TKey, TValue, TOtherKeyComparator, TAllocator, TTree, TOtherTreeArgs...> & map) {
-		_tree_.merge_unique(map._tree_);
+	template< typename TOtherComparator >
+	void merge(TreeSet<TElement, TOtherComparator, TAllocator, TTree, TOtherTreeArgs...> & set) {
+		_tree_.merge_unique(set._tree_);
 	}
 
 	auto erase(ConstIterator position) -> Iterator {
@@ -729,23 +581,24 @@ public:
 		return Iterator(_tree_.erase(first._iterator_, last._iterator_));
 	}
 
-	auto erase(Key const & key) -> Size {
-		return _tree_.erase(key);
+	auto erase(Element const & element) -> Size {
+		return _tree_.erase(element);
 	}
 
 	void clear() noexcept {
 		_tree_.clear();
 	}
 
-	void swap(TreeMap & map) noexcept(IsNothrowSwappable<Tree>{}) {
-		_tree_.swap(map._tree_);
+	void swap(TreeSet & set) noexcept(IsNothrowSwappable<Tree>{}) {
+		_tree_.swap(set._tree_);
 	}
 
 private:
 	Tree _tree_;
 
-}; // class TreeMap<TKey, TValue, TKeyComparator, TAllocator, TTree, TOtherTreeArgs...>
+}; // class TreeSet<TElement, TComparator, TAllocator, TTree, TOtherTreeArgs...s>
 
 } // namespace Container
 
 } // namespace BR
+
