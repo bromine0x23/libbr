@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief TreeMap
+ * @brief TreeMultiMap
  * @author Bromine0x23
  * @since 1.0
  */
@@ -10,7 +10,6 @@
 #include <libbr/container/initializer_list.hpp>
 #include <libbr/container/pair.hpp>
 #include <libbr/container/rb_tree.hpp>
-#include <libbr/enumerate/enumerable.hpp>
 #include <libbr/exception/index_exception.hpp>
 #include <libbr/functional/less.hpp>
 #include <libbr/iterator/reverse_iterator.hpp>
@@ -52,7 +51,7 @@ template<
 	template< typename, typename, typename, typename ...> class TTree = RBTree,
 	typename ... TOtherTreeArgs
 >
-class TreeMap;
+class TreeMultiMap;
 
 } // namespace Container
 
@@ -60,7 +59,7 @@ class TreeMap;
 
 namespace Detail {
 namespace Container {
-namespace TreeMap {
+namespace TreeMultiMap {
 
 template<typename TKey, class TPair, class TKeyComparator, bool = BooleanAnd< IsEmpty<TKeyComparator>, NotFinal<TKeyComparator> >{} >
 class Comparator : private TKeyComparator {
@@ -178,7 +177,7 @@ public:
 
 private:
 	template<typename, typename, typename, typename, template< typename, typename, typename, typename ...> class, typename ...>
-	friend class BR::TreeMap;
+	friend class BR::TreeMultiMap;
 
 	template <typename>
 	friend class ConstIterator;
@@ -250,7 +249,7 @@ public:
 
 private:
 	template<typename, typename, typename, typename, template< typename, typename, typename, typename ...> class, typename ...>
-	friend class BR::TreeMap;
+	friend class BR::TreeMultiMap;
 
 public:
 	ConstIterator() noexcept {
@@ -323,21 +322,21 @@ inline auto operator!=(Iterator<TTreeIterator> const & x, ConstIterator<TTreeIte
 	return y != x;
 }
 
-} // namespace TreeMap
+} // namespace TreeMultiMap
 } // namespace Container
 } // namespace Detail
 
 inline namespace Container {
 
 template<typename TKey, typename TValue, typename TKeyComparator, typename TAllocator, template< typename, typename, typename, typename ...> class TTree, typename ... TOtherTreeArgs>
-class TreeMap :
+class TreeMultiMap :
 	public Enumerable<
-		TreeMap< TKey, TValue, TKeyComparator, TAllocator, TTree, TOtherTreeArgs... >,
-		typename Detail::Container::TreeMap::Iterator<
-			typename TTree< Pair<TKey, TValue>, Detail::Container::TreeMap::Comparator< TKey, Pair<TKey, TValue>, TKeyComparator >, TAllocator, TOtherTreeArgs... >::Iterator
+		TreeMultiMap< TKey, TValue, TKeyComparator, TAllocator, TTree, TOtherTreeArgs... >,
+		typename Detail::Container::TreeMultiMap::Iterator<
+			typename TTree< Pair<TKey, TValue>, Detail::Container::TreeMultiMap::Comparator< TKey, Pair<TKey, TValue>, TKeyComparator >, TAllocator, TOtherTreeArgs... >::Iterator
 		>,
-		typename Detail::Container::TreeMap::ConstIterator<
-			typename TTree< Pair<TKey, TValue>, Detail::Container::TreeMap::Comparator< TKey, Pair<TKey, TValue>, TKeyComparator >, TAllocator, TOtherTreeArgs... >::ConstIterator
+		typename Detail::Container::TreeMultiMap::ConstIterator<
+			typename TTree< Pair<TKey, TValue>, Detail::Container::TreeMultiMap::Comparator< TKey, Pair<TKey, TValue>, TKeyComparator >, TAllocator, TOtherTreeArgs... >::ConstIterator
 		>
 	> {
 
@@ -349,7 +348,7 @@ public:
 	using Element       = Pair<Key, Value>;
 
 private:
-	using Comparator = Detail::Container::TreeMap::Comparator< Key, Element, KeyComparator >;
+	using Comparator = Detail::Container::TreeMultiMap::Comparator< Key, Element, KeyComparator >;
 
 	using Tree = TTree< Element, Comparator, Allocator, TOtherTreeArgs... >;
 
@@ -368,16 +367,16 @@ public:
 
 	using Difference = typename Tree::Difference;
 
-	using Iterator = typename Detail::Container::TreeMap::Iterator< typename Tree::Iterator >;
+	using Iterator = typename Detail::Container::TreeMultiMap::Iterator< typename Tree::Iterator >;
 
-	using ConstIterator = typename Detail::Container::TreeMap::ConstIterator< typename Tree::ConstIterator >;
+	using ConstIterator = typename Detail::Container::TreeMultiMap::ConstIterator< typename Tree::ConstIterator >;
 
 	using ReverseIterator = BR::ReverseIterator<Iterator>;
 
 	using ConstReverseIterator = BR::ReverseIterator<ConstIterator>;
 
 	class ElementComparator : public BinaryFunctor< Element, Element > {
-		friend class TreeMap;
+		friend class TreeMultiMap;
 
 	public:
 		auto operator()(Element const & x, Element const & y) const -> bool {
@@ -393,60 +392,60 @@ public:
 	};
 
 public:
-	TreeMap() noexcept(HasNothrowDefaultConstructor<Tree>{}): _tree_(Comparator()) {
+	TreeMultiMap() noexcept(HasNothrowDefaultConstructor<Tree>{}): _tree_(Comparator()) {
 	}
 
-	explicit TreeMap(Allocator const & allocator) : _tree_(typename Tree::Allocator(allocator)) {
+	explicit TreeMultiMap(Allocator const & allocator) : _tree_(typename Tree::Allocator(allocator)) {
 	}
 
-	explicit TreeMap(KeyComparator const & comparator, Allocator const & allocator = Allocator{}) : _tree_(Comparator(comparator), typename Tree::Allocator(allocator)) {
+	explicit TreeMultiMap(KeyComparator const & comparator, Allocator const & allocator = Allocator{}) : _tree_(Comparator(comparator), typename Tree::Allocator(allocator)) {
 	}
 
-	TreeMap(TreeMap const & map) : _tree_(map._tree_) {
+	TreeMultiMap(TreeMultiMap const & map) : _tree_(map._tree_) {
 		insert(map.begin(), map.end());
 	}
 
-	TreeMap(TreeMap const & map, Allocator const & allocator) : _tree_(map._tree_, typename Tree::Allocator(allocator)) {
+	TreeMultiMap(TreeMultiMap const & map, Allocator const & allocator) : _tree_(map._tree_, typename Tree::Allocator(allocator)) {
 	}
 
-	TreeMap(TreeMap && map) noexcept(HasNothrowMoveConstructor<Tree>{}): _tree_(move(map._tree_)) {
+	TreeMultiMap(TreeMultiMap && map) noexcept(HasNothrowMoveConstructor<Tree>{}): _tree_(move(map._tree_)) {
 	}
 
-	TreeMap(TreeMap && map, Allocator const & allocator) : _tree_(move(map._tree_), typename Tree::Allocator(allocator)) {
+	TreeMultiMap(TreeMultiMap && map, Allocator const & allocator) : _tree_(move(map._tree_), typename Tree::Allocator(allocator)) {
 	}
 
 	template< typename TIterator >
-	TreeMap(TIterator first, TIterator last, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : _tree_(typename Tree::Allocator(allocator)) {
+	TreeMultiMap(TIterator first, TIterator last, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : _tree_(typename Tree::Allocator(allocator)) {
 		insert(first, last);
 	}
 
 	template< typename TIterator >
-	TreeMap(TIterator first, TIterator last, KeyComparator const & comparator, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : _tree_(Comparator(comparator), typename Tree::Allocator(allocator)) {
+	TreeMultiMap(TIterator first, TIterator last, KeyComparator const & comparator, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : _tree_(Comparator(comparator), typename Tree::Allocator(allocator)) {
 		insert(first, last);
 	}
 
-	TreeMap(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : _tree_(typename Tree::Allocator(allocator)) {
+	TreeMultiMap(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : _tree_(typename Tree::Allocator(allocator)) {
 		insert(list.begin(), list.end());
 	}
 
-	TreeMap(InitializerList<Element> list, KeyComparator const & comparator, Allocator const & allocator = Allocator{}) : _tree_(Comparator(comparator), typename Tree::Allocator(allocator)) {
+	TreeMultiMap(InitializerList<Element> list, KeyComparator const & comparator, Allocator const & allocator = Allocator{}) : _tree_(Comparator(comparator), typename Tree::Allocator(allocator)) {
 		insert(list.begin(), list.end());
 	}
 
-	~TreeMap() = default;
+	~TreeMultiMap() = default;
 
-	auto operator=(TreeMap const & map) -> TreeMap & {
+	auto operator=(TreeMultiMap const & map) -> TreeMultiMap & {
 		_tree_ = map._tree_;
 		return *this;
 	}
 
-	auto operator=(TreeMap && map) noexcept(HasNothrowMoveAssignment<Tree>{}) -> TreeMap & {
+	auto operator=(TreeMultiMap && map) noexcept(HasNothrowMoveAssignment<Tree>{}) -> TreeMultiMap & {
 		_tree_ = move(map._tree_);
 		return *this;
 	}
 
-	auto operator=(InitializerList<Element> list) -> TreeMap & {
-		_tree_.assign_unique(list.begin(), list.end());
+	auto operator=(InitializerList<Element> list) -> TreeMultiMap & {
+		_tree_.assign_equal(list.begin(), list.end());
 		return *this;
 	}
 
@@ -522,55 +521,27 @@ public:
 		return _tree_.max_size();
 	}
 
-	auto operator[](Key const & key) -> Value & {
-		return _tree_.emplace_unique(piecewise_construct_tag, forward_as_tuple(key), forward_as_tuple()).template get<0>()->template get<1>();
-	}
-
-	auto operator[](Key && key) -> Value & {
-		return _tree_.emplace_unique(piecewise_construct_tag, forward_as_tuple(key), forward_as_tuple()).template get<0>()->template get<1>();
-	}
-
-	auto at(Key const & key) -> Value & {
-		auto result = _tree_.find(key);
-#if !defined(BR_NO_EXCEPTIONS)
-		if (result == _tree_.end()) {
-			throw IndexException("TreeMap::at: Key not found.");
-		}
-#endif
-		return result->template get<1>();
-	}
-
-	auto at(Key const & key) const -> Value const & {
-		auto result = _tree_.find(key);
-#if !defined(BR_NO_EXCEPTIONS)
-		if (result == _tree_.end()) {
-			throw IndexException("TreeMap::at: Key not found.");
-		}
-#endif
-		return result->template get<1>();
-	}
-
-	auto operator==(TreeMap const & y) const -> bool {
+	auto operator==(TreeMultiMap const & y) const -> bool {
 		return _tree_.operator==(y._tree_);
 	}
 
-	auto operator!=(TreeMap const & y) const -> bool {
+	auto operator!=(TreeMultiMap const & y) const -> bool {
 		return !operator==(y);
 	}
 
-	auto operator<(TreeMap const & y) const -> bool {
+	auto operator<(TreeMultiMap const & y) const -> bool {
 		return _tree_.operator<(y._tree_);
 	}
 
-	auto operator>(TreeMap const & y) const -> bool {
+	auto operator>(TreeMultiMap const & y) const -> bool {
 		return y.operator<(*this);
 	}
 
-	auto operator<=(TreeMap const & y) const -> bool {
+	auto operator<=(TreeMultiMap const & y) const -> bool {
 		return !y.operator<(*this);
 	}
 
-	auto operator>=(TreeMap const & y) const -> bool {
+	auto operator>=(TreeMultiMap const & y) const -> bool {
 		return !operator<(y);
 	}
 
@@ -682,53 +653,49 @@ public:
 	}
 
 	template< typename ... TArgs >
-	auto emplace(TArgs &&... args) -> Pair< Iterator, bool > {
-		auto pair = _tree_.emplace_unique(forward<TArgs>(args)...);
-		return Pair< Iterator, bool >(pair.template get<0>(), pair.template get<1>());
+	auto emplace(TArgs &&... args) -> Iterator {
+		return Iterator(_tree_.emplace_equal(forward<TArgs>(args)...));
 	}
 
-	auto insert(Element const & element) -> Pair< Iterator, bool > {
-		auto pair = _tree_.insert_unique(element);
-		return Pair< Iterator, bool >(pair.template get<0>(), pair.template get<1>());
+	auto insert(Element const & element) -> Iterator {
+		return Iterator(_tree_.insert_equal(element));
 	}
 
-	auto insert(Element && element) -> Pair< Iterator, bool > {
-		auto pair = _tree_.insert_unique(move(element));
-		return Pair< Iterator, bool >(pair.template get<0>(), pair.template get<1>());
+	auto insert(Element && element) -> Iterator {
+		return Iterator(_tree_.insert_equal(move(element)));
 	}
 
 	template< typename TOtherElement >
-	auto insert(TOtherElement && element) -> EnableIf< IsConstructible<Element, TOtherElement>, Pair< Iterator, bool > > {
-		auto pair = _tree_.insert_unique(forward<TOtherElement>(element));
-		return Pair< Iterator, bool >(pair.template get<0>(), pair.template get<1>());
+	auto insert(TOtherElement && element) -> EnableIf< IsConstructible<Element, TOtherElement>, Iterator > {
+		return Iterator(_tree_.insert_equal(forward<TOtherElement>(element)));
 	}
 
 	template< typename ... TArgs >
 	auto emplace_hint(ConstIterator hint, TArgs &&... args) -> Iterator {
-		return Iterator(_tree_.emplace_unique_hint(hint._iterator_, forward<TArgs>(args)...));
+		return Iterator(_tree_.emplace_equal_hint(hint._iterator_, forward<TArgs>(args)...));
 	}
 
 	auto insert(ConstIterator hint, Element const & element) -> Iterator {
-		return Iterator(_tree_.insert_unique(hint._iterator_, element));
+		return Iterator(_tree_.insert_equal(hint._iterator_, element));
 	}
 
 	auto insert(ConstIterator hint, Element && element) -> Iterator {
-		return Iterator(_tree_.insert_unique(hint._iterator_, move(element)));
+		return Iterator(_tree_.insert_equal(hint._iterator_, move(element)));
 	}
 
 	template< typename TOtherElement >
 	auto insert(ConstIterator hint, TOtherElement && element) -> EnableIf< IsConstructible<Element, TOtherElement>, Iterator > {
-		return Iterator(_tree_.insert_unique(hint._iterator_, forward<TOtherElement>(element)));
+		return Iterator(_tree_.insert_equal(hint._iterator_, forward<TOtherElement>(element)));
 	}
 
 	template< typename TIterator >
 	auto insert(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator> > {
-		_tree_.insert_unique(first, last);
+		_tree_.insert_equal(first, last);
 	}
 
 	template< typename TOtherKeyComparator >
-	void merge(TreeMap<TKey, TValue, TOtherKeyComparator, TAllocator, TTree, TOtherTreeArgs...> & map) {
-		_tree_.merge_unique(map._tree_);
+	void merge(TreeMultiMap<TKey, TValue, TOtherKeyComparator, TAllocator, TTree, TOtherTreeArgs...> & map) {
+		_tree_.merge_equal(map._tree_);
 	}
 
 	auto erase(ConstIterator position) -> Iterator {
@@ -747,14 +714,14 @@ public:
 		_tree_.clear();
 	}
 
-	void swap(TreeMap & map) noexcept(IsNothrowSwappable<Tree>{}) {
+	void swap(TreeMultiMap & map) noexcept(IsNothrowSwappable<Tree>{}) {
 		_tree_.swap(map._tree_);
 	}
 
 private:
 	Tree _tree_;
 
-}; // class TreeMap<TKey, TValue, TKeyComparator, TAllocator, TTree, TOtherTreeArgs...>
+}; // class TreeMultiMap<TKey, TValue, TKeyComparator, TAllocator, TTree, TOtherTreeArgs...>
 
 } // namespace Container
 

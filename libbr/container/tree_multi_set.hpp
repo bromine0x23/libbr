@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief TreeSet
+ * @brief TreeMultiSet
  * @author Bromine0x23
  * @since 1.0
  */
@@ -50,7 +50,7 @@ template<
 	template< typename, typename, typename, typename ...> class TTree = RBTree,
 	typename ... TOtherTreeArgs
 >
-class TreeSet;
+class TreeMultiSet;
 
 } // namespace Container
 
@@ -58,7 +58,7 @@ class TreeSet;
 
 namespace Detail {
 namespace Container {
-namespace TreeSet {
+namespace TreeMultiSet {
 
 template< typename TTreeIterator >
 class Iterator;
@@ -84,7 +84,7 @@ public:
 
 private:
 	template<typename, typename, typename, template< typename, typename, typename, typename ...> class, typename ...>
-	friend class BR::TreeSet;
+	friend class BR::TreeMultiSet;
 
 	template <typename>
 	friend class ConstIterator;
@@ -156,7 +156,7 @@ public:
 
 private:
 	template<typename, typename, typename, template< typename, typename, typename, typename ...> class, typename ...>
-	friend class BR::TreeSet;
+	friend class BR::TreeMultiSet;
 
 public:
 	ConstIterator() noexcept {
@@ -229,20 +229,20 @@ inline auto operator!=(Iterator<TTreeIterator> const & x, ConstIterator<TTreeIte
 	return y != x;
 }
 
-} // namespace TreeSet
+} // namespace TreeMultiSet
 } // namespace Container
 } // namespace Detail
 
 inline namespace Container {
 
 template<typename TElement, typename TComparator, typename TAllocator, template< typename, typename, typename, typename ...> class TTree, typename ... TOtherTreeArgs >
-class TreeSet:
+class TreeMultiSet:
 	public Enumerable<
-		TreeSet< TElement, TComparator, TAllocator, TTree, TOtherTreeArgs... >,
-		typename Detail::Container::TreeSet::Iterator<
+		TreeMultiSet< TElement, TComparator, TAllocator, TTree, TOtherTreeArgs... >,
+		typename Detail::Container::TreeMultiSet::Iterator<
 			typename TTree< TElement, TComparator, TAllocator, TOtherTreeArgs... >::Iterator
 		>,
-		typename Detail::Container::TreeSet::ConstIterator<
+		typename Detail::Container::TreeMultiSet::ConstIterator<
 			typename TTree< TElement, TComparator, TAllocator, TOtherTreeArgs... >::ConstIterator
 		>
 	> {
@@ -268,69 +268,69 @@ public:
 
 	using Difference = typename Tree::Difference;
 
-	using Iterator = typename Detail::Container::TreeSet::Iterator< typename Tree::Iterator >;
+	using Iterator = typename Detail::Container::TreeMultiSet::Iterator< typename Tree::Iterator >;
 
-	using ConstIterator = typename Detail::Container::TreeSet::ConstIterator< typename Tree::ConstIterator >;
+	using ConstIterator = typename Detail::Container::TreeMultiSet::ConstIterator< typename Tree::ConstIterator >;
 
 	using ReverseIterator = BR::ReverseIterator<Iterator>;
 
 	using ConstReverseIterator = BR::ReverseIterator<ConstIterator>;
 
 public:
-	TreeSet() noexcept(HasNothrowDefaultConstructor<Tree>{}): _tree_() {
+	TreeMultiSet() noexcept(HasNothrowDefaultConstructor<Tree>{}): _tree_() {
 	}
 
-	explicit TreeSet(Allocator const & allocator) : _tree_(allocator) {
+	explicit TreeMultiSet(Allocator const & allocator) : _tree_(allocator) {
 	}
 
-	explicit TreeSet(Comparator const & comparator, Allocator const & allocator = Allocator{}) : _tree_(comparator, allocator) {
+	explicit TreeMultiSet(Comparator const & comparator, Allocator const & allocator = Allocator{}) : _tree_(comparator, allocator) {
 	}
 
-	TreeSet(TreeSet const & set) : _tree_(set._tree_) {
+	TreeMultiSet(TreeMultiSet const & set) : _tree_(set._tree_) {
 		insert(set.begin(), set.end());
 	}
 
-	TreeSet(TreeSet const & set, Allocator const & allocator) : _tree_(set._tree_, allocator) {
+	TreeMultiSet(TreeMultiSet const & set, Allocator const & allocator) : _tree_(set._tree_, allocator) {
 	}
 
-	TreeSet(TreeSet && set) noexcept(HasNothrowMoveConstructor<Tree>{}): _tree_(move(set._tree_)) {
+	TreeMultiSet(TreeMultiSet && set) noexcept(HasNothrowMoveConstructor<Tree>{}): _tree_(move(set._tree_)) {
 	}
 
-	TreeSet(TreeSet && set, Allocator const & allocator) : _tree_(move(set._tree_), allocator) {
+	TreeMultiSet(TreeMultiSet && set, Allocator const & allocator) : _tree_(move(set._tree_), allocator) {
 	}
 
 	template< typename TIterator >
-	TreeSet(TIterator first, TIterator last, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : _tree_(allocator) {
+	TreeMultiSet(TIterator first, TIterator last, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : _tree_(allocator) {
 		insert(first, last);
 	}
 
 	template< typename TIterator >
-	TreeSet(TIterator first, TIterator last, Comparator const & comparator, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : _tree_(comparator, allocator) {
+	TreeMultiSet(TIterator first, TIterator last, Comparator const & comparator, EnableIf< IsInputIterator<TIterator>, Allocator const & > allocator = Allocator{}) : _tree_(comparator, allocator) {
 		insert(first, last);
 	}
 
-	TreeSet(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : _tree_(allocator) {
+	TreeMultiSet(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : _tree_(allocator) {
 		insert(list.begin(), list.end());
 	}
 
-	TreeSet(InitializerList<Element> list, Comparator const & comparator, Allocator const & allocator = Allocator{}) : _tree_(comparator, allocator) {
+	TreeMultiSet(InitializerList<Element> list, Comparator const & comparator, Allocator const & allocator = Allocator{}) : _tree_(comparator, allocator) {
 		insert(list.begin(), list.end());
 	}
 
-	~TreeSet() = default;
+	~TreeMultiSet() = default;
 
-	auto operator=(TreeSet const & set) -> TreeSet & {
+	auto operator=(TreeMultiSet const & set) -> TreeMultiSet & {
 		_tree_ = set._tree_;
 		return *this;
 	}
 
-	auto operator=(TreeSet && set) noexcept(HasNothrowMoveAssignment<Tree>{}) -> TreeSet & {
+	auto operator=(TreeMultiSet && set) noexcept(HasNothrowMoveAssignment<Tree>{}) -> TreeMultiSet & {
 		_tree_ = move(set._tree_);
 		return *this;
 	}
 
-	auto operator=(InitializerList<Element> list) -> TreeSet & {
-		_tree_.assign_unique(list.begin(), list.end());
+	auto operator=(InitializerList<Element> list) -> TreeMultiSet & {
+		_tree_.assign_equal(list.begin(), list.end());
 		return *this;
 	}
 
@@ -402,27 +402,27 @@ public:
 		return _tree_.max_size();
 	}
 
-	auto operator==(TreeSet const & y) const -> bool {
+	auto operator==(TreeMultiSet const & y) const -> bool {
 		return _tree_.operator==(y._tree_);
 	}
 
-	auto operator!=(TreeSet const & y) const -> bool {
+	auto operator!=(TreeMultiSet const & y) const -> bool {
 		return !operator==(y);
 	}
 
-	auto operator<(TreeSet const & y) const -> bool {
+	auto operator<(TreeMultiSet const & y) const -> bool {
 		return _tree_.operator<(y._tree_);
 	}
 
-	auto operator>(TreeSet const & y) const -> bool {
+	auto operator>(TreeMultiSet const & y) const -> bool {
 		return y.operator<(*this);
 	}
 
-	auto operator<=(TreeSet const & y) const -> bool {
+	auto operator<=(TreeMultiSet const & y) const -> bool {
 		return !y.operator<(*this);
 	}
 
-	auto operator>=(TreeSet const & y) const -> bool {
+	auto operator>=(TreeMultiSet const & y) const -> bool {
 		return !operator<(y);
 	}
 
@@ -553,30 +553,30 @@ public:
 
 	template< typename ... TArgs >
 	auto emplace_hint(ConstIterator hint, TArgs &&... args) -> Iterator {
-		return Iterator(_tree_.emplace_unique_hint(hint._iterator_, forward<TArgs>(args)...));
+		return Iterator(_tree_.emplace_equal_hint(hint._iterator_, forward<TArgs>(args)...));
 	}
 
 	auto insert(ConstIterator hint, Element const & element) -> Iterator {
-		return Iterator(_tree_.insert_unique(hint._iterator_, element));
+		return Iterator(_tree_.insert_equal(hint._iterator_, element));
 	}
 
 	auto insert(ConstIterator hint, Element && element) -> Iterator {
-		return Iterator(_tree_.insert_unique(hint._iterator_, move(element)));
+		return Iterator(_tree_.insert_equal(hint._iterator_, move(element)));
 	}
 
 	template< typename TOtherElement >
 	auto insert(ConstIterator hint, TOtherElement && element) -> EnableIf< IsConstructible<Element, TOtherElement>, Iterator > {
-		return Iterator(_tree_.insert_unique(hint._iterator_, forward<TOtherElement>(element)));
+		return Iterator(_tree_.insert_equal(hint._iterator_, forward<TOtherElement>(element)));
 	}
 
 	template< typename TIterator >
 	auto insert(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator> > {
-		_tree_.insert_unique(first, last);
+		_tree_.insert_equal(first, last);
 	}
 
 	template< typename TOtherComparator >
-	void merge(TreeSet<TElement, TOtherComparator, TAllocator, TTree, TOtherTreeArgs...> & set) {
-		_tree_.merge_unique(set._tree_);
+	void merge(TreeMultiSet<TElement, TOtherComparator, TAllocator, TTree, TOtherTreeArgs...> & set) {
+		_tree_.merge_equal(set._tree_);
 	}
 
 	auto erase(ConstIterator position) -> Iterator {
@@ -595,14 +595,14 @@ public:
 		_tree_.clear();
 	}
 
-	void swap(TreeSet & set) noexcept(IsNothrowSwappable<Tree>{}) {
+	void swap(TreeMultiSet & set) noexcept(IsNothrowSwappable<Tree>{}) {
 		_tree_.swap(set._tree_);
 	}
 
 private:
 	Tree _tree_;
 
-}; // class TreeSet<TElement, TComparator, TAllocator, TTree, TOtherTreeArgs...s>
+}; // class TreeMultiSet<TElement, TComparator, TAllocator, TTree, TOtherTreeArgs...s>
 
 } // namespace Container
 

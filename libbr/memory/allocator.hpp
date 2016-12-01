@@ -22,6 +22,8 @@ inline namespace Memory {
 template<typename TElement>
 class Allocator;
 
+
+
 template<>
 class Allocator<void> {
 public:
@@ -45,12 +47,12 @@ public:
 	constexpr Allocator() noexcept = default;
 
 	template<typename TOtherElement>
-	BR_FORCE_INLINE auto operator==(Allocator<TOtherElement> const &) const noexcept -> bool {
+	constexpr auto operator==(Allocator<TOtherElement> const &) const noexcept -> bool {
 		return true;
 	}
 
 	template<typename TOtherElement>
-	BR_FORCE_INLINE auto operator!=(Allocator<TOtherElement> const &) const noexcept -> bool {
+	constexpr auto operator!=(Allocator<TOtherElement> const &) const noexcept -> bool {
 		return false;
 	}
 
@@ -65,10 +67,6 @@ public:
 
 	using ConstPointer = Element const *;
 
-	using Reference = Element &;
-
-	using ConstReference = Element const &;
-
 	using Size = BR::Size;
 
 	using Difference = PointerDifference;
@@ -80,49 +78,27 @@ public:
 	template<typename TOtherElement>
 	using Rebind = Allocator<TOtherElement>;
 
-	BR_FORCE_INLINE constexpr Allocator() noexcept {
-	}
+	constexpr Allocator() noexcept = default;
 
 	template<typename TOtherElement>
-	BR_FORCE_INLINE constexpr Allocator(Allocator<TOtherElement> const &) noexcept {
+	constexpr Allocator(Allocator<TOtherElement> const &) noexcept {
 	}
 
-	BR_FORCE_INLINE auto address(Reference reference) noexcept -> Pointer {
-		return address_of(reference);
-	}
-
-	BR_FORCE_INLINE auto address(ConstReference reference) const noexcept -> ConstPointer {
-		return address_of(reference);
-	}
-
-	BR_FORCE_INLINE auto allocate(Size size, Allocator<void>::ConstPointer = nullptr) -> Pointer {
+	auto allocate(Size size, Allocator<void>::ConstPointer = nullptr) -> Pointer {
 		return static_cast<Pointer>(::operator new(size * sizeof(Element)));
 	}
 
-	BR_FORCE_INLINE void deallocate(Pointer pointer, Size) noexcept {
+	void deallocate(Pointer pointer, Size) noexcept {
 		return ::operator delete(reinterpret_cast< void * >(pointer));
 	}
 
-	BR_FORCE_INLINE auto maxSize() const noexcept -> Size {
-		return Size(~0) / sizeof(Element);
-	}
-
-	template<typename TOtherElement, typename ... TArgs>
-	BR_FORCE_INLINE void construct(TOtherElement *pointer, TArgs &&... args) {
-		::new(reinterpret_cast< void * >(pointer)) TOtherElement(forward<TArgs>(args) ...);
-	}
-
-	BR_FORCE_INLINE void destroy(Pointer pointer) {
-		pointer->~Value();
-	}
-
 	template<typename TOtherElement>
-	BR_FORCE_INLINE auto operator==(Allocator<TOtherElement> const &) const noexcept -> bool {
+	constexpr auto operator==(Allocator<TOtherElement> const &) const noexcept -> bool {
 		return true;
 	}
 
 	template<typename TOtherElement>
-	BR_FORCE_INLINE auto operator!=(Allocator<TOtherElement> const &) const noexcept -> bool {
+	constexpr auto operator!=(Allocator<TOtherElement> const &) const noexcept -> bool {
 		return false;
 	}
 

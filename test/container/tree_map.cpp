@@ -21,12 +21,11 @@ TEST(TreeMap, InitializerListConstruct) {
 
 TEST(TreeMap, Index) {
 	TreeMap<int, int> tree;
-	tree[0] = 1;
 	tree[1] = 0;
 	tree[2] = -1;
 	tree[3] = -2;
 	tree[4] = -3;
 	tree[5] = -4;
-	EXPECT_EQ(6, tree.size());
+	EXPECT_EQ(5, tree.size());
 	EXPECT_TRUE(all_of(tree.begin(), tree.end(), [](Pair<int, int> const & pair){ return pair.first + pair.second == 1; }));
 }

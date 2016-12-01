@@ -272,14 +272,14 @@ struct Allocate : AllocateBasic< HasMemberFunction_allocate< TAllocator, TArgs .
 
 template< typename TAllocator, typename ... TArgs >
 struct AllocateBasic< true, TAllocator, TArgs ... > {
-	static Pointer< TAllocator > call(TAllocator allocator, TArgs && ... args) {
+	static auto call(TAllocator allocator, TArgs && ... args) -> Pointer<TAllocator> {
 		return allocator.allocate(forward<TArgs>(args) ...);
 	}
 };
 
 template< typename TAllocator, typename TSize, typename TConstVoidPointer >
 struct AllocateBasic< false, TAllocator, TSize, TConstVoidPointer > {
-	static Pointer< TAllocator > call(TAllocator allocator, TSize size, TConstVoidPointer hint) {
+	static auto call(TAllocator allocator, TSize size, TConstVoidPointer hint) -> Pointer<TAllocator> {
 		return Allocate< TAllocator, TSize >::call(allocator, size);
 	}
 };
@@ -298,15 +298,15 @@ struct MaxSize : MaxSizeBasic< HasMemberFunction_max_size< TAllocator, TArgument
 
 template< typename TAllocator, typename ... TArguments >
 struct MaxSizeBasic< true, TAllocator, TArguments ... > {
-	static Size< TAllocator > call(TAllocator allocator, TArguments && ... arguments) {
+	static auto call(TAllocator allocator, TArguments && ... arguments) -> Size<TAllocator> {
 		return allocator.max_size(forward<TArguments>(arguments) ...);
 	}
 };
 
 template< typename TAllocator >
 struct MaxSizeBasic< false, TAllocator > {
-	static Size< TAllocator > call(TAllocator allocator) {
-		return BR::IntegerTraits< Size< TAllocator > >::max();
+	constexpr static auto call(TAllocator allocator) -> Size<TAllocator> {
+		return BR::IntegerTraits< Size<TAllocator> >::max() / sizeof(Element<TAllocator>);
 	}
 };
 
@@ -324,14 +324,14 @@ struct SelectOnContainerCopyConstruction : SelectOnContainerCopyConstructionBasi
 
 template< typename TAllocator, typename ... TArguments >
 struct SelectOnContainerCopyConstructionBasic< true, TAllocator, TArguments ... > {
-	static TAllocator call(TAllocator allocator, TArguments && ... arguments) noexcept {
+	static auto call(TAllocator allocator, TArguments && ... arguments) noexcept -> TAllocator {
 		return allocator.select_on_container_copy_construction(forward<TArguments>(arguments) ...);
 	}
 };
 
 template< typename TAllocator, typename ... TArguments >
 struct SelectOnContainerCopyConstructionBasic< false, TAllocator, TArguments ... > {
-	static TAllocator call(TAllocator allocator) noexcept {
+	static auto call(TAllocator allocator) noexcept -> TAllocator {
 		return allocator;
 	}
 };
@@ -361,13 +361,12 @@ struct AllocatorTraits {
 	template<typename TElement>
 	using Rebind = Detail::TypeTraits::AllocatorTraits::Rebind<TAllocator, TElement>;
 
-	static Pointer allocate(Allocator & allocator, Size size) {
+	static auto allocate(Allocator & allocator, Size size) -> Pointer {
 		return allocator.allocate(size);
 	}
 
-	static Pointer allocate(Allocator & allocator, Size size, ConstVoidPointer hint) {
-		return Detail::TypeTraits::AllocatorTraits::Allocate<Allocator, Size, ConstVoidPointer>::call(allocator, size,
-		                                                                                              hint);
+	static auto allocate(Allocator & allocator, Size size, ConstVoidPointer hint) -> Pointer {
+		return Detail::TypeTraits::AllocatorTraits::Allocate<Allocator, Size, ConstVoidPointer>::call(allocator, size, hint);
 	}
 
 	static void deallocate(Allocator & allocator, Pointer pointer, Size size) noexcept {
@@ -384,11 +383,11 @@ struct AllocatorTraits {
 		BR::destroy(allocator, pointer);
 	}
 
-	static Size max_size(Allocator const & allocator) noexcept {
+	constexpr static auto max_size(Allocator const & allocator) noexcept -> Size {
 		return Detail::TypeTraits::AllocatorTraits::MaxSize<Allocator>::call(allocator);
 	}
 
-	static Allocator select_on_container_copy_construction(Allocator const & allocator) noexcept {
+	static auto select_on_container_copy_construction(Allocator const & allocator) noexcept -> Allocator {
 		return Detail::TypeTraits::AllocatorTraits::SelectOnContainerCopyConstruction<Allocator>::call(allocator);
 	}
 };
