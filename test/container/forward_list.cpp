@@ -7,7 +7,9 @@ static bool is_even(int v) {
 	return v % 2 == 0;
 }
 
+#if defined(BR_DEBUG)
 template class BR::ForwardList<int>;
+#endif
 
 TEST(ForwardList, Each) {
 

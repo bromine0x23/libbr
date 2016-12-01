@@ -16,6 +16,13 @@
 #include <libbr/container/pair.hpp>
 #include <libbr/container/tuple.hpp>
 
+#include <libbr/container/avl_tree.hpp>
+#include <libbr/container/binary_tree.hpp>
+#include <libbr/container/rb_tree.hpp>
+#include <libbr/container/splay_tree.hpp>
+#include <libbr/container/tree_map.hpp>
+#include <libbr/container/tree_set.hpp>
+
 namespace BR {
 
 /**
