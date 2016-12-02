@@ -52,6 +52,11 @@ template<
 >
 class TreeMultiSet;
 
+template< typename TElement, typename TComparator, typename TAllocator, template< typename, typename, typename, typename ...> class TTree, typename ... TOtherTreeArgs >
+inline void swap(TreeMultiSet<TElement, TComparator, TAllocator, TTree, TOtherTreeArgs...> & x, TreeMultiSet<TElement, TComparator, TAllocator, TTree, TOtherTreeArgs...> & y) noexcept(noexcept(x.swap(y)))  {
+	x.swap(y);
+}
+
 } // namespace Container
 
 
@@ -602,7 +607,7 @@ public:
 private:
 	Tree _tree_;
 
-}; // class TreeMultiSet<TElement, TComparator, TAllocator, TTree, TOtherTreeArgs...s>
+}; // class TreeMultiSet<TElement, TComparator, TAllocator, TTree, TOtherTreeArgs...>
 
 } // namespace Container
 

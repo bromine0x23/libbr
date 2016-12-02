@@ -31,6 +31,10 @@
 
 namespace BR {
 
+inline namespace Container {
+
+
+
 /**
  * @brief 动态数组
  * @tparam TElement 数组元素类型
@@ -42,6 +46,8 @@ template< typename TElement, typename TAllocator >
 inline void swap(DynamicArray< TElement, TAllocator> & x, DynamicArray< TElement, TAllocator > & y) noexcept(noexcept(x.swap(y)))  {
 	x.swap(y);
 }
+
+} // namespace Container
 
 
 

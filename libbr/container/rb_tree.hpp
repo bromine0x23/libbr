@@ -26,6 +26,7 @@
 namespace BR {
 inline namespace Container {
 
+
 /**
  * @brief red-black tree
  * @tparam TElement
@@ -33,6 +34,16 @@ inline namespace Container {
  * @tparam TAllocator
  */
 template< typename TElement, typename TComparator = Less<TElement>, typename TAllocator = Allocator<TElement> >
+class RBTree;
+
+template< typename TElement, typename TComparator, typename TAllocator >
+inline void swap(RBTree<TElement, TComparator, TAllocator> & x, RBTree<TElement, TComparator, TAllocator> & y) noexcept(noexcept(x.swap(y)))  {
+	x.swap(y);
+}
+
+
+
+template< typename TElement, typename TComparator, typename TAllocator >
 class RBTree :
 	public Detail::Container::BinaryTree::Implement< Detail::Container::RBTree::Basic, TElement, TComparator, TAllocator >,
 	public Enumerable<

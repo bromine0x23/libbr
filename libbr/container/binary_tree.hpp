@@ -33,6 +33,16 @@ inline namespace Container {
  * @tparam TAllocator
  */
 template< typename TElement, typename TComparator = Less<TElement>, typename TAllocator = Allocator<TElement> >
+class BinaryTree;
+
+template< typename TElement, typename TComparator, typename TAllocator >
+inline void swap(BinaryTree<TElement, TComparator, TAllocator> & x, BinaryTree<TElement, TComparator, TAllocator> & y) noexcept(noexcept(x.swap(y)))  {
+	x.swap(y);
+}
+
+
+
+template< typename TElement, typename TComparator, typename TAllocator >
 class BinaryTree :
 	public Detail::Container::BinaryTree::Implement< Detail::Container::BinaryTree::Basic, TElement, TComparator, TAllocator >,
 	public Enumerable<

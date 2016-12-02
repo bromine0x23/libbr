@@ -52,6 +52,11 @@ template<
 >
 class TreeSet;
 
+template< typename TElement, typename TComparator, typename TAllocator, template< typename, typename, typename, typename ...> class TTree, typename ... TOtherTreeArgs >
+inline void swap(TreeSet<TElement, TComparator, TAllocator, TTree, TOtherTreeArgs...> & x, TreeSet<TElement, TComparator, TAllocator, TTree, TOtherTreeArgs...> & y) noexcept(noexcept(x.swap(y)))  {
+	x.swap(y);
+}
+
 } // namespace Container
 
 

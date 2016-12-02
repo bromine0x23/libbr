@@ -53,6 +53,11 @@ template<
 >
 class TreeMultiMap;
 
+template< typename TKey, typename TValue, typename TKeyComparator, typename TAllocator, template< typename, typename, typename, typename ...> class TTree, typename ... TOtherTreeArgs >
+inline void swap(TreeMultiMap<TKey, TValue, TKeyComparator, TAllocator, TTree, TOtherTreeArgs...> & x, TreeMultiMap<TKey, TValue, TKeyComparator, TAllocator, TTree, TOtherTreeArgs...> & y) noexcept(noexcept(x.swap(y)))  {
+	x.swap(y);
+}
+
 } // namespace Container
 
 

@@ -35,7 +35,6 @@ inline namespace Container {
 template< typename T, Size N >
 class Array;
 
-
 /**
  *
  * @tparam T
@@ -79,6 +78,8 @@ constexpr inline auto get(Array< T, S > const && A) noexcept -> T const && {
 	static_assert(I < S, "Index out of bounds.");
 	return move(A[I]);
 }
+
+
 
 inline namespace Container {
 

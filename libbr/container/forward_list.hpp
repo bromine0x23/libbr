@@ -37,7 +37,7 @@
 
 namespace BR {
 
-
+inline namespace Container {
 
 template< typename TElement, typename TAllocator = Allocator<TElement> >
 class ForwardList;
@@ -46,6 +46,8 @@ template< typename TElement, typename TAllocator >
 inline void swap(ForwardList< TElement, TAllocator> & x, ForwardList< TElement, TAllocator > & y) noexcept(noexcept(x.swap(y)))  {
 	x.swap(y);
 }
+
+} // namespace Container
 
 
 
