@@ -89,3 +89,13 @@
 #endif
 
 #endif
+
+#if defined(BR_NO_EXCEPTIONS)
+#  define BR_TRY if (true)
+#  define BR_CATCH(...) else if (false)
+#  define BR_RETHROW
+#else
+#  define BR_TRY try
+#  define BR_CATCH(e) catch(e)
+#  define BR_RETHROW throw
+#endif

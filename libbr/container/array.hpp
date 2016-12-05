@@ -15,6 +15,8 @@
 #include <libbr/enumerate/enumerable.hpp>
 #include <libbr/exception/throw.hpp>
 #include <libbr/iterator/reverse_iterator.hpp>
+#include <libbr/operators/equality_comparable.hpp>
+#include <libbr/operators/less_than_comparable.hpp>
 #include <libbr/type_traits/is_nothrow_swappable.hpp>
 #include <libbr/type_traits/remove_const_volatile.hpp>
 #include <libbr/utility/integral_constant.hpp>
@@ -84,11 +86,11 @@ constexpr inline auto get(Array< T, S > const && A) noexcept -> T const && {
 inline namespace Container {
 
 template< typename TElement, Size N >
-class Array : public Enumerable<
-	Array< TElement, N >,
-	TElement *,
-	TElement const *
-> {
+class Array :
+	public Enumerable< Array< TElement, N >, TElement *, TElement const * >,
+	public EqualityComparable< Array< TElement, N > >,
+	public LessThanComparable< Array< TElement, N > >
+{
 public:
 	using Element = TElement;
 
@@ -250,24 +252,8 @@ public:
 		return equal(begin(), end(), y.begin(), y.end());
 	}
 
-	auto operator!=(Array const & y) const -> bool {
-		return !operator==(y);
-	}
-
 	auto operator<(Array const & y) const -> bool {
 		return lexicographical_compare(begin(), end(), y.begin(), y.end());
-	}
-
-	auto operator>(Array const & y) const -> bool {
-		return y.operator<(*this);
-	}
-
-	auto operator<=(Array const & y) const -> bool {
-		return !y.operator<(*this);
-	}
-
-	auto operator>=(Array const & y) const -> bool {
-		return !operator<(y);
 	}
 
 private:

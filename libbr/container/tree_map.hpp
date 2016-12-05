@@ -16,6 +16,10 @@
 #include <libbr/iterator/reverse_iterator.hpp>
 #include <libbr/memory/allocator.hpp>
 #include <libbr/memory/allocator_traits.hpp>
+#include <libbr/operators/decrementable.hpp>
+#include <libbr/operators/equality_comparable.hpp>
+#include <libbr/operators/incrementable.hpp>
+#include <libbr/operators/less_than_comparable.hpp>
 #include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/has_nothrow_copy_constructor.hpp>
@@ -166,7 +170,12 @@ template< typename TTreeIterator >
 class ConstIterator;
 
 template< typename TTreeIterator >
-class Iterator : public BasicIterator {
+class Iterator :
+	public BasicIterator,
+	public EqualityComparable< Iterator<TTreeIterator> >,
+	public Incrementable< Iterator<TTreeIterator> >,
+	public Decrementable< Iterator<TTreeIterator> >
+{
 private:
 	using TreeIterator = TTreeIterator;
 
@@ -204,29 +213,13 @@ public:
 		return *this;
 	}
 
-	auto operator++(int) -> Iterator {
-		Iterator temp(*this);
-		operator++();
-		return *this;
-	}
-
 	auto operator--() -> Iterator & {
 		--_iterator_;
 		return *this;
 	}
 
-	auto operator--(int) -> Iterator {
-		Iterator temp(*this);
-		operator--();
-		return *temp;
-	}
-
 	auto operator==(Iterator const & y) const -> bool {
 		return _iterator_ == y._iterator_;
-	}
-
-	auto operator!=(Iterator const & y) const -> bool {
-		return !operator==(y);
 	}
 
 private:
@@ -237,7 +230,13 @@ private:
 }; // class Iterator<TTreeIterator>
 
 template< typename TTreeIterator >
-class ConstIterator : public BasicIterator {
+class ConstIterator :
+	public BasicIterator,
+	public EqualityComparable< ConstIterator<TTreeIterator> >,
+	public EqualityComparable< ConstIterator<TTreeIterator>, Iterator<TTreeIterator> >,
+	public Incrementable< ConstIterator<TTreeIterator> >,
+	public Decrementable< ConstIterator<TTreeIterator> >
+{
 
 private:
 	using TreeIterator = TTreeIterator;
@@ -277,37 +276,17 @@ public:
 		return *this;
 	}
 
-	auto operator++(int) -> ConstIterator {
-		ConstIterator temp(*this);
-		operator++();
-		return temp;
-	}
-
 	auto operator--() -> ConstIterator & {
 		--_iterator_;
 		return *this;
-	}
-
-	auto operator--(int) -> ConstIterator {
-		ConstIterator temp(*this);
-		operator--();
-		return *temp;
 	}
 
 	auto operator==(ConstIterator const & y) const -> bool {
 		return _iterator_ == y._iterator_;
 	}
 
-	auto operator!=(ConstIterator const & y) const -> bool {
-		return !operator==(y);
-	}
-
 	auto operator==(Iterator<TreeIterator> const  & y) const -> bool {
 		return _iterator_ == y._iterator_;
-	}
-
-	auto operator!=(Iterator<TreeIterator> const  & y) const -> bool {
-		return !operator==(y);
 	}
 
 private:
@@ -317,16 +296,6 @@ private:
 private:
 	TreeIterator _iterator_;
 }; // class ConstIterator<TTreeIterator>
-
-template< typename TTreeIterator >
-inline auto operator==(Iterator<TTreeIterator> const & x, ConstIterator<TTreeIterator> const & y) -> bool {
-	return y == x;
-}
-
-template< typename TTreeIterator >
-inline auto operator!=(Iterator<TTreeIterator> const & x, ConstIterator<TTreeIterator> const & y) -> bool {
-	return y != x;
-}
 
 } // namespace TreeMap
 } // namespace Container
@@ -344,7 +313,10 @@ class TreeMap :
 		typename Detail::Container::TreeMap::ConstIterator<
 			typename TTree< Pair<TKey, TValue>, Detail::Container::TreeMap::Comparator< TKey, Pair<TKey, TValue>, TKeyComparator >, TAllocator, TOtherTreeArgs... >::ConstIterator
 		>
-	> {
+	>,
+	public EqualityComparable< TreeMap< TKey, TValue, TKeyComparator, TAllocator, TTree, TOtherTreeArgs... > >,
+	public LessThanComparable< TreeMap< TKey, TValue, TKeyComparator, TAllocator, TTree, TOtherTreeArgs... > >
+{
 
 public:
 	using Key           = TKey;

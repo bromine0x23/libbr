@@ -5,6 +5,9 @@
 #include <libbr/iterator/basic_iterator.hpp>
 #include <libbr/iterator/category.hpp>
 #include <libbr/memory/pointer_traits.hpp>
+#include <libbr/operators/decrementable.hpp>
+#include <libbr/operators/equality_comparable.hpp>
+#include <libbr/operators/incrementable.hpp>
 
 namespace BR {
 namespace Detail {
@@ -21,17 +24,18 @@ template< typename TNodePointer >
 class ConstIterator;
 
 template< typename TNodePointer >
-class Iterator : public IteratorWithCategory< ReadableTag, WritableTag, BidirectionalTraversalTag > {
+class Iterator :
+	public IteratorWithCategory< ReadableTag, WritableTag, BidirectionalTraversalTag >,
+	public EqualityComparable< Iterator<TNodePointer> >,
+	public Incrementable< Iterator<TNodePointer> >,
+	public Decrementable< Iterator<TNodePointer> >
+{
 private:
 	using NodePointer = TNodePointer;
 
 	using NodePointerTraits = PointerTraits<NodePointer>;
 
 	using Node = typename NodePointerTraits::Element;
-
-	using BasicNode = typename Node::Base;
-
-	using BasicNodePointer = typename NodePointerTraits::template Rebind<BasicNode>;
 
 	using Algorithms = BinaryTree::Algorithms<NodePointer>;
 
@@ -42,8 +46,6 @@ private:
 	friend class ConstIterator;
 
 public:
-	struct Category : public IteratorTag, public ReadableTag, public WritableTag, public BidirectionalTraversalTag {};
-
 	using Element = typename Node::Element;
 
 	using Pointer = typename NodePointerTraits::template Rebind<Element>;
@@ -69,29 +71,13 @@ public:
 		return *this;
 	}
 
-	auto operator++(int) -> Iterator {
-		Iterator temp(*this);
-		operator++();
-		return temp;
-	}
-
 	auto operator--() -> Iterator & {
 		m_pointer = Algorithms::prev_node(m_pointer);
 		return *this;
 	}
 
-	auto operator--(int) -> Iterator {
-		Iterator temp(*this);
-		operator--();
-		return *temp;
-	}
-
 	auto operator==(Iterator const & y) const -> bool {
 		return m_pointer == y.m_pointer;
-	}
-
-	auto operator!=(Iterator const & y) const -> bool {
-		return !operator==(y);
 	}
 
 private:
@@ -103,7 +89,13 @@ private:
 }; // class Iterator<TNodePointer>
 
 template< typename TNodePointer >
-class ConstIterator : public IteratorWithCategory< ReadableTag, BidirectionalTraversalTag > {
+class ConstIterator :
+	public IteratorWithCategory< ReadableTag, BidirectionalTraversalTag >,
+	public EqualityComparable< ConstIterator<TNodePointer> >,
+	public EqualityComparable< ConstIterator<TNodePointer>, Iterator<TNodePointer> >,
+	public Incrementable< ConstIterator<TNodePointer> >,
+	public Decrementable< ConstIterator<TNodePointer> >
+{
 private:
 	using NodePointer = TNodePointer;
 
@@ -111,18 +103,12 @@ private:
 
 	using Node = typename NodePointerTraits::Element;
 
-	using BasicNode = typename Node::Base;
-
-	using BasicNodePointer = typename NodePointerTraits::template Rebind<BasicNode>;
-
 	using Algorithms = BinaryTree::Algorithms<NodePointer>;
 
 	template< template< typename, typename, typename, typename...> class, typename, typename, typename, typename... >
 	friend class Implement;
 
 public:
-	struct Category : public IteratorTag, public ReadableTag, public BidirectionalTraversalTag {};
-
 	using Element = typename Node::Element;
 
 	using Pointer = typename NodePointerTraits::template Rebind<Element const>;
@@ -151,37 +137,17 @@ public:
 		return *this;
 	}
 
-	auto operator++(int) -> ConstIterator {
-		ConstIterator temp(*this);
-		operator++();
-		return temp;
-	}
-
 	auto operator--() -> ConstIterator & {
 		m_pointer = Algorithms::prev_node(m_pointer);
 		return *this;
-	}
-
-	auto operator--(int) -> ConstIterator {
-		ConstIterator temp(*this);
-		operator--();
-		return *temp;
 	}
 
 	auto operator==(ConstIterator const & y) const -> bool {
 		return m_pointer == y.m_pointer;
 	}
 
-	auto operator!=(ConstIterator const & y) const -> bool {
-		return !operator==(y);
-	}
-
 	auto operator==(Iterator<NodePointer> const  & y) const -> bool {
 		return m_pointer == y.m_pointer;
-	}
-
-	auto operator!=(Iterator<NodePointer> const  & y) const -> bool {
-		return !operator==(y);
 	}
 
 private:
@@ -191,16 +157,6 @@ private:
 private:
 	NodePointer m_pointer;
 }; // class ConstIterator<TNodePointer>
-
-template< typename TNodePointer >
-inline auto operator==(Iterator<TNodePointer> const & x, ConstIterator<TNodePointer> const & y) -> bool {
-	return y == x;
-}
-
-template< typename TNodePointer >
-inline auto operator!=(Iterator<TNodePointer> const & x, ConstIterator<TNodePointer> const & y) -> bool {
-	return y != x;
-}
 
 } // namespace BinaryTree
 } // namespace Container

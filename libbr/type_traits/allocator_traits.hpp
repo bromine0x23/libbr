@@ -379,7 +379,7 @@ struct AllocatorTraits {
 	}
 
 	template<typename TElement>
-	static void destroy(Allocator &allocator, TElement *pointer) {
+	static void destroy(Allocator &allocator, TElement * pointer) {
 		BR::destroy(allocator, pointer);
 	}
 

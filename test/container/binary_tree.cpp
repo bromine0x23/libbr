@@ -65,3 +65,10 @@ TEST(BinaryTree, Merge) {
 	EXPECT_EQ(55, accumulate(tree0.begin(), tree0.end(), 0));
 	EXPECT_EQ(0, accumulate(tree1.begin(), tree1.end(), 0));
 }
+
+TEST(BinaryTree, Compare) {
+	BinaryTree<int> tree0{1, 3, 5, 7, 9};
+	BinaryTree<int> tree1{1, 3, 5, 7, 10};
+
+	EXPECT_TRUE(tree0 < tree1);
+}

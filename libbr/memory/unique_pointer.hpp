@@ -81,6 +81,7 @@ inline void swap(UniquePointer< TElement, TDeleter > & x, UniquePointer< TElemen
 } // namespace Memory
 
 
+
 namespace Detail {
 namespace Memory {
 namespace UniquePointer {

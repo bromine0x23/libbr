@@ -6,6 +6,8 @@
 #include <libbr/container/initializer_list.hpp>
 #include <libbr/container/pair.hpp>
 #include <libbr/iterator/reverse_iterator.hpp>
+#include <libbr/operators/equality_comparable.hpp>
+#include <libbr/operators/less_than_comparable.hpp>
 #include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/has_nothrow_default_constructor.hpp>
@@ -25,7 +27,11 @@ namespace BinaryTree {
 using BR::Pair;
 
 template< template< typename, typename, typename, typename...> class TBasic, typename TElement, typename TComparator, typename TAllocator, typename... TClassArgs >
-class Implement : protected TBasic< TElement, TComparator, TAllocator, TClassArgs... > {
+class Implement :
+	protected TBasic< TElement, TComparator, TAllocator, TClassArgs... >,
+	public EqualityComparable< Implement<TBasic, TElement, TComparator, TAllocator, TClassArgs...> >,
+	public LessThanComparable< Implement<TBasic, TElement, TComparator, TAllocator, TClassArgs...> >
+{
 private:
 	using Base = TBasic< TElement, TComparator, TAllocator, TClassArgs... >;
 
@@ -215,24 +221,8 @@ public:
 		return size() == y.size() && equal(begin(), end(), y.begin(), y.end());
 	}
 
-	auto operator!=(Implement const & y) const -> bool {
-		return !operator==(y);
-	}
-
 	auto operator<(Implement const & y) const -> bool {
 		return lexicographical_compare(begin(), end(), y.begin(), y.end());
-	}
-
-	auto operator>(Implement const & y) const -> bool {
-		return y.operator<(*this);
-	}
-
-	auto operator<=(Implement const & y) const -> bool {
-		return !y.operator<(*this);
-	}
-
-	auto operator>=(Implement const & y) const -> bool {
-		return !operator<(y);
 	}
 
 	auto find(Element const & element) -> Iterator {

@@ -2,8 +2,10 @@
 
 #include <libbr/config.hpp>
 #include <libbr/iterator/basic_iterator.hpp>
-#include <libbr/type_traits/iterator_traits.hpp>
 #include <libbr/memory/address_of.hpp>
+#include <libbr/operators/decrementable.hpp>
+#include <libbr/operators/incrementable.hpp>
+#include <libbr/type_traits/iterator_traits.hpp>
 
 namespace BR {
 
@@ -16,7 +18,11 @@ inline auto make_reverse_iterator(TIterator iterator) -> ReverseIterator<TIterat
 }
 
 template< typename TIterator >
-class ReverseIterator : public BasicIterator {
+class ReverseIterator :
+	public BasicIterator,
+	public Incrementable< ReverseIterator<TIterator> >,
+	public Decrementable< ReverseIterator<TIterator> >
+{
 public:
 	using Iterator = TIterator;
 
@@ -65,18 +71,6 @@ public:
 	auto operator--() -> ReverseIterator & {
 		++m_iterator;
 		return *this;
-	}
-
-	auto operator++(int) -> ReverseIterator {
-		ReverseIterator current(*this);
-		--current;
-		return current;
-	}
-
-	auto operator--(int) -> ReverseIterator {
-		ReverseIterator current(*this);
-		++current;
-		return current;
 	}
 
 	auto operator+(Difference n) const -> ReverseIterator {

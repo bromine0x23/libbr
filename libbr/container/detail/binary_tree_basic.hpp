@@ -1,9 +1,11 @@
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/container/detail/allocator_helpers.hpp>
 #include <libbr/container/detail/binary_tree_algorithms.hpp>
 #include <libbr/container/detail/binary_tree_node.hpp>
 #include <libbr/container/detail/binary_tree_iterator.hpp>
+#include <libbr/container/detail/node_destructor.hpp>
 #include <libbr/container/tuple.hpp>
 #include <libbr/memory/address_of.hpp>
 #include <libbr/memory/allocator_traits.hpp>
@@ -22,35 +24,6 @@ namespace BR {
 namespace Detail {
 namespace Container {
 namespace BinaryTree {
-
-template< typename TAllocator >
-struct NodeDestructor : public UnaryFunctor<typename AllocatorTraits<TAllocator>::Pointer> {
-	using Allocator = TAllocator;
-
-private:
-	using AllocatorTraits = BR::AllocatorTraits<Allocator>;
-
-public:
-	using Pointer = typename AllocatorTraits::Pointer;
-
-	explicit NodeDestructor(Allocator & allocator, bool constructed = false) noexcept : m_allocator(allocator), constructed(constructed) {
-	}
-
-	void operator()(Pointer pointer) noexcept {
-		if (constructed) {
-			AllocatorTraits::destroy(m_allocator, address_of(pointer->element));
-		}
-		if (pointer != nullptr) {
-			AllocatorTraits::deallocate(m_allocator, pointer, 1);
-		}
-	}
-
-public:
-	bool constructed;
-
-private:
-	Allocator & m_allocator;
-};
 
 struct Traits {
 	template< typename TElement, typename TVoidPointer >
@@ -97,7 +70,7 @@ protected:
 
 	using BasicNodePointerTraits = PointerTraits<BasicNodePointer>;
 
-	using NodeDestructor = BinaryTree::NodeDestructor<NodeAllocator>;
+	using NodeDestructor = Container::NodeDestructor<NodeAllocator>;
 
 	using NodeHolder = UniquePointer< Node, NodeDestructor >;
 
@@ -226,22 +199,18 @@ protected:
 	void m_assign_unique(TInputIterator first, TInputIterator last) {
 		if (m_size() != 0) {
 			NodePointer cache = m_detach();
-#if !defined(BR_NO_EXCEPTIONS)
-			try {
-#endif
+			BR_TRY {
 				for (; cache != nullptr && first != last; ++first) {
 					cache->element = *first;
 					NodePointer next = m_detach(cache);
 					m_insert_unique(cache);
 					cache = next;
 				}
-#if !defined(BR_NO_EXCEPTIONS)
-			} catch (...) {
+			} BR_CATCH(...) {
 				for (; cache->parent != nullptr; cache = cache->parent) {}
 				m_destroy_subtree(cache);
-				throw;
+				BR_RETHROW;
 			}
-#endif
 			if (cache != nullptr) {
 				for (; cache->parent != nullptr; cache = cache->parent) {}
 				m_destroy_subtree(cache);
@@ -256,22 +225,18 @@ protected:
 	void m_assign_equal(TInputIterator first, TInputIterator last) {
 		if (m_size() != 0) {
 			NodePointer cache = m_detach();
-#if !defined(BR_NO_EXCEPTIONS)
-			try {
-#endif
+			BR_TRY {
 				for (; cache != nullptr && first != last; ) {
 					cache->element = *first;
 					NodePointer next = m_detach(cache);
 					m_insert_equal(cache);
 					cache = next;
 				}
-#if !defined(BR_NO_EXCEPTIONS)
-			} catch (...) {
+			} BR_CATCH(...) {
 				for (; cache->parent != nullptr; cache = cache->parent) {}
 				m_destroy_subtree(cache);
-				throw;
+				BR_RETHROW;
 			}
-#endif
 			if (cache != nullptr) {
 				for (; cache->parent != nullptr; cache = cache->parent) {}
 				m_destroy_subtree(cache);
@@ -334,7 +299,7 @@ protected:
 		return result;
 	}
 
-	auto m_insert_unique(NodePointer node) -> Pair< NodePointer, bool > {
+	auto m_insert_unique(NodePointer const & node) -> Pair< NodePointer, bool > {
 		typename Algorithms::InsertCommitData data;
 		auto result = Algorithms::insert_unique_check(m_header(), node, m_comparator(), data);
 		if (result.second) {
@@ -354,7 +319,7 @@ protected:
 		return result;
 	}
 
-	auto m_insert_unique(NodePointer hint, NodePointer node) -> NodePointer {
+	auto m_insert_unique(NodePointer hint, NodePointer const & node) -> NodePointer {
 		typename Algorithms::InsertCommitData data;
 		auto result = Algorithms::insert_unique_check(m_header(), hint, node, m_comparator(), data);
 		if (result.second) {
@@ -372,7 +337,7 @@ protected:
 		return result;
 	}
 
-	auto m_insert_equal(NodePointer node) -> NodePointer {
+	auto m_insert_equal(NodePointer const & node) -> NodePointer {
 		auto result = Algorithms::insert_equal_upper_bound(m_header(), node, m_comparator());
 		++m_size();
 		return result;
@@ -384,7 +349,7 @@ protected:
 		return result;
 	}
 
-	auto m_insert_equal(NodePointer hint, NodePointer node) -> NodePointer {
+	auto m_insert_equal(NodePointer hint, NodePointer const & node) -> NodePointer {
 		auto result = Algorithms::insert_equal(m_header(), hint, node, m_comparator());
 		++m_size();
 		return result;
@@ -435,13 +400,9 @@ protected:
 
 	void m_swap(Basic & tree) noexcept(BooleanAnd< typename NodeAllocatorTraits::IsAlwaysEqual, IsNothrowSwappable<Comparator> >{}) {
 		using BR::swap;
-		m_swap_allocator(m_allocator(), tree.m_allocator());
+		swap_allocator(m_allocator(), tree.m_allocator());
 		Algorithms::swap(m_header(), tree.m_header());
 		swap(m_size(), tree.m_size());
-	}
-
-	static void m_swap_allocator(NodeAllocator & x, NodeAllocator & y) noexcept(typename NodeAllocatorTraits::IsAlwaysEqual{}) {
-		m_swap_allocator(x, y, typename NodeAllocatorTraits::IsPropagateOnContainerSwap{});
 	}
 
 	auto m_detach() -> NodePointer {
@@ -514,22 +475,18 @@ private:
 			auto end = m_end();
 			if (m_size() != 0) {
 				NodePointer cache = m_detach();
-#if !defined(BR_NO_EXCEPTIONS)
-				try {
-#endif
+				BR_TRY {
 					for (; cache != nullptr && tree.m_size() != 0; ) {
 						cache->element = move(tree.m_remove(tree.m_begin())->element);
 						NodePointer next = m_detach(cache);
 						m_insert_equal(cache);
 						cache = next;
 					}
-#if !defined(BR_NO_EXCEPTIONS)
-				} catch (...) {
+				} BR_CATCH(...) {
 					for (; cache->parent != nullptr; cache = cache->parent) {}
 					m_destroy_subtree(cache);
-					throw;
+					BR_RETHROW;
 				}
-#endif
 				if (cache != nullptr) {
 					for (; cache->parent != nullptr; cache = cache->parent) {}
 					m_destroy_subtree(cache);
@@ -541,12 +498,6 @@ private:
 		}
 	}
 
-	void m_destroy_node(NodePointer node) {
-		auto & allocator = m_allocator();
-		NodeAllocatorTraits::destroy(allocator, address_of(node->element));
-		NodeAllocatorTraits::deallocate(allocator, node, 1);
-	}
-
 	void m_destroy_subtree(NodePointer node) {
 		for (; node != nullptr;) {
 			auto save = node->left;
@@ -555,18 +506,10 @@ private:
 				save->right = node;
 			} else {
 				save = node->right;
-				m_destroy_node(node);
+				destroy_node(m_allocator(), node);
 			}
 			node = save;
 		}
-	}
-
-	static void m_swap_allocator(NodeAllocator & x, NodeAllocator & y, BooleanFalse) noexcept {
-	}
-
-	static void m_swap_allocator(NodeAllocator & x, NodeAllocator & y, BooleanTrue) noexcept(IsNothrowSwappable<NodeAllocator>{}) {
-		using BR::swap;
-		swap(x, y);
 	}
 
 private:
