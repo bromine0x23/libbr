@@ -41,16 +41,6 @@ static Float64 const _3_MUL_2_POW_P42 = Bind64(0x42A80000U, 0U).f; // 3 * 2^+42
 
 } // inline namespace _64
 
-#if !defined(BR_GCC) && !defined(BR_CLANG) && !defined(BR_MSVC)
-auto libbr_get_float_round_mode() -> FloatRoundMode {
-	return FloatRoundMode(std::fegetround());
-}
-
-auto libbr_set_float_round_mode(FloatRoundMode mode) -> bool {
-	return std::fesetround(to_i(mode)) == 0;
-}
-#endif
-
 auto libbr_sqrt_32(Float32 x) -> Float32 {
 	using namespace _32;
 
@@ -135,8 +125,7 @@ auto libbr_sqrt_64(Float64 x) -> Float64 {
 				return (x - x) / (x - x);
 			}
 			break;
-		case FloatCategory::SubNormal:
-		{
+		case FloatCategory::SubNormal: {
 			SInt i = 0;
 			for (i = 0; (b.r & 0x00800000U) == 0; ++i) {
 				b.r <<= 1;
@@ -147,6 +136,30 @@ auto libbr_sqrt_64(Float64 x) -> Float64 {
 	}
 
 	return b.f;
+}
+
+auto libbr_cbrt_32(Float32 x) -> Float32 {
+	return std::cbrt(x); // TODO
+}
+
+auto libbr_cbrt_64(Float64 x) -> Float64 {
+	return std::cbrt(x); // TODO
+}
+
+auto libbr_pow_32(Float32 base, Float32 exponent) -> Float32 {
+	return std::pow(base, exponent); // TODO
+}
+
+auto libbr_pow_64(Float64 base, Float64 exponent) -> Float64 {
+	return std::pow(base, exponent); // TODO
+}
+
+auto libbr_hypot_32(Float32 x, Float32 y) -> Float32 {
+	return std::hypot(x, y); // TODO
+}
+
+auto libbr_hypot_64(Float64 x, Float64 y) -> Float64 {
+	return std::hypot(x, y); // TODO
 }
 
 #include <libbr/math/function/detail/exp.inl>
@@ -198,7 +211,7 @@ auto libbr_exp_32(Float32 x) -> Float32 {
 }
 
 auto libbr_exp_64(Float64 x) -> Float64 {
-	return std::exp(x);
+	return std::exp(x); // TODO
 }
 
 #include <libbr/math/function/detail/exp2.inl>
@@ -312,32 +325,131 @@ auto libbr_exp2_64(Float64 x) -> Float64 {
 }
 
 auto libbr_log_32(Float32 x) -> Float32 {
-	return std::log(x);
+	return std::log(x); // TODO
 }
 
 auto libbr_log_64(Float64 x) -> Float64 {
-	return std::log(x);
+	return std::log(x); // TODO
 }
 
 auto libbr_log2_32(Float32 x) -> Float32 {
-	return std::log2(x);
+	return std::log2(x); // TODO
 }
 
 auto libbr_log2_64(Float64 x) -> Float64 {
-	return std::log2(x);
+	return std::log2(x); // TODO
 }
 
 auto libbr_log10_32(Float32 x) -> Float32 {
-	return std::log10(x);
+	return std::log10(x); // TODO
 }
 
 auto libbr_log10_64(Float64 x) -> Float64 {
-	return std::log10(x);
+	return std::log10(x); // TODO
 }
 
 auto libbr_scale_d(DFloat x, SInt n) -> DFloat {
 	return std::scalbln(x, n);
 }
+
+
+auto libbr_sin_32(Float32 x) -> Float32 {
+	return std::sin(x); // TODO
+}
+
+auto libbr_sin_64(Float64 x) -> Float64 {
+	return std::sin(x); // TODO
+}
+
+auto libbr_cos_32(Float32 x) -> Float32 {
+	return std::cos(x); // TODO
+}
+
+auto libbr_cos_64(Float64 x) -> Float64 {
+	return std::cos(x); // TODO
+}
+
+auto libbr_tan_32(Float32 x) -> Float32 {
+	return std::tan(x); // TODO
+}
+
+auto libbr_tan_64(Float64 x) -> Float64 {
+	return std::tan(x); // TODO
+}
+
+auto libbr_arcsin_32(Float32 x) -> Float32 {
+	return std::asin(x); // TODO
+}
+
+auto libbr_arcsin_64(Float64 x) -> Float64 {
+	return std::asin(x); // TODO
+}
+
+auto libbr_arccos_32(Float32 x) -> Float32 {
+	return std::acos(x); // TODO
+}
+
+auto libbr_arccos_64(Float64 x) -> Float64 {
+	return std::acos(x); // TODO
+}
+
+auto libbr_arctan_32(Float32 x) -> Float32 {
+	return std::atan(x); // TODO
+}
+
+auto libbr_arctan_64(Float64 x) -> Float64 {
+	return std::atan(x); // TODO
+}
+
+
+auto libbr_sinh_32(Float32 x) -> Float32 {
+	return std::sinh(x); // TODO
+}
+
+auto libbr_sinh_64(Float64 x) -> Float64 {
+	return std::sinh(x); // TODO
+}
+
+auto libbr_cosh_32(Float32 x) -> Float32 {
+	return std::cosh(x); // TODO
+}
+
+auto libbr_cosh_64(Float64 x) -> Float64 {
+	return std::cosh(x); // TODO
+}
+
+auto libbr_tanh_32(Float32 x) -> Float32 {
+	return std::tanh(x); // TODO
+}
+
+auto libbr_tanh_64(Float64 x) -> Float64 {
+	return std::tanh(x); // TODO
+}
+
+auto libbr_arcsinh_32(Float32 x) -> Float32 {
+	return std::asinh(x); // TODO
+}
+
+auto libbr_arcsinh_64(Float64 x) -> Float64 {
+	return std::asinh(x); // TODO
+}
+
+auto libbr_arccosh_32(Float32 x) -> Float32 {
+	return std::acosh(x); // TODO
+}
+
+auto libbr_arccosh_64(Float64 x) -> Float64 {
+	return std::acosh(x); // TODO
+}
+
+auto libbr_arctanh_32(Float32 x) -> Float32 {
+	return std::atanh(x); // TODO
+}
+
+auto libbr_arctanh_64(Float64 x) -> Float64 {
+	return std::atanh(x); // TODO
+}
+
 
 static constexpr auto _exponent32(UInt32 raw) -> SInt32 {
 	return SInt32((raw >> 23) & 0xFFU) - 0x7F;

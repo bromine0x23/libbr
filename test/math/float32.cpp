@@ -116,8 +116,3 @@ TEST(Float32, Exp2) {
 	EXPECT_EQ(4.0F, exp2(2.0F));
 	EXPECT_EQ(16.0F, exp2(4.0F));
 }
-
-TEST(Float32, Environment) {
-	FloatEnvironment environment;
-	get_float_environment(environment);
-}

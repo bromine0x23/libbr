@@ -32,16 +32,14 @@
 #include <libbr/math/function/is_less_greater.hpp>
 #include <libbr/math/function/is_unordered.hpp>
 
-#include <libbr/math/function/ceil.hpp>
-#include <libbr/math/function/floor.hpp>
-#include <libbr/math/function/round.hpp>
-#include <libbr/math/function/truncate.hpp>
-
 #include <libbr/math/function/abs.hpp>
 #include <libbr/math/function/max.hpp>
 #include <libbr/math/function/min.hpp>
 
 #include <libbr/math/function/sqrt.hpp>
+#include <libbr/math/function/cbrt.hpp>
+#include <libbr/math/function/pow.hpp>
+#include <libbr/math/function/hypot.hpp>
 
 #include <libbr/math/function/exp.hpp>
 #include <libbr/math/function/exp2.hpp>
@@ -49,3 +47,23 @@
 #include <libbr/math/function/log.hpp>
 #include <libbr/math/function/log2.hpp>
 #include <libbr/math/function/log10.hpp>
+
+#include <libbr/math/function/sin.hpp>
+#include <libbr/math/function/cos.hpp>
+#include <libbr/math/function/tan.hpp>
+#include <libbr/math/function/arcsin.hpp>
+#include <libbr/math/function/arccos.hpp>
+#include <libbr/math/function/arctan.hpp>
+
+#include <libbr/math/function/sinh.hpp>
+#include <libbr/math/function/cosh.hpp>
+#include <libbr/math/function/tanh.hpp>
+#include <libbr/math/function/arcsinh.hpp>
+#include <libbr/math/function/arccosh.hpp>
+#include <libbr/math/function/arctanh.hpp>
+
+#include <libbr/math/function/ceil.hpp>
+#include <libbr/math/function/floor.hpp>
+#include <libbr/math/function/round.hpp>
+#include <libbr/math/function/truncate.hpp>
+

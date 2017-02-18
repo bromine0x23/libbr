@@ -37,12 +37,16 @@
 #endif
 
 #if !defined(BR_ARCHITECTURE)
-#  if defined(__i386__)
-#    define BR_ARCHITECTURE "i386"
-#    define BR_32BIT
-#  elif defined(__x86_64__)
+#  if defined(__x86_64__) || defined(__x86_64) || defined(__amd64__) || defined(__amd64)
 #    define BR_ARCHITECTURE "x86_64"
+#    define BR_X86_64
 #    define BR_64BIT
+#  elif defined(__i386__) || defined(__i486__) || defined(__i586__) || defined(__i686__)
+#    define BR_ARCHITECTURE "x86"
+#    define BR_X86
+#    define BR_32BIT
+#  else
+#    error "Unknown architecture."
 #  endif
 #endif
 

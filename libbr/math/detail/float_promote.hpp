@@ -26,6 +26,9 @@ struct TypeFloatPromote<Float32> : public TypeWrapper<Float32> {};
 template<>
 struct TypeFloatPromote<Float64> : public TypeWrapper<Float64> {};
 
+template< typename TX, typename TY>
+using FloatPromote2 = decltype(FloatPromote<TX>() + FloatPromote<TY>());
+
 } // namespace Math
 } // namespace Detail
 } // namespace BR
