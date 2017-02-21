@@ -8,7 +8,10 @@
 #include <libbr/config.hpp>
 #include <libbr/math/detail/bignum_config.hpp>
 #include <libbr/math/relation.hpp>
-#include <libbr/utility/bit_math.hpp>
+#include <libbr/math/function/count_leading_zeros.hpp>
+#include <libbr/math/function/is_power2.hpp>
+#include <libbr/math/function/ilog2.hpp>
+#include <libbr/math/function/reverse_bits.hpp>
 #include <libbr/utility/integral_constant.hpp>
 #include <libbr/utility/swap.hpp>
 

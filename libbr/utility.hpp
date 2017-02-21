@@ -8,7 +8,6 @@
 
 #include <libbr/utility/aligned_storage.hpp>
 #include <libbr/utility/aligned_union.hpp>
-#include <libbr/utility/bit_math.hpp>
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/utility/demangle.hpp>
 #include <libbr/utility/exchange.hpp>

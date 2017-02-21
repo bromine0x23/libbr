@@ -1063,7 +1063,7 @@ String<> BignumAlgorithm::to_s(BignumData const & X, Digit b, bool show_plus) {
 	};
 	static auto to_s_power_2 = [](BignumData const & X, Digit base) {
 		auto const xlength = X.length;
-		auto const bits_per_char = integral_log2(base);
+		auto const bits_per_char = ilog2(base);
 		auto mod_base_mask = (1 << bits_per_char) - 1;
 
 		String<> s; s.reserve((X.length * BIT_PER_DIGIT - count_leading_zeros(X.digits[X.length - 1]) + bits_per_char) / bits_per_char);
@@ -1108,7 +1108,7 @@ String<> BignumAlgorithm::to_s(BignumData const & X, Digit b, bool show_plus) {
 	if (is_zero(X)) {
 		return "0";
 	} else {
-		s << (is_power_of_2(b) ? to_s_power_2(X, b) : to_s_generic(X, b));
+		s << (is_power2(b) ? to_s_power_2(X, b) : to_s_generic(X, b));
 		return s;
 	}
 }
