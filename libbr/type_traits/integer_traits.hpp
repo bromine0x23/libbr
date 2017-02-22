@@ -46,7 +46,7 @@ struct IntegerTraitsBasic< TInteger, true > {
 
 template<>
 struct IntegerTraitsBasic< bool, true > {
-	using Type = TInteger;
+	using Type = bool;
 	constexpr static bool is_integer = true;
 	constexpr static bool is_signed  = false;
 	constexpr static auto digits = 1;

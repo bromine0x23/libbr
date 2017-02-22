@@ -30,6 +30,7 @@ set(LIBBR_COMPONENTS
 	math
 	memory
 	optional
+	random
 	string
 	type_operate
 	type_traits
