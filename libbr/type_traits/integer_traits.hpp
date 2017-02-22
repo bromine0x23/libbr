@@ -3,8 +3,8 @@
 #include <climits>
 
 #include <libbr/config.hpp>
-#include <libbr/type_traits/is_signed.hpp>
-#include <libbr/type_traits/is_unsigned.hpp>
+#include <libbr/type_traits/is_integral.hpp>
+#include <libbr/type_traits/remove_const_volatile.hpp>
 
 namespace BR {
 
@@ -22,61 +22,49 @@ struct IntegerTraits;
 
 
 namespace Detail {
+namespace TypeTraits {
 
-template< typename TInteger, TInteger min_val, TInteger max_val >
+template< typename T, bool is_integral = IsIntegral<T>{} >
 struct IntegerTraitsBasic {
-	constexpr static TInteger min() noexcept { return min_val; }
-	constexpr static TInteger max() noexcept { return max_val; }
-	constexpr static auto is_integer  = true;
-	constexpr static auto is_signed   = IsSigned< TInteger >::value;
-	constexpr static auto is_unsigned = IsUnsigned< TInteger >::value;
+	using Type = T;
+	constexpr static auto is_integer = false;
+	constexpr static auto is_signed  = false;
+	constexpr static auto digits = 0;
+	constexpr static auto min() noexcept -> Type { return T(); }
+	constexpr static auto max() noexcept -> Type { return T(); }
 };
 
+template< typename TInteger >
+struct IntegerTraitsBasic< TInteger, true > {
+	using Type = TInteger;
+	constexpr static bool is_integer = true;
+	constexpr static bool is_signed  = static_cast<Type>(-1) < static_cast<Type>(0);
+	constexpr static auto digits = static_cast<Size>(sizeof(Type) * BIT_PER_CHAR - is_signed);
+	constexpr static auto min() noexcept -> Type { return static_cast<Type>(is_signed ? Type(1) << digits : 0); }
+	constexpr static auto max() noexcept -> Type { return static_cast<Type>(is_signed ? Type(~0) ^ min() : Type(~0)); }
+};
+
+template<>
+struct IntegerTraitsBasic< bool, true > {
+	using Type = TInteger;
+	constexpr static bool is_integer = true;
+	constexpr static bool is_signed  = false;
+	constexpr static auto digits = 1;
+	constexpr static auto min() noexcept -> Type { return false; }
+	constexpr static auto max() noexcept -> Type { return true; }
+};
+
+template< typename T >
+using IntegerTraits = IntegerTraitsBasic< RemoveConstVolatile<T> >;
+
+} // namespace TypeTraits
 } // namespace Detail
 
 inline namespace TypeTraits {
 
 template< typename T >
-struct IntegerTraits {
-	constexpr static T min() noexcept { return T(); }
-	constexpr static T max() noexcept { return T(); }
-	constexpr static auto is_integer  = false;
-	constexpr static auto is_signed   = false;
-	constexpr static auto is_unsigned = false;
+struct IntegerTraits : public Detail::TypeTraits::IntegerTraits<T> {
 };
-
-template<>
-struct IntegerTraits< char > : Detail::IntegerTraitsBasic< char, CHAR_MIN, CHAR_MAX > {};
-
-template<>
-struct IntegerTraits< signed char > : Detail::IntegerTraitsBasic< signed char, SCHAR_MIN, SCHAR_MAX > {};
-
-template<>
-struct IntegerTraits< unsigned char > : Detail::IntegerTraitsBasic< unsigned char, 0, UCHAR_MAX > {};
-
-template<>
-struct IntegerTraits< signed short > : Detail::IntegerTraitsBasic< signed short, SHRT_MIN, SHRT_MAX > {};
-
-template<>
-struct IntegerTraits< unsigned short > : Detail::IntegerTraitsBasic< unsigned short, 0, USHRT_MAX > {};
-
-template<>
-struct IntegerTraits< signed int > : Detail::IntegerTraitsBasic< signed int,INT_MIN, INT_MAX > {};
-
-template<>
-struct IntegerTraits< unsigned int > : Detail::IntegerTraitsBasic< unsigned int, 0, UINT_MAX > {};
-
-template<>
-struct IntegerTraits< signed long > : Detail::IntegerTraitsBasic< signed long, LONG_MIN, LONG_MAX > {};
-
-template<>
-struct IntegerTraits< unsigned long > : Detail::IntegerTraitsBasic< unsigned long, 0, ULONG_MAX > {};
-
-template<>
-struct IntegerTraits< signed long long > : Detail::IntegerTraitsBasic< signed long long, LLONG_MIN, LLONG_MAX > {};
-
-template<>
-struct IntegerTraits< unsigned long long > : Detail::IntegerTraitsBasic< unsigned long long, 0, ULLONG_MAX > {};
 
 } // namespace TypeTraits
 
