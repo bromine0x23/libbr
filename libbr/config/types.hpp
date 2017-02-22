@@ -203,6 +203,8 @@ using Float32 = float;
 
 using Float64 = double;
 
+using Float96 = long double;
+
 } // namespace BR
 
 namespace BR {
@@ -243,6 +245,11 @@ using CArray = T[S];
  */
 template< typename TChar >
 using CString = TChar const *;
+
+struct MaxAlignType {
+	alignas(alignof(long long)) long long ll;
+	alignas(alignof(long double)) long double ld;
+};
 
 } // namespace BR
 

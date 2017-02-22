@@ -31,6 +31,11 @@ public:
 		}
 	}
 
+	auto operator=(NodeDestructor const & destructor) -> NodeDestructor {
+		constructed = destructor.constructed;
+		return *this;
+	}
+
 public:
 	bool constructed;
 
