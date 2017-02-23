@@ -210,6 +210,14 @@ public:
 		seed(s);
 	}
 
+	constexpr static auto min() -> Result {
+		return increment == 0U ? 1U: 0U;
+	}
+
+	constexpr static auto max() -> Result {
+		return modulus - 1U;
+	}
+
 	auto seed(Result s = default_seed) -> LinearCongruentialEngine & {
 		m_seed(BooleanConstant<modulus == 0>{}, BooleanConstant<increment == 0>{}, s);
 		return *this;
@@ -252,7 +260,7 @@ private:
 
 private:
 	Result m_x;
-};
+}; // class LinearCongruentialEngine<TUInt, a, c, m>
 
 } // inline namespace Random
 
