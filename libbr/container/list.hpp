@@ -10,26 +10,19 @@
 #include <libbr/algorithm/equal.hpp>
 #include <libbr/algorithm/lexicographical_compare.hpp>
 #include <libbr/assert/assert.hpp>
-#include <libbr/container/detail/allocator_helpers.hpp>
 #include <libbr/container/detail/list_basic.hpp>
 #include <libbr/container/initializer_list.hpp>
-#include <libbr/container/tuple.hpp>
 #include <libbr/enumerate/enumerable.hpp>
-#include <libbr/iterator/distance.hpp>
 #include <libbr/iterator/move_iterator.hpp>
-#include <libbr/iterator/next.hpp>
-#include <libbr/iterator/prev.hpp>
 #include <libbr/iterator/reverse_iterator.hpp>
 #include <libbr/functional/equal.hpp>
 #include <libbr/functional/less.hpp>
-#include <libbr/memory/address_of.hpp>
 #include <libbr/memory/allocator.hpp>
-#include <libbr/memory/allocator_destructor.hpp>
 #include <libbr/memory/allocator_traits.hpp>
 #include <libbr/memory/pointer_traits.hpp>
-#include <libbr/memory/unique_pointer.hpp>
 #include <libbr/operators/equality_comparable.hpp>
 #include <libbr/operators/less_than_comparable.hpp>
+#include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/has_nothrow_default_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_move_assignment.hpp>
@@ -37,16 +30,15 @@
 #include <libbr/type_traits/is_nothrow_swappable.hpp>
 #include <libbr/utility/forward.hpp>
 #include <libbr/utility/move.hpp>
-#include <libbr/utility/swap.hpp>
 
 namespace BR {
 
 inline namespace Container {
 
 /**
- * @brief 双向链表
- * @tparam TElement 元素类型
- * @tparam TAllocator 分配器类型
+ * @brief Double-linked list。
+ * @tparam TElement The type of the elements.
+ * @tparam TAllocator An allocator used to acquire/release memory and to construct/destroy the elements in that memory.
  */
 template< typename TElement, typename TAllocator = Allocator<TElement> >
 class List;
@@ -74,14 +66,8 @@ class List :
 	public LessThanComparable< List<TElement, TAllocator> >
 {
 public:
-	/**
-	 * @brief 元素类型
-	 */
 	using Element = TElement;
 
-	/**
-	 * @brief 分配器类型
-	 */
 	using Allocator = TAllocator;
 
 private:
@@ -98,54 +84,24 @@ private:
 	using NodePointer = typename Base::NodePointer;
 
 public:
-	/**
-	 * @brief Reference
-	 */
 	using Reference = typename Base::Reference;
 
-	/**
-	 * @brief ConstReference
-	 */
 	using ConstReference = typename Base::ConstReference;
 
-	/**
-	 * @brief Pointer
-	 */
 	using Pointer = typename Base::Pointer;
 
-	/**
-	 * @brief ConstPointer
-	 */
 	using ConstPointer = typename Base::ConstPointer;
 
-	/**
-	 * @brief Difference
-	 */
 	using Difference = typename Base::Difference;
 
-	/**
-	 * @brief Size
-	 */
 	using Size = typename Base::Size;
 
-	/**
-	 * @brief Iterator
-	 */
 	using Iterator = typename Base::Iterator;
 
-	/**
-	 * @brief ConstIterator
-	 */
 	using ConstIterator = typename Base::ConstIterator;
 
-	/**
-	 * @brief ReverseIterator
-	 */
 	using ReverseIterator = BR::ReverseIterator<Iterator>;
 
-	/**
-	 * @brief ConstReverseIterator
-	 */
 	using ConstReverseIterator = BR::ReverseIterator<ConstIterator>;
 
 private:
@@ -157,100 +113,100 @@ private:
 
 public:
 	/**
-	 * @name 构造函数
+	 * @name Constructor
 	 */
 	///@{
 	/**
-	 * @brief 默认构造函数
+	 * @brief Default constructor.
 	 */
 	List() noexcept(HasNothrowDefaultConstructor<NodeAllocator>{}) {
 	}
 
 	/**
-	 * @brief 默认构造函数，指定分配器
-	 * @param[in] allocator 分配器
+	 * @brief Default constructor.
+	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
 	explicit List(Allocator const & allocator) : Base(allocator) {
 	}
 
 	/**
-	 * @brief 复制构造函数
-	 * @param[in] list 源容器
+	 * @brief Copy constructor.
+	 * @param list Another container to be used as source to initialize the elements of the container with.
 	 */
 	List(List const & list) : Base(Allocator(NodeAllocatorTraits::select_on_container_copy_construction(list.m_allocator()))) {
 		insert(begin(), list.begin(), list.end());
 	}
 
 	/**
-	 * @brief 复制构造函数，指定分配器
-	 * @param[in] list 源容器
-	 * @param[in] allocator 分配器
+	 * @brief Copy constructor.
+	 * @param list Another container to be used as source to initialize the elements of the container with.
+	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
 	List(List const & list, Allocator const & allocator) : Base(allocator) {
 		insert(begin(), list.begin(), list.end());
 	}
 
 	/**
-	 * @brief 移动构造函数
-	 * @param[in,out] list 源容器
+	 * @brief Move constructor.
+	 * @param list Another container to be used as source to initialize the elements of the container with.
 	 */
 	List(List && list) noexcept(HasNothrowMoveConstructor<NodeAllocator>{}) : Base(Allocator(move(list.m_allocator()))) {
-		splice(end(), list);
+		splice(end(), move(list));
 	}
 
 	/**
-	 * @brief 移动构造函数，指定分配器
-	 * @param[in,out] list 源容器
-	 * @param[in] allocator 分配器
+	 * @brief Move constructor.
+	 * @param list Another container to be used as source to initialize the elements of the container with.
+	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
 	List(List && list, Allocator const & allocator) : Base(allocator) {
-		if (allocator == list.m_allocator()) {
-			splice(end(), list);
+		if (this->m_allocator() == list.m_allocator()) {
+			splice(end(), move(list));
 		} else {
 			assign(make_move_iterator(list.begin()), make_move_iterator(list.end()));
 		}
 	}
 
 	/**
-	 * @brief 构造具有指定长度的容器，元素以默认值初始化
-	 * @param[in] n 容器大小
-	 * @param[in] allocator 分配器
+	 * @brief Constructs the container with \p count default-constructed instances of Element.
+	 * @param count The size of the container.
+	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
-	explicit List(Size n, Allocator const & allocator = Allocator{}) : Base(allocator) {
-		for (; n > 0; --n) {
+	explicit List(Size count, Allocator const & allocator = Allocator{}) : Base(allocator) {
+		for (; count > 0; --count) {
 			emplace_back();
 		}
 	}
 
 	/**
-	 * @brief 构造具有指定长度的容器，元素以给定值初始化
-	 * @param[in] x 用于初始化的元素
-	 * @param[in] n 容器大小
-	 * @param[in] allocator 分配器
+	 * @brief Constructs the container with \p count copies of elements with value \p element.
+	 * @param element The value to initialize elements of the container with.
+	 * @param count The size of the container.
+	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
-	List(ConstReference x, Size n, Allocator const & allocator = Allocator{}) : Base(allocator) {
-		for (; n > 0; --n) {
-			emplace_back(x);
+	List(ConstReference element, Size count, Allocator const & allocator = Allocator{}) : Base(allocator) {
+		for (; count > 0; --count) {
+			emplace_back(element);
 		}
 	}
 
 	/**
-	 * @brief 从给定区间中的值构造
-	 * @tparam TIterator 迭代器类型
-	 * @param[in] f,l 给定区间
-	 * @param[in] allocator 分配器
+	 * @brief Constructs the container with the contents of the range \c [first,last).
+	 * @tparam TIterator Iterator type.
+	 * @param first,last The range to copy the elements from.
+	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
 	template< typename TIterator >
-	List(TIterator f, TIterator l, Allocator const & allocator = Allocator{}, EnableIf< IsInputIterator<TIterator> > * = nullptr) : Base(allocator) {
-		for (; f != l; ++f) {
-			emplace_back(*f);
+	List(TIterator first, TIterator last, Allocator const & allocator = Allocator{}, EnableIf< IsInputIterator<TIterator> > * = nullptr) : Base(allocator) {
+		for (; first != last; ++first) {
+			emplace_back(*first);
 		}
 	}
 
 	/**
-	 * @brief 从初始化列表构造
-	 * @param[in] list 初始化列表
-	 * @param[in] allocator 分配器
+	 * @brief Constructs the container with the contents of the initializer list \p list.
+	 * @param list Initializer list to initialize the elements of the container with.
+	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
 	List(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : Base(allocator) {
 		for (auto i = list.begin(), e = list.end(); i != e; ++i) {
@@ -259,20 +215,35 @@ public:
 	}
 	///@}
 
+	/**
+	 * @brief Destructor
+	 */
 	~List() = default;
 
 	/**
-	 * @name 成员
+	 * @name Member
 	 */
 	///@{
+	/**
+	 * @brief Returns the associated allocator.
+	 * @return The associated allocator.
+	 */
 	auto allocator() const noexcept -> Allocator {
 		return Allocator(this->m_allocator());
 	}
 
+	/**
+	 * @brief Access the first element.
+	 * @return Reference to the first element.
+	 */
 	auto front() -> Reference {
 		return this->m_header()->next->element;
 	}
 
+	/**
+	 * @brief Access the first element.
+	 * @return Reference to the first element.
+	 */
 	auto front() const -> ConstReference {
 		return this->m_header()->next->element;
 	}
@@ -287,46 +258,52 @@ public:
 	///@}
 
 	/**
-	 * @name 迭代器
+	 * @name Iterator
 	 */
 	///@{
 	/**
-	 * @brief begin
+	 * @brief Returns an iterator to the beginning.
+	 * @return Iterator to the first element.
 	 */
 	auto begin() noexcept -> Iterator {
 		return Iterator(this->m_begin());
 	}
 
 	/**
-	 * @brief begin
+	 * @brief Returns an iterator to the beginning.
+	 * @return Iterator to the first element.
 	 */
 	auto begin() const noexcept -> ConstIterator {
 		return ConstIterator(this->m_begin());
 	}
 
 	/**
-	 * @brief const begin
+	 * @brief Returns an iterator to the beginning.
+	 * @return Iterator to the first element.
 	 */
 	auto cbegin() const noexcept -> ConstIterator {
 		return begin();
 	}
 
 	/**
-	 * @brief end
+	 * @brief Returns an iterator to the end
+	 * @return Iterator to the element following the last element.
 	 */
 	auto end() noexcept -> Iterator {
 		return Iterator(this->m_end());
 	}
 
 	/**
-	 * @brief end
+	 * @brief Returns an iterator to the end
+	 * @return Iterator to the element following the last element.
 	 */
 	auto end() const noexcept -> ConstIterator {
 		return ConstIterator(this->m_end());
 	}
 
 	/**
-	 * @brief const end
+	 * @brief Returns an iterator to the end
+	 * @return Iterator to the element following the last element.
 	 */
 	auto cend() const noexcept -> ConstIterator {
 		return end();
@@ -376,11 +353,12 @@ public:
 	///@}
 
 	/**
-	 * @name 容量
+	 * @name Capacity
 	 */
 	///@{
 	/**
-	 * @brief is empty
+	 * @brief Checks whether the container is empty.
+	 * @return \c true if the container is empty, \c false otherwise.
 	 */
 	auto empty() const noexcept -> bool {
 		return this->m_size() == 0;
@@ -394,33 +372,28 @@ public:
 	}
 
 	/**
-	 * @brief max size
+	 * @brief Returns the maximum possible number of element.
+	 * @return Maximum possible number of element.
 	 */
 	auto max_size() const noexcept -> Size {
 		return NodeAllocatorTraits::max_size(this->m_allocator());
 	}
 
 	/**
-	 * resize
-	 *
-	 * @param new_size new size
-	 * @return
+	 * @brief Changes the number of elements stored.
+	 * @param new_size New size of the container.
 	 */
-	auto resize(Size new_size) -> List & {
+	void resize(Size new_size) {
 		this->m_resize(new_size);
-		return *this;
 	}
 
 	/**
-	 * resize
-	 *
-	 * @param new_size new size
-	 * @param x element to fill
-	 * @return
+	 * @brief Changes the number of elements stored.
+	 * @param new_size New size of the container.
+	 * @param element The value to initialize the new elements with.
 	 */
-	auto resize(Size new_size, Element const & x) -> List & {
-		this->m_resize(new_size, x);
-		return *this;
+	void resize(Size new_size, Element const & element) {
+		this->m_resize(new_size, element);
 	}
 	///@}
 
@@ -428,23 +401,33 @@ public:
 	 * @name 比较
 	 */
 	///@{
+	/**
+	 * @brief Check equality.
+	 * @param y Another containers to compare.
+	 * @return \c true if the contents of the containers are equal, \c false otherwise.
+	 */
 	auto operator==(List const & y) const -> bool {
 		return size() == y.size() && equal(begin(), end(), y.begin(), y.end());
 	}
 
+	/**
+	 * @brief Lexicographically less comparision.
+	 * @param y Another containers to compare.
+	 * @return \c true if the contents of this container are lexicographically less than the contents of \p y, \c false otherwise.
+	 */
 	auto operator<(List const & y) const -> bool {
 		return lexicographical_compare(begin(), end(), y.begin(), y.end());
 	}
 	///@}
 
 	/**
-	 * @name 赋值操作
+	 * @name Assignment
 	 */
 	///@{
 	/**
-	 * @brief 复制运算
-	 * @param[in] list 源链表
-	 * @return
+	 * @brief Copy assignment.
+	 * @param list Data source container.
+	 * @return \c *this
 	 */
 	auto operator=(List const & list) -> List & {
 		if (this != &list) {
@@ -455,18 +438,9 @@ public:
 	}
 
 	/**
-	 * @brief copy assignment
-	 * @param list
-	 * @return
-	 */
-	auto assign(List const & list) -> List & {
-		return *this = list;
-	}
-
-	/**
-	 * @brief 移动运算
-	 * @param[in] list 源链表
-	 * @return
+	 * @brief Move assignment.
+	 * @param list Data source container.
+	 * @return \c *this
 	 */
 	auto operator=(List && list) noexcept(
 		BooleanAnd< typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment, HasNothrowMoveAssignment<Allocator> >{}
@@ -476,8 +450,9 @@ public:
 	}
 
 	/**
-	 * @brief 从初始化列表复制
-	 * @param[in] list 初始化列表
+	 * @brief Replaces the contents with the elements from the initializer list \p list.
+	 * @param list Initializer list to copy the values from.
+	 * @return \c *this
 	 */
 	auto operator=(InitializerList<Element> list) -> List & {
 		assign(list.begin(), list.end());
@@ -485,47 +460,48 @@ public:
 	}
 
 	/**
-	 * @brief 从初始化列表复制
-	 * @param[in] list 初始化列表
+	 * @brief Replaces the contents with \p count copies of value \p element
+	 * @param element The value to initialize elements of the container with.
+	 * @param count The new size of the container.
+	 * @return \c *this
 	 */
-	auto assign(InitializerList<Element> list) -> List & {
-		assign(list.begin(), list.end());
-		return *this;
-	}
-
-	/**
-	 * @brief 设置容器内容为 count 个给定元素的副本
-	 * @param[in] x 作为副本的元素
-	 * @param[in] n 鸽术
-	 */
-	auto assign(Element const & x, Size n) -> List & {
+	void assign(Element const & element, Size count) {
 		auto i = begin(), e = end();
-		for (; n > 0 && i != e; --n, ++i) {
-			*i = x;
+		for (; count > 0 && i != e; --count, ++i) {
+			*i = element;
 		}
 		if (i == e) {
-			insert(e, x, n);
+			insert(e, element, count);
 		} else {
 			erase(i, e);
 		}
 	}
 
 	/**
-	 * @brief 以迭代器区间赋值
-	 * @param[in] f,l 迭代器区间
+	 * @brief Replaces the contents with copies of those in the range \c [first,last).
+	 * @param first,last The range to copy the elements from.
+	 * @return \c *this
 	 */
 	template< typename TIterator >
-	auto assign(TIterator f, TIterator l) -> EnableIf< IsInputIterator<TIterator>, List & > {
+	auto assign(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator> > {
 		auto i = begin(), e = end();
-		for (; f != l && i != e; ++f, ++i) {
-			*i = *f;
+		for (; first != last && i != e; ++first, ++i) {
+			*i = *first;
 		}
 		if (i == e) {
-			insert(e, f, l);
+			insert(e, first, last);
 		} else {
 			erase(i, e);
 		}
-		return *this;
+	}
+
+	/**
+	 * @brief Replaces the contents with the elements from the initializer list \p list.
+	 * @param list Initializer list to copy the values from.
+	 * @return \c *this
+	 */
+	void assign(InitializerList<Element> list) {
+		assign(list.begin(), list.end());
 	}
 	///@}
 
@@ -536,13 +512,13 @@ public:
 	/**
 	 * @brief 从参数构造对象并添加到指定位置
 	 * @tparam TArgs
-	 * @param postion
+	 * @param position
 	 * @param args
 	 * @return
 	 */
 	template< typename ... TArgs >
-	auto emplace(ConstIterator postion, TArgs && ... args) -> Iterator {
-		return Iterator(this->m_insert(postion.m_pointer, this->m_construct_node(forward<TArgs>(args)...)));
+	auto emplace(ConstIterator position, TArgs && ... args) -> Iterator {
+		return Iterator(this->m_insert(position.m_pointer, this->m_construct_node(forward<TArgs>(args)...)));
 	}
 
 	/**
@@ -568,20 +544,20 @@ public:
 	}
 
 	/**
-	 *
-	 * @param position
-	 * @param element
-	 * @return
+	 * @brief Inserts elements after an element.
+	 * @param position Iterator after which the content will be inserted.
+	 * @param element Element value to insert.
+	 * @return Iterator to the inserted element.
 	 */
 	auto insert(ConstIterator position, Element const & element) -> Iterator {
 		return emplace(position, element);
 	}
 
 	/**
-	 *
-	 * @param position
-	 * @param element
-	 * @return
+	 * @brief Inserts elements after an element.
+	 * @param position Iterator after which the content will be inserted.
+	 * @param element Element value to insert.
+	 * @return Iterator to the inserted element.
 	 */
 	auto insert(ConstIterator position, Element && element) -> Iterator {
 		return emplace(position, move(element));
@@ -662,10 +638,6 @@ public:
 	 * @name 删除操作
 	 */
 	///@{
-	auto clear() noexcept -> List & {
-		this->m_clear();
-	}
-
 	void erase_front() {
 		erase(cbegin());
 	}
@@ -682,14 +654,29 @@ public:
 		erase(cend());
 	}
 
-	auto remove(ConstReference x) -> List & {
+	/**
+	 * @brief Clears the contents.
+	 */
+	void clear() noexcept {
+		this->m_clear();
+	}
+
+	/**
+	 * @brief Removes all elements that are equal to \p element.
+	 * @param element Value of the elements to remove.
+	 */
+	void remove(ConstReference x) {
 		return remove_if([&x](ConstReference y){ return x == y; });
 	}
 
+	/**
+	 * @brief Removes all elements for which predicate \p predicate returns true.
+	 * @tparam TUnaryPredicate Type of unary predicate.
+	 * @param predicate Unary predicate which returns \c ​true if the element should be removed.
+	 */
 	template< typename TUnaryPredicate >
-	auto remove_if(TUnaryPredicate && predicate) -> List & {
+	void remove_if(TUnaryPredicate && predicate) {
 		this->m_remove(predicate);
-		return *this;
 	}
 	///@}
 
@@ -697,31 +684,62 @@ public:
 	 * @name splice
 	 */
 	///@{
-	auto splice(ConstIterator p, List & other) -> List & {
-		this->m_splice(p.m_pointer, other);
-		return *this;
+	/**
+	 * @brief Moves elements from another ForwardList
+	 * @param position Element after which the content will be inserted.
+	 * @param other Another container to move the content from.
+	 */
+	void splice(ConstIterator position, List & other) {
+		this->m_splice(position.m_pointer, other);
 	}
 
-	auto splice(ConstIterator p, List & other, ConstIterator i) -> List & {
-		this->m_splice(p.m_pointer, other, i.m_pointer);
-		return *this;
+	/**
+	 * @brief Moves elements from another ForwardList
+	 * @param position Element after which the content will be inserted.
+	 * @param other Another container to move the content from.
+	 * @param i Iterator preceding the iterator to the element to move from other to \c *this.
+	 */
+	void splice(ConstIterator position, List & other, ConstIterator i) {
+		this->m_splice(position.m_pointer, other, i.m_pointer);
 	}
 
-	auto splice(ConstIterator p, List & other, ConstIterator f, ConstIterator l) -> List & {
-		this->m_splice(p.m_pointer, other, f.m_pointer, l.m_pointer);
-		return *this;
+	/**
+	 * @brief Moves elements from another ForwardList
+	 * @param position Element after which the content will be inserted.
+	 * @param other Another container to move the content from.
+	 * @param first,last The range of elements to move from other to \c *this.
+	 */
+	void splice(ConstIterator position, List & other, ConstIterator first, ConstIterator last) {
+		this->m_splice(position.m_pointer, other, first.m_pointer, last.m_pointer);
 	}
 
-	auto splice(ConstIterator p, List && other) -> List & {
-		return splice(p, other);
+	/**
+	 * @brief Moves elements from another ForwardList
+	 * @param position Element after which the content will be inserted.
+	 * @param other Another container to move the content from.
+	 */
+	void splice(ConstIterator position, List && other) {
+		splice(position, other);
 	}
 
-	auto splice(ConstIterator p, List && other, ConstIterator i) -> List & {
-		return splice(p, other, i);
+	/**
+	 * @brief Moves elements from another ForwardList
+	 * @param position Element after which the content will be inserted.
+	 * @param other Another container to move the content from.
+	 * @param i Iterator preceding the iterator to the element to move from other to \c *this.
+	 */
+	void splice(ConstIterator position, List && other, ConstIterator i) {
+		splice(position, other, i);
 	}
 
-	auto splice(ConstIterator p, List && other, ConstIterator f, ConstIterator l) -> List & {
-		return splice(p, other, f, l);
+	/**
+	 * @brief Moves elements from another ForwardList
+	 * @param position Element after which the content will be inserted.
+	 * @param other Another container to move the content from.
+	 * @param first,last The range of elements to move from other to \c *this.
+	 */
+	void splice(ConstIterator position, List && other, ConstIterator first, ConstIterator last) {
+		splice(position, other, first, last);
 	}
 	///@}
 

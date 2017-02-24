@@ -9,6 +9,7 @@
 #include <libbr/container/detail/raw_array.hpp>
 #include <libbr/iterator/next.hpp>
 #include <libbr/iterator/prev.hpp>
+#include <libbr/memory/address_of.hpp>
 #include <libbr/memory/allocator_traits.hpp>
 #include <libbr/memory/unique_pointer.hpp>
 #include <libbr/type_traits/has_nothrow_default_constructor.hpp>
@@ -93,6 +94,7 @@ public:
 	}
 
 	~Basic() {
+		m_clear();
 	}
 
 protected:
@@ -266,7 +268,7 @@ protected:
 		for (; f != l;) {
 			auto t = f;
 			f = f->next;
-			destroy_node(m_allocator(), f);
+			destroy_node(m_allocator(), t);
 			--m_size();
 		}
 		return f;
@@ -286,7 +288,7 @@ protected:
 	}
 
 	template< typename TUnaryPredicate >
-	void m_remove(TUnaryPredicate predicate) {
+	void m_remove(TUnaryPredicate & predicate) {
 		typename Algorithms::StablePartitionInfo info;
 		Algorithms::stable_partition(m_begin(), m_header(), predicate, info);
 		m_erase(m_begin(), info.begin_right);
@@ -323,7 +325,7 @@ protected:
 	}
 
 	template< typename TComparator >
-	void m_merge(Basic & list, TComparator comparator) {
+	void m_merge(Basic & list, TComparator & comparator) {
 		auto b = m_begin(), e = m_end();
 		auto e1 = list.m_end();
 		for (; list.m_size() != 0;) {
@@ -378,10 +380,6 @@ protected:
 		swap_allocator(m_allocator(), list.m_allocator());
 		Algorithms::swap(m_header(), list.m_header());
 		swap(m_size(), list.m_size());
-	}
-
-	static void m_swap_allocator(NodeAllocator & x, NodeAllocator & y) noexcept(typename NodeAllocatorTraits::IsAlwaysEqual{}) {
-		m_swap_allocator(x, y, typename NodeAllocatorTraits::IsPropagateOnContainerSwap{});
 	}
 
 private:
