@@ -1,7 +1,7 @@
 #include "../test.hpp"
 #include <libbr/container/forward_list.hpp>
-#include <libbr/string/raw_string.hpp>
 #include <libbr/iterator/next.hpp>
+#include <libbr/string/raw_string.hpp>
 #include <libbr/utility/move.hpp>
 
 using namespace BR;
@@ -25,7 +25,6 @@ TEST(ForwardList, construct) {
 }
 
 TEST(ForwardList, each) {
-
 	ForwardList<int> list{ 0, 1, 2, 3, 4 };
 
 	list.each();
@@ -61,7 +60,6 @@ TEST(ForwardList, assign) {
 	list1.assign(list0.begin(), list0.end());
 
 	EXPECT_EQ((ForwardList<int>{ 10, 10, 10, 10, 10 }), list1);
-
 }
 
 TEST(ForwardList, insert) {
@@ -139,7 +137,7 @@ TEST(ForwardList, splice_after) {
 }
 
 TEST(ForwardList, unique) {
-	ForwardList<int> list{ 1, 2, 2, 3, 3, 2, 1, 1, 2 };
+	ForwardList<int> list{ 1, 2, 2, 3, 3, 3, 2, 1, 1, 2 };
 
 	list.unique();
 

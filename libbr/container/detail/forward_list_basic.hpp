@@ -335,9 +335,10 @@ protected:
 
 	template< typename TBinaryPredicate >
 	void m_unique(TBinaryPredicate & predicate) {
-		for (auto node = m_begin(); node != m_end();) {
+		auto const end = m_end();
+		for (auto node = m_begin(); node != end;) {
 			auto next = node->next;
-			for (; next != m_end() && predicate(node->element, next->element); next = next->next) {}
+			for (; next != end && predicate(node->element, next->element); next = next->next) {}
 			if (node->next != next) {
 				m_erase_after(node, next);
 			}
@@ -377,8 +378,6 @@ protected:
 			for(; i < fill && !counter[i].m_empty(); ) {
 				counter[i].m_merge(carry, comparator);
 				carry.m_swap(counter[i++]);
-				// carry.m_swap(counter[i]);
-				// carry.m_merge(counter[i++], comparator);
 			}
 			BR_ASSERT(counter[i].m_empty());
 			carry.m_swap(counter[i]);

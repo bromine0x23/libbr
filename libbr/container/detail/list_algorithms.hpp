@@ -57,11 +57,11 @@ public:
 		return next;
 	}
 
-	static void unlink(NodePointer const & f, NodePointer const & l) {
-		if (f != l) {
-			auto prev = f->prev;
-			l->prev = prev;
-			prev->next = l;
+	static void unlink(NodePointer const & first, NodePointer const & last) {
+		if (first != last) {
+			auto prev_first = first->prev;
+			last->prev = prev_first;
+			prev_first->next = last;
 		}
 	}
 

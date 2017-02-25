@@ -37,7 +37,7 @@ namespace BR {
 inline namespace Container {
 
 /**
- * @brief Singly-linked list。
+ * @brief Linear singly-linked list。
  * @tparam TElement The type of the elements.
  * @tparam TAllocator An allocator used to acquire/release memory and to construct/destroy the elements in that memory.
  */
@@ -207,7 +207,7 @@ public:
 	}
 
 	/**
-	 * @brief Constructs the container with the contents of the range \c [first,last).
+	 * @brief Constructs the container with the contents of the range \f$ [first, last) \f$.
 	 * @tparam TIterator Iterator type.
 	 * @param first,last The range to copy the elements from.
 	 * @param allocator Allocator to use for all memory allocations of this container.
@@ -320,7 +320,7 @@ public:
 
 	/**
 	 * @brief Returns an iterator to the element before beginning.
-	 * @refitem Iterator to the element before the first element.
+	 * @return Iterator to the element before the first element.
 	 */
 	auto before_begin() noexcept -> Iterator {
 		return Iterator(this->m_head());
@@ -328,7 +328,7 @@ public:
 
 	/**
 	 * @brief Returns an iterator to the element before beginning.
-	 * @refitem Iterator to the element before the first element.
+	 * @return Iterator to the element before the first element.
 	 */
 	auto before_begin() const noexcept -> ConstIterator {
 		return ConstIterator(this->m_head());
@@ -336,7 +336,7 @@ public:
 
 	/**
 	 * @brief Returns an iterator to the element before beginning.
-	 * @refitem Iterator to the element before the first element.
+	 * @return Iterator to the element before the first element.
 	 */
 	auto before_cbegin() const noexcept -> ConstIterator {
 		return before_begin();
@@ -454,7 +454,7 @@ public:
 	}
 
 	/**
-	 * @brief Replaces the contents with copies of those in the range \c [first,last).
+	 * @brief Replaces the contents with copies of those in the range \f$ [first, last) \f$.
 	 * @param first,last The range to copy the elements from.
 	 * @return \c *this
 	 */
@@ -518,7 +518,7 @@ public:
 	}
 
 	/**
-	 * @brief Inserts elements after an element.
+	 * @brief Inserts \p element after \p position.
 	 * @param position Iterator before which the content will be inserted.
 	 * @param element Element value to insert.
 	 * @return Iterator to the inserted element.
@@ -528,7 +528,7 @@ public:
 	}
 
 	/**
-	 * @brief Inserts elements after an element.
+	 * @brief Inserts \p element after \p position.
 	 * @param position Iterator before which the content will be inserted.
 	 * @param element Element value to insert.
 	 * @return Iterator to the inserted element.
@@ -538,21 +538,22 @@ public:
 	}
 
 	/**
-	 * @brief Inserts elements after an element.
+	 * @brief Inserts \p count copies of the \p element after \p position.
 	 * @param position Iterator before which the content will be inserted.
 	 * @param element Element value to insert.
-	 * @param n Number of copies to insert.
-	 * @return Iterator to the last element inserted, or \p position if \p count == 0.
+	 * @param count Number of copies to insert.
+	 * @return Iterator to the last element inserted, or \p position if \code count == 0 \endcode.
 	 */
 	auto insert_after(ConstIterator position, Element const & element, Size count) -> Iterator {
 		return Iterator(this->m_insert_after(position.m_pointer, element, count));
 	}
 
 	/**
-	 * @brief Inserts elements after an element.
+	 * @brief Inserts elements from range \f$ [first, last) \f$ after \p position.
+	 * @tparam TIterator Type of \p first and \p last.
 	 * @param position Iterator before which the content will be inserted.
 	 * @param first,last The range of elements to insert.
-	 * @return Iterator to the last element inserted, or \p position if \p first == \p last.
+	 * @return Iterator to the last element inserted, or \p position if \code first == last \endcode.
 	 */
 	template< typename TIterator >
 	auto insert_after(ConstIterator position, TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator>, Iterator > {
@@ -560,9 +561,9 @@ public:
 	}
 
 	/**
-	 * @brief Inserts elements after an element.
+	 * @brief Inserts elements from initializer \p list ilist after \p position.
 	 * @param position Iterator before which the content will be inserted.
-	 * @param list
+	 * @param list Initializer list to insert the values from.
 	 * @return Iterator to the last element inserted, or \p position if \p list is empty.
 	 */
 	auto insert_after(ConstIterator position, InitializerList<Element> list) -> Iterator {
@@ -591,8 +592,8 @@ public:
 	}
 
 	/**
-	 * @brief Removes the elements in the range \c (first,last).
-	 * @param position Iterator to the element before the element to remove.
+	 * @brief Removes the elements in the range \f$ (first, last) \f$.
+	 * @param first,last Range of elements to remove.
 	 * @return Iterator to the element following the erased one, or \c end() if no such element exists.
 	 */
 	auto erase_after(ConstIterator first, ConstIterator last) -> Iterator {

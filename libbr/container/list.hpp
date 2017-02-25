@@ -16,6 +16,7 @@
 #include <libbr/iterator/move_iterator.hpp>
 #include <libbr/iterator/reverse_iterator.hpp>
 #include <libbr/functional/equal.hpp>
+#include <libbr/functional/equal_to.hpp>
 #include <libbr/functional/less.hpp>
 #include <libbr/memory/allocator.hpp>
 #include <libbr/memory/allocator_traits.hpp>
@@ -36,7 +37,7 @@ namespace BR {
 inline namespace Container {
 
 /**
- * @brief Double-linked list。
+ * @brief Circular double-linked  list。
  * @tparam TElement The type of the elements.
  * @tparam TAllocator An allocator used to acquire/release memory and to construct/destroy the elements in that memory.
  */
@@ -191,7 +192,7 @@ public:
 	}
 
 	/**
-	 * @brief Constructs the container with the contents of the range \c [first,last).
+	 * @brief Constructs the container with the contents of the range \f$ [first, last) \f$.
 	 * @tparam TIterator Iterator type.
 	 * @param first,last The range to copy the elements from.
 	 * @param allocator Allocator to use for all memory allocations of this container.
@@ -216,9 +217,14 @@ public:
 	///@}
 
 	/**
-	 * @brief Destructor
+	 * @name Destructor
+	 */
+	///@{
+	/**
+	 * @brief Destructor.
 	 */
 	~List() = default;
+	///@}
 
 	/**
 	 * @name Member
@@ -248,10 +254,18 @@ public:
 		return this->m_header()->next->element;
 	}
 
+	/**
+	 * @brief Access the last element.
+	 * @return Reference to the last element.
+	 */
 	auto back() -> Reference {
 		return this->m_header()->prev->element;
 	}
 
+	/**
+	 * @brief Access the last element.
+	 * @return Reference to the last element.
+	 */
 	auto back() const -> ConstReference {
 		return this->m_header()->prev->element;
 	}
@@ -310,42 +324,48 @@ public:
 	}
 
 	/**
-	 * @brief reverse begin
+	 * @brief Returns a reverse iterator to the beginning.
+	 * @return Reverse iterator to the first element.
 	 */
 	auto rbegin() noexcept -> ReverseIterator {
 		return ReverseIterator(end());
 	}
 
 	/**
-	 * @brief reverse begin
+	 * @brief Returns a reverse iterator to the beginning.
+	 * @return Reverse iterator to the first element.
 	 */
 	auto rbegin() const noexcept -> ConstReverseIterator {
 		return ConstReverseIterator(end());
 	}
 
 	/**
-	 * @brief const reverse begin
+	 * @brief Returns a reverse iterator to the beginning.
+	 * @return Reverse iterator to the first element.
 	 */
 	auto crbegin() const noexcept -> ConstReverseIterator {
 		return rbegin();
 	}
 
 	/**
-	 * @brief reverse end
+	 * @brief Returns a reverse iterator to the end.
+	 * @return Reverse iterator to the element following the last element.
 	 */
 	auto rend() noexcept -> ReverseIterator {
 		return ReverseIterator(begin());
 	}
 
 	/**
-	 * @brief reverse end
+	 * @brief Returns a reverse iterator to the end.
+	 * @return Reverse iterator to the element following the last element.
 	 */
 	auto rend() const noexcept -> ConstReverseIterator {
 		return ConstReverseIterator(begin());
 	}
 
 	/**
-	 * @brief const reverse end
+	 * @brief Returns a reverse iterator to the end.
+	 * @return Reverse iterator to the element following the last element.
 	 */
 	auto crend() const noexcept -> ConstReverseIterator {
 		return rend();
@@ -358,14 +378,16 @@ public:
 	///@{
 	/**
 	 * @brief Checks whether the container is empty.
-	 * @return \c true if the container is empty, \c false otherwise.
+	 * @retval true The container is empty.
+	 * @retval false Otherwise.
 	 */
 	auto empty() const noexcept -> bool {
 		return this->m_size() == 0;
 	}
 
 	/**
-	 * @brief size
+	 * @brief Returns the number of elements.
+	 * @return The number of elements in the container.
 	 */
 	auto size() const noexcept -> Size {
 		return this->m_size();
@@ -466,33 +488,17 @@ public:
 	 * @return \c *this
 	 */
 	void assign(Element const & element, Size count) {
-		auto i = begin(), e = end();
-		for (; count > 0 && i != e; --count, ++i) {
-			*i = element;
-		}
-		if (i == e) {
-			insert(e, element, count);
-		} else {
-			erase(i, e);
-		}
+		this->m_assign(element, count);
 	}
 
 	/**
-	 * @brief Replaces the contents with copies of those in the range \c [first,last).
+	 * @brief Replaces the contents with copies of those in the range \f$ [first, last) \f$.
 	 * @param first,last The range to copy the elements from.
 	 * @return \c *this
 	 */
 	template< typename TIterator >
 	auto assign(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator> > {
-		auto i = begin(), e = end();
-		for (; first != last && i != e; ++first, ++i) {
-			*i = *first;
-		}
-		if (i == e) {
-			insert(e, first, last);
-		} else {
-			erase(i, e);
-		}
+		this->m_assign(first, last);
 	}
 
 	/**
@@ -506,15 +512,15 @@ public:
 	///@}
 
 	/**
-	 * @name 添加性操作
+	 * @name Insertion
 	 */
 	///@{
 	/**
-	 * @brief 从参数构造对象并添加到指定位置
-	 * @tparam TArgs
-	 * @param position
-	 * @param args
-	 * @return
+	 * @brief Constructs element in-place.
+	 * @tparam TArgs Type of \p args
+	 * @param position Iterator before which the new element will be constructed.
+	 * @param args Arguments to forward to the constructor of the element.
+	 * @return Iterator pointing to the emplaced element.
 	 */
 	template< typename ... TArgs >
 	auto emplace(ConstIterator position, TArgs && ... args) -> Iterator {
@@ -522,10 +528,10 @@ public:
 	}
 
 	/**
-	 * @brief 从参数构造对象并添加到头部
-	 * @tparam TArgs
-	 * @param args
-	 * @return
+	 * @brief Constructs an element in-place at the beginning.
+	 * @tparam TArgs Type of \p args
+	 * @param args Arguments to forward to the constructor of the element.
+	 * @return A reference to the inserted element.
 	 */
 	template< typename ... TArgs >
 	auto emplace_front(TArgs && ... args) -> Reference {
@@ -533,10 +539,10 @@ public:
 	}
 
 	/**
-	 * @brief 从参数构造对象并添加到尾部
-	 * @tparam TArgs
-	 * @param args
-	 * @return
+	 * @brief Constructs an element in-place at the end.
+	 * @tparam TArgs Type of \p args
+	 * @param args Arguments to forward to the constructor of the element.
+	 * @return A reference to the inserted element.
 	 */
 	template< typename ... TArgs >
 	auto emplace_back(TArgs && ... args) -> Reference {
@@ -544,43 +550,42 @@ public:
 	}
 
 	/**
-	 * @brief Inserts elements after an element.
+	 * @brief Inserts \p element before \p position.
 	 * @param position Iterator after which the content will be inserted.
 	 * @param element Element value to insert.
-	 * @return Iterator to the inserted element.
+	 * @return Iterator to the inserted \p element.
 	 */
 	auto insert(ConstIterator position, Element const & element) -> Iterator {
 		return emplace(position, element);
 	}
 
 	/**
-	 * @brief Inserts elements after an element.
+	 * @brief Inserts \p element before \p position.
 	 * @param position Iterator after which the content will be inserted.
 	 * @param element Element value to insert.
-	 * @return Iterator to the inserted element.
+	 * @return Iterator to the inserted \p element.
 	 */
 	auto insert(ConstIterator position, Element && element) -> Iterator {
 		return emplace(position, move(element));
 	}
 
 	/**
-	 *
-	 * @param position
-	 * @param element
-	 * @param n
-	 * @return
+	 * @brief Inserts \p count copies of the \p element before \p position.
+	 * @param position Iterator after which the content will be inserted, can be the end() iterator.
+	 * @param element Element value to insert.
+	 * @param count Number of copies to insert.
+	 * @return Iterator to the first element inserted, or \p position if <code>count == 0</code>.
 	 */
-	auto insert(ConstIterator position, Element const & element, Size n) -> Iterator {
-		return Iterator(this->m_insert(position.m_pointer, element, n));
+	auto insert(ConstIterator position, Element const & element, Size count) -> Iterator {
+		return Iterator(this->m_insert(position.m_pointer, element, count));
 	}
 
 	/**
-	 *
-	 * @tparam TIterator
-	 * @param position
-	 * @param first
-	 * @param last
-	 * @return
+	 * @brief Inserts elements from range \f$ [first, last) \f$ before \p position.
+	 * @tparam TIterator Type of \p first and \p last.
+	 * @param position Iterator after which the content will be inserted, can be the end() iterator.
+	 * @param first,last The range of elements to insert, can't be iterators into container for which insert is called
+	 * @return Iterator to the first element inserted, or \p position if <code>first == last</code>.
 	 */
 	template< typename TIterator >
 	auto insert(ConstIterator position, TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator>, Iterator > {
@@ -588,46 +593,42 @@ public:
 	}
 
 	/**
-	 *
-	 * @param position
-	 * @param list
-	 * @return
+	 * @brief Inserts elements from initializer \p list ilist before \p position.
+	 * @param position Iterator after which the content will be inserted, can be the end() iterator.
+	 * @param list Initializer list to insert the values from.
+	 * @return Iterator to the first element inserted, or pos if ilist is empty.
 	 */
 	auto insert(ConstIterator position, InitializerList<Element> list) -> Iterator {
 		return insert(position, list.begin(), list.end());
 	}
 
 	/**
-	 *
-	 * @param element
-	 * @return
+	 * @brief Inserts an element to the beginning.
+	 * @param element Element value to insert.
 	 */
 	void insert_front(Element const & element) {
 		emplace_front(element);
 	}
 
 	/**
-	 *
-	 * @param element
-	 * @return
+	 * @brief Inserts an element to the beginning.
+	 * @param element Element value to insert.
 	 */
 	void insert_front(Element && element) {
 		emplace_front(move(element));
 	}
 
 	/**
-	 *
-	 * @param element
-	 * @return
+	 * @brief Inserts an element to the end.
+	 * @param element Element value to insert.
 	 */
 	void insert_back(Element const & element){
 		emplace_back(element);
 	}
 
 	/**
-	 *
-	 * @param element
-	 * @return
+	 * @brief Inserts an element to the end.
+	 * @param element Element value to insert.
 	 */
 	void insert_back(Element && element) {
 		emplace_back(move(element));
@@ -635,23 +636,39 @@ public:
 	///@}
 
 	/**
-	 * @name 删除操作
+	 * @name Deletion
 	 */
 	///@{
+	/**
+	 * @brief Removes the first element.
+	 */
 	void erase_front() {
 		erase(cbegin());
 	}
 
+	/**
+	 * @brief Removes the element at \p position.
+	 * @param position Iterator to the element to remove.
+	 * @return Iterator following the removed element, or \c end() if the iterator \p position refers to the last element.
+	 */
 	auto erase(ConstIterator position) -> Iterator {
 		return Iterator(this->m_erase(position.m_pointer));
 	}
 
+	/**
+	 * @brief Removes the elements in the range \f$ [first, last) \f$ .
+	 * @param first,last Range of elements to remove.
+	 * @return Iterator following the last removed element.
+	 */
 	auto erase(ConstIterator first, ConstIterator last) -> Iterator {
 		return Iterator(this->m_erase(first.m_pointer, last.m_pointer));
 	}
 
+	/**
+	 * @brief Removes the last element.
+	 */
 	void erase_back() {
-		erase(cend());
+		erase(--cend());
 	}
 
 	/**
@@ -665,8 +682,8 @@ public:
 	 * @brief Removes all elements that are equal to \p element.
 	 * @param element Value of the elements to remove.
 	 */
-	void remove(ConstReference x) {
-		return remove_if([&x](ConstReference y){ return x == y; });
+	void remove(ConstReference element) {
+		return remove_if(EqualTo<Element>(element));
 	}
 
 	/**
@@ -675,7 +692,7 @@ public:
 	 * @param predicate Unary predicate which returns \c ​true if the element should be removed.
 	 */
 	template< typename TUnaryPredicate >
-	void remove_if(TUnaryPredicate && predicate) {
+	void remove_if(TUnaryPredicate predicate) {
 		this->m_remove(predicate);
 	}
 	///@}
@@ -685,7 +702,7 @@ public:
 	 */
 	///@{
 	/**
-	 * @brief Moves elements from another ForwardList
+	 * @brief Moves elements from another List
 	 * @param position Element after which the content will be inserted.
 	 * @param other Another container to move the content from.
 	 */
@@ -694,7 +711,7 @@ public:
 	}
 
 	/**
-	 * @brief Moves elements from another ForwardList
+	 * @brief Moves elements from another List
 	 * @param position Element after which the content will be inserted.
 	 * @param other Another container to move the content from.
 	 * @param i Iterator preceding the iterator to the element to move from other to \c *this.
@@ -704,7 +721,7 @@ public:
 	}
 
 	/**
-	 * @brief Moves elements from another ForwardList
+	 * @brief Moves elements from another List
 	 * @param position Element after which the content will be inserted.
 	 * @param other Another container to move the content from.
 	 * @param first,last The range of elements to move from other to \c *this.
@@ -714,7 +731,7 @@ public:
 	}
 
 	/**
-	 * @brief Moves elements from another ForwardList
+	 * @brief Moves elements from another List
 	 * @param position Element after which the content will be inserted.
 	 * @param other Another container to move the content from.
 	 */
@@ -723,7 +740,7 @@ public:
 	}
 
 	/**
-	 * @brief Moves elements from another ForwardList
+	 * @brief Moves elements from another List
 	 * @param position Element after which the content will be inserted.
 	 * @param other Another container to move the content from.
 	 * @param i Iterator preceding the iterator to the element to move from other to \c *this.
@@ -733,7 +750,7 @@ public:
 	}
 
 	/**
-	 * @brief Moves elements from another ForwardList
+	 * @brief Moves elements from another List
 	 * @param position Element after which the content will be inserted.
 	 * @param other Another container to move the content from.
 	 * @param first,last The range of elements to move from other to \c *this.
@@ -744,61 +761,94 @@ public:
 	///@}
 
 	/**
-	 * @name 杂项
+	 * @name Miscellaneous
 	 */
 	///@{
-	auto unique() -> List & {
-		return unique(Equal<Element>{});
+	/**
+	 * @brief Removes consecutive duplicate elements.
+	 */
+	void unique() {
+		unique(Equal<Element>{});
 	}
 
+	/**
+	 * @brief Removes consecutive duplicate elements.
+	 * @tparam TBinaryPredicate Type of \p predicate.
+	 * @param predicate Binary predicate which returns ​true if the elements should be treated as equal.
+	 */
 	template< typename TBinaryPredicate >
-	auto unique(TBinaryPredicate predicate) -> List & {
-		for (auto i = begin(), e = end(); i != e;) {
-			auto j = i;
-			for (++j; j != e && predicate(*i, *j); ++j) {}
-			if (++i != j) {
-				i = erase(i, j);
-			}
-		}
-		return *this;
+	void unique(TBinaryPredicate predicate) {
+		this->m_unique(predicate);
 	}
 
+	/**
+	 * @brief Merges two sorted lists into one.
+	 * @param list Another container to merge.
+	 */
+	void merge(List & list) {
+		merge(list, Less<Element>{});
+	}
+
+	/**
+	 * @brief Merges two sorted lists into one.
+	 * @tparam TComparator Type of \p comparator
+	 * @param list Another container to merge.
+	 * @param comparator Binary predicate which returns ​true if the first argument is less than (i.e. is ordered before) the second.
+	 */
 	template< typename TComparator >
-	auto merge(List & other, TComparator comparator) -> List & {
-		this->m_merge(other, comparator);
-		return *this;
+	void merge(List & list, TComparator comparator) {
+		this->m_merge(list, comparator);
 	}
 
-	auto merge(List & other) -> List & {
-		return merge(other, Less<Element>{});
+	/**
+	 * @brief Merges two sorted lists into one.
+	 * @param list Another container to merge.
+	 */
+	void merge(List && list) {
+		merge(list);
 	}
 
+	/**
+	 * @brief Merges two sorted lists into one.
+	 * @tparam TComparator Type of \p comparator
+	 * @param list Another container to merge.
+	 * @param comparator Binary predicate which returns ​true if the first argument is less than (i.e. is ordered before) the second.
+	 */
 	template< typename TComparator >
-	auto merge(List && other, TComparator comparator) -> List & {
-		return merge(other, comparator);
+	void merge(List && list, TComparator comparator) {
+		merge(list, comparator);
 	}
 
-	auto merge(List && other) -> List & {
-		return merge(other);
+	/**
+	 * @brief Sorts the elements.
+	 */
+	void sort() {
+		sort(Less<Element>{});
 	}
 
+	/**
+	 * @brief Sorts the elements.
+	 * @tparam TComparator Type of \p comparator
+	 * @param comparator Binary predicate which returns ​true if the first argument is less than (i.e. is ordered before) the second.
+	 */
 	template< typename TComparator >
-	auto sort(TComparator comparator) -> List & {
+	void sort(TComparator comparator) {
 		this->m_sort(comparator);
-		return *this;
 	}
 
-	auto sort() -> List & {
-		return sort(Less<Element>{});
-	}
-
+	/**
+	 * @brief Swaps the contents.
+	 * @param other Container to exchange the contents with.
+	 */
 	void swap(List & other) noexcept(BooleanOr< BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerSwap >, IsNothrowSwappable<NodeAllocator> >{}) {
 		this->m_swap(other);
 	}
 
-	auto reverse() -> List & {
+	/**
+	 * @brief Reverses the order of the elements.
+	 */
+	void reverse() {
 		this->m_reverse();
-		return *this;
 	}
 	///@}
 
