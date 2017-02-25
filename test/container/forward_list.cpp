@@ -2,7 +2,7 @@
 #include <libbr/container/forward_list.hpp>
 #include <libbr/string/raw_string.hpp>
 #include <libbr/iterator/next.hpp>
-#include <cstdio>
+#include <libbr/utility/move.hpp>
 
 using namespace BR;
 
@@ -35,6 +35,33 @@ TEST(ForwardList, each) {
 	EXPECT_FALSE(list.none(is_even));
 	EXPECT_TRUE(list.include(2));
 	EXPECT_FALSE(list.include(8));
+}
+
+TEST(ForwardList, assign) {
+	ForwardList<int> list0{ 3, 1, 4, 6, 5, 9 };
+
+	ForwardList<int> list1;
+
+	list1 = list0;
+
+	EXPECT_EQ((ForwardList<int>{ 3, 1, 4, 6, 5, 9 }), list0);
+
+	ForwardList<int> list2;
+
+	list2 = move(list0);
+
+	EXPECT_EQ((ForwardList<int>{}), list0);
+
+	EXPECT_EQ((ForwardList<int>{ 3, 1, 4, 6, 5, 9 }), list2);
+
+	list0.assign(10, 5);
+
+	EXPECT_EQ((ForwardList<int>{ 10, 10, 10, 10, 10 }), list0);
+
+	list1.assign(list0.begin(), list0.end());
+
+	EXPECT_EQ((ForwardList<int>{ 10, 10, 10, 10, 10 }), list1);
+
 }
 
 TEST(ForwardList, insert) {

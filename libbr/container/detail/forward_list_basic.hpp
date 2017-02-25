@@ -60,9 +60,6 @@ protected:
 	using Algorithms = ForwardList::Algorithms<NodePointer>;
 
 public:
-	using Reference = Element &;
-
-	using ConstReference = Element const &;
 
 	using Pointer = typename AllocatorTraits::Pointer;
 
@@ -136,6 +133,33 @@ protected:
 		NodeAllocatorTraits::construct(allocator, address_of(holder->element), forward<TArgs>(args)...);
 		holder.get_deleter().constructed = true;
 		return holder;
+	}
+
+	void m_assign(Element const & element, Size count) {
+		auto prev = m_before_begin(), node = m_begin(), end = m_end();
+		for (; node != end && count > 0; node = node->next, (void)--count) {
+			node->element = element;
+			prev = node;
+		}
+		if (node == end) {
+			m_insert_after(prev, element, count);
+		} else {
+			m_erase_after(prev, end);
+		}
+	}
+
+	template< typename TInputIterator >
+	void m_assign(TInputIterator first, TInputIterator last) {
+		auto prev = m_before_begin(), node = m_begin(), end = m_end();
+		for (; node != end && first != last; node = node->next, (void)++first) {
+			node->element = *first;
+			prev = node;
+		}
+		if (node == end) {
+			m_insert_after(prev, first, last);
+		} else {
+			m_erase_after(prev, end);
+		}
 	}
 
 	void m_prepare_after(NodePointer const & position, Size count) {
@@ -393,7 +417,7 @@ private:
 
 	void m_move_assign(Basic & list, BooleanTrue) noexcept(HasNothrowMoveAssignment<NodeAllocator>{}) {
 		m_clear();
-		m_splice_after(m_end(), list);
+		m_splice_after(m_before_begin(), list);
 	}
 
 	void m_move_assign(Basic & list, BooleanFalse) {

@@ -30,6 +30,7 @@
 #include <libbr/type_traits/is_nothrow_swappable.hpp>
 #include <libbr/utility/forward.hpp>
 #include <libbr/utility/move.hpp>
+#include <libbr/utility/swap.hpp>
 
 namespace BR {
 
@@ -43,6 +44,11 @@ inline namespace Container {
 template< typename TElement, typename TAllocator = Allocator<TElement> >
 class ForwardList;
 
+/**
+ * @brief Specializes the BR::swap algorithm for ForwardList
+ * @tparam TElement,TAllocator Template arguments of ForwardList.
+ * @param x,y Containers whose contents to swap.
+ */
 template< typename TElement, typename TAllocator >
 inline void swap(ForwardList< TElement, TAllocator> & x, ForwardList< TElement, TAllocator > & y) noexcept(noexcept(x.swap(y)))  {
 	x.swap(y);
@@ -67,8 +73,14 @@ class ForwardList :
 {
 
 public:
+	/**
+	 * TElement
+	 */
 	using Element = TElement;
 
+	/**
+	 * TAllocator
+	 */
 	using Allocator = TAllocator;
 
 private:
@@ -85,20 +97,38 @@ private:
 	using NodePointer = typename Base::NodePointer;
 
 public:
-	using Reference = typename Base::Reference;
+	/**
+	 * Element &
+	 */
+	using Reference = Element &;
 
-	using ConstReference = typename Base::ConstReference;
+	/**
+	 * Element const &
+	 */
+	using ConstReference = Element const &;
 
+	/**
+	 * BR::AllocatorTraits<Allocator>::Pointer
+	 */
 	using Pointer = typename Base::Pointer;
 
+	/**
+	 * BR::AllocatorTraits<Allocator>::ConstPointer
+	 */
 	using ConstPointer = typename Base::ConstPointer;
 
 	using Difference = typename Base::Difference;
 
 	using Size = typename Base::Size;
 
+	/**
+	 * A forward iterator to Element
+	 */
 	using Iterator = typename Base::Iterator;
 
+	/**
+	 * A forward iterator to Element const
+	 */
 	using ConstIterator = typename Base::ConstIterator;
 
 public:
@@ -198,9 +228,14 @@ public:
 	///@}
 
 	/**
-	 * @brief Destructor
+	 * @name Destructor
+	 */
+	///@{
+	/**
+	 * @brief Destructor.
 	 */
 	~ForwardList() = default;
+	///@}
 
 	/**
 	 * @name Member
@@ -415,15 +450,7 @@ public:
 	 * @return \c *this
 	 */
 	void assign(Element const & element, Size count) {
-		auto i = before_begin(), j = begin(), e = end();
-		for (; j != e && count > 0; --count, ++i, ++j) {
-			*j = element;
-		}
-		if (j == e) {
-			insert_after(i, element, count);
-		} else {
-			erase_after(i, e);
-		}
+		this->m_assign(element, count);
 	}
 
 	/**
@@ -433,15 +460,7 @@ public:
 	 */
 	template< typename TIterator >
 	auto assign(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator> > {
-		auto i = before_begin(), j = begin(), e = end();
-		for (; j != e && first != last; ++i, (void)++j, ++first) {
-			*j = *first;
-		}
-		if (j == e) {
-			insert_after(i, first, last);
-		} else {
-			erase_after(i, e);
-		}
+		this->m_assign(first, last);
 	}
 
 	/**
@@ -670,7 +689,7 @@ public:
 	///@}
 
 	/**
-	 * @name 杂项
+	 * @name Miscellaneous
 	 */
 	///@{
 	/**
@@ -752,7 +771,6 @@ public:
 	/**
 	 * @brief Swaps the contents.
 	 * @param other Container to exchange the contents with.
-	 * @throws noexcept(BR::AllocatorTraits<Allocator>::IsAlwaysEqual{})
 	 */
 	void swap(ForwardList & other) noexcept(typename AllocatorTraits::IsAlwaysEqual{}) {
 		this->m_swap(other);
