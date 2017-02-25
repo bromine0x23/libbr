@@ -8,9 +8,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/algorithm/equal.hpp>
-#include <libbr/algorithm/min.hpp>
 #include <libbr/type_traits/integer_traits.hpp>
-#include <libbr/type_traits/enable_if.hpp>
 
 namespace BR {
 
@@ -71,10 +69,8 @@ public:
 private:
 	constexpr static auto digits = IntegerTraits<Result>::digits;
 
-	static_assert(w <= digits, "MersenneTwisterEngine: invalid parameters");
-	static_assert(0 <  m, "MersenneTwisterEngine: invalid parameters");
-	static_assert(m <= n, "MersenneTwisterEngine: invalid parameters");
-	static_assert(2 <= w, "MersenneTwisterEngine: invalid parameters");
+	static_assert(2 <= w && w <= digits, "MersenneTwisterEngine: invalid parameters");
+	static_assert(0 <  m && m <= n, "MersenneTwisterEngine: invalid parameters");
 	static_assert(r <= w, "MersenneTwisterEngine: invalid parameters");
 	static_assert(u <= w, "MersenneTwisterEngine: invalid parameters");
 	static_assert(s <= w, "MersenneTwisterEngine: invalid parameters");
@@ -104,23 +100,24 @@ public:
 	}
 
 	auto seed(Result sd = default_seed) -> MersenneTwisterEngine & {
-		m_x[0] = sd & max();
+		m_state[0] = sd & max();
 		for (Size i = 1; i < state_size; ++i) {
-			auto x = m_x[i - 1];
+			auto x = m_state[i - 1];
 			x ^= x >> (word_size - 2);
 			x *= initialization_multiplier;
 			x += i;
 			x &= max();
-			m_x[i] = x;
+			m_state[i] = x;
 		}
-		m_i = state_size;
+		m_index = state_size;
+		return *this;
 	}
 
 	auto operator()() -> Result {
-		if (m_i >= state_size) {
+		if (m_index >= state_size) {
 			m_twist();
 		}
-		Result z = m_x[m_i++];
+		Result z = m_state[m_index++];
 		z ^= (z >> u) & d;
 		z ^= (z << s) & b;
 		z ^= (z << t) & c;
@@ -129,47 +126,16 @@ public:
 	}
 
 	auto discard(Size step) -> MersenneTwisterEngine & {
-		for (; step > state_size - m_i; ) {
-			step -= state_size - m_i;
+		for (; step > state_size - m_index; ) {
+			step -= state_size - m_index;
 			m_twist();
 		}
-		m_i += step;
+		m_index += step;
 		return *this;
 	}
 
 	auto operator==(MersenneTwisterEngine const & y) -> bool {
-		if (m_i == y.m_i) {
-			return equal(m_x, m_x + state_size, y.m_x);
-		}
-		if (m_i == 0 || y.m_i == 0) {
-			auto j = min(n - m_i, n - y.m_i);
-			if (!equal(m_x + m_i, m_x + m_i + j, y.m_x + y.m_i)) {
-				return false;
-			}
-			if (m_i == 0) {
-				return equal(m_x + j, m_x + state_size, y.m_x);
-			}
-			return equal(m_x, m_x + (state_size - j), y.m_x + j);
-		}
-		if (m_i < y.m_i) {
-			auto j = state_size - y.m_i;
-			if (!equal(m_x + m_i, m_x + (m_i + j), y.m_x + y.m_i)) {
-				return false;
-			}
-			if (!equal(m_x + (m_i + j), m_x + state_size, y.m_x)) {
-				return false;
-			}
-			return equal(m_x, m_x + m_i, y.m_x + (state_size - (m_i + j)));
-		} else {
-			auto j = state_size - m_i;
-			if (!equal(y.m_x + y.m_i, y.m_x + (y.m_i + j), m_x + m_i)) {
-				return false;
-			}
-			if (!equal(y.m_x + (y.m_i + j), y.m_x + state_size, m_x)) {
-				return false;
-			}
-			return equal(y.m_x, y.m_x + y.m_i, m_x + (state_size - (y.m_i + j)));
-		}
+		return (m_index == y.m_index) && equal(m_state, m_state + state_size, y.m_state);
 	}
 
 	auto operator!=(MersenneTwisterEngine const & y) -> bool {
@@ -181,21 +147,21 @@ private:
 	void m_twist() {
 		constexpr Result mask = ~Result() << mask_bits;
 		for (Size k = 0; k < (state_size - shift_size); ++k) {
-			Result y = (m_x[k] & mask) | (m_x[k + 1] & ~mask);
-			m_x[k] = m_x[k + shift_size] ^ (y >> 1) ^ ((y & 0x1) ? xor_mask : 0);
+			Result y = (m_state[k] & mask) | (m_state[k + 1] & ~mask);
+			m_state[k] = m_state[k + shift_size] ^ (y >> 1) ^ ((y & 0x1) ? xor_mask : 0);
 		}
 		for (Size k = state_size - shift_size; k < state_size - 1; ++k) {
-			Result y = (m_x[k] & mask) | (m_x[k + 1] & ~mask);
-			m_x[k] = m_x[k + shift_size - state_size] ^ (y >> 1) ^ ((y & 0x1) ? xor_mask : 0);
+			Result y = (m_state[k] & mask) | (m_state[k + 1] & ~mask);
+			m_state[k] = m_state[k + shift_size - state_size] ^ (y >> 1) ^ ((y & 0x1) ? xor_mask : 0);
 		}
-		Result y = (m_x[state_size - 1] & mask) | (m_x[0] & ~mask);
-		m_x[state_size - 1] = m_x[shift_size - 1] ^ (y >> 1) ^ ((y & 0x1) ? xor_mask : 0);
-		m_i = 0;
+		Result y = (m_state[state_size - 1] & mask) | (m_state[0] & ~mask);
+		m_state[state_size - 1] = m_state[shift_size - 1] ^ (y >> 1) ^ ((y & 0x1) ? xor_mask : 0);
+		m_index = 0;
 	}
 
 private:
-	Result m_x[state_size];
-	Size m_i;
+	Result m_state[state_size];
+	Size m_index;
 }; // class MersenneTwisterEngine<TUInt w, n, m, r, a, u, d, s, b, t, c, l, f>
 
 } // inline namespace Random
