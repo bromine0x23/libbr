@@ -143,7 +143,7 @@ protected:
 			auto holder = m_construct_node();
 			auto first = holder.release(), prev_last = first;
 			BR_TRY {
-				for (; count-- > 0; prev_last = prev_last->next) {
+				for (; --count > 0; prev_last = prev_last->next) {
 					holder = m_construct_node();
 					prev_last->next = holder.release();
 				}
@@ -192,13 +192,13 @@ protected:
 		return node;
 	}
 
-	auto m_insert_after(NodePointer const & position, Element const & element, Size count) -> NodePointer {
-		auto result = position;
+	auto m_insert_after(NodePointer const & prev, Element const & element, Size count) -> NodePointer {
+		auto result = prev;
 		if (count > 0) {
 			auto holder = m_construct_node(element);
 			auto first = holder.release(), prev_last = first;
 			BR_TRY {
-				for (; count-- > 0; prev_last = prev_last->next) {
+				for (; --count > 0; prev_last = prev_last->next) {
 					holder = m_construct_node(element);
 					prev_last->next = holder.release();
 				}
@@ -210,15 +210,15 @@ protected:
 				}
 				BR_RETHROW;
 			}
-			Algorithms::link_after(position, first, prev_last);
+			Algorithms::link_after(prev, first, prev_last);
 			result = prev_last;
 		}
 		return result;
 	}
 
 	template< typename TInputIterator >
-	auto m_insert_after(NodePointer const & position, TInputIterator f, TInputIterator l) -> NodePointer {
-		auto result = position;
+	auto m_insert_after(NodePointer const & prev, TInputIterator f, TInputIterator l) -> NodePointer {
+		auto result = prev;
 		if (f != l) {
 			auto holder = m_construct_node(*f);
 			auto first = holder.release(), prev_last = first;
@@ -241,10 +241,11 @@ protected:
 		return result;
 	}
 
-	auto m_erase_after(NodePointer position) -> NodePointer {
-		auto result = position->next;
-		Algorithms::unlink_after(position);
-		destroy_node(m_allocator(), position);
+	auto m_erase_after(NodePointer prev) -> NodePointer {
+		auto node = prev->next;
+		auto result = node->next;
+		Algorithms::unlink_after(prev);
+		destroy_node(m_allocator(), node);
 		return result;
 	}
 
@@ -256,7 +257,7 @@ protected:
 			first = first->next;
 			destroy_node(m_allocator(), node);
 		}
-		return first;
+		return last;
 	}
 
 	void m_clear() noexcept {
@@ -285,19 +286,16 @@ protected:
 		}
 	}
 
-	auto m_splice_after(NodePointer const & prev, Basic & list) -> NodePointer {
-		auto last_inserted = prev;
+	void m_splice_after(NodePointer const & prev, Basic & list) {
 		if (!list.m_empty()) {
 			auto prev_first = list.m_head();
 			auto prev_last = Algorithms::find_prev(prev_first, list.m_end());
 			Algorithms::transfer_after(prev, prev_first, prev_last);
-			last_inserted = prev_last;
 		}
-		return last_inserted;
 	}
 
 	void m_splice_after(NodePointer const & prev, Basic & list, NodePointer const & node) {
-		Algorithms::transfer_after(prev, node, node->next);
+		Algorithms::transfer_after(prev, node);
 	}
 
 	void m_splice_after(NodePointer const & prev, Basic & list, NodePointer const & prev_first, NodePointer const & last) {
@@ -311,26 +309,34 @@ protected:
 		Algorithms::transfer_after(prev, prev_first, prev_last);
 	}
 
-	template< typename TComparator >
-	auto m_merge(Basic & list, TComparator & comparator) -> NodePointer {
-		auto last_inserted = m_end();
-		auto prev = m_head();
-		for (; !list.m_empty();) {
-			auto prev_last = list.m_head(), last = prev_last->next;
-			auto node = prev->next;
-			for (; node != m_end() && !comparator(last->element, node->element); node = node->next) {
-				prev = node;
+	template< typename TBinaryPredicate >
+	void m_unique(TBinaryPredicate & predicate) {
+		for (auto node = m_begin(); node != m_end();) {
+			auto next = node->next;
+			for (; next != m_end() && predicate(node->element, next->element); next = next->next) {}
+			if (node->next != next) {
+				m_erase_after(node, next);
 			}
-			if (node == m_end()) {
-				last_inserted = m_splice_after(prev, list);
-			}
-			for (; last != list.m_end() && !comparator(last->element, node->element); last = last->next) {
-				prev_last = last;
-			}
-			m_splice_after_closed(prev, list, list.m_head(), prev_last);
-			last_inserted = prev_last;
+			node = next;
 		}
-		return last_inserted;
+	}
+
+	template< typename TComparator >
+	void m_merge(Basic & list, TComparator & comparator) {
+		auto prev = m_before_begin();
+		for (; !list.m_empty();) {
+			auto prev_last = list.m_before_begin(), last = list.m_begin();
+			auto node = prev->next;
+			for (; node != m_end() && !comparator(last->element, node->element); prev = node, (void)(node = node->next)) {}
+			if (node == m_end()) {
+				m_splice_after(prev, list);
+				break;
+			}
+			prev_last = last;
+			last = last->next;
+			for (; last != list.m_end() && comparator(last->element, node->element); prev_last = last, (void)(last = last->next)) {}
+			m_splice_after_closed(prev, list, list.m_before_begin(), prev_last);
+		}
 	}
 
 	template< typename TComparator >
@@ -341,35 +347,37 @@ protected:
 		Basic carry(m_allocator());
 		RawArray<Basic, 64> counter(m_allocator());
 		auto fill = 0;
-		NodePointer last_inserted;
 		for (; !m_empty(); ) {
-			last_inserted = m_begin();
 			carry.m_splice_after(carry.m_before_begin(), *this, this->m_before_begin());
 			auto i = 0;
 			for(; i < fill && !counter[i].m_empty(); ) {
-				carry.m_swap(counter[i]);
-				last_inserted = carry.m_merge(counter[i++], comparator);
+				counter[i].m_merge(carry, comparator);
+				carry.m_swap(counter[i++]);
+				// carry.m_swap(counter[i]);
+				// carry.m_merge(counter[i++], comparator);
 			}
 			BR_ASSERT(counter[i].m_empty());
-
-			auto const last_element = Algorithms::find_prev(last_inserted, carry.m_end());
-			counter[i].m_splice_after_closed(counter[i].m_before_begin(), carry, carry.m_before_begin(), last_element);
+			carry.m_swap(counter[i]);
 			if (i == fill) {
 				++fill;
 			}
 		}
 		for (auto i = 1; i < fill; ++i) {
-			last_inserted = counter[i].m_merge(counter[i-1], comparator);
+			counter[i].m_merge(counter[i-1], comparator);
 		}
-		--fill;
-		auto last_element = Algorithms::find_prev(last_inserted, counter[fill].m_end());
-		m_splice_after_closed(m_before_begin(), counter[fill], counter[fill].m_before_begin(), last_element);
+		m_swap(counter[fill-1]);
 	}
 
 	void m_swap(Basic & list) noexcept(typename NodeAllocatorTraits::IsAlwaysEqual{}) {
 		using BR::swap;
 		swap_allocator(m_allocator(), list.m_allocator());
 		Algorithms::swap(m_head(), list.m_head());
+	}
+
+	void m_reverse() {
+		if (!m_empty()) {
+			Algorithms::reverse(m_head());
+		}
 	}
 
 private:

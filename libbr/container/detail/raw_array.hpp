@@ -8,34 +8,28 @@ namespace BR {
 namespace Detail {
 namespace Container {
 
-
 template< typename TElement, Size N >
 class RawArray {
 
 public:
 	template< typename Initializer>
 	RawArray(Initializer const & initializer) {
-		char * buffer = (char *)raw;
 		Size i = 0;
 		BR_TRY {
 			for (; i != N; ++i) {
-				new(buffer) TElement(initializer);
-				buffer += sizeof(TElement);
+				new(raw + i) TElement(initializer);
 			}
 		} BR_CATCH(...) {
 			for (; i--;) {
-				buffer -= sizeof(TElement);
-				((TElement *)buffer)->~TElement();
+				((TElement *)(raw + i))->~TElement();
 			}
 			BR_RETHROW;
 		}
 	}
 
 	~RawArray() {
-		char * buffer = (char *)raw + N * sizeof(TElement);
 		for (Size i = 0; i != N; ++i) {
-			buffer -= sizeof(TElement);
-			((TElement *)buffer)->~TElement();
+			((TElement *)(raw + i))->~TElement();
 		}
 	}
 
@@ -51,7 +45,7 @@ private:
 	struct {
 		alignas(alignof(TElement)) Byte bytes[sizeof(TElement)];
 	} raw[N];
-};
+}; // class RawArray< TElement, N >
 
 
 } // namespace Container

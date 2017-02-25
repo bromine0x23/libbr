@@ -16,7 +16,6 @@
 #include <libbr/functional/equal_to.hpp>
 #include <libbr/functional/less.hpp>
 #include <libbr/iterator/move_iterator.hpp>
-#include <libbr/iterator/next.hpp>
 #include <libbr/memory/allocator.hpp>
 #include <libbr/memory/allocator_traits.hpp>
 #include <libbr/memory/pointer_traits.hpp>
@@ -416,7 +415,7 @@ public:
 	 * @return \c *this
 	 */
 	void assign(Element const & element, Size count) {
-		auto i = before_begin(), j = next(i), e = end();
+		auto i = before_begin(), j = begin(), e = end();
 		for (; j != e && count > 0; --count, ++i, ++j) {
 			*j = element;
 		}
@@ -434,7 +433,7 @@ public:
 	 */
 	template< typename TIterator >
 	auto assign(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator> > {
-		auto i = before_begin(), j = next(i), e = end();
+		auto i = before_begin(), j = begin(), e = end();
 		for (; j != e && first != last; ++i, (void)++j, ++first) {
 			*j = *first;
 		}
@@ -687,15 +686,8 @@ public:
 	 * @param predicate Binary predicate which returns ​true if the elements should be treated as equal.
 	 */
 	template< typename TBinaryPredicate >
-	void unique(TBinaryPredicate && predicate) {
-		for (auto i = begin(), e = end(); i != e;) {
-			auto j = next(i);
-			for (; j != e && predicate(*i, *j); ++j) {}
-			if (i.m_pointer->next != j.m_pointer) {
-				erase_after(i, j);
-			}
-			i = j;
-		}
+	void unique(TBinaryPredicate predicate) {
+		this->m_unique(predicate);
 	}
 
 	/**
@@ -719,10 +711,20 @@ public:
 		}
 	}
 
+	/**
+	 * @brief Merges two sorted lists into one.
+	 * @param list Another container to merge.
+	 */
 	void merge(ForwardList && list) {
 		merge(list, Less<Element>{});
 	}
 
+	/**
+	 * @brief Merges two sorted lists into one.
+	 * @tparam TComparator Type of \p comparator
+	 * @param list Another container to merge.
+	 * @param comparator Binary predicate which returns ​true if the first argument is less than (i.e. is ordered before) the second.
+	 */
 	template< typename TComparator >
 	void merge(ForwardList && list, TComparator comparator) {
 		if (this != &list) {
@@ -730,43 +732,41 @@ public:
 		}
 	}
 
+	/**
+	 * @brief Sorts the elements.
+	 */
 	void sort() {
 		return sort(Less<Element>{});
 	}
 
+	/**
+	 * @brief Sorts the elements.
+	 * @tparam TComparator Type of \p comparator
+	 * @param comparator Binary predicate which returns ​true if the first argument is less than (i.e. is ordered before) the second.
+	 */
 	template< typename TComparator >
 	void sort(TComparator comparator) {
 		this->m_sort(comparator);
 	}
 
-	void swap(ForwardList & other) noexcept(
-		BooleanOr<
-			BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerSwap >,
-			IsNothrowSwappable<NodeAllocator>
-		>{}
-	) {
+	/**
+	 * @brief Swaps the contents.
+	 * @param other Container to exchange the contents with.
+	 * @throws noexcept(BR::AllocatorTraits<Allocator>::IsAlwaysEqual{})
+	 */
+	void swap(ForwardList & other) noexcept(typename AllocatorTraits::IsAlwaysEqual{}) {
 		this->m_swap(other);
 	}
 
-	void reverse() noexcept;
+	/**
+	 * @brief Reverses the order of the elements.
+	 */
+	void reverse() noexcept {
+		this->m_reverse();
+	}
 	///@}
 
 }; // class ForwardList< TElement, TAllocator >
-
-template< typename TElement, typename TAllocator >
-void ForwardList< TElement, TAllocator >::reverse() noexcept {
-	auto p = this->m_head()->next;
-	if (p != nullptr) {
-		auto f = p->next;
-		for (p->next = nullptr; f != nullptr;) {
-			auto t = f->next;
-			f->next = p;
-			p = f;
-			f = t;
-		}
-		this->m_head()->next = p;
-	}
-}
 
 } // namespace Container
 

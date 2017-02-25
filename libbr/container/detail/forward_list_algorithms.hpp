@@ -50,6 +50,15 @@ public:
 		prev_first->next = last;
 	}
 
+	static void transfer_after(NodePointer const & prev, NodePointer const & node) {
+		auto next = node->next;
+		if (prev != node && prev != next) {
+			node->next = next->next;
+			next->next = prev->next;
+			prev->next = next;
+		}
+	}
+
 	static void transfer_after(NodePointer const & prev, NodePointer const & prev_first, NodePointer const & prev_last) {
 		if (prev != prev_first && prev != prev_last && prev_first != prev_last) {
 			auto first = prev_first->next;
@@ -61,55 +70,16 @@ public:
 		}
 	}
 
-	static void swap(NodePointer const head0, NodePointer const & head1) {
+	static void swap(NodePointer const & head0, NodePointer const & head1) {
 		using BR::swap;
 		swap(head0->next, head1->next);
 	}
 
-	template< typename TUnaryPredicate >
-	static void stable_partition(NodePointer before_begin, NodePointer const & end, TUnaryPredicate predicate, StablePartitionInfo & info) {
-		auto bcur = before_begin;
-		auto cur  = bcur->next;
-		auto new_f = end;
-		Size size_left = 0, size_right = 0;
-		for (; cur != end;) {
-			if (predicate(cur)) {
-				++size_left;
-				bcur = cur;
-				cur  = cur->next;
-			} else{
-				++size_right;
-				auto last_to_remove = bcur;
-				new_f = cur;
-				bcur = cur;
-				cur  = cur->next;
-				BR_TRY {
-					for (; cur != end; ) {
-						if (predicate(cur)) {
-							++size_left;
-							last_to_remove->next = cur;
-							last_to_remove = cur;
-							auto nxt = cur->next;
-							bcur->next = nxt;
-							cur = nxt;
-						} else{
-							++size_right;
-							bcur = cur;
-							cur  = cur->next;
-						}
-					}
-				} BR_CATCH(...) {
-					last_to_remove->next = new_f;
-					BR_RETHROW;
-				}
-				last_to_remove->next = new_f;
-				break;
-			}
+	static void reverse(NodePointer const & head) {
+		auto node = head->next;
+		for (auto next = node; (next = node->next) != nullptr; ) {
+			transfer_after(head, node);
 		}
-		info.size_left = size_left;
-		info.size_right = size_right;
-		info.begin_right = new_f;
-		info.new_last = bcur;
 	}
 
 }; // struct Algorithms<TNodePointer>
