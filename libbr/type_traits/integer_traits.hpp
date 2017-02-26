@@ -1,6 +1,9 @@
+/**
+ * @file
+ * @brief IntegerTraits
+ * @since 1.0
+ */
 #pragma once
-
-#include <climits>
 
 #include <libbr/config.hpp>
 #include <libbr/type_traits/is_integral.hpp>

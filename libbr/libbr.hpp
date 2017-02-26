@@ -9,6 +9,7 @@
 #include <libbr/iterator.hpp>
 #include <libbr/math.hpp>
 #include <libbr/memory.hpp>
+#include <libbr/random.hpp>
 #include <libbr/string.hpp>
 #include <libbr/type_traits.hpp>
 #include <libbr/utility.hpp>

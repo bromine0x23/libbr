@@ -189,9 +189,11 @@ using Char16 = char16_t;
  */
 using Char32 = char32_t;
 
-using SInt = SInt32;
+using Boolean = bool;
 
-using UInt = UInt32;
+using SInt = signed int;
+
+using UInt = unsigned int;
 
 using SFloat = float;
 

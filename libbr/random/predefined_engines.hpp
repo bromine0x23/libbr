@@ -1,6 +1,6 @@
 #pragma once
 
-#include <libbr/config>
+#include <libbr/config.hpp>
 
 #include <libbr/random/minimal_standard_1988.hpp>
 #include <libbr/random/minimal_standard_1993.hpp>

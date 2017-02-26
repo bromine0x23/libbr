@@ -17,6 +17,11 @@
 
 #include <libbr/random/predefined_engines.hpp>
 
+#include <libbr/random/generate_canonical.hpp>
+
+#include <libbr/random/uniform_real_distribution.hpp>
+#include <libbr/random/bernoulli_distribution.hpp>
+
 namespace BR {
 
 /**

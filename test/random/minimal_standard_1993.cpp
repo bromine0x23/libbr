@@ -4,12 +4,18 @@
 using namespace BR;
 
 TEST(Random, MinimalStandard1993) {
-	MinimalStandard1993 engine(233);
-	EXPECT_EQ(0x7FFFFFFEU, engine.max());
-	EXPECT_EQ(0x00000001U, engine.min());
-	EXPECT_EQ(0x00AB9E27U, engine());
-	EXPECT_EQ(0x6801FCC5U, engine());
-	engine.discard(2);
-	EXPECT_EQ(0x444F943AU, engine());
-	EXPECT_EQ(0x194EC907U, engine());
+	{
+		MinimalStandard1993 engine;
+		engine.discard(9999);
+		EXPECT_EQ(0x17CC5AB9U, engine());
+	} {
+		MinimalStandard1993 engine(233);
+		EXPECT_EQ(0x7FFFFFFEU, engine.max());
+		EXPECT_EQ(0x00000001U, engine.min());
+		EXPECT_EQ(0x00AB9E27U, engine());
+		EXPECT_EQ(0x6801FCC5U, engine());
+		engine.discard(2);
+		EXPECT_EQ(0x444F943AU, engine());
+		EXPECT_EQ(0x194EC907U, engine());
+	}
 }
