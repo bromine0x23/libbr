@@ -1,13 +1,12 @@
 /**
  * @file
  * @brief DiscardBlockEngine
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/random/subtract_with_carry_engine.hpp>
+#include <libbr/operators/equality_comparable.hpp>
 #include <libbr/utility/move.hpp>
 
 namespace BR {
@@ -23,10 +22,6 @@ inline namespace Random {
 template< typename TEngine, Size p, Size r >
 class DiscardBlockEngine;
 
-using Ranlux24 = DiscardBlockEngine< Ranlux24Base, 223, 23 >;
-
-using Ranlux48 = DiscardBlockEngine< Ranlux48Base, 389, 11 >;
-
 } // inline namespace Random
 
 
@@ -34,25 +29,25 @@ using Ranlux48 = DiscardBlockEngine< Ranlux48Base, 389, 11 >;
 inline namespace Random {
 
 template< typename TEngine, Size p, Size r >
-class DiscardBlockEngine {
+class DiscardBlockEngine : public EqualityComparable< DiscardBlockEngine< TEngine, p, r > > {
 public:
 	using Engine = TEngine;
 
 	using Result = typename TEngine::Result;
 
 public:
-	constexpr static auto block_size = p;
-	constexpr static auto used_size  = r;
+	static constexpr auto block_size = p;
+	static constexpr auto used_size  = r;
 
 private:
-	static_assert(0 <  r && r <= p, "DiscardBlockEngine: invalid parameters");
+	static_assert(0 < used_size && used_size <= block_size, "DiscardBlockEngine: invalid parameters");
 
 public:
-	constexpr static auto min() -> Result {
+	static constexpr auto min() -> Result {
 		return Engine::min();
 	}
 
-	constexpr static auto max() -> Result {
+	static constexpr auto max() -> Result {
 		return Engine::max();
 	}
 
@@ -79,8 +74,8 @@ public:
 		return *this;
 	}
 
-	auto seed(Result sd) -> DiscardBlockEngine & {
-		m_engine.seed(sd);
+	auto seed(Result seed) -> DiscardBlockEngine & {
+		m_engine.seed(seed);
 		m_count = 0;
 		return *this;
 	}
@@ -105,15 +100,11 @@ public:
 		return m_count == y.m_count && m_engine == y.m_engine;
 	}
 
-	auto operator!=(DiscardBlockEngine const & y) -> bool {
-		return !(*this == y);
-	}
-
 private:
 	Engine m_engine;
 	SInt m_count;
-}; // class DiscardBlockEngine< TUInt p, r >
+}; // class DiscardBlockEngine< TUInt, p, r >
 
-} // inline namespace Random
+} // namespace Random
 
 } // namespace BR

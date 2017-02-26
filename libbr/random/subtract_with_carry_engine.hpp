@@ -1,13 +1,13 @@
 /**
  * @file
  * @brief SubtractWithCarryEngine
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
 
 #include <libbr/config.hpp>
 #include <libbr/algorithm/equal.hpp>
+#include <libbr/operators/equality_comparable.hpp>
 #include <libbr/random/linear_congruential_engine.hpp>
 #include <libbr/type_traits/integer_traits.hpp>
 #include <libbr/utility/integral_constant.hpp>
@@ -26,10 +26,6 @@ inline namespace Random {
 template< typename TUInt, Size w, Size s, Size r >
 class SubtractWithCarryEngine;
 
-using Ranlux24Base = SubtractWithCarryEngine< UInt32, 24, 10, 24 >;
-
-using Ranlux48Base = SubtractWithCarryEngine< UInt64, 48,  5, 12 >;
-
 } // inline namespace Random
 
 
@@ -37,28 +33,28 @@ using Ranlux48Base = SubtractWithCarryEngine< UInt64, 48,  5, 12 >;
 inline namespace Random {
 
 template< typename TUInt, Size w, Size s, Size r >
-class SubtractWithCarryEngine {
+class SubtractWithCarryEngine : public EqualityComparable< SubtractWithCarryEngine< TUInt, w, s, r > > {
 public:
 	using Result = TUInt;
 
 public:
-	constexpr static auto word_size = w;
-	constexpr static auto short_lag = s;
-	constexpr static auto long_lag  = r;
-	constexpr static auto default_seed = Result(19780503U);
+	static constexpr auto word_size = w;
+	static constexpr auto short_lag = s;
+	static constexpr auto long_lag  = r;
+	static constexpr auto default_seed = Result(19780503U);
 
 private:
-	constexpr static auto digits = IntegerTraits<Result>::digits;
+	static constexpr auto digits = IntegerTraits<Result>::digits;
 
 	static_assert(0 < word_size && word_size <= digits,  "SubtractWithCarryEngine: invalid parameters");
 	static_assert(0 < short_lag && short_lag < long_lag, "SubtractWithCarryEngine: invalid parameters");
 
 public:
-	constexpr static auto min() -> Result {
+	static constexpr auto min() -> Result {
 		return 0U;
 	}
 
-	constexpr static auto max() -> Result {
+	static constexpr auto max() -> Result {
 		return word_size == digits ? ~Result() : (Result(1U) << word_size) - Result(1U);
 	}
 
@@ -66,12 +62,12 @@ private:
 	static_assert(min() < max(), "SubtractWithCarryEngine: invalid parameters");
 
 public:
-	explicit SubtractWithCarryEngine(Result sd = default_seed) {
-		seed(sd);
+	explicit SubtractWithCarryEngine(Result seed = default_seed) {
+		this->seed(seed);
 	}
 
-	auto seed(Result sd = default_seed) -> SubtractWithCarryEngine & {
-		m_seed(sd, IntegralConstant<UInt, 1 + (word_size - 1) / 32>{});
+	auto seed(Result seed = default_seed) -> SubtractWithCarryEngine & {
+		m_seed(seed, IntegralConstant<UInt, 1 + (word_size - 1) / 32>{});
 		return *this;
 	}
 
@@ -96,10 +92,6 @@ public:
 
 	auto operator==(SubtractWithCarryEngine const & y) -> bool {
 		return (m_carry == y.m_carry) && (m_index == y.m_index) && equal(m_terms, m_terms + long_lag, y.m_terms);
-	}
-
-	auto operator!=(SubtractWithCarryEngine const & y) -> bool {
-		return !(*this == y);
 	}
 
 private:
@@ -128,6 +120,6 @@ private:
 	Size   m_index;
 }; // class SubtractWithCarryEngine< TUInt w, s, r >
 
-} // inline namespace Random
+} // namespace Random
 
 } // namespace BR

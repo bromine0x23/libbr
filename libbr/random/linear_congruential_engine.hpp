@@ -1,12 +1,12 @@
 /**
  * @file
  * @brief LinearCongruentialEngine
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/operators/equality_comparable.hpp>
 #include <libbr/utility/boolean_constant.hpp>
 
 namespace BR {
@@ -23,10 +23,6 @@ inline namespace Random {
  */
 template< typename TUInt, TUInt a, TUInt c, TUInt m >
 class LinearCongruentialEngine;
-
-using MinimalStandard1988 = LinearCongruentialEngine<UInt32, 16807, 0, 0x7FFFFFFFU>;
-
-using MinimalStandard1993 = LinearCongruentialEngine<UInt32, 48271, 0, 0x7FFFFFFFU>;
 
 } // namespace Random
 
@@ -191,35 +187,35 @@ struct LinearCongruentialEngineNext<UInt8, a, c, m, might_overflow> {
 inline namespace Random {
 
 template< typename TUInt, TUInt a, TUInt c, TUInt m >
-class LinearCongruentialEngine {
+class LinearCongruentialEngine : public EqualityComparable< LinearCongruentialEngine< TUInt, a, c, m > > {
 public:
 	using Result = TUInt;
 
 public:
-	constexpr static auto multiplier = a;
-	constexpr static auto increment = c;
-	constexpr static auto modulus = m;
-	constexpr static auto default_seed = Result(1);
+	static constexpr auto multiplier = a;
+	static constexpr auto increment = c;
+	static constexpr auto modulus = m;
+	static constexpr auto default_seed = Result(1);
 
 private:
 	static_assert(modulus == 0 || multiplier < modulus, "LinearCongruentialEngine: invalid parameters");
 	static_assert(modulus == 0 || increment  < modulus, "LinearCongruentialEngine: invalid parameters");
 
 public:
-	explicit LinearCongruentialEngine(Result s = default_seed) {
-		seed(s);
+	explicit LinearCongruentialEngine(Result seed = default_seed) {
+		this->seed(seed);
 	}
 
-	constexpr static auto min() -> Result {
+	static constexpr auto min() -> Result {
 		return increment == 0U ? 1U: 0U;
 	}
 
-	constexpr static auto max() -> Result {
+	static constexpr auto max() -> Result {
 		return modulus - 1U;
 	}
 
-	auto seed(Result s = default_seed) -> LinearCongruentialEngine & {
-		m_seed(BooleanConstant<modulus == 0>{}, BooleanConstant<increment == 0>{}, s);
+	auto seed(Result seed = default_seed) -> LinearCongruentialEngine & {
+		m_seed(BooleanConstant<modulus == 0>{}, BooleanConstant<increment == 0>{}, seed);
 		return *this;
 	}
 
@@ -236,10 +232,6 @@ public:
 
 	auto operator==(LinearCongruentialEngine const & y) -> bool {
 		return m_x == y.m_x;
-	}
-
-	auto operator!=(LinearCongruentialEngine const & y) -> bool {
-		return !(*this == y);
 	}
 
 private:
@@ -260,8 +252,8 @@ private:
 
 private:
 	Result m_x;
-}; // class LinearCongruentialEngine<TUInt, a, c, m>
+}; // class LinearCongruentialEngine< TUInt, a, c, m >
 
-} // inline namespace Random
+} // namespace Random
 
 } // namespace BR

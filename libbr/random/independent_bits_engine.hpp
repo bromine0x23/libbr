@@ -1,13 +1,13 @@
 /**
  * @file
  * @brief IndependentBitsEngine
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
 
 #include <libbr/config.hpp>
 #include <libbr/math/function/ilog2.hpp>
+#include <libbr/operators/equality_comparable.hpp>
 #include <libbr/type_traits/conditional.hpp>
 #include <libbr/type_traits/integer_traits.hpp>
 #include <libbr/utility/boolean_constant.hpp>
@@ -32,7 +32,7 @@ class IndependentBitsEngine;
 inline namespace Random {
 
 template< typename TEngine, Size w, typename TUInt >
-class IndependentBitsEngine {
+class IndependentBitsEngine : public EqualityComparable< IndependentBitsEngine< TEngine, w, TUInt > > {
 public:
 	using Engine = TEngine;
 
@@ -41,41 +41,41 @@ public:
 private:
 	template< typename TUI, TUI R0, Size W, Size M >
 	class GetN {
-		constexpr static auto digits = IntegerTraits<TUI>::digits;
-		constexpr static Size N = W / M + (W % M != 0);
-		constexpr static Size W0 = W / N;
-		constexpr static TUI Y0 = W0 < digits ? (R0 >> W0) << W0 : 0;
+		static constexpr auto digits = IntegerTraits<TUI>::digits;
+		static constexpr Size N = W / M + (W % M != 0);
+		static constexpr Size W0 = W / N;
+		static constexpr TUI Y0 = W0 < digits ? (R0 >> W0) << W0 : 0;
 	public:
-		constexpr static Size value = R0 - Y0 > Y0 / N ? N + 1 : N;
+		static constexpr Size value = R0 - Y0 > Y0 / N ? N + 1 : N;
 	};
 
 	using EngineResult = typename Engine::Result;
 
 	using WorkingResult = ConditionalByValue< sizeof(EngineResult) <= sizeof(Result), Result, EngineResult >;
 
-	constexpr static WorkingResult r = Engine::max() - Engine::min() + WorkingResult(1);
+	static constexpr WorkingResult r = Engine::max() - Engine::min() + WorkingResult(1);
 
-	constexpr static auto digits = IntegerTraits<Result>::digits;
-	constexpr static auto engine_digits = IntegerTraits<EngineResult>::digits;
-	constexpr static auto working_digits = IntegerTraits<WorkingResult>::digits;
-	constexpr static Size m = r == 0 ? working_digits : ilog2(r) + 1;
-	constexpr static auto n = GetN< WorkingResult, r, w, m >::value;
-	constexpr static Size w0 = w / n;
-	constexpr static Size w1 = w0 + 1;
-	constexpr static Size n0 = n - w % n;
-	constexpr static WorkingResult y0 = w0 < working_digits ? (r >> w0) << w0 : 0;
-	constexpr static WorkingResult y1 = w1 < working_digits ? (r >> w1) << w1 : 0;
-	constexpr static EngineResult mask0 = ~EngineResult() >> (engine_digits - w0);
-	constexpr static EngineResult mask1 = ~EngineResult() >> (engine_digits - w1);
+	static constexpr auto digits = IntegerTraits<Result>::digits;
+	static constexpr auto engine_digits = IntegerTraits<EngineResult>::digits;
+	static constexpr auto working_digits = IntegerTraits<WorkingResult>::digits;
+	static constexpr Size m = r == 0 ? working_digits : ilog2(r) + 1;
+	static constexpr auto n = GetN< WorkingResult, r, w, m >::value;
+	static constexpr Size w0 = w / n;
+	static constexpr Size w1 = w0 + 1;
+	static constexpr Size n0 = n - w % n;
+	static constexpr WorkingResult y0 = w0 < working_digits ? (r >> w0) << w0 : 0;
+	static constexpr WorkingResult y1 = w1 < working_digits ? (r >> w1) << w1 : 0;
+	static constexpr EngineResult mask0 = ~EngineResult() >> (engine_digits - w0);
+	static constexpr EngineResult mask1 = ~EngineResult() >> (engine_digits - w1);
 
-	static_assert(0 < w && w <= digits,  "SubtractWithCarryEngine: invalid parameters");
+	static_assert(0 < w && w <= digits,  "IndependentBitsEngine: invalid parameters");
 
 public:
-	constexpr static auto min() -> Result {
+	static constexpr auto min() -> Result {
 		return 0;
 	}
 
-	constexpr static auto max() -> Result {
+	static constexpr auto max() -> Result {
 		return w == digits ? ~Result() : (Result(1U) << w) - Result(1U);
 	}
 
@@ -153,6 +153,6 @@ private:
 	Engine m_engine;
 }; // class IndependentBitsEngine< TEngine, w, TUInt >
 
-} // inline namespace Random
+} // namespace Random
 
 } // namespace BR

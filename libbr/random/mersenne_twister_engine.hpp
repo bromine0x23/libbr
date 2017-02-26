@@ -1,13 +1,13 @@
 /**
  * @file
  * @brief MersenneTwisterEngine
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
 
 #include <libbr/config.hpp>
 #include <libbr/algorithm/equal.hpp>
+#include <libbr/operators/equality_comparable.hpp>
 #include <libbr/type_traits/integer_traits.hpp>
 
 namespace BR {
@@ -35,10 +35,6 @@ inline namespace Random {
 template< typename TUInt, Size w, Size n, Size m, Size r, TUInt a, Size u, TUInt d, Size s, TUInt b, Size t, TUInt c, Size l, TUInt f >
 class MersenneTwisterEngine;
 
-using MT19937 = MersenneTwisterEngine< UInt32, 32, 624, 397, 31, 0x9908B0DFU, 11, 0xFFFFFFFFU, 7, 0x9D2C5680U, 15, 0xEFC60000U, 18, 1812433253>;
-
-using MT19937_64 = MersenneTwisterEngine< UInt64, 64, 312, 156, 31, 0xB5026F5AA96619E9ULL, 29, 0x5555555555555555ULL, 17, 0x71D67FFFEDA60000ULL, 37, 0xFFF7EEE000000000ULL, 43, 6364136223846793005ULL>;
-
 } // inline namespace Random
 
 
@@ -46,28 +42,28 @@ using MT19937_64 = MersenneTwisterEngine< UInt64, 64, 312, 156, 31, 0xB5026F5AA9
 inline namespace Random {
 
 template< typename TUInt, Size w, Size n, Size m, Size r, TUInt a, Size u, TUInt d, Size s, TUInt b, Size t, TUInt c, Size l, TUInt f >
-class MersenneTwisterEngine {
+class MersenneTwisterEngine : public EqualityComparable< MersenneTwisterEngine< TUInt, w, n, m, r, a, u, d, s, b, t, c, l, f > > {
 public:
 	using Result = TUInt;
 
 public:
-	constexpr static auto word_size = w;
-	constexpr static auto state_size = n;
-	constexpr static auto shift_size = m;
-	constexpr static auto mask_bits = r;
-	constexpr static auto xor_mask = a;
-	constexpr static auto tempering_u = u;
-	constexpr static auto tempering_d = d;
-	constexpr static auto tempering_s = s;
-	constexpr static auto tempering_b = b;
-	constexpr static auto tempering_t = t;
-	constexpr static auto tempering_c = c;
-	constexpr static auto tempering_l = l;
-	constexpr static auto initialization_multiplier = f;
-	constexpr static auto default_seed = Result(5489U);
+	static constexpr auto word_size = w;
+	static constexpr auto state_size = n;
+	static constexpr auto shift_size = m;
+	static constexpr auto mask_bits = r;
+	static constexpr auto xor_mask = a;
+	static constexpr auto tempering_u = u;
+	static constexpr auto tempering_d = d;
+	static constexpr auto tempering_s = s;
+	static constexpr auto tempering_b = b;
+	static constexpr auto tempering_t = t;
+	static constexpr auto tempering_c = c;
+	static constexpr auto tempering_l = l;
+	static constexpr auto initialization_multiplier = f;
+	static constexpr auto default_seed = Result(5489U);
 
 private:
-	constexpr static auto digits = IntegerTraits<Result>::digits;
+	static constexpr auto digits = IntegerTraits<Result>::digits;
 
 	static_assert(2 <= w && w <= digits, "MersenneTwisterEngine: invalid parameters");
 	static_assert(0 <  m && m <= n, "MersenneTwisterEngine: invalid parameters");
@@ -78,11 +74,11 @@ private:
 	static_assert(l <= w, "MersenneTwisterEngine: invalid parameters");
 
 public:
-	constexpr static auto min() -> Result {
+	static constexpr auto min() -> Result {
 		return 0U;
 	}
 
-	constexpr static auto max() -> Result {
+	static constexpr auto max() -> Result {
 		return word_size == digits ? ~Result() : (Result(1U) << word_size) - Result(1U);
 	}
 
@@ -95,12 +91,12 @@ private:
 	static_assert(f <= max(), "MersenneTwisterEngine: invalid parameters");
 
 public:
-	explicit MersenneTwisterEngine(Result sd = default_seed) {
-		seed(sd);
+	explicit MersenneTwisterEngine(Result seed = default_seed) {
+		this->seed(seed);
 	}
 
-	auto seed(Result sd = default_seed) -> MersenneTwisterEngine & {
-		m_state[0] = sd & max();
+	auto seed(Result seed = default_seed) -> MersenneTwisterEngine & {
+		m_state[0] = seed & max();
 		for (Size i = 1; i < state_size; ++i) {
 			auto x = m_state[i - 1];
 			x ^= x >> (word_size - 2);
@@ -138,10 +134,6 @@ public:
 		return (m_index == y.m_index) && equal(m_state, m_state + state_size, y.m_state);
 	}
 
-	auto operator!=(MersenneTwisterEngine const & y) -> bool {
-		return !(*this == y);
-	}
-
 private:
 
 	void m_twist() {
@@ -162,8 +154,8 @@ private:
 private:
 	Result m_state[state_size];
 	Size m_index;
-}; // class MersenneTwisterEngine<TUInt w, n, m, r, a, u, d, s, b, t, c, l, f>
+}; // class MersenneTwisterEngine< TUInt w, n, m, r, a, u, d, s, b, t, c, l, f >
 
-} // inline namespace Random
+} // namespace Random
 
 } // namespace BR

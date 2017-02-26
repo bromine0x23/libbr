@@ -1,7 +1,6 @@
 /**
  * @file
- * @brief Random module
- * @author Bromine0x23
+ * @brief Random
  * @since 1.0
  */
 #pragma once
@@ -14,6 +13,9 @@
 
 #include <libbr/random/discard_block_engine.hpp>
 #include <libbr/random/independent_bits_engine.hpp>
+#include <libbr/random/shuffle_order_engine.hpp>
+
+#include <libbr/random/predefined_engines.hpp>
 
 namespace BR {
 
