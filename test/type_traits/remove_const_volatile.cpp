@@ -4,7 +4,7 @@
 
 using namespace BR;
 
-TEST(TypeOperate, RemoveConstVolatile) {
+TEST(TypeTraits, RemoveConstVolatile) {
 	TYPE_TRAITS_CHECKS(RemoveConstVolatile, BR_EMPTY, BR_EMPTY)
 	TYPE_TRAITS_CHECKS(RemoveConstVolatile, const, BR_EMPTY)
 	TYPE_TRAITS_CHECKS(RemoveConstVolatile, volatile, BR_EMPTY)

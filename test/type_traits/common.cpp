@@ -19,7 +19,7 @@ struct C1C2 {
 
 using namespace BR;
 
-TEST(TypeOperate, Common) {
+TEST(TypeTraits, Common) {
 	TYPE_TRAITS_CHECKS(Common, BR_EMPTY, BR_EMPTY)
 
 	TYPE_TRAITS_CHECK(C1C2, Common, C1, C1C2)

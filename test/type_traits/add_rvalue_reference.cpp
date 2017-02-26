@@ -4,7 +4,7 @@
 
 using namespace BR;
 
-TEST(TypeOperate, AddRValueReference) {
+TEST(TypeTraits, AddRValueReference) {
 	TYPE_TRAITS_CHECKS(AddRValueReference, BR_EMPTY, &&)
 	TYPE_TRAITS_CHECKS(AddRValueReference, const, const &&)
 	TYPE_TRAITS_CHECKS(AddRValueReference, volatile, volatile &&)

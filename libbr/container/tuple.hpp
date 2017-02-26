@@ -689,9 +689,16 @@ public:
 	) {
 	}
 
-	/**
-	 * implicit move conversion assignment
-	 */
+	auto operator=(Tuple const & tuple) noexcept(IsNothrowAssignable< Imp &, Tuple const & >{}) -> Tuple & {
+		m_imp.operator=(tuple);
+		return *this;
+	}
+
+	auto operator=(Tuple && tuple) noexcept(IsNothrowAssignable< Imp &, Tuple && >{}) -> Tuple & {
+		m_imp.operator=(move(tuple));
+		return *this;
+	}
+
 	template< typename TTuple, typename = EnableIf< Detail::Container::IsTupleAssignable< Tuple, TTuple > > >
 	auto operator=(TTuple && tuple) noexcept(IsNothrowAssignable< Imp &, TTuple >{}) -> Tuple & {
 		m_imp.operator=(forward<TTuple>(tuple));

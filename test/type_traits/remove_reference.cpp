@@ -4,7 +4,7 @@
 
 using namespace BR;
 
-TEST(TypeOperate, RemoveReference) {
+TEST(TypeTraits, RemoveReference) {
 	TYPE_TRAITS_CHECKS(RemoveReference, BR_EMPTY, BR_EMPTY)
 	TYPE_TRAITS_CHECKS(RemoveReference, const, const)
 	TYPE_TRAITS_CHECKS(RemoveReference, volatile, volatile)

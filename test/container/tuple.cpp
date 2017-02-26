@@ -86,15 +86,20 @@ TEST(Tuple, MakeTuple) {
 	EXPECT_EQ(0, d);
 }
 
-TEST(Tuple, AssignPair) {
-	using P = Pair< double, char >;
-	using T = Tuple< int, short >;
-	P p(2.5, 'a');
-	T t;
-	t = p;
-	EXPECT_EQ(2, t.get<0>());
-	EXPECT_EQ(short('a'), t.get<1>());
-
+TEST(Tuple, Assign) {
+	{
+		auto p = make_pair(2.5, 'a');
+		Tuple< int, short > t;
+		t = p;
+		EXPECT_EQ(2, t.get<0>());
+		EXPECT_EQ(short('a'), t.get<1>());
+	} {
+		auto p = make_pair(2.5, 'a');
+		Tuple< int, short > t;
+		t = move(p);
+		EXPECT_EQ(2, t.get<0>());
+		EXPECT_EQ(short('a'), t.get<1>());
+	}
 }
 
 template< typename TTuple >

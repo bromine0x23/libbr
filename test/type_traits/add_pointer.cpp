@@ -4,7 +4,7 @@
 
 using namespace BR;
 
-TEST(TypeOperate, AddPointer) {
+TEST(TypeTraits, AddPointer) {
 	TYPE_TRAITS_CHECKS(AddPointer, BR_EMPTY, *)
 	TYPE_TRAITS_CHECKS(AddPointer, const, const *)
 	TYPE_TRAITS_CHECKS(AddPointer, volatile, volatile *)

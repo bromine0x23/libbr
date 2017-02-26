@@ -22,7 +22,7 @@ static Float64 pos_inf = to_float(0x7FF00000U, 0x00000000U);
 static Float64 neg_inf = -pos_inf;
 static Float64 pos_nan = to_float(0x7FFFFFFFU, 0xFFFFFFFFU);
 
-TEST(TestFloat64, Classify) {
+TEST(Float64, Classify) {
 	EXPECT_EQ(classify(pos_max_normal), FloatCategory::Normal);
 	EXPECT_EQ(classify(neg_max_normal), FloatCategory::Normal);
 	EXPECT_EQ(classify(pos_min_normal), FloatCategory::Normal);
@@ -38,7 +38,7 @@ TEST(TestFloat64, Classify) {
 	EXPECT_EQ(classify(pos_nan), FloatCategory::NaN);
 }
 
-TEST(TestFloat64, IsNormal) {
+TEST(Float64, IsNormal) {
 	EXPECT_TRUE(is_normal(pos_max_normal));
 	EXPECT_TRUE(is_normal(neg_max_normal));
 	EXPECT_TRUE(is_normal(pos_min_normal));
@@ -54,7 +54,7 @@ TEST(TestFloat64, IsNormal) {
 	EXPECT_FALSE(is_normal(pos_nan));
 }
 
-TEST(TestFloat64, IsFinite) {
+TEST(Float64, IsFinite) {
 	EXPECT_TRUE(is_finite(pos_max_normal));
 	EXPECT_TRUE(is_finite(neg_max_normal));
 	EXPECT_TRUE(is_finite(pos_min_normal));
@@ -70,7 +70,7 @@ TEST(TestFloat64, IsFinite) {
 	EXPECT_FALSE(is_finite(pos_nan));
 }
 
-TEST(TestFloat64, IsInfinite) {
+TEST(Float64, IsInfinite) {
 	EXPECT_FALSE(is_infinite(pos_max_normal));
 	EXPECT_FALSE(is_infinite(neg_max_normal));
 	EXPECT_FALSE(is_infinite(pos_min_normal));
@@ -86,7 +86,7 @@ TEST(TestFloat64, IsInfinite) {
 	EXPECT_FALSE(is_infinite(pos_nan));
 }
 
-TEST(TestFloat64, IsNaN) {
+TEST(Float64, IsNaN) {
 	EXPECT_FALSE(is_nan(pos_max_normal));
 	EXPECT_FALSE(is_nan(neg_max_normal));
 	EXPECT_FALSE(is_nan(pos_min_normal));

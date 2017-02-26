@@ -4,7 +4,7 @@
 
 using namespace BR;
 
-TEST(TypeOperate, Decay) {
+TEST(TypeTraits, Decay) {
 	TYPE_TRAITS_CHECKS(Decay, BR_EMPTY, BR_EMPTY)
 	TYPE_TRAITS_CHECKS(Decay, [2], *)
 	TYPE_TRAITS_CHECKS(Decay, const [2], const *)

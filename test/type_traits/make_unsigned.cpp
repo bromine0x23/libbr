@@ -21,7 +21,7 @@ enum ES128 : SInt128 {};
 enum EU128 : UInt128 {};
 #endif
 
-TEST(TypeOperate, MakeUnsigned) {
+TEST(TypeTraits, MakeUnsigned) {
 	TYPE_TRAITS_CHECK(unsigned char     , MakeUnsigned,          char     )
 	TYPE_TRAITS_CHECK(unsigned char     , MakeUnsigned,   signed char     )
 	TYPE_TRAITS_CHECK(unsigned char     , MakeUnsigned, unsigned char     )

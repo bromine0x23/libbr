@@ -22,12 +22,9 @@ TEST(Container, Dijkstra) {
 	List< Tuple<int, int> > edges[5];
 	edges[0].emplace_back(1, 10);
 	edges[0].emplace_back(2, 5);
-	edges[1].emplace_back(2, 2);
-	edges[1].emplace_back(3, 1);
-	edges[2].emplace_back(1, 3);
-	edges[2].emplace_back(3, 9);
-	edges[2].emplace_back(4, 2);
-	edges[3].emplace_back(4, 4);
+	edges[1].insert(edges[1].cend(), { {2, 2}, {3, 1} });
+	edges[2].assign({ {1, 3}, {3, 9}, {4, 2} });
+	edges[3].emplace_front(4, 4);
 	edges[4].emplace_back(0, 7);
 	edges[4].emplace_back(3, 6);
 

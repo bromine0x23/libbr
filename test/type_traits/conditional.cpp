@@ -5,7 +5,7 @@
 
 using namespace BR;
 
-TEST(TypeOperate, Conditional) {
+TEST(TypeTraits, Conditional) {
 	TYPE_TRAITS_CHECK(int, ConditionalByValue, true, int, double)
 	TYPE_TRAITS_CHECK(double, ConditionalByValue, false, int, double)
 	TYPE_TRAITS_CHECK(int, Conditional, BooleanTrue, int, double)
