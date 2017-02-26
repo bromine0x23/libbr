@@ -21,8 +21,8 @@ namespace BR {
 inline namespace TypeTraits {
 
 /**
- * 指针特性类
- * @tparam TPointer 指针类型
+ * @brief Provides information about pointer-like types.
+ * @tparam TPointer pointer-like type
  */
 template< typename TPointer >
 struct PointerTraits;
@@ -99,33 +99,34 @@ template< typename TPointer >
 struct PointerTraits {
 public:
 	/**
-	 * @brief 指针类型，即 \em TPointer
+	 * @brief TPointer
 	 */
 	using Pointer = TPointer;
 
 	/**
-	 * @brief 指针指向的元素类型
+	 * @brief Type of referenced value.
 	 *
-	 * 如果 <tt>Pointer::Element</tt> 存在则为该类型；
-	 * 否则，如果 \em Pointer 是一个模板实例 <tt>Template< T, TArgs... ></tt>，则为类型 \em T
+	 * <code>Pointer::Element</code> if present.
+	 * Otherwise <code>T</code> if <code>Pointer</code>  is a template instantiation <code>Template\<T, Args...\></tt>.
 	 */
 	using Element = Detail::TypeTraits::PointerTraits::Element<Pointer>;
 
 	/**
-	 * @brief 两指针求差的结果类型
-	 * @see BR::PointerDifference
+	 * @brief Type of difference between two <code>Pointer</code>s.
 	 *
-	 * 如果 <tt>Pointer::Difference</tt> 存在则为该类型；
-	 * 否则，为 PointerDifference
+	 * <code>Pointer::Difference</code> if present.
+	 * Otherwise <code>BR::PointerDifference</code>.
+	 *
+	 * @see BR::PointerDifference
 	 */
 	using Difference = Detail::TypeTraits::PointerTraits::Difference<Pointer>;
 
 	/**
-	 * @brief 绑定到新的元素类型
-	 * @tparam TNewElement 新的元素类型
+	 * @brief Bind referenced type to <code>TNewElement</code>.
+	 * @tparam TNewElement new element
 	 *
-	 * 如果 <tt>Pointer::Rebind<TNewElement></tt> 存在则为该类型；
-	 * 否则，如果 \em Pointer 是一个模板实例 <tt>Template< T, TArgs... ></tt>，则为类型 <tt>Template< TNewElement, TArgs... ></tt>
+	 * <code>Pointer::Rebind\<TNewElement\></code> if exists.
+	 * Otherwise <code>Template\<TNewElement, Args...\></tt> if <code>Pointer</code> is a template instantiation <code>Template\<T, Args...\></tt>.
 	 */
 	template< typename TOtherElement >
 	using Rebind = Detail::TypeTraits::PointerTraits::Rebind< Pointer, TOtherElement >;
@@ -135,8 +136,10 @@ private:
 
 public:
 	/**
-	 * @brief 包装引用为指针
-	 * @pre \em Element 不是 \em void
+	 * @brief Obtains a dereferenceable pointer to its argument.
+	 * @pre Element is not <code>void</code>.
+	 * @param reference Reference to an object of type <code>Element &</code>.
+	 * @return A dereferenceable pointer to \p reference, of the type <code>Pointer</code>.
 	 */
 	static auto make_pointer(Conditional< IsVoid<Element>, NAT, Element > & reference) -> Pointer {
 		return Pointer::make_pointer(reference);
@@ -149,7 +152,7 @@ public:
 };
 
 /**
- * @brief 指针特性类对原生指针的特化
+ * @brief A specialization of PointerTraits provided for <code>TElement *</code>.
  */
 template< typename TElement >
 struct PointerTraits< TElement * > {

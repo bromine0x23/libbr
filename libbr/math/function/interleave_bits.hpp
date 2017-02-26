@@ -34,8 +34,7 @@ constexpr static BR::UInt16 LIBBR_INTERLEAVE_BITS[] = {
 
 /**
  * interleave_bits
- * @param h
- * @param l
+ * @param x,y
  * @return interleaved bits
  */
 //@{

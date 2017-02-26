@@ -13,7 +13,7 @@ extern "C" {
 // TODO: implement it
 /**
  * like std::hypot
- * @param x
+ * @param x,y
  * @return
  */
 //@{

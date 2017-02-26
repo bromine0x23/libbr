@@ -13,7 +13,8 @@ extern "C" {
 // TODO: implement it
 /**
  * like std::pow
- * @param x
+ * @param base
+ * @param exponent
  * @return
  */
 //@{
