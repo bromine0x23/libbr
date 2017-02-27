@@ -6,7 +6,7 @@
 namespace BR {
 namespace Detail {
 namespace Container {
-namespace ForwardList {
+namespace SList {
 
 template< typename TNodePointer >
 struct BasicNode;
@@ -34,7 +34,7 @@ struct Node : public HeadNode< TElement, TVoidPointer > {
 	Element element;
 };
 
-} // namespace ForwardList
+} // namespace SList
 } // namespace Container
 } // namespace Detail
 } // namespace BR

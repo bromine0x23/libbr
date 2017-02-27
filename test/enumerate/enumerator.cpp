@@ -1,7 +1,7 @@
 #include "../test.hpp"
 #include <libbr/enumerate/enumerator.hpp>
 #include <libbr/container/array.hpp>
-#include <libbr/container/forward_list.hpp>
+#include <libbr/container/slist.hpp>
 
 using namespace BR;
 
@@ -38,7 +38,7 @@ TEST(Enumerator, CArray) {
 }
 
 TEST(Enumerator, ForwardList) {
-	ForwardList<int> list = { 0, 1, 2, 3, 4 };
+	SList<int> list = { 0, 1, 2, 3, 4 };
 	auto enumerator = make_enumerator(list.begin(), list.end());
 
 	EXPECT_TRUE(enumerator.move());

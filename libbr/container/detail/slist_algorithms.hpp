@@ -7,7 +7,7 @@
 namespace BR {
 namespace Detail {
 namespace Container {
-namespace ForwardList {
+namespace SList {
 
 template< typename TNodePointer >
 struct Algorithms {
@@ -84,7 +84,7 @@ public:
 
 }; // struct Algorithms<TNodePointer>
 
-} // namespace ForwardList
+} // namespace SList
 } // namespace Container
 } // namespace Detail
 } // namespace BR

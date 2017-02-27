@@ -1,7 +1,6 @@
 /**
  * @file
- * @brief ForwardList
- * @author Bromine0x23
+ * @brief SList
  * @since 1.0
  */
 #pragma once
@@ -10,7 +9,7 @@
 #include <libbr/algorithm/equal.hpp>
 #include <libbr/algorithm/lexicographical_compare.hpp>
 #include <libbr/container/initializer_list.hpp>
-#include <libbr/container/detail/forward_list_basic.hpp>
+#include <libbr/container/detail/slist_basic.hpp>
 #include <libbr/enumerate/enumerable.hpp>
 #include <libbr/functional/equal.hpp>
 #include <libbr/functional/equal_to.hpp>
@@ -42,15 +41,15 @@ inline namespace Container {
  * @tparam TAllocator An allocator used to acquire/release memory and to construct/destroy the elements in that memory.
  */
 template< typename TElement, typename TAllocator = Allocator<TElement> >
-class ForwardList;
+class SList;
 
 /**
- * @brief Specializes the BR::swap algorithm for ForwardList
- * @tparam TElement,TAllocator Template arguments of ForwardList.
+ * @brief Specializes the BR::swap algorithm for SList
+ * @tparam TElement,TAllocator Template arguments of SList.
  * @param x,y Containers whose contents to swap.
  */
 template< typename TElement, typename TAllocator >
-inline void swap(ForwardList< TElement, TAllocator> & x, ForwardList< TElement, TAllocator > & y) noexcept(noexcept(x.swap(y)))  {
+inline void swap(SList< TElement, TAllocator> & x, SList< TElement, TAllocator > & y) noexcept(noexcept(x.swap(y)))  {
 	x.swap(y);
 }
 
@@ -61,15 +60,15 @@ inline void swap(ForwardList< TElement, TAllocator> & x, ForwardList< TElement, 
 inline namespace Container {
 
 template< typename TElement, typename TAllocator >
-class ForwardList :
-	private Detail::Container::ForwardList::Basic< TElement, TAllocator >,
+class SList :
+	private Detail::Container::SList::Basic< TElement, TAllocator >,
 	public Enumerable<
-		ForwardList<TElement, TAllocator>,
-		typename Detail::Container::ForwardList::Basic< TElement, TAllocator >::Iterator,
-		typename Detail::Container::ForwardList::Basic< TElement, TAllocator >::ConstIterator
+		SList<TElement, TAllocator>,
+		typename Detail::Container::SList::Basic< TElement, TAllocator >::Iterator,
+		typename Detail::Container::SList::Basic< TElement, TAllocator >::ConstIterator
 	>,
-	public EqualityComparable< ForwardList<TElement, TAllocator> >,
-	public LessThanComparable< ForwardList<TElement, TAllocator> >
+	public EqualityComparable< SList<TElement, TAllocator> >,
+	public LessThanComparable< SList<TElement, TAllocator> >
 {
 
 public:
@@ -84,7 +83,9 @@ public:
 	using Allocator = TAllocator;
 
 private:
-	using Base = Detail::Container::ForwardList::Basic< Element, Allocator >;
+	using Self = SList;
+
+	using Base = Detail::Container::SList::Basic< Element, Allocator >;
 
 	using AllocatorTraits = BR::AllocatorTraits<Allocator>;
 
@@ -139,21 +140,21 @@ public:
 	/**
 	 * @brief Default constructor.
 	 */
-	ForwardList() noexcept(HasNothrowDefaultConstructor<NodeAllocator>{}) {
+	SList() noexcept(HasNothrowDefaultConstructor<NodeAllocator>{}) {
 	}
 
 	/**
 	 * @brief Default constructor.
 	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
-	explicit ForwardList(Allocator const & allocator) : Base(allocator) {
+	explicit SList(Allocator const & allocator) : Base(allocator) {
 	}
 
 	/**
 	 * @brief Copy constructor.
 	 * @param list Another container to be used as source to initialize the elements of the container with.
 	 */
-	ForwardList(ForwardList const & list) : Base(Allocator(NodeAllocatorTraits::select_on_container_copy_construction(list.m_allocator()))) {
+	SList(Self const & list) : Base(Allocator(NodeAllocatorTraits::select_on_container_copy_construction(list.m_allocator()))) {
 		insert_after(before_cbegin(), list.begin(), list.end());
 	}
 
@@ -162,7 +163,7 @@ public:
 	 * @param list Another container to be used as source to initialize the elements of the container with.
 	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
-	ForwardList(ForwardList const & list, Allocator const & allocator) : Base(allocator) {
+	SList(Self const & list, Allocator const & allocator) : Base(allocator) {
 		insert_after(before_cbegin(), list.begin(), list.end());
 	}
 
@@ -170,7 +171,7 @@ public:
 	 * @brief Move constructor.
 	 * @param list Another container to be used as source to initialize the elements of the container with.
 	 */
-	ForwardList(ForwardList && list) noexcept(HasNothrowMoveConstructor<NodeAllocator>{}) : Base(Allocator(move(list.m_allocator()))) {
+	SList(Self && list) noexcept(HasNothrowMoveConstructor<NodeAllocator>{}) : Base(Allocator(move(list.m_allocator()))) {
 		splice_after(before_cbegin(), move(list));
 	}
 
@@ -179,7 +180,7 @@ public:
 	 * @param list Another container to be used as source to initialize the elements of the container with.
 	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
-	ForwardList(ForwardList && list, Allocator const & allocator) : Base(move(allocator)) {
+	SList(Self && list, Allocator const & allocator) : Base(move(allocator)) {
 		if (this->m_allocator() == list.m_allocator()) {
 			splice_after(before_cbegin(), move(list));
 		} else {
@@ -192,7 +193,7 @@ public:
 	 * @param count The size of the container.
 	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
-	explicit ForwardList(Size count, Allocator const & allocator = Allocator{}) : Base(allocator) {
+	explicit SList(Size count, Allocator const & allocator = Allocator{}) : Base(allocator) {
 		this->m_prepare_after(this->m_head(), count);
 	}
 
@@ -202,7 +203,7 @@ public:
 	 * @param count The size of the container.
 	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
-	ForwardList(Element const & element, Size count, Allocator const & allocator = Allocator{}) : Base(allocator) {
+	SList(Element const & element, Size count, Allocator const & allocator = Allocator{}) : Base(allocator) {
 		insert_after(before_cbegin(), element, count);
 	}
 
@@ -213,7 +214,7 @@ public:
 	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
 	template< typename TIterator >
-	ForwardList(TIterator first, TIterator last, Allocator const & allocator = Allocator{}, EnableIf< IsInputIterator<TIterator> > * = nullptr) : Base(allocator) {
+	SList(TIterator first, TIterator last, Allocator const & allocator = Allocator{}, EnableIf< IsInputIterator<TIterator> > * = nullptr) : Base(allocator) {
 		insert_after(before_cbegin(), first, last);
 	}
 
@@ -222,7 +223,7 @@ public:
 	 * @param list Initializer list to initialize the elements of the container with.
 	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
-	ForwardList(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : Base(allocator) {
+	SList(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : Base(allocator) {
 		insert_after(before_cbegin(), list.begin(), list.end());
 	}
 	///@}
@@ -234,7 +235,7 @@ public:
 	/**
 	 * @brief Destructor.
 	 */
-	~ForwardList() = default;
+	~SList() = default;
 	///@}
 
 	/**
@@ -390,7 +391,7 @@ public:
 	 * @param y Another containers to compare.
 	 * @return \c true if the contents of the containers are equal, \c false otherwise.
 	 */
-	auto operator==(ForwardList const & y) const -> bool {
+	auto operator==(SList const & y) const -> bool {
 		return equal(begin(), end(), y.begin(), y.end());
 	}
 
@@ -399,7 +400,7 @@ public:
 	 * @param y Another containers to compare.
 	 * @return \c true if the contents of this container are lexicographically less than the contents of \p y, \c false otherwise.
 	 */
-	auto operator<(ForwardList const & y) const -> bool {
+	auto operator<(Self const & y) const -> bool {
 		return lexicographical_compare(begin(), end(), y.begin(), y.end());
 	}
 	///@}
@@ -413,7 +414,7 @@ public:
 	 * @param list Data source container.
 	 * @return \c *this
 	 */
-	auto operator=(ForwardList const & list) -> ForwardList & {
+	auto operator=(Self const & list) -> Self & {
 		if (this != &list) {
 			this->m_copy_assign_allocator(list);
 			assign(list.begin(), list.end());
@@ -426,9 +427,9 @@ public:
 	 * @param list Data source container.
 	 * @return \c *this
 	 */
-	auto operator=(ForwardList && list) noexcept(
+	auto operator=(Self && list) noexcept(
 		BooleanAnd< typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment, HasNothrowMoveAssignment<Allocator> >{}
-	) -> ForwardList & {
+	) -> Self & {
 		this->m_move_assign(list);
 		return *this;
 	}
@@ -438,7 +439,7 @@ public:
 	 * @param list Initializer list to copy the values from.
 	 * @return \c *this
 	 */
-	auto operator=(InitializerList<Element> list) -> ForwardList & {
+	auto operator=(InitializerList<Element> list) -> Self & {
 		assign(list.begin(), list.end());
 		return *this;
 	}
@@ -631,60 +632,60 @@ public:
 	 */
 	///@{
 	/**
-	 * @brief Moves elements from another ForwardList
+	 * @brief Moves elements from another SList
 	 * @param position Element before which the content will be inserted.
 	 * @param other Another container to move the content from.
 	 */
-	void splice_after(ConstIterator position, ForwardList & other) {
+	void splice_after(ConstIterator position, Self & other) {
 		this->m_splice_after(position.m_pointer, other);
 	}
 
 	/**
-	 * @brief Moves elements from another ForwardList
+	 * @brief Moves elements from another SList
 	 * @param position Element before which the content will be inserted.
 	 * @param other Another container to move the content from.
 	 * @param i Iterator preceding the iterator to the element to move from other to \c *this.
 	 */
-	void splice_after(ConstIterator position, ForwardList & other, ConstIterator i) {
+	void splice_after(ConstIterator position, Self & other, ConstIterator i) {
 		this->m_splice_after(position.m_pointer, other, i.m_pointer);
 	}
 
 	/**
-	 * @brief Moves elements from another ForwardList
+	 * @brief Moves elements from another SList
 	 * @param position Element before which the content will be inserted.
 	 * @param other Another container to move the content from.
 	 * @param first,last The range of elements to move from other to \c *this.
 	 */
-	void splice_after(ConstIterator position, ForwardList & other, ConstIterator first, ConstIterator last) {
+	void splice_after(ConstIterator position, Self & other, ConstIterator first, ConstIterator last) {
 		this->m_splice_after(position.m_pointer, other, first.m_pointer, last.m_pointer);
 	}
 
 	/**
-	 * @brief Moves elements from another ForwardList
+	 * @brief Moves elements from another SList
 	 * @param position Element before which the content will be inserted.
 	 * @param other Another container to move the content from.
 	 */
-	void splice_after(ConstIterator position, ForwardList && other) {
+	void splice_after(ConstIterator position, Self && other) {
 		splice_after(position, other);
 	}
 
 	/**
-	 * @brief Moves elements from another ForwardList
+	 * @brief Moves elements from another SList
 	 * @param position Element before which the content will be inserted.
 	 * @param other Another container to move the content from.
 	 * @param i Iterator preceding the iterator to the element to move from other to \c *this.
 	 */
-	void splice_after(ConstIterator position, ForwardList && other, ConstIterator i) {
+	void splice_after(ConstIterator position, Self && other, ConstIterator i) {
 		splice_after(position, other, i);
 	}
 
 	/**
-	 * @brief Moves elements from another ForwardList
+	 * @brief Moves elements from another SList
 	 * @param position Element before which the content will be inserted.
 	 * @param other Another container to move the content from.
 	 * @param first,last The range of elements to move from other to \c *this.
 	 */
-	void splice_after(ConstIterator position, ForwardList && other, ConstIterator first, ConstIterator last) {
+	void splice_after(ConstIterator position, Self && other, ConstIterator first, ConstIterator last) {
 		splice_after(position, other, first, last);
 	}
 	///@}
@@ -714,7 +715,7 @@ public:
 	 * @brief Merges two sorted lists into one.
 	 * @param list Another container to merge.
 	 */
-	void merge(ForwardList & list) {
+	void merge(Self & list) {
 		merge(list, Less<Element>{});
 	}
 
@@ -725,7 +726,7 @@ public:
 	 * @param comparator Binary predicate which returns ​true if the first argument is less than (i.e. is ordered before) the second.
 	 */
 	template< typename TComparator >
-	void merge(ForwardList & list, TComparator comparator) {
+	void merge(Self & list, TComparator comparator) {
 		if (this != &list) {
 			this->m_merge(list, comparator);
 		}
@@ -735,7 +736,7 @@ public:
 	 * @brief Merges two sorted lists into one.
 	 * @param list Another container to merge.
 	 */
-	void merge(ForwardList && list) {
+	void merge(Self && list) {
 		merge(list, Less<Element>{});
 	}
 
@@ -746,7 +747,7 @@ public:
 	 * @param comparator Binary predicate which returns ​true if the first argument is less than (i.e. is ordered before) the second.
 	 */
 	template< typename TComparator >
-	void merge(ForwardList && list, TComparator comparator) {
+	void merge(Self && list, TComparator comparator) {
 		if (this != &list) {
 			this->m_merge(list, comparator);
 		}
@@ -773,7 +774,7 @@ public:
 	 * @brief Swaps the contents.
 	 * @param other Container to exchange the contents with.
 	 */
-	void swap(ForwardList & other) noexcept(typename AllocatorTraits::IsAlwaysEqual{}) {
+	void swap(Self & other) noexcept(typename AllocatorTraits::IsAlwaysEqual{}) {
 		this->m_swap(other);
 	}
 
@@ -785,7 +786,7 @@ public:
 	}
 	///@}
 
-}; // class ForwardList< TElement, TAllocator >
+}; // class SList< TElement, TAllocator >
 
 } // namespace Container
 

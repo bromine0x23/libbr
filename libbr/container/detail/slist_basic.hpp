@@ -3,9 +3,9 @@
 #include <libbr/config.hpp>
 #include <libbr/assert/assert.hpp>
 #include <libbr/container/detail/allocator_helpers.hpp>
-#include <libbr/container/detail/forward_list_algorithms.hpp>
-#include <libbr/container/detail/forward_list_iterator.hpp>
-#include <libbr/container/detail/forward_list_node.hpp>
+#include <libbr/container/detail/slist_algorithms.hpp>
+#include <libbr/container/detail/slist_iterator.hpp>
+#include <libbr/container/detail/slist_node.hpp>
 #include <libbr/container/detail/node_destructor.hpp>
 #include <libbr/container/detail/raw_array.hpp>
 #include <libbr/memory/address_of.hpp>
@@ -20,7 +20,7 @@
 namespace BR {
 namespace Detail {
 namespace Container {
-namespace ForwardList {
+namespace SList {
 
 
 template< typename TElement, typename TAllocator >
@@ -35,7 +35,7 @@ protected:
 
 	using VoidPointer = typename AllocatorTraits::VoidPointer;
 
-	using Node = ForwardList::Node< Element, VoidPointer >;
+	using Node = SList::Node< Element, VoidPointer >;
 
 	using NodeAllocator = typename AllocatorTraits::template Rebind<Node>;
 
@@ -57,7 +57,7 @@ protected:
 
 	using NodeHolder = UniquePointer< Node, NodeDestructor >;
 
-	using Algorithms = ForwardList::Algorithms<NodePointer>;
+	using Algorithms = SList::Algorithms<NodePointer>;
 
 public:
 
@@ -69,9 +69,9 @@ public:
 
 	using Difference = typename AllocatorTraits::Difference;
 
-	using Iterator = ForwardList::Iterator<NodePointer>;
+	using Iterator = SList::Iterator<NodePointer>;
 
-	using ConstIterator = ForwardList::ConstIterator<NodePointer>;
+	using ConstIterator = SList::ConstIterator<NodePointer>;
 
 public:
 	Basic() noexcept(HasNothrowDefaultConstructor<NodeAllocator>{}) : m_impl() {
@@ -432,7 +432,7 @@ protected:
 
 }; // class Basic<TElement, TAllocator>
 
-} // namespace ForwardList
+} // namespace SList
 } // namespace Container
 } // namespace Detail
 } // namespace BR

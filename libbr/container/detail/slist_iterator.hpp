@@ -10,13 +10,13 @@ namespace BR {
 inline namespace Container {
 
 template< typename TElement, typename TAllocator >
-class ForwardList;
+class SList;
 
 } // inline namespace Container
 
 namespace Detail {
 namespace Container {
-namespace ForwardList {
+namespace SList {
 
 template< typename TNodePointer >
 class Iterator;
@@ -34,7 +34,7 @@ private:
 	using Node = typename NodePointerTraits::Element;
 
 	template< typename, typename >
-	friend class BR::ForwardList;
+	friend class BR::SList;
 
 	template< typename >
 	friend class ConstIterator;
@@ -97,7 +97,7 @@ private:
 	using Node = typename NodePointerTraits::Element;
 
 	template< typename, typename >
-	friend class BR::ForwardList;
+	friend class BR::SList;
 
 public:
 	using Element = typename Node::Element;
@@ -167,7 +167,7 @@ inline auto operator!=(Iterator<TNodePointer> const & x, ConstIterator<TNodePoin
 	return y != x;
 }
 
-} // namespace ForwardList
+} // namespace SList
 } // namespace Container
 } // namespace Detail
 
