@@ -1,5 +1,5 @@
 #include "../test.hpp"
-#include <libbr/container/array.hpp>
+#include <libbr/container/fixed_array.hpp>
 #include <libbr/container/tuple.hpp>
 #include <libbr/utility/optional.hpp>
 
@@ -32,7 +32,7 @@ TEST(Utility, Optional) {
 		EXPECT_EQ(tuple, optional);
 
 	} {
-		Optional< Array< SInt, 5 > > optional;
+		Optional< FixedArray< SInt, 5 > > optional;
 
 		EXPECT_TRUE(!optional);
 		EXPECT_THROW(optional.value(), OptionalAccessException);

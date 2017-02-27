@@ -1,6 +1,6 @@
 #include "../test.hpp"
 #include <libbr/enumerate/enumerator.hpp>
-#include <libbr/container/array.hpp>
+#include <libbr/container/fixed_array.hpp>
 #include <libbr/container/slist.hpp>
 
 using namespace BR;
@@ -74,7 +74,7 @@ struct S {
 };
 
 TEST(Enumerator, Class) {
-	auto array = Array< S, 5 >::build([](int i){
+	auto array = FixedArray< S, 5 >::build([](int i){
 		return S{i};
 	});
 	auto enumerator = make_enumerator(array.begin(), array.end());

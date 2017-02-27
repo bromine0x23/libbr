@@ -1,6 +1,6 @@
 #include "../test.hpp"
 #include <libbr/container/tuple.hpp>
-#include <libbr/container/array.hpp>
+#include <libbr/container/fixed_array.hpp>
 #include <libbr/container/pair.hpp>
 
 using namespace BR;
@@ -154,7 +154,7 @@ TEST(Tuple, TupleCat) {
 		Tuple<> t = tuple_cat(Tuple<>());
 		BR_FORCE_USE(t);
 	} {
-		//Tuple<> t = tuple_cat< Array< int, 0 > >(Array< int, 0 >());
+		//Tuple<> t = tuple_cat< FixedArray< int, 0 > >(FixedArray< int, 0 >());
 		//BR_FORCE_USE(t);
 	} {
 		Tuple<int> t0(1);

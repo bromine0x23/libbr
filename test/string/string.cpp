@@ -1,7 +1,6 @@
 #include "../test.hpp"
 #include "../support/allocator.hpp"
 #include <libbr/string/string.hpp>
-#include <libbr/container/array.hpp>
 #include <libbr/exception/index_exception.hpp>
 
 using namespace BR;

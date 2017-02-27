@@ -1,7 +1,6 @@
 /**
  * @file
- * @brief Array
- * @author Bromine0x23
+ * @brief FixedArray
  * @since 1.0
  */
 #pragma once
@@ -35,7 +34,7 @@ inline namespace Container {
  * 是类元组类型
  */
 template< typename T, Size N >
-class Array;
+class FixedArray;
 
 /**
  *
@@ -45,52 +44,54 @@ class Array;
  * @param y
  */
 template< typename T, Size N >
-void swap(Array< T, N > & x, Array< T, N > & y) noexcept(noexcept(x.swap(y))) {
+void swap(FixedArray< T, N > & x, FixedArray< T, N > & y) noexcept(noexcept(x.swap(y))) {
 	x.swap(y);
 }
 
-} // namespace Container
-
 template< typename T, Size S >
-struct TupleSize< Array< T, S > > : IntegralConstant< Size, S > {};
+struct TupleSize< FixedArray< T, S > > : IntegralConstant< Size, S > {};
 
 template< Size I, typename T, Size S >
-struct TypeTupleElement< I, Array< T, S > > : TypeWrapper<T> {};
+struct TypeTupleElement< I, FixedArray< T, S > > : TypeWrapper<T> {};
 
 template< Size I, typename T, Size S >
-constexpr inline auto get(Array< T, S > & A) noexcept -> T & {
+constexpr inline auto get(FixedArray< T, S > & A) noexcept -> T & {
 	static_assert(I < S, "Index out of bounds.");
 	return A[I];
 }
 
 template< Size I, typename T, Size S >
-constexpr inline auto get(Array< T, S > const & A) noexcept -> T const & {
+constexpr inline auto get(FixedArray< T, S > const & A) noexcept -> T const & {
 	static_assert(I < S, "Index out of bounds.");
 	return A[I];
 }
 
 template< Size I, typename T, Size S >
-constexpr inline auto get(Array< T, S > && A) noexcept -> T && {
+constexpr inline auto get(FixedArray< T, S > && A) noexcept -> T && {
 	static_assert(I < S, "Index out of bounds.");
 	return move(A[I]);
 }
 
 template< Size I, typename T, Size S >
-constexpr inline auto get(Array< T, S > const && A) noexcept -> T const && {
+constexpr inline auto get(FixedArray< T, S > const && A) noexcept -> T const && {
 	static_assert(I < S, "Index out of bounds.");
 	return move(A[I]);
 }
 
+} // namespace Container
 
 
 inline namespace Container {
 
 template< typename TElement, Size N >
-class Array :
-	public Enumerable< Array< TElement, N >, TElement *, TElement const * >,
-	public EqualityComparable< Array< TElement, N > >,
-	public LessThanComparable< Array< TElement, N > >
+class FixedArray :
+	public Enumerable< FixedArray< TElement, N >, TElement *, TElement const * >,
+	public EqualityComparable< FixedArray< TElement, N > >,
+	public LessThanComparable< FixedArray< TElement, N > >
 {
+private:
+	using Self = FixedArray;
+
 public:
 	using Element = TElement;
 
@@ -116,8 +117,8 @@ public:
 
 public:
 	template< typename TFunctor >
-	static auto build(TFunctor functor) -> Array {
-		Array array;
+	static auto build(TFunctor functor) -> Self {
+		Self array;
 		for (Size i = 0; i < N; ++i) {
 			auto t = i;
 			array[i] = functor(t);
@@ -129,7 +130,7 @@ public:
 	 * @brief 填充数组
 	 * @param element 填充值
 	 */
-	auto fill(Element const & element) -> Array & {
+	auto fill(Element const & element) -> Self & {
 		fill_n(m_elements, N, element);
 		return *this;
 	}
@@ -137,7 +138,7 @@ public:
 	/**
 	 * @brief 交换
 	 */
-	void swap(Array & array) noexcept(IsNothrowSwappable< CArray< Element, N > >::value) {
+	void swap(Self & array) noexcept(IsNothrowSwappable< CArray< Element, N > >{}) {
 		using BR::swap;
 		swap(m_elements, array.m_elements);
 	}
@@ -178,7 +179,7 @@ public:
 		return begin();
 	}
 
-	auto crbegin() const noexcept -> ConstIterator {
+	auto crbegin() const noexcept -> ConstReverseIterator {
 		return rbegin();
 	}
 
@@ -186,7 +187,7 @@ public:
 		return end();
 	}
 
-	auto crend() const noexcept -> ConstIterator {
+	auto crend() const noexcept -> ConstReverseIterator {
 		return rend();
 	}
 
@@ -198,7 +199,7 @@ public:
 		return N;
 	}
 
-	constexpr auto empty() const noexcept -> bool {
+	constexpr auto empty() const noexcept -> Boolean {
 		return N == 0;
 	}
 
@@ -248,17 +249,17 @@ public:
 		return m_elements;
 	}
 
-	auto operator==(Array const & y) const -> bool {
+	auto operator==(Self const & y) const -> Boolean {
 		return equal(begin(), end(), y.begin(), y.end());
 	}
 
-	auto operator<(Array const & y) const -> bool {
+	auto operator<(Self const & y) const -> Boolean {
 		return lexicographical_compare(begin(), end(), y.begin(), y.end());
 	}
 
 private:
 	Element m_elements[N > 0 ? N : 1];
-}; // struct Array< TElement, S >
+}; // struct FixedArray< TElement, S >
 
 } // namespace Container
 

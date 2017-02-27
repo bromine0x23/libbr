@@ -8,7 +8,7 @@
 
 #include <libbr/config.hpp>
 
-#include <libbr/container/array.hpp>
+#include <libbr/container/fixed_array.hpp>
 #include <libbr/container/compressed_pair.hpp>
 #include <libbr/container/slist.hpp>
 #include <libbr/container/initializer_list.hpp>
