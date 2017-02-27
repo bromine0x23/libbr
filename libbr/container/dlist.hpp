@@ -1,7 +1,6 @@
 /**
  * @file
- * @brief List
- * @author Bromine0x23
+ * @brief DList
  * @since 1.0
  */
 #pragma once
@@ -10,7 +9,7 @@
 #include <libbr/algorithm/equal.hpp>
 #include <libbr/algorithm/lexicographical_compare.hpp>
 #include <libbr/assert/assert.hpp>
-#include <libbr/container/detail/list_basic.hpp>
+#include <libbr/container/detail/dlist_basic.hpp>
 #include <libbr/container/initializer_list.hpp>
 #include <libbr/enumerate/enumerable.hpp>
 #include <libbr/iterator/move_iterator.hpp>
@@ -37,15 +36,15 @@ namespace BR {
 inline namespace Container {
 
 /**
- * @brief Circular double-linked  list。
+ * @brief Circular double-linked list。
  * @tparam TElement The type of the elements.
  * @tparam TAllocator An allocator used to acquire/release memory and to construct/destroy the elements in that memory.
  */
 template< typename TElement, typename TAllocator = Allocator<TElement> >
-class List;
+class DList;
 
 template< typename TElement, typename TAllocator >
-inline void swap(List< TElement, TAllocator > & x, List< TElement, TAllocator > & y) noexcept(noexcept(x.swap(y))) {
+inline void swap(DList< TElement, TAllocator > & x, DList< TElement, TAllocator > & y) noexcept(noexcept(x.swap(y))) {
 	x.swap(y);
 }
 
@@ -56,15 +55,15 @@ inline void swap(List< TElement, TAllocator > & x, List< TElement, TAllocator > 
 inline namespace Container {
 
 template< typename TElement, typename TAllocator >
-class List :
-	private Detail::Container::List::Basic< TElement, TAllocator >,
+class DList :
+	private Detail::Container::DList::Basic< TElement, TAllocator >,
 	public Enumerable<
-		List<TElement, TAllocator>,
-		typename Detail::Container::List::Basic< TElement, TAllocator >::Iterator,
-		typename Detail::Container::List::Basic< TElement, TAllocator >::ConstIterator
+		DList<TElement, TAllocator>,
+		typename Detail::Container::DList::Basic< TElement, TAllocator >::Iterator,
+		typename Detail::Container::DList::Basic< TElement, TAllocator >::ConstIterator
 	>,
-	public EqualityComparable< List<TElement, TAllocator> >,
-	public LessThanComparable< List<TElement, TAllocator> >
+	public EqualityComparable< DList<TElement, TAllocator> >,
+	public LessThanComparable< DList<TElement, TAllocator> >
 {
 public:
 	using Element = TElement;
@@ -72,7 +71,9 @@ public:
 	using Allocator = TAllocator;
 
 private:
-	using Base = Detail::Container::List::Basic< Element, Allocator >;
+	using Self = DList;
+
+	using Base = Detail::Container::DList::Basic< Element, Allocator >;
 
 	using AllocatorTraits = BR::AllocatorTraits<Allocator>;
 
@@ -85,9 +86,15 @@ private:
 	using NodePointer = typename Base::NodePointer;
 
 public:
-	using Reference = typename Base::Reference;
+	/**
+	 * Element &
+	 */
+	using Reference = Element &;
 
-	using ConstReference = typename Base::ConstReference;
+	/**
+	 * Element const &
+	 */
+	using ConstReference = Element const &;
 
 	using Pointer = typename Base::Pointer;
 
@@ -120,21 +127,21 @@ public:
 	/**
 	 * @brief Default constructor.
 	 */
-	List() noexcept(HasNothrowDefaultConstructor<NodeAllocator>{}) {
+	DList() noexcept(HasNothrowDefaultConstructor<NodeAllocator>{}) {
 	}
 
 	/**
 	 * @brief Default constructor.
 	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
-	explicit List(Allocator const & allocator) : Base(allocator) {
+	explicit DList(Allocator const & allocator) : Base(allocator) {
 	}
 
 	/**
 	 * @brief Copy constructor.
 	 * @param list Another container to be used as source to initialize the elements of the container with.
 	 */
-	List(List const & list) : Base(Allocator(NodeAllocatorTraits::select_on_container_copy_construction(list.m_allocator()))) {
+	DList(Self const & list) : Base(Allocator(NodeAllocatorTraits::select_on_container_copy_construction(list.m_allocator()))) {
 		insert(begin(), list.begin(), list.end());
 	}
 
@@ -143,7 +150,7 @@ public:
 	 * @param list Another container to be used as source to initialize the elements of the container with.
 	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
-	List(List const & list, Allocator const & allocator) : Base(allocator) {
+	DList(Self const & list, Allocator const & allocator) : Base(allocator) {
 		insert(begin(), list.begin(), list.end());
 	}
 
@@ -151,7 +158,7 @@ public:
 	 * @brief Move constructor.
 	 * @param list Another container to be used as source to initialize the elements of the container with.
 	 */
-	List(List && list) noexcept(HasNothrowMoveConstructor<NodeAllocator>{}) : Base(Allocator(move(list.m_allocator()))) {
+	DList(Self && list) noexcept(HasNothrowMoveConstructor<NodeAllocator>{}) : Base(Allocator(move(list.m_allocator()))) {
 		splice(end(), move(list));
 	}
 
@@ -160,7 +167,7 @@ public:
 	 * @param list Another container to be used as source to initialize the elements of the container with.
 	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
-	List(List && list, Allocator const & allocator) : Base(allocator) {
+	DList(Self && list, Allocator const & allocator) : Base(allocator) {
 		if (this->m_allocator() == list.m_allocator()) {
 			splice(end(), move(list));
 		} else {
@@ -173,7 +180,7 @@ public:
 	 * @param count The size of the container.
 	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
-	explicit List(Size count, Allocator const & allocator = Allocator{}) : Base(allocator) {
+	explicit DList(Size count, Allocator const & allocator = Allocator{}) : Base(allocator) {
 		for (; count > 0; --count) {
 			emplace_back();
 		}
@@ -185,7 +192,7 @@ public:
 	 * @param count The size of the container.
 	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
-	List(ConstReference element, Size count, Allocator const & allocator = Allocator{}) : Base(allocator) {
+	DList(ConstReference element, Size count, Allocator const & allocator = Allocator{}) : Base(allocator) {
 		for (; count > 0; --count) {
 			emplace_back(element);
 		}
@@ -198,7 +205,7 @@ public:
 	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
 	template< typename TIterator >
-	List(TIterator first, TIterator last, Allocator const & allocator = Allocator{}, EnableIf< IsInputIterator<TIterator> > * = nullptr) : Base(allocator) {
+	DList(TIterator first, TIterator last, Allocator const & allocator = Allocator{}, EnableIf< IsInputIterator<TIterator> > * = nullptr) : Base(allocator) {
 		for (; first != last; ++first) {
 			emplace_back(*first);
 		}
@@ -209,7 +216,7 @@ public:
 	 * @param list Initializer list to initialize the elements of the container with.
 	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
-	List(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : Base(allocator) {
+	DList(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : Base(allocator) {
 		for (auto i = list.begin(), e = list.end(); i != e; ++i) {
 			emplace_back(*i);
 		}
@@ -223,7 +230,7 @@ public:
 	/**
 	 * @brief Destructor.
 	 */
-	~List() = default;
+	~DList() = default;
 	///@}
 
 	/**
@@ -428,7 +435,7 @@ public:
 	 * @param y Another containers to compare.
 	 * @return \c true if the contents of the containers are equal, \c false otherwise.
 	 */
-	auto operator==(List const & y) const -> bool {
+	auto operator==(Self const & y) const -> bool {
 		return size() == y.size() && equal(begin(), end(), y.begin(), y.end());
 	}
 
@@ -437,7 +444,7 @@ public:
 	 * @param y Another containers to compare.
 	 * @return \c true if the contents of this container are lexicographically less than the contents of \p y, \c false otherwise.
 	 */
-	auto operator<(List const & y) const -> bool {
+	auto operator<(Self const & y) const -> bool {
 		return lexicographical_compare(begin(), end(), y.begin(), y.end());
 	}
 	///@}
@@ -451,7 +458,7 @@ public:
 	 * @param list Data source container.
 	 * @return \c *this
 	 */
-	auto operator=(List const & list) -> List & {
+	auto operator=(Self const & list) -> Self & {
 		if (this != &list) {
 			this->m_copy_assign_allocator(list);
 			assign(list.begin(), list.end());
@@ -464,9 +471,9 @@ public:
 	 * @param list Data source container.
 	 * @return \c *this
 	 */
-	auto operator=(List && list) noexcept(
+	auto operator=(Self && list) noexcept(
 		BooleanAnd< typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment, HasNothrowMoveAssignment<Allocator> >{}
-	) -> List & {
+	) -> Self & {
 		this->m_move_assign(list);
 		return *this;
 	}
@@ -476,7 +483,7 @@ public:
 	 * @param list Initializer list to copy the values from.
 	 * @return \c *this
 	 */
-	auto operator=(InitializerList<Element> list) -> List & {
+	auto operator=(InitializerList<Element> list) -> Self & {
 		assign(list.begin(), list.end());
 		return *this;
 	}
@@ -702,60 +709,60 @@ public:
 	 */
 	///@{
 	/**
-	 * @brief Moves elements from another List
+	 * @brief Moves elements from another DList
 	 * @param position Element after which the content will be inserted.
 	 * @param other Another container to move the content from.
 	 */
-	void splice(ConstIterator position, List & other) {
+	void splice(ConstIterator position, Self & other) {
 		this->m_splice(position.m_pointer, other);
 	}
 
 	/**
-	 * @brief Moves elements from another List
+	 * @brief Moves elements from another DList
 	 * @param position Element after which the content will be inserted.
 	 * @param other Another container to move the content from.
 	 * @param i Iterator preceding the iterator to the element to move from other to \c *this.
 	 */
-	void splice(ConstIterator position, List & other, ConstIterator i) {
+	void splice(ConstIterator position, Self & other, ConstIterator i) {
 		this->m_splice(position.m_pointer, other, i.m_pointer);
 	}
 
 	/**
-	 * @brief Moves elements from another List
+	 * @brief Moves elements from another DList
 	 * @param position Element after which the content will be inserted.
 	 * @param other Another container to move the content from.
 	 * @param first,last The range of elements to move from other to \c *this.
 	 */
-	void splice(ConstIterator position, List & other, ConstIterator first, ConstIterator last) {
+	void splice(ConstIterator position, Self & other, ConstIterator first, ConstIterator last) {
 		this->m_splice(position.m_pointer, other, first.m_pointer, last.m_pointer);
 	}
 
 	/**
-	 * @brief Moves elements from another List
+	 * @brief Moves elements from another DList
 	 * @param position Element after which the content will be inserted.
 	 * @param other Another container to move the content from.
 	 */
-	void splice(ConstIterator position, List && other) {
+	void splice(ConstIterator position, Self && other) {
 		splice(position, other);
 	}
 
 	/**
-	 * @brief Moves elements from another List
+	 * @brief Moves elements from another DList
 	 * @param position Element after which the content will be inserted.
 	 * @param other Another container to move the content from.
 	 * @param i Iterator preceding the iterator to the element to move from other to \c *this.
 	 */
-	void splice(ConstIterator position, List && other, ConstIterator i) {
+	void splice(ConstIterator position, Self && other, ConstIterator i) {
 		splice(position, other, i);
 	}
 
 	/**
-	 * @brief Moves elements from another List
+	 * @brief Moves elements from another DList
 	 * @param position Element after which the content will be inserted.
 	 * @param other Another container to move the content from.
 	 * @param first,last The range of elements to move from other to \c *this.
 	 */
-	void splice(ConstIterator position, List && other, ConstIterator first, ConstIterator last) {
+	void splice(ConstIterator position, Self && other, ConstIterator first, ConstIterator last) {
 		splice(position, other, first, last);
 	}
 	///@}
@@ -785,7 +792,7 @@ public:
 	 * @brief Merges two sorted lists into one.
 	 * @param list Another container to merge.
 	 */
-	void merge(List & list) {
+	void merge(Self & list) {
 		merge(list, Less<Element>{});
 	}
 
@@ -796,7 +803,7 @@ public:
 	 * @param comparator Binary predicate which returns ​true if the first argument is less than (i.e. is ordered before) the second.
 	 */
 	template< typename TComparator >
-	void merge(List & list, TComparator comparator) {
+	void merge(Self & list, TComparator comparator) {
 		this->m_merge(list, comparator);
 	}
 
@@ -804,7 +811,7 @@ public:
 	 * @brief Merges two sorted lists into one.
 	 * @param list Another container to merge.
 	 */
-	void merge(List && list) {
+	void merge(Self && list) {
 		merge(list);
 	}
 
@@ -815,7 +822,7 @@ public:
 	 * @param comparator Binary predicate which returns ​true if the first argument is less than (i.e. is ordered before) the second.
 	 */
 	template< typename TComparator >
-	void merge(List && list, TComparator comparator) {
+	void merge(Self && list, TComparator comparator) {
 		merge(list, comparator);
 	}
 
@@ -840,7 +847,7 @@ public:
 	 * @brief Swaps the contents.
 	 * @param other Container to exchange the contents with.
 	 */
-	void swap(List & other) noexcept(BooleanOr< BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerSwap >, IsNothrowSwappable<NodeAllocator> >{}) {
+	void swap(Self & other) noexcept(BooleanOr< BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerSwap >, IsNothrowSwappable<NodeAllocator> >{}) {
 		this->m_swap(other);
 	}
 
@@ -852,7 +859,7 @@ public:
 	}
 	///@}
 
-}; // class List< TElement, TAllocator >
+}; // class DList< TElement, TAllocator >
 
 } // inline namespace Container
 

@@ -2,9 +2,9 @@
 
 #include <libbr/config.hpp>
 #include <libbr/container/detail/allocator_helpers.hpp>
-#include <libbr/container/detail/list_algorithms.hpp>
-#include <libbr/container/detail/list_iterator.hpp>
-#include <libbr/container/detail/list_node.hpp>
+#include <libbr/container/detail/dlist_algorithms.hpp>
+#include <libbr/container/detail/dlist_iterator.hpp>
+#include <libbr/container/detail/dlist_node.hpp>
 #include <libbr/container/detail/node_destructor.hpp>
 #include <libbr/container/detail/raw_array.hpp>
 #include <libbr/iterator/next.hpp>
@@ -20,7 +20,7 @@
 namespace BR {
 namespace Detail {
 namespace Container {
-namespace List {
+namespace DList {
 
 template< typename TElement, typename TAllocator >
 class Basic {
@@ -35,7 +35,7 @@ protected:
 
 	using VoidPointer = typename AllocatorTraits::VoidPointer;
 
-	using Node = List::Node< Element, VoidPointer >;
+	using Node = DList::Node< Element, VoidPointer >;
 
 	using NodeAllocator = typename AllocatorTraits::template Rebind<Node>;
 
@@ -57,13 +57,9 @@ protected:
 
 	using NodeHolder = UniquePointer< Node, NodeDestructor >;
 
-	using Algorithms = List::Algorithms<NodePointer>;
+	using Algorithms = DList::Algorithms<NodePointer>;
 
 public:
-	using Reference = Element &;
-
-	using ConstReference = Element const &;
-
 	using Pointer = typename AllocatorTraits::Pointer;
 
 	using ConstPointer = typename AllocatorTraits::ConstPointer;
@@ -72,9 +68,9 @@ public:
 
 	using Difference = typename AllocatorTraits::Difference;
 
-	using Iterator = List::Iterator<NodePointer>;
+	using Iterator = DList::Iterator<NodePointer>;
 
-	using ConstIterator = List::ConstIterator<NodePointer>;
+	using ConstIterator = DList::ConstIterator<NodePointer>;
 
 public:
 	Basic() noexcept(HasNothrowDefaultConstructor<NodeAllocator>{}) : m_impl(0) {
@@ -455,9 +451,9 @@ private:
 protected:
 	Tuple< Size, NodeAllocator, BasicNode > m_impl;
 
-}; // class Basic<TElement, TAllocator>
+}; // class DList<TElement, TAllocator>
 
-} // namespace List
+} // namespace DList
 } // namespace Container
 } // namespace Detail
 } // namespace BR

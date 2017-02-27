@@ -7,7 +7,7 @@
 namespace BR {
 namespace Detail {
 namespace Container {
-namespace List {
+namespace DList {
 
 template< typename TNodePointer >
 struct Algorithms {
@@ -171,7 +171,7 @@ public:
 
 }; // struct Algorithms<TNodePointer>
 
-} // namespace List
+} // namespace DList
 } // namespace Container
 } // namespace Detail
 } // namespace BR

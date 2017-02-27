@@ -19,7 +19,7 @@ using namespace BR;
  * d | 0| 8| 5| 9| 7|
  */
 TEST(Container, Dijkstra) {
-	List< Tuple<int, int> > edges[5];
+	DList< Tuple<int, int> > edges[5];
 	edges[0].emplace_back(1, 10);
 	edges[0].emplace_back(2, 5);
 	edges[1].insert(edges[1].cend(), { {2, 2}, {3, 1} });
