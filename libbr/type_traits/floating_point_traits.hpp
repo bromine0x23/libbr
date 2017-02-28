@@ -47,6 +47,7 @@ struct FloatingPointTraitsBasic {
 	static constexpr auto max() noexcept -> Type { return T(); }
 	static constexpr auto lowest() noexcept -> Type { return T(); }
 	static constexpr auto epsilon() noexcept -> Type { return T(); }
+	static constexpr auto infinity() noexcept -> Type { return T(); }
 };
 
 constexpr auto get_max_digits10(SInt digits) -> SInt {
@@ -71,6 +72,7 @@ struct FloatingPointTraitsBasic<float> {
 	static constexpr auto max() noexcept -> Type { return __FLT_MAX__; }
 	static constexpr auto lowest() noexcept -> Type { return -max(); }
 	static constexpr auto epsilon() noexcept -> Type { return __FLT_EPSILON__; }
+	static constexpr auto infinity() noexcept -> Type { return __builtin_huge_valf(); }
 };
 
 template<>
@@ -89,6 +91,7 @@ struct FloatingPointTraitsBasic<double> {
 	static constexpr auto max() noexcept -> Type { return __DBL_MAX__; }
 	static constexpr auto lowest() noexcept -> Type { return -max(); }
 	static constexpr auto epsilon() noexcept -> Type { return __DBL_EPSILON__; }
+	static constexpr auto infinity() noexcept -> Type { return __builtin_huge_val(); }
 };
 
 template<>
@@ -107,6 +110,7 @@ struct FloatingPointTraitsBasic<long double> {
 	static constexpr auto max() noexcept -> Type { return __LDBL_MAX__; }
 	static constexpr auto lowest() noexcept -> Type { return -max(); }
 	static constexpr auto epsilon() noexcept -> Type { return __LDBL_EPSILON__; }
+	static constexpr auto infinity() noexcept -> Type { return __builtin_huge_vall(); }
 };
 
 #else
@@ -127,6 +131,7 @@ struct FloatingPointTraitsBasic<float> {
 	static constexpr auto max() noexcept -> Type { return FLT_MAX; }
 	static constexpr auto lowest() noexcept -> Type { return -max(); }
 	static constexpr auto epsilon() noexcept -> Type { return FLT_EPSILON; }
+	static constexpr auto infinity() noexcept -> Type { return __builtin_huge_valf(); }
 };
 
 template<>
@@ -145,6 +150,7 @@ struct FloatingPointTraitsBasic<double> {
 	static constexpr auto max() noexcept -> Type { return DBL_MAX; }
 	static constexpr auto lowest() noexcept -> Type { return -max(); }
 	static constexpr auto epsilon() noexcept -> Type { return DBL_EPSILON; }
+	static constexpr auto infinity() noexcept -> Type { return __builtin_huge_val(); }
 };
 
 template<>
@@ -163,6 +169,7 @@ struct FloatingPointTraitsBasic<long double> {
 	static constexpr auto max() noexcept -> Type { return LDBL_MAX; }
 	static constexpr auto lowest() noexcept -> Type { return -LDBL_MAX; }
 	static constexpr auto epsilon() noexcept -> Type { return LDBL_EPSILON; }
+	static constexpr auto infinity() noexcept -> Type { return __builtin_huge_vall(); }
 };
 
 #endif

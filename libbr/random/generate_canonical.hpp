@@ -6,8 +6,11 @@
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/algorithm/max.hpp>
+#include <libbr/algorithm/min.hpp>
 #include <libbr/math/function/ilog2.hpp>
 #include <libbr/type_traits/max_integer.hpp>
+#include <libbr/type_traits/floating_point_traits.hpp>
 
 namespace BR {
 
@@ -23,17 +26,18 @@ inline namespace Random {
  */
 template< typename TReal, Size bits, typename TGenerator >
 auto generate_canonical(TGenerator & generator) -> TReal {
-	constexpr auto digits = sizeof(TReal) * BIT_PER_CHAR;
+	constexpr auto digits = FloatingPointTraits<TReal>::digits;
 	constexpr auto b = digits < bits ? digits : bits;
-	constexpr auto log_r = ilog2(TGenerator::max() - TGenerator::min() + UInt64(1)) + 1;
-	constexpr auto k = b / log_r + (b % log_r != 0) + (b == 0);
-	auto range = TGenerator::max() - TGenerator::min() + TReal(1);
-	auto base = range;
-	TReal s = generator() - TGenerator::min();
-	for (Size i = 1; i < k; ++i, base *= range) {
-		s += (generator() - TGenerator::min()) * base;
+	constexpr auto log2_r = ilog2(generator.max() - generator.min() + UInt64(1)) + 1;
+	constexpr auto m = b / log2_r + (b % log2_r != 0) + (b == 0);
+	constexpr auto range = generator.max() - generator.min() + TReal(1);
+	TReal sum = 0;
+	TReal base = 1;
+	for (Size i = 0; i < m; ++i) {
+		sum += (generator() - generator.min()) * base;
+		base *= range;
 	}
-	return s / base;
+	return sum / base;
 }
 
 } // namespace Random
