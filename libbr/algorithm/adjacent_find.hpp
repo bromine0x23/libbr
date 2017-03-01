@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief adjacent_find
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -15,20 +14,20 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::adjacent_find
- * @tparam TForwardIterator 前向迭代器类型
- * @tparam TBinaryPredicate 二元谓词类型
- * @param[in] first, last 输入区间
- * @param[in] predicate 二元谓词
+ * @brief Finds the first two adjacent items that satisfy a given predicate.
+ * @tparam TForwardIterator ForwardIterator type of \p first & \p last.
+ * @tparam TBinaryPredicate Type of \p predicate.
+ * @param first,last The range of elements to examine.
+ * @param predicate Binary predicate which returns <code>​true</code> if the elements should be treated as equal.
  * @return
  */
 template< typename TForwardIterator, typename TBinaryPredicate >
 auto adjacent_find(TForwardIterator first, TForwardIterator last, TBinaryPredicate && predicate) -> TForwardIterator;
 
 /**
- * @brief like std::adjacent_find
- * @tparam TForwardIterator 前向迭代器类型
- * @param[in] first, last 输入区间
+ * @brief Finds the first two adjacent items that are equal.
+ * @tparam TForwardIterator ForwardIterator type of \p first & \p last.
+ * @param first,last The range of elements to examine.
  * @return
  */
 template< typename TForwardIterator >

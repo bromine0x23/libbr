@@ -26,8 +26,8 @@ namespace Memory {
 
 template< typename TAllocator, typename TInputIterator, typename TValue >
 auto construct_backward(TAllocator & allocator, TInputIterator first, TInputIterator last, TValue * pointer) -> TValue * {
-	for (; first != last; --pointer) {
-		BR::construct(allocator, pointer, move_if_noexcept(*--last));
+	for (; first != last;) {
+		BR::construct(allocator, --pointer, move_if_noexcept(*--last));
 	}
 	return pointer;
 }

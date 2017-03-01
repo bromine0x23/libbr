@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief copy_while
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -14,17 +13,17 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief copy_while
- * @tparam TInputIterator
- * @tparam TOutputIterator
- * @tparam TUnaryPredicate
- * @param[in] first,last
- * @param[out] result
- * @param[in] predicate
- * @return
+ * @brief Copies the elements until the predicate \p predicate returns <code>false</code>.
+ * @tparam TInputIterator An InputIterator type for \p first & \p last.
+ * @tparam TOutputIterator An OutputIterator type for \p output.
+ * @tparam TUnaryPredicate Type of \p predicate.
+ * @param[in] first,last The range of elements to copy.
+ * @param[out] output The beginning of the destination range.
+ * @param[in] predicate Unary predicate which returns ​<code>false</code> for ternimate copy.
+ * @return Output iterator to the element in the destination range, one past the last element copied.
  */
 template< typename TInputIterator, typename TOutputIterator, typename TUnaryPredicate >
-auto copy_while(TInputIterator first, TInputIterator last, TOutputIterator result, TUnaryPredicate && predicate) -> TOutputIterator;
+auto copy_while(TInputIterator first, TInputIterator last, TOutputIterator output, TUnaryPredicate && predicate) -> TOutputIterator;
 
 } // namespace Algorithm
 
@@ -33,11 +32,11 @@ auto copy_while(TInputIterator first, TInputIterator last, TOutputIterator resul
 inline namespace Algorithm {
 
 template< typename TInputIterator, typename TOutputIterator, typename TUnaryPredicate >
-inline auto copy_while(TInputIterator first, TInputIterator last, TOutputIterator result, TUnaryPredicate && predicate) -> TOutputIterator {
-	for (; first != last && forward<TUnaryPredicate>(predicate)(*first); ++result, (void)++first) {
-		*result = *first;
+inline auto copy_while(TInputIterator first, TInputIterator last, TOutputIterator output, TUnaryPredicate && predicate) -> TOutputIterator {
+	for (; first != last && forward<TUnaryPredicate>(predicate)(*first); ++output, (void)++first) {
+		*output = *first;
 	}
-	return result;
+	return output;
 }
 
 } // namespace Algorithm

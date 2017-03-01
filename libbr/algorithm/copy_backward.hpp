@@ -19,15 +19,15 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::copy_backward
- * @tparam TInputIterator0
- * @tparam TInputIterator1
- * @param[in] first,last
- * @param[out] result
- * @return
+ * @brief Copies a range of elements in backwards order.
+ * @tparam TBidirectionalIterator A BidirectionalIterator type of \p first & \p last.
+ * @tparam TOutputIterator A BidirectionalIterator and OutputIterator type of \p output
+ * @param[in] first,last The range of the elements to copy.
+ * @param[out] output End of the destination range.
+ * @return Iterator to the last element copied.
  */
-template< typename TInputIterator0, typename TInputIterator1 >
-auto copy_backward(TInputIterator0 first, TInputIterator0 last, TInputIterator1 result) -> TInputIterator1;
+template< typename TBidirectionalIterator, typename TOutputIterator >
+auto copy_backward(TBidirectionalIterator first, TBidirectionalIterator last, TOutputIterator output) -> TOutputIterator;
 
 } // namespace Algorithm
 
@@ -36,20 +36,20 @@ auto copy_backward(TInputIterator0 first, TInputIterator0 last, TInputIterator1 
 namespace Detail {
 namespace Algorithm {
 
-template< typename TBidirectionalIterator0, typename TBidirectionalIterator1 >
-inline auto copy_backward(TBidirectionalIterator0 first, TBidirectionalIterator0 last, TBidirectionalIterator1 result) -> TBidirectionalIterator1 {
+template< typename TBidirectionalIterator, typename TOutputIterator >
+inline auto copy_backward(TBidirectionalIterator first, TBidirectionalIterator last, TOutputIterator output) -> TOutputIterator {
 	for (; first != last;) {
-		*--result = *--last;
+		*--output = *--last;
 	}
-	return result;
+	return output;
 }
 
 template< typename TInputValue, typename TOutputValue, typename = EnableIf< BooleanAnd< IsSame< RemoveConst<TInputValue>, TOutputValue >, HasTrivialCopyAssignment<TOutputValue> > > >
-inline auto copy_backward(TInputValue * first, TInputValue * last, TOutputValue * result) -> TOutputValue * {
+inline auto copy_backward(TInputValue * first, TInputValue * last, TOutputValue * output) -> TOutputValue * {
 	auto n = static_cast<Size>(last - first);
-	result -= n;
-	memory_move(result, first, n * sizeof(TOutputValue));
-	return result;
+	output -= n;
+	memory_move(output, first, n * sizeof(TOutputValue));
+	return output;
 }
 
 } // namespace Algorithm
@@ -57,9 +57,9 @@ inline auto copy_backward(TInputValue * first, TInputValue * last, TOutputValue 
 
 inline namespace Algorithm {
 
-template< typename TInputIterator0, typename TInputIterator1 >
-inline auto copy_backward(TInputIterator0 first, TInputIterator0 last, TInputIterator1 result) -> TInputIterator1 {
-	return Detail::Algorithm::copy_backward(first, last, result);
+template< typename TBidirectionalIterator, typename TOutputIterator >
+inline auto copy_backward(TBidirectionalIterator first, TBidirectionalIterator last, TOutputIterator output) -> TOutputIterator {
+	return Detail::Algorithm::copy_backward(first, last, output);
 }
 
 } // namespace Algorithm

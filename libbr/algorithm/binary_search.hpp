@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief binary_search
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -16,23 +15,27 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief 二分查找给定区间是否存在给定值
- * @tparam TForwardIterator
- * @tparam TValue
- * @tparam TComparator
- * @param[in] first,last 待检查区间
- * @param[in] value 待查找值
- * @param[in] comparator 比较器
+ * @brief Determines if an element exists in a certain range.
+ * @tparam TForwardIterator ForwardIterator type of \p first & \p last
+ * @tparam TValue Type of \p value.
+ * @tparam TComparator Type of \p comparator.
+ * @param first,last The range of elements to examine.
+ * @param value The value to compare the elements to.
+ * @param comparator Comparison function object which returns ​<code>true</code> if the first argument is less than (i.e. ordered before) the second.
+ * @retval true An element equal to value is found.
+ * @retval false Otherwise.
  */
 template< typename TForwardIterator, typename TValue, typename TComparator >
 auto binary_search(TForwardIterator first, TForwardIterator last, TValue const & value, TComparator && comparator) -> bool;
 
 /**
- * @brief 二分查找，使用Less<>作比较器
- * @tparam TForwardIterator
- * @tparam TValue
- * @param[in] first,last 待检查区间
- * @param[in] value 待查找值
+ * @brief Determines if an element exists in a certain range.
+ * @tparam TForwardIterator ForwardIterator type of \p first & \p last
+ * @tparam TValue Type of \p value.
+ * @param first,last The range of elements to examine.
+ * @param value The value to compare the elements to.
+ * @retval true An element equal to value is found.
+ * @retval false Otherwise.
  */
 template< typename TForwardIterator, typename TValue >
 auto binary_search(TForwardIterator first, TForwardIterator last, TValue const & value) -> bool;
@@ -46,7 +49,7 @@ inline namespace Algorithm {
 template< typename TForwardIterator, typename TValue, typename TComparator >
 inline auto binary_search(TForwardIterator first, TForwardIterator last, TValue const & value, TComparator && comparator) -> bool {
 	first = lower_bound(first, last, value, comparator);
-	return first != last && !forward<TComparator>(comparator)(value, *first);
+	return !(first == last) && !forward<TComparator>(comparator)(value, *first);
 }
 
 template< typename TForwardIterator, typename TValue >

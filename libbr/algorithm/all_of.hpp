@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief all_of
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -14,11 +13,14 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief 检查区间内是否所有元素满足给定谓词
- * @tparam TInputIterator 输入迭代器类型
- * @tparam TUnaryPredicate 一元谓词类型
- * @param[in] first,last 输入区间
- * @param[in] predicate 一元谓词
+ * @brief Checks if a \p predicate is <code>true</code> for all of the elements in a range.
+ * @tparam TInputIterator InputIterator type of \p first & \p last.
+ * @tparam TUnaryPredicate Type of \p predicate
+ * @param first,last The range of elements to examine.
+ * @param predicate Unary predicate.
+ * @return Returns <code>true</code> if the range is empty.
+ * @retval true Unary predicate \p predicate returns true for all elements in the range.
+ * @retval false Otherwise.
  */
 template<typename TInputIterator, typename TUnaryPredicate>
 auto all_of(TInputIterator first, TInputIterator last, TUnaryPredicate && predicate) -> bool;

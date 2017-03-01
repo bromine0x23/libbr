@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief copy_n
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -16,17 +15,17 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::copy_n
- * @tparam TInputIterator
- * @tparam TSize
- * @tparam TOutputIterator
- * @param[in] first
- * @param[in] n
- * @param[out] result
- * @return
+ * @brief Copies a number of elements to a new location.
+ * @tparam TInputIterator An InputIterator type for \p first.
+ * @tparam TSize Type of \p count.
+ * @tparam TOutputIterator An OutputIterator type for \p output.
+ * @param[in] first The beginning of the range of elements to copy from.
+ * @param[in] count Number of the elements to copy.
+ * @param[out] output The beginning of the destination range.
+ * @return Iterator in the destination range, pointing past the last element copied if \f$ count > 0 \f$ or \p output otherwise.
  */
 template< typename TInputIterator, typename TSize, typename TOutputIterator >
-inline auto copy_n(TInputIterator first, TSize n, TOutputIterator result) -> TOutputIterator;
+inline auto copy_n(TInputIterator first, TSize count, TOutputIterator output) -> TOutputIterator;
 
 } // namespace Algorithm
 
@@ -36,21 +35,22 @@ namespace Detail {
 namespace Algorithm {
 
 template< typename TSinglePassIterator, typename TSize, typename TOutputIterator >
-auto copy_n(TSinglePassIterator first, TSize n, TOutputIterator result, SinglePassTraversalTag) -> TOutputIterator {
-	if (n > 0) {
-		*result = *first;
-		++result;
-		for (--n; n > 0; --n) {
-			*result = *++first;
-			++result;
+auto copy_n(TSinglePassIterator first, TSize count, TOutputIterator output, SinglePassTraversalTag) -> TOutputIterator {
+	if (count > 0) {
+		*output = *first;
+		++output;
+		for (--count; count > 0; --count) {
+			*output = *++first;
+			++output;
 		}
 	}
-	return result;
+	return output;
 }
 
 template< typename TRandomAccessIterator, typename TSize, typename TOutputIterator >
-inline auto copy_n(TRandomAccessIterator first, TSize n, TOutputIterator result, RandomAccessTraversalTag) -> TOutputIterator {
-	return copy(first, first + n, result);
+inline auto copy_n(TRandomAccessIterator first, TSize count, TOutputIterator output, RandomAccessTraversalTag) -> TOutputIterator {
+	using BR::copy;
+	return copy(first, first + count, output);
 }
 
 } // namespace Algorithm
@@ -59,8 +59,8 @@ inline auto copy_n(TRandomAccessIterator first, TSize n, TOutputIterator result,
 inline namespace Algorithm {
 
 template< typename TInputIterator, typename TSize, typename TOutputIterator >
-auto copy_n(TInputIterator first, TSize n, TOutputIterator result) -> TOutputIterator {
-	return Detail::Algorithm::copy_n(first, n, result, typename IteratorTraits<TInputIterator>::Category{});
+auto copy_n(TInputIterator first, TSize count, TOutputIterator output) -> TOutputIterator {
+	return Detail::Algorithm::copy_n(first, count, output, typename IteratorTraits<TInputIterator>::Category{});
 }
 
 } // namespace Algorithm

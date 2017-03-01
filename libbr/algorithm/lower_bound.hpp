@@ -48,9 +48,9 @@ inline namespace Algorithm {
 
 template< typename TForwardIterator, typename TValue, typename TComparator >
 auto lower_bound(TForwardIterator first, TForwardIterator last, TValue const & value, TComparator && comparator) -> TForwardIterator {
-	for (auto length = distance(first, last); length != 0; ) {
-		auto half_length = length / 2;
-		auto middle = next(first, length);
+	for (auto length = distance(first, last); length > 0; ) {
+		auto const half_length = length / 2;
+		auto middle = next(first, half_length);
 		if (forward<TComparator>(comparator)(*middle, value)) {
 			first = ++middle;
 			length -= half_length + 1;

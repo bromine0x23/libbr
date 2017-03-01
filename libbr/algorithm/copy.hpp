@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief copy
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -21,15 +20,15 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::copy
- * @tparam TInputIterator
- * @tparam TOutputIterator
- * @param[in] first,last
- * @param[out] result
- * @return
+ * @brief Copies a range of elements to a new location.
+ * @tparam TInputIterator An InputIterator type for \p first & \p last.
+ * @tparam TOutputIterator An OutputIterator type for \p output.
+ * @param[in] first,last The range of elements to copy.
+ * @param[out] output The beginning of the destination range.
+ * @return Output iterator to the element in the destination range, one past the last element copied.
  */
 template< typename TInputIterator, typename TOutputIterator >
-auto copy(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator;
+auto copy(TInputIterator first, TInputIterator last, TOutputIterator output) -> TOutputIterator;
 
 } // namespace Algorithm
 
@@ -38,34 +37,34 @@ auto copy(TInputIterator first, TInputIterator last, TOutputIterator result) -> 
 namespace Detail {
 namespace Algorithm {
 
-template< typename TInputIterator, typename TOutputIterator >
-auto copy(TInputIterator first, TInputIterator last, TOutputIterator result, SinglePassTraversalTag) -> TOutputIterator {
-	for ( ; first != last; ++result, ++first) {
-		*result = *first;
+template< typename TSinglePassIterator, typename TOutputIterator >
+auto copy(TSinglePassIterator first, TSinglePassIterator last, TOutputIterator output, SinglePassTraversalTag) -> TOutputIterator {
+	for ( ; first != last; ++output, ++first) {
+		*output = *first;
 	}
-	return result;
+	return output;
 }
 
-template< typename TInputIterator, typename TOutputIterator >
-auto copy(TInputIterator first, TInputIterator last, TOutputIterator result, RandomAccessTraversalTag) -> TOutputIterator {
+template< typename TRandomAccessIterator, typename TOutputIterator >
+auto copy(TRandomAccessIterator first, TRandomAccessIterator last, TOutputIterator output, RandomAccessTraversalTag) -> TOutputIterator {
 	for (auto n = last - first; n > 0; --n) {
-		*result = *first;
+		*output = *first;
 		++first;
-		++result;
+		++output;
 	}
-	return result;
+	return output;
 }
 
 template< typename TInputIterator, typename TOutputIterator >
-inline auto copy(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator {
-	return copy(first, last, result, typename IteratorTraits<TInputIterator>::Category{});
+inline auto copy(TInputIterator first, TInputIterator last, TOutputIterator output) -> TOutputIterator {
+	return copy(first, last, output, typename IteratorTraits<TInputIterator>::Category{});
 }
 
 template< typename TInputValue, typename TOutputValue, typename = EnableIf< BooleanAnd< IsSame< RemoveConst<TInputValue>, TOutputValue >, HasTrivialCopyAssignment<TInputValue> > > >
-inline auto copy(TInputValue * first, TInputValue * last, TOutputValue * result) -> TOutputValue * {
+inline auto copy(TInputValue * first, TInputValue * last, TOutputValue * output) -> TOutputValue * {
 	auto n = static_cast<Size>(last - first);
-	memory_move(result, first, n * sizeof(TOutputValue));
-	return result + n;
+	memory_move(output, first, n * sizeof(TOutputValue));
+	return output + n;
 }
 
 } // namespace Algorithm
@@ -74,8 +73,8 @@ inline auto copy(TInputValue * first, TInputValue * last, TOutputValue * result)
 inline namespace Algorithm {
 
 template< typename TInputIterator, typename TOutputIterator >
-inline auto copy(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator {
-	return Detail::Algorithm::copy(first, last, result);
+inline auto copy(TInputIterator first, TInputIterator last, TOutputIterator output) -> TOutputIterator {
+	return Detail::Algorithm::copy(first, last, output);
 }
 
 } // namespace Algorithm

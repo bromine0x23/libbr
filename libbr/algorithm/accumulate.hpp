@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief accumulate
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -15,28 +14,28 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::accumulate
- * @tparam TInputIterator
- * @tparam TValue
- * @tparam TBinaryFunctor
- * @param[in] first,last
- * @param[in] init
- * @param[in] functor
+ * @brief Sums up a range of elements.
+ * @tparam TInputIterator InputIterator type of \p first & \p last.
+ * @tparam TValue Type of \p initial
+ * @tparam TBinaryFunctor Type of \p functor.
+ * @param first,last The range of elements to sum.
+ * @param initial Initial value of the sum.
+ * @param functor Binary operation function object that will be applied.
  * @return
  */
 template< typename TInputIterator, typename TValue, typename TBinaryFunctor >
-auto accumulate(TInputIterator first, TInputIterator last, TValue init, TBinaryFunctor functor) -> TValue;
+auto accumulate(TInputIterator first, TInputIterator last, TValue initial, TBinaryFunctor && functor) -> TValue;
 
 /**
- * @brief like std::accumulate
- * @tparam TInputIterator
- * @tparam TValue
- * @param[in] first,last
- * @param[in] init
+ * @brief Sums up a range of elements.
+ * @tparam TInputIterator InputIterator type of \p first & \p last.
+ * @tparam TValue Type of \p initial
+ * @param first,last The range of elements to sum.
+ * @param init Initial value of the sum.
  * @return
  */
 template< typename TInputIterator, typename TValue >
-auto accumulate(TInputIterator first, TInputIterator last, TValue init) -> TValue;
+auto accumulate(TInputIterator first, TInputIterator last, TValue initial) -> TValue;
 
 } // namespace Algorithm
 
@@ -45,16 +44,16 @@ auto accumulate(TInputIterator first, TInputIterator last, TValue init) -> TValu
 inline namespace Algorithm {
 
 template< typename TInputIterator, typename TValue, typename TBinaryFunctor >
-inline auto accumulate(TInputIterator first, TInputIterator last, TValue init, TBinaryFunctor functor) -> TValue {
+inline auto accumulate(TInputIterator first, TInputIterator last, TValue initial, TBinaryFunctor && functor) -> TValue {
 	for (; first != last; ++first) {
-		init = forward<TBinaryFunctor>(functor)(init, *first);
+		initial = forward<TBinaryFunctor>(functor)(initial, *first);
 	}
-	return init;
+	return initial;
 }
 
 template< typename TInputIterator, typename TValue >
-inline auto accumulate(TInputIterator first, TInputIterator last, TValue init) -> TValue {
-	return accumulate(first, last, init, Plus<>());
+inline auto accumulate(TInputIterator first, TInputIterator last, TValue initial) -> TValue {
+	return accumulate(first, last, initial, Plus<>());
 }
 
 } // namespace Algorithm
