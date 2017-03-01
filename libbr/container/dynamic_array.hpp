@@ -1,43 +1,36 @@
 /**
  * @file
  * @brief DynamicArray
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/algorithm/copy.hpp>
-#include <libbr/algorithm/min.hpp>
-#include <libbr/algorithm/fill_n.hpp>
+#include <libbr/algorithm/equal.hpp>
+#include <libbr/algorithm/lexicographical_compare.hpp>
+#include <libbr/assert/assert.hpp>
 #include <libbr/container/initializer_list.hpp>
-#include <libbr/container/tuple.hpp>
-#include <libbr/exception/throw.hpp>
-#include <libbr/iterator/advance.hpp>
-#include <libbr/iterator/distance.hpp>
-#include <libbr/iterator/move_iterator.hpp>
+#include <libbr/container/detail/dynamic_array_basic.hpp>
+#include <libbr/enumerate/enumerable.hpp>
 #include <libbr/iterator/reverse_iterator.hpp>
 #include <libbr/memory/allocator.hpp>
-#include <libbr/memory/allocator_traits.hpp>
-#include <libbr/memory/construct_backward.hpp>
-#include <libbr/memory/pointer_traits.hpp>
+#include <libbr/operators/equality_comparable.hpp>
+#include <libbr/operators/less_than_comparable.hpp>
+#include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/has_nothrow_default_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_move_constructor.hpp>
-#include <libbr/type_traits/has_nothrow_move_assignment.hpp>
-#include <libbr/type_traits/is_same.hpp>
-#include <libbr/utility/boolean_constant.hpp>
+#include <libbr/type_traits/is_input_iterator.hpp>
 #include <libbr/utility/move.hpp>
 
 namespace BR {
 
 inline namespace Container {
 
-
-
 /**
- * @brief 动态数组
- * @tparam TElement 数组元素类型
+ * @brief Dynamic array
+ * @tparam TElement The type of the elements.
+ * @tparam TAllocator An allocator used to acquire/release memory and to construct/destroy the elements in that memory.
  */
 template< typename TElement, typename TAllocator = Allocator<TElement> >
 class DynamicArray;
@@ -51,390 +44,204 @@ inline void swap(DynamicArray< TElement, TAllocator> & x, DynamicArray< TElement
 
 
 
-namespace Detail {
-namespace Container {
-namespace DynamicArray {
+inline namespace Container {
 
 template< typename TElement, typename TAllocator >
-class Base {
+class DynamicArray :
+	private Detail::Container::DynamicArray::Basic< TElement, TAllocator >,
+	public Enumerable<
+		DynamicArray<TElement, TAllocator>,
+		typename Detail::Container::DynamicArray::Basic< TElement, TAllocator >::Iterator,
+		typename Detail::Container::DynamicArray::Basic< TElement, TAllocator >::ConstIterator
+	>,
+	public EqualityComparable< DynamicArray<TElement, TAllocator> >,
+	public LessThanComparable< DynamicArray<TElement, TAllocator> >
+{
 
-protected:
+public:
 	using Element = TElement;
 
 	using Allocator = TAllocator;
 
-	using AllocatorTraits = BR::AllocatorTraits<TAllocator>;
+private:
+	using Self = DynamicArray;
 
+	using Base = Detail::Container::DynamicArray::Basic< Element, Allocator >;
+
+	using AllocatorTraits = BR::AllocatorTraits<Allocator>;
+
+public:
+	/**
+	 * @brief Element &
+	 */
 	using Reference = Element &;
 
+	/**
+	 * @brief Element const &
+	 */
 	using ConstReference = Element const &;
 
-	using Size = typename AllocatorTraits ::Size;
-
-	using Difference = typename AllocatorTraits ::Difference;
-
-	using Pointer = typename AllocatorTraits ::Pointer;
-
-	using ConstPointer = typename AllocatorTraits ::ConstPointer;
-
-	using Iterator = Pointer;
-
-	using ConstIterator = ConstPointer;
-
-protected:
-	Base() noexcept(HasNothrowDefaultConstructor<Allocator>{}) : m_imp(nullptr, nullptr, nullptr) {
-	}
-
-	Base(Allocator const & allocator) : m_imp(nullptr, nullptr, nullptr, allocator) {
-	}
-
-	~Base() {
-		if (m_storage_begin() != nullptr) {
-			m_clear();
-			AllocatorTraits::deallocate(m_allocator(), m_begin(), m_capacity());
-		}
-	}
-
-	auto m_storage_begin() noexcept -> Pointer & {
-		return m_imp.get<0>();
-	}
-
-	auto m_storage_begin() const noexcept -> Pointer const & {
-		return m_imp.get<0>();
-	}
-
-	auto m_begin() noexcept -> Pointer & {
-		return m_storage_begin();
-	}
-
-	auto m_begin() const noexcept -> Pointer const & {
-		return m_storage_begin();
-	}
-
-	auto m_end() noexcept -> Pointer & {
-		return m_imp.get<1>();
-	}
-
-	auto m_end() const noexcept -> Pointer const & {
-		return m_imp.get<1>();
-	}
-
-	auto m_storage_end() noexcept -> Pointer & {
-		return m_imp.get<2>();
-	}
-
-	auto m_storage_end() const noexcept -> Pointer const & {
-		return m_imp.get<2>();
-	}
-
-	auto m_allocator() noexcept -> Allocator & {
-		return m_imp.get<Allocator>();
-	}
-
-	auto m_allocator() const noexcept -> Allocator const & {
-		return m_imp.get<Allocator>();
-	}
-
-	void m_clear() noexcept {
-		m_destruct_at_end(m_begin());
-	}
-
-	auto m_capacity() const noexcept -> Size {
-		return static_cast<Size>(m_storage_end() - m_storage_begin());
-	}
-
-	void m_copy_assign_allocator(Base const & array) {
-		m_copy_assign_allocator(array, typename NodeAllocatorTraits::IsPropagateOnContainerCopyAssignment{});
-	}
-
-	void m_move_assign_allocator(Base & array) noexcept(
-		BooleanOr<
-			BooleanNot< typename AllocatorTraits::IsPropagateOnContainerMoveAssignment >,
-			HasNothrowMoveAssignment<Allocator>
-		>{}
-	) {
-		m_move_assign_allocator(array, typename AllocatorTraits::IsPropagateOnContainerMoveAssignment{});
-	}
-
-	void m_destruct_at_end(Pointer new_end) noexcept {
-		m_destruct_at_end(new_end, HasTrivialDestructor<Element>{});
-	}
-
-	static void m_swap_allocator(Allocator & x, Allocator & y) noexcept(
-		BooleanOr<
-			BooleanNot< typename AllocatorTraits::IsPropagateOnContainerSwap >,
-			IsNothrowSwappable<Allocator>
-	>{}
-	) {
-		m_swap_allocator(x, y, typename AllocatorTraits::IsPropagateOnContainerSwap{});
-	}
-
-private:
-	void m_copy_assign_allocator(Base const & array, BooleanTrue) {
-		if (m_allocator() != array.m_allocator()) {
-			clear();
-			AllocatorTraits::deallocate(m_allocator(), m_storage_begin(), m_capacity());
-			m_storage_begin() = m_end() = m_storage_end() = nullptr;
-		}
-		m_allocator() = array.m_allocator();
-	}
-
-	void m_copy_assign_allocator(Base const & array, BooleanFalse) noexcept {
-	}
-
-	void m_move_assign_allocator(Base & array, BooleanTrue) noexcept(HasNothrowMoveAssignment<NodeAllocator>{}) {
-		m_allocator() = move(list.m_allocator());
-	}
-
-	void m_move_assign_allocator(Base & array, BooleanFalse) noexcept {
-	}
-
-	void m_destruct_at_end(Pointer new_end, BooleanTrue) {
-		m_end() = new_end;
-	}
-
-	void m_destruct_at_end(Pointer new_end, BooleanFalse) {
-		for (; new_end != end(); ) {
-			AllocatorTraits::destroy(m_allocator(), PointerTraits<Pointer>::to_raw(--m_end()));
-		}
-	}
-
-	static void m_swap_allocator(Allocator & x, Allocator & y, BooleanFalse) noexcept {
-	}
-
-	static void m_swap_allocator(Allocator & x, Allocator & y, BooleanTrue) noexcept(IsNothrowSwappable<Allocator>{}) {
-		using BR::swap;
-		swap(x, y);
-	}
-
-private:
-	Tuple< Pointer, Pointer, Pointer, Allocator > m_imp;
-
-}; // class Base< TElement, TAllocator >
-
-template< typename TElement, typename TAllocator >
-class Buffer {
-
-protected:
-	using Element = TElement;
-
-	using Allocator = TAllocator;
-
-	using AllocatorTraits = BR::AllocatorTraits< Allocator >;
-
-	using Pointer = typename AllocatorTraits::Pointer;
-
-	using PointerTraits = BR::PointerTraits<Pointer>;
-
-	template< typename TElement, typename TAllocator >
-	friend class BR::DynamicArray;
-
-	Buffer(Buffer && buffer) noexcept(
-		HasNothrowMoveConstructor<Allocator>{}
-	) : m_storage_begin(buffer.m_storage_begin), m_end(buffer.m_end), m_storage_end(buffer.m_storage_end), m_allocator(buffer.m_allocator) {
-		buffer.m_storage_begin = buffer.m_end = buffer.m_storage_end = nullptr;
-	}
-
-	Buffer(Size capacity, Allocator & allocator) : m_allocator(allocator) {
-		m_end = m_storage_begin = capacity != 0 ? AllocatorTraits::allocate(allocator, capacity) : nullptr;
-		m_storage_end = m_storage_begin + capacity;
-	}
-
-	~Buffer() {
-		if (m_storage_begin != nullptr) {
-			m_destruct(HasTrivialDestructor<Element>{});
-			AllocatorTraits::allocate(m_allocator, m_storage_begin, static_cast<Size>(m_storage_end - m_storage_begin));
-		}
-	}
-
-private:
-	void m_destruct(BooleanTrue) {
-		m_end = m_storage_begin;
-	}
-
-	void m_destruct_at_end(BooleanFalse);
-
-private:
-	Pointer m_storage_begin = nullptr;
-	Pointer m_end = nullptr;
-	Pointer m_storage_end = nullptr;
-	Allocator & m_allocator;
-
-}; // class Base< TElement, TAllocator >
-
-template< typename TElement, typename TAllocator >
-void Buffer< TElement, TAllocator >::m_destruct(BooleanFalse) {
-	for (; m_storage_begin != m_end; ) {
-		AllocatorTraits::destroy(m_allocator, PointerTraits::to_raw(--m_end));
-	}
-}
-
-} // namespace DynamicArray
-} // namespace Container
-} // namespace Detail
-
-template< typename TElement, typename TAllocator >
-class DynamicArray : private Detail::Container::DynamicArray::Base< TElement, TAllocator > {
-
-public:
-	/**
-	 * @brief 元素类型
-	 */
-	using Element = TElement;
-
-	/**
-	 * @brief 分配器类型
-	 */
-	using Allocator = TAllocator;
-
-private:
-	using Base = Detail::Container::DynamicArray::Base< Element, Allocator >;
-
-public:
-	/**
-	 * @brief Reference
-	 */
-	using Reference = typename Base::Reference;
-
-	/**
-	 * @brief ConstReference
-	 */
-	using ConstReference = typename Base::ConstReference;
-
-	/**
-	 * @brief Pointer
-	 */
 	using Pointer = typename Base::Pointer;
 
-	/**
-	 * @brief ConstPointer
-	 */
 	using ConstPointer = typename Base::ConstPointer;
 
-	/**
-	 * @brief Difference
-	 */
 	using Difference = typename Base::Difference;
 
-	/**
-	 * @brief Size
-	 */
 	using Size = typename Base::Size;
 
-	/**
-	 * @brief Iterator
-	 */
 	using Iterator = typename Base::Iterator;
 
-	/**
-	 * @brief ConstIterator
-	 */
 	using ConstIterator = typename Base::ConstIterator;
 
-	/**
-	 * @brief ReverseIterator
-	 */
 	using ReverseIterator = BR::ReverseIterator<Iterator>;
 
-	/**
-	 * @brief ConstReverseIterator
-	 */
 	using ConstReverseIterator = BR::ReverseIterator<ConstIterator>;
 
-	static_assert(IsSame< typename Allocator::Value, Element >{}, "`Allocator::Value` must be same type as `Element`");
-
-private:
-	using PointerTraits = BR::PointerTraits<Pointer>;
-
-	using Buffer = Detail::Container::DynamicArray::Buffer< Element, Allocator >;
-
-
-	template< typename TIterator >
-	using IsInputIterator = BooleanAnd<
-		IsConvertible< typename IteratorTraits<TIterator>::Category, ReadableTag >,
-		IsConvertible< typename IteratorTraits<TIterator>::Category, SinglePassTraversalTag >
-	>;
-
+	static_assert(IsSame< typename Allocator::Element, Element >{}, "`Allocator::Value` must be same type as `Element`");
 public:
+	/**
+	 * @name Constructor
+	 */
+	///@{
+	/**
+	 * @brief Default constructor.
+	 */
 	DynamicArray() noexcept (HasNothrowDefaultConstructor<Allocator>{}) {
 	}
 
+	/**
+	 * @brief Default constructor.
+	 * @param allocator Allocator to use for all memory allocations of this container.
+	 */
 	explicit DynamicArray(Allocator const & allocator) noexcept : Base(allocator) {
 	}
 
-	DynamicArray(DynamicArray const & other);
-
-	DynamicArray(DynamicArray const & other, Allocator const & allocator);
-
-	DynamicArray(DynamicArray && other) noexcept(HasNothrowMoveConstructor<NodeAllocator>{});
-
-	DynamicArray(DynamicArray && other, Allocator const & allocator);
-
-	explicit DynamicArray(Size n, Allocator const & allocator = Allocator{});
-
-	DynamicArray(ConstReference x, Size n, Allocator const & allocator = Allocator{});
-
-	template< typename TIterator >
-	DynamicArray(TIterator f, TIterator l, Allocator const & allocator = Allocator{}, EnableIf< IsInputIterator<TIterator> > * = nullptr) : Base(allocator) {
-		m_construct(f, l, typename IteratorTraits<TIterator>::Category{});
+	/**
+	 * @brief Copy constructor.
+	 * @param other Another container to be used as source to initialize the elements of the container with.
+	 */
+	DynamicArray(Self const & other) : Base(Allocator(AllocatorTraits::select_on_container_copy_construction(other.m_allocator()))) {
+		this->m_allocate_construct(other.m_begin(), other.m_end());
 	}
-
-	DynamicArray(InitializerList<Element> l, Allocator const & allocator = Allocator{}) : DynamicArray(l.begin(), l.end(), allocator) {
-	}
-
-	~DynamicArray() = default;
 
 	/**
-	 * @name 赋值
+	 * @brief Copy constructor.
+	 * @param other Another container to be used as source to initialize the elements of the container with.
+	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
-	///@{
+	DynamicArray(Self const & other, Allocator const & allocator) : Base(allocator) {
+		this->m_allocate_construct(other.m_begin(), other.m_end());
+	}
 
 	/**
-	 * @brief 复制运算
-	 * @param[in] array 源链表
+	 * @brief Move constructor.
+	 * @param other Another container to be used as source to initialize the elements of the container with.
 	 */
-	auto operator=(DynamicArray const & array) -> DynamicArray &;
-
-	auto operator=(DynamicArray && array) noexcept(BooleanOr< typename AllocatorTraits::IsPropagateOnContainerMoveAssignment, typename AllocatorTraits::IsAlwaysEqual >{}) -> DynamicArray & {
-		m_move_assign(other, typename AllocatorTraits::IsPropagateOnContainerMoveAssignment{});
-		return *this;
-	};
-
-	auto operator=(InitializerList<Element> l) -> DynamicArray & {
-		return assign(l.begin(), l.end());
+	DynamicArray(Self && other) noexcept : Base(move(other)) {
 	}
 
-	auto assign(Element const & x, Size n) -> DynamicArray &;
+	/**
+	 * @brief Move constructor.
+	 * @param other Another container to be used as source to initialize the elements of the container with.
+	 * @param allocator Allocator to use for all memory allocations of this container.
+	 */
+	DynamicArray(Self && other, Allocator const & allocator) : Base(move(other), allocator) {
+	}
 
+	/**
+	 * @brief Constructs the container with \p count default-constructed instances of Element.
+	 * @param count The size of the container.
+	 * @param allocator Allocator to use for all memory allocations of this container.
+	 */
+	explicit DynamicArray(Size count, Allocator const & allocator = Allocator{}) {
+		if (count > 0) {
+			this->m_allocate(count);
+			this->m_construct_at_end(count);
+		}
+	}
+
+	/**
+	 * @brief Constructs the container with \p count copies of elements with value \p element.
+	 * @param element The value to initialize elements of the container with.
+	 * @param count The size of the container.
+	 * @param allocator Allocator to use for all memory allocations of this container.
+	 */
+	DynamicArray(ConstReference element, Size count, Allocator const & allocator = Allocator{}) {
+		if (count > 0) {
+			this->m_allocate(count);
+			this->m_construct_at_end(element, count);
+		}
+	}
+
+	/**
+	 * @brief Constructs the container with the contents of the range \f$ [first, last) \f$.
+	 * @tparam TIterator Iterator type.
+	 * @param first,last The range to copy the elements from.
+	 * @param allocator Allocator to use for all memory allocations of this container.
+	 */
 	template< typename TIterator >
-	auto assign(TIterator f, TIterator l) -> EnableIf< IsInputIterator<TIterator>, DynamicArray & > {
-		m_assign(f, l, typename IteratorTraits<TIterator>::Category{});
-		return *this;
+	DynamicArray(TIterator first, TIterator last, Allocator const & allocator = Allocator{}, EnableIf< IsInputIterator<TIterator> > * = nullptr) : Base(allocator) {
+		this->m_allocate_construct(first, last);
 	}
 
-	auto assign(InitializerList<Element> l) -> DynamicArray & {
-		return assign(l.begin(), l.end());
+	/**
+	 * @brief Constructs the container with the contents of the initializer list \p list.
+	 * @param list Initializer list to initialize the elements of the container with.
+	 * @param allocator Allocator to use for all memory allocations of this container.
+	 */
+	DynamicArray(InitializerList<Element> list, Allocator const & allocator = Allocator{}) : Base(allocator) {
+		this->m_allocate_construct(list.begin(), list.end());
 	}
 	///@}
 
 	/**
-	 * @name 成员
+	 * @name Destructor
 	 */
 	///@{
+	/**
+	 * @brief Destructor.
+	 */
+	~DynamicArray() = default;
+	///@}
+
+	/**
+	 * @name Member
+	 */
+	///@{
+	/**
+	 * @brief Returns the associated allocator.
+	 * @return The associated allocator.
+	 */
 	auto allocator() const noexcept -> Allocator {
-		return Base::m_allocator();
+		return this->m_allocator();
 	}
 
+	/**
+	 * @brief Access specified element.
+	 * @param index Position of the element to return.
+	 * @return Reference to the requested element.
+	 */
 	auto operator[](Size index) -> Reference {
 		BR_ASSERT(index < size());
 		return this->m_begin()[index];
 	}
 
+	/**
+	 * @brief Access specified element.
+	 * @param index Position of the element to return.
+	 * @return Reference to the requested element.
+	 */
 	auto operator[](Size index) const -> ConstReference {
 		BR_ASSERT(index < size());
 		return this->m_begin()[index];
 	}
 
+	/**
+	 * @brief Access specified element with bounds checking.
+	 * @param index Position of the element to return.
+	 * @throw IndexException
+	 * @return Reference to the requested element.
+	 */
 	auto at(Size index) -> Reference {
 		if (index >= size()) {
 			throw_index_exception("DynamicArray::at(Size)");
@@ -442,6 +249,12 @@ public:
 		return this->m_begin()[index];
 	}
 
+	/**
+	 * @brief Access specified element with bounds checking.
+	 * @param index Position of the element to return.
+	 * @throw IndexException \f$ !(index < size()) \f$
+	 * @return Reference to the requested element.
+	 */
 	auto at(Size index) const -> ConstReference {
 		if (index >= size()) {
 			throw_index_exception("DynamicArray::at(Size)");
@@ -449,114 +262,150 @@ public:
 		return this->m_begin()[index];
 	}
 
+	/**
+	 * @brief Access the first element.
+	 * @return Reference to the first element.
+	 */
 	auto front() -> Reference {
 		return *this->m_begin();
 	}
 
+	/**
+	 * @brief Access the first element.
+	 * @return Reference to the first element.
+	 */
 	auto front() const -> ConstReference {
 		return *this->m_begin();
 	}
 
+	/**
+	 * @brief Access the last element.
+	 * @return Reference to the last element.
+	 */
 	auto back() -> Reference {
 		return *(this->m_end() - 1);
 	}
 
+	/**
+	 * @brief Access the last element.
+	 * @return Reference to the last element.
+	 */
 	auto back() const -> ConstReference {
 		return *(this->m_end() - 1);
 	}
 
+	/**
+	 * @brief Direct access to the underlying array.
+	 * @return Pointer to the underlying element storage. For non-empty containers, returns &front()
+	 */
 	auto data() noexcept -> Element * {
 		return PointerTraits<Pointer>::to_raw(this->m_begin());
 	}
 
+	/**
+	 * @brief Direct access to the underlying array.
+	 * @return Pointer to the underlying element storage. For non-empty containers, returns &front()
+	 */
 	auto data() const noexcept -> Element const * {
 		return PointerTraits<Pointer>::to_raw(this->m_begin());
 	}
 	///@}
 
 	/**
-	 * @name 迭代器
+	 * @name Iterator
 	 */
 	///@{
 	/**
-	 * @brief begin
+	 * @brief Returns an iterator to the beginning.
+	 * @return Iterator to the first element.
 	 */
 	auto begin() noexcept -> Iterator {
 		return Iterator(this->m_begin());
 	}
 
 	/**
-	 * @brief begin
+	 * @brief Returns an iterator to the beginning.
+	 * @return Iterator to the first element.
 	 */
 	auto begin() const noexcept -> ConstIterator {
 		return ConstIterator(this->m_begin());
 	}
 
 	/**
-	 * @brief const begin
+	 * @brief Returns an iterator to the beginning.
+	 * @return Iterator to the first element.
 	 */
 	auto cbegin() const noexcept -> ConstIterator {
 		return begin();
 	}
 
 	/**
-	 * @brief end
+	 * @brief Returns an iterator to the end
+	 * @return Iterator to the element following the last element.
 	 */
 	auto end() noexcept -> Iterator {
 		return Iterator(this->m_end());
 	}
 
 	/**
-	 * @brief end
+	 * @brief Returns an iterator to the end
+	 * @return Iterator to the element following the last element.
 	 */
 	auto end() const noexcept -> ConstIterator {
 		return ConstIterator(this->m_end());
 	}
 
 	/**
-	 * @brief const end
+	 * @brief Returns an iterator to the end
+	 * @return Iterator to the element following the last element.
 	 */
 	auto cend() const noexcept -> ConstIterator {
 		return end();
 	}
 
 	/**
-	 * @brief reverse begin
+	 * @brief Returns a reverse iterator to the beginning.
+	 * @return Reverse iterator to the first element.
 	 */
 	auto rbegin() noexcept -> ReverseIterator {
 		return ReverseIterator(end());
 	}
 
 	/**
-	 * @brief reverse begin
+	 * @brief Returns a reverse iterator to the beginning.
+	 * @return Reverse iterator to the first element.
 	 */
 	auto rbegin() const noexcept -> ConstReverseIterator {
 		return ConstReverseIterator(end());
 	}
 
 	/**
-	 * @brief const reverse begin
+	 * @brief Returns a reverse iterator to the beginning.
+	 * @return Reverse iterator to the first element.
 	 */
 	auto crbegin() const noexcept -> ConstReverseIterator {
 		return rbegin();
 	}
 
 	/**
-	 * @brief reverse end
+	 * @brief Returns a reverse iterator to the end.
+	 * @return Reverse iterator to the element following the last element.
 	 */
 	auto rend() noexcept -> ReverseIterator {
 		return ReverseIterator(begin());
 	}
 
 	/**
-	 * @brief reverse end
+	 * @brief Returns a reverse iterator to the end.
+	 * @return Reverse iterator to the element following the last element.
 	 */
 	auto rend() const noexcept -> ConstReverseIterator {
 		return ConstReverseIterator(begin());
 	}
 
 	/**
-	 * @brief const reverse end
+	 * @brief Returns a reverse iterator to the end.
+	 * @return Reverse iterator to the element following the last element.
 	 */
 	auto crend() const noexcept -> ConstReverseIterator {
 		return rend();
@@ -564,438 +413,298 @@ public:
 	///@}
 
 	/**
-	 * @name 容量
+	 * @name Capacity
 	 */
 	///@{
 	/**
-	 * @brief begin
+	 * @brief Checks whether the container is empty.
+	 * @retval true The container is empty.
+	 * @retval false Otherwise.
 	 */
-	/**
-	 * @brief is empty
-	 */
-	auto is_empty() const noexcept -> bool {
-		return this->m_begin() == this->m_end();
+	auto empty() const noexcept -> Boolean {
+		return this->m_empty();
 	}
 
 	/**
-	 * @brief size
+	 * @brief Returns the number of elements.
+	 * @return The number of elements in the container.
 	 */
 	auto size() const noexcept -> Size {
-		return static_cast<Size>(this->m_end() - this->m_begin());
+		return this->m_size();
 	}
 
+	/**
+	 * @brief Returns the number of elements that the container has currently allocated space for.
+	 * @return Capacity of the currently allocated storage.
+	 */
 	auto capacity() const noexcept -> Size {
 		return this->m_capacity();
 	}
 
 	/**
-	 * @brief max size
+	 * @brief Returns the maximum possible number of element.
+	 * @return Maximum possible number of element.
 	 */
 	auto max_size() const noexcept -> Size {
-		return min<Size>(AllocatorTraits::max_size(this->m_allocator()), IntegerTraits<Size>::max() / 2);
+		return this->m_max_size();
 	}
 
 	/**
-	 * @brief 设置容量为至少 \em size
-	 * @param[in] count 预留容量
+	 * @brief Reserves storage.
+	 * @param new_capacity new capacity of the container.
 	 */
-	auto reserve(Size count) -> DynamicArray &;
+	void reserve(Size new_capacity) {
+		this->m_reserve(new_capacity);
+	}
 
 	/**
-	 * @brief 缩减容量，释放未使用的空间
+	 * @brief Reduces memory usage by freeing unused memory.
 	 */
-	auto clamp() noexcept -> DynamicArray &;
+	void clamp() noexcept {
+		this->m_clamp();
+	}
 	///@}
 
 	/**
-	 * @name 添加性操作
+	 * @name Compare
 	 */
 	///@{
 	/**
-	 * @brief 从参数构造对象并添加到尾部
+	 * @brief Check equality.
+	 * @param y Another containers to compare.
+	 * @return \c true if the contents of the containers are equal, \c false otherwise.
+	 */
+	auto operator==(Self const & y) const -> bool {
+		return size() == y.size() && equal(begin(), end(), y.begin(), y.end());
+	}
+
+	/**
+	 * @brief Lexicographically less comparision.
+	 * @param y Another containers to compare.
+	 * @return \c true if the contents of this container are lexicographically less than the contents of \p y, \c false otherwise.
+	 */
+	auto operator<(Self const & y) const -> bool {
+		return lexicographical_compare(begin(), end(), y.begin(), y.end());
+	}
+	///@}
+
+	/**
+	 * @name Assignment
+	 */
+	///@{
+	/**
+	 * @brief Copy assignment.
+	 * @param other Data source container.
+	 * @return \c *this
+	 */
+	auto operator=(Self const & other) -> Self & {
+		this->m_assign(other);
+		return *this;
+	}
+
+	/**
+	 * @brief Move assignment.
+	 * @param other Data source container.
+	 * @return \c *this
+	 */
+	auto operator=(Self && other) noexcept(
+		BooleanOr< typename AllocatorTraits::IsPropagateOnContainerMoveAssignment, typename AllocatorTraits::IsAlwaysEqual >{}
+	) -> Self & {
+		this->m_assign(move(other));
+		return *this;
+	}
+
+	/**
+	 * @brief Replaces the contents with the elements from the initializer list \p list.
+	 * @param list Initializer list to copy the values from.
+	 * @return \c *this
+	 */
+	auto operator=(InitializerList<Element> list) -> Self & {
+		assign(list.begin(), list.end());
+		return *this;
+	}
+
+	/**
+	 * @brief Replaces the contents with \p count copies of value \p element
+	 * @param element The value to initialize elements of the container with.
+	 * @param count The new size of the container.
+	 * @return \c *this
+	 */
+	void assign(Element const & element, Size count) {
+		this->m_assign(element, count);
+	}
+
+	/**
+	 * @brief Replaces the contents with copies of those in the range \f$ [first, last) \f$.
+	 * @param first,last The range to copy the elements from.
+	 * @return \c *this
+	 */
+	template< typename TIterator >
+	auto assign(TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator> > {
+		this->m_assign(first, last);
+	}
+
+	/**
+	 * @brief Replaces the contents with the elements from the initializer list \p list.
+	 * @param list Initializer list to copy the values from.
+	 * @return \c *this
+	 */
+	void assign(InitializerList<Element> list) {
+		assign(list.begin(), list.end());
+	}
+	///@}
+
+	/**
+	 * @name Insertion
+	 */
+	///@{
+	/**
+	 * @brief Constructs element in-place.
+	 * @tparam TArgs Type of \p args
+	 * @param position Iterator before which the new element will be constructed.
+	 * @param args Arguments to forward to the constructor of the element.
+	 * @return Iterator pointing to the emplaced element.
 	 */
 	template< typename ... TArgs >
-	auto emplace_back(TArgs && ... args) -> DynamicArray &;
-
-	auto insert_back(Element const & x) -> DynamicArray & {
-		return emplace_back(x);
+	auto emplace(ConstIterator position, TArgs && ... args) -> Iterator {
+		return Iterator(this->m_emplace(position - cbegin(), forward<TArgs>(args)...));
 	}
 
-	auto insert_back(Element && x) -> DynamicArray & {
-		return emplace_back(move(x));
+	/**
+	 * @brief Inserts \p element before \p position.
+	 * @param position Iterator after which the content will be inserted.
+	 * @param element Element value to insert.
+	 * @return Iterator to the inserted \p element.
+	 */
+	auto insert(ConstIterator position, Element const & element) -> Iterator {
+		return emplace(position, element);
 	}
 
+	/**
+	 * @brief Inserts \p element before \p position.
+	 * @param position Iterator after which the content will be inserted.
+	 * @param element Element value to insert.
+	 * @return Iterator to the inserted \p element.
+	 */
+	auto insert(ConstIterator position, Element && element) -> Iterator {
+		return emplace(position, move(element));
+	}
+
+	/**
+	 * @brief Inserts \p count copies of the \p element before \p position.
+	 * @param position Iterator after which the content will be inserted, can be the end() iterator.
+	 * @param element Element value to insert.
+	 * @param count Number of copies to insert.
+	 * @return Iterator to the first element inserted, or \p position if <code>count == 0</code>.
+	 */
+	auto insert(ConstIterator position, Element const & element, Size count) -> Iterator {
+		return Iterator(this->m_insert(position - this->m_begin(), element, count));
+	}
+
+	/**
+	 * @brief Inserts elements from range \f$ [first, last) \f$ before \p position.
+	 * @tparam TIterator Type of \p first and \p last.
+	 * @param position Iterator after which the content will be inserted, can be the end() iterator.
+	 * @param first,last The range of elements to insert, can't be iterators into container for which insert is called
+	 * @return Iterator to the first element inserted, or \p position if <code>first == last</code>.
+	 */
+	template< typename TIterator >
+	auto insert(ConstIterator position, TIterator first, TIterator last) -> EnableIf< IsInputIterator<TIterator>, Iterator > {
+		return Iterator(this->m_insert(position - this->m_begin(), first, last));
+	}
+
+	/**
+	 * @brief Inserts elements from initializer \p list ilist before \p position.
+	 * @param position Iterator after which the content will be inserted, can be the end() iterator.
+	 * @param list Initializer list to insert the values from.
+	 * @return Iterator to the first element inserted, or pos if ilist is empty.
+	 */
+	auto insert(ConstIterator position, InitializerList<Element> list) -> Iterator {
+		return insert(position, list.begin(), list.end());
+	}
+
+	/**
+	 * @brief Constructs an element in-place at the end.
+	 * @tparam TArgs Type of \p args
+	 * @param args Arguments to forward to the constructor of the element.
+	 * @return A reference to the inserted element.
+	 */
 	template< typename ... TArgs >
-	auto emplace(ConstIterator p, TArgs && ... args) -> Iterator;
-
-	auto insert(ConstIterator p, Element const & x) -> Iterator {
-		return emplace(p, x);
+	auto emplace_back(TArgs && ... args) -> Reference {
+		this->m_emplace_back(forward<TArgs>(args)...);
+		return back();
 	}
 
-	auto insert(ConstIterator p, Element && x) -> Iterator {
-		return emplace(p, move(x));
+	/**
+	 * @brief Inserts an element to the end.
+	 * @param element Element value to insert.
+	 */
+	void insert_back(Element const & element) {
+		emplace_back(element);
 	}
 
-	auto insert(ConstIterator p, Element const & x, Size s) -> Iterator;
-
-	template< typename TInputIterator >
-	auto insert(ConstIterator p, TInputIterator f, TInputIterator l) -> EnableIf< IsInputIterator<TInputIterator>, TInputIterator >;
-
-	auto insert(ConstIterator p, InitializerList<Element> l) -> Iterator {
-		return insert(p, l.begin(), l.end());
+	/**
+	 * @brief Inserts an element to the end.
+	 * @param element Element value to insert.
+	 */
+	void insert_back(Element && element) {
+		emplace_back(move(element));
 	}
 	///@}
 
 	/**
-	 * @name 删除操作
+	 * @name Deletion
 	 */
 	///@{
-	auto clear() noexcept -> DynamicArray & {
-		auto old_size = size();
-		m_clear();
-		m_annotate_shrink(old_size);
+	/**
+	 * @brief Removes the element at \p position.
+	 * @param position Iterator to the element to remove.
+	 * @return Iterator following the removed element, or \c end() if the iterator \p position refers to the last element.
+	 */
+	auto erase(ConstIterator position) -> Iterator {
+		return Iterator(this->m_erase(position - cbegin()));
 	}
 
-	auto erase(ConstIterator p) -> Iterator;
+	/**
+	 * @brief Removes the elements in the range \f$ [first, last) \f$ .
+	 * @param first,last Range of elements to remove.
+	 * @return Iterator following the last removed element.
+	 */
+	auto erase(ConstIterator first, ConstIterator last) -> Iterator {
+		return Iterator(this->m_erase(first - cbegin(), last - first));
+	}
 
-	auto erase(ConstIterator f, ConstIterator l) -> Iterator;
+	/**
+	 * @brief Removes the last element.
+	 */
+	void erase_back() {
+		this->m_destruct_at_end(this->m_end() - 1);
+	}
 
-	auto erase_back() -> DynamicArray &;
+	/**
+	 * @brief Clears the contents.
+	 */
+	void clear() noexcept {
+		this->m_clear();
+	}
 	///@}
 
 	/**
-	 * @name 杂项
+	 * @name Miscellaneous
 	 */
 	///@{
-	void swap(DynamicArray & other) noexcept(BooleanOr< BooleanNot< typename NodeAllocatorTraits::IsPropagateOnContainerSwap >, IsNothrowSwappable<NodeAllocator> >{});
+	/**
+	 * @brief Swaps the contents.
+	 * @param other Container to exchange the contents with.
+	 */
+	void swap(Self & other) noexcept(
+		BooleanOr< BooleanNot< typename AllocatorTraits::IsPropagateOnContainerSwap >, IsNothrowSwappable<Allocator> >{}
+	) {
+		this->m_swap(other);
+	}
 	///@}
-
-private:
-	constexpr static auto m_new_capacity(Size new_size) noexcept -> Size {
-		Size max_size = this->max_size();
-		if (max_size < new_size) {
-			throw_length_exception(BR_CURRENT_FUNCTION);
-		}
-		Size capacity = this->capacity();
-		return (capacity < max_size / 2) ? max<Size>(2 * capacity, new_size) : max_size;
-	}
-
-	void m_allocate(Size n) {
-		if (n > max_size()) {
-			throw_length_exception();
-		}
-		this->m_storage_begin() = this->m_end() = AllocatorTraits::allocate(this->m_allocator(), n);
-		this->m_storage_end() = this->m_storage_begin() + n;
-	}
-
-	void m_deallocate() noexcept {
-		if (this->m_storage_begin() != nullptr) {
-			clear();
-			AllocatorTraits::deallocate(this->m_allocator(), this->m_storage_begin(), capacity());
-			this->m_storage_begin() = this->m_end() = this->m_storage_end() = nullptr;
-		}
-	}
-
-	template<typename TSinglePassIterator>
-	void m_construct(TSinglePassIterator first, TSinglePassIterator last, SinglePassTraversalTag);
-
-	template<typename TForwardIterator>
-	void m_construct(TForwardIterator first, TForwardIterator last, ForwardTraversalTag);
-
-	void m_construct_at_end(Size n);
-
-	void m_construct_at_end(Size n, ConstReference x);
-
-	template<typename TForwardIterator>
-	void m_construct_at_end(TForwardIterator first, TForwardIterator last);
-
-	template<typename TSinglePassIterator>
-	void m_assign(TSinglePassIterator first, TSinglePassIterator last, SinglePassTraversalTag);
-
-	template<typename TForwardIterator>
-	void m_assign(TForwardIterator first, TForwardIterator last, ForwardTraversalTag);
-
-	void m_move_assign(DynamicArray & other, BooleanTrue) noexcept(HasNothrowMoveAssign<Allocator>{}) {
-		m_deallocate();
-		m_move_assign_allocator(other);
-		this->m_storage_begin() = other.m_storage_begin();
-		this->m_end() = other.m_end();
-		this->m_storage_end() = other.m_storage_end();
-		other.m_storage_begin() = other.m_end() = other.m_storage_end() = nullptr;
-	}
-
-	void m_move_assign(DynamicArray & other, BooleanFalse) noexcept(typename AllocatorTraits::IsAlwaysEqual{}) {
-		if (m_allocator() == other.m_allocator()) {
-			m_move_assign(other, BooleanTrue{});
-		} else {
-			assign(make_move_iterator(other.begin()), make_move_iterator(other.end()));
-		}
-	}
-
-	void m_reallocate(Size new_capacity);
-
-	Pointer m_reallocate(Size new_capacity, Size reverse);
-
-	void m_move_elements(Pointer from_begin, Pointer from_end, Pointer to_begin) {
-		Pointer old_end = this->m_end();
-		auto n = old_end - to_begin;
-		for (auto p = from_begin + n; p < from_end; ++p, ++this->m_end()) {
-			construct(m_allocator(), PointerTraits::to_raw(this->m_end()), move(*p));
-		}
-		move_backward(from_begin, from_end + n, old_end);
-	}
-
 }; // class DynamicArray< TElement, TAllocator >
 
-template< typename TElement, typename TAllocator >
-template<typename TSinglePassIterator>
-void DynamicArray< TElement, TAllocator >::m_construct(TSinglePassIterator first, TSinglePassIterator last, SinglePassTraversalTag) {
-	for (; first != last; ++first) {
-		insert_back(*first);
-	}
-}
-
-template< typename TElement, typename TAllocator >
-template<typename TForwardIterator>
-void DynamicArray< TElement, TAllocator >::m_construct(TForwardIterator first, TForwardIterator last, ForwardTraversalTag) {
-	Size n = static_cast<Size>(distance(first, last));
-	if (n > 0) {
-		m_allocate(__n);
-		m_construct_at_end(first, last, n);
-	}
-}
-
-template< typename TElement, typename TAllocator >
-void DynamicArray< TElement, TAllocator >::m_construct_at_end(Size n) {
-	Allocator & allocator = this->m_allocator();
-	do {
-		AllocatorTraits::construct(allocator, PointerTraits::to_raw(this->m_end()));
-		++this->m_end();
-		--n;
-	} while (n > 0);
-}
-
-template< typename TElement, typename TAllocator >
-void DynamicArray< TElement, TAllocator >::m_construct_at_end(Size n, ConstReference x) {
-	Allocator & allocator = this->m_allocator();
-	do {
-		AllocatorTraits::construct(allocator, PointerTraits::to_raw(this->m_end()), x);
-		++this->m_end();
-		--n;
-	} while (n > 0);
-}
-
-template< typename TElement, typename TAllocator >
-template<typename TForwardIterator>
-void DynamicArray< TElement, TAllocator >::m_construct_at_end(TForwardIterator first, TForwardIterator last, ForwardTraversalTag) {
-	Allocator & allocator = this->m_allocator();
-	for (; first != last; ++last, (void) ++this->m_end()) {
-		AllocatorTraits::construct(allocator, PointerTraits::to_raw(this->m_end()), *last);
-	}
-}
-
-template< typename TElement, typename TAllocator >
-template<typename TSinglePassIterator>
-void DynamicArray< TElement, TAllocator >::m_assign(TSinglePassIterator first, TSinglePassIterator last, SinglePassTraversalTag) {
-	clear();
-	for (; first != last; ++first) {
-		insert_back(*first);
-	}
-};
-
-template< typename TElement, typename TAllocator >
-template<typename TForwardIterator>
-void DynamicArray< TElement, TAllocator >::m_assign(TForwardIterator first, TForwardIterator last, ForwardTraversalTag) {
-	Size new_size = static_cast<Size>(distance(first, last));
-	if (capacity() < new_size) {
-		m_deallocate();
-		m_allocate(m_new_capacity(new_size));
-		m_construct_at_end(first, last, new_size);
-	} else {
-		TForwardIterator mid = last;
-		bool growing = false;
-		if (size() < new_size) {
-			growing = true;
-			mid = first;
-			advance(mid, size());
-		}
-		Pointer new_end = copy(first, mid, this->begin());
-		if (growing) {
-			m_construct_at_end(mid, last, new_size - size());
-		} else {
-			this->m_destruct_at_end(new_end);
-		}
-	}
-}
-
-template< typename TElement, typename TAllocator >
-void DynamicArray< TElement, TAllocator >::m_reallocate(Size new_capacity) {
-	Buffer buffer(new_capacity, m_allocator());
-	buffer.m_end = construct_forward(this->m_allocator(), make_move_iterator_if_noexcept(this->m_begin()), make_move_iterator_if_noexcept(this->m_end()), buffer.m_end);
-	swap(this->m_storage_begin(), buffer.m_storage_begin);
-	swap(this->m_end(), buffer.m_end);
-	swap(this->m_storage_end(), buffer.m_storage_end);
-}
-
-template< typename TElement, typename TAllocator >
-void DynamicArray< TElement, TAllocator >::m_reallocate(Size new_capacity, Pointer reverse_position) {
-	Buffer buffer(new_capacity, m_allocator());
-	buffer.m_end = construct_forward(this->m_allocator(), make_move_iterator_if_noexcept(this->m_begin()), make_move_iterator_if_noexcept(reverse_position), buffer.m_end);
-	Pointer pointer = buffer.m_end;
-	++buffer.m_end;
-	buffer.m_end = construct_forward(this->m_allocator(), make_move_iterator_if_noexcept(reverse_position), make_move_iterator_if_noexcept(this->m_end()), buffer.m_end);
-	swap(this->m_storage_begin(), buffer.m_storage_begin);
-	swap(this->m_end(), buffer.m_end);
-	swap(this->m_storage_end(), buffer.m_storage_end);
-	return pointer;
-}
-
-template< typename TElement, typename TAllocator >
-template< typename ... TArgs >
-void DynamicArray< TElement, TAllocator >::m_reallocate_and_emplace(Size new_capacity, Pointer position, TArgs && ... args) {
-	Buffer buffer(new_capacity, m_allocator());
-	buffer.m_end = construct_forward(this->m_allocator(), make_move_iterator_if_noexcept(this->m_begin()), make_move_iterator_if_noexcept(split_pointer), buffer.m_end);
-	construct(this->m_allocator(), buffer.m_end, forward<TArgs>(args)...);
-	++buffer.m_end;
-	buffer.m_end = construct_forward(this->m_allocator(), make_move_iterator_if_noexcept(position), make_move_iterator_if_noexcept(this->m_end()), buffer.m_end);
-	swap(this->m_storage_begin(), buffer.m_storage_begin);
-	swap(this->m_end(), buffer.m_end);
-	swap(this->m_storage_end(), buffer.m_storage_end);
-}
-
-template< typename TElement, typename TAllocator >
-DynamicArray< TElement, TAllocator >::DynamicArray(DynamicArray const & other) : Base(AllocatorTraits::select_on_container_copy_construction(other.m_allocator())) {
-	Size n = other.size();
-	if (n > 0) {
-		m_allocator(n);
-		m_construct_at_end(other.begin(), other.end(), n);
-	}
-}
-
-template< typename TElement, typename TAllocator >
-DynamicArray< TElement, TAllocator >::DynamicArray(DynamicArray const & other, Allocator const & allocator) : Base(allocator) {
-	Size n = other.size();
-	if (n > 0) {
-		m_allocator(n);
-		m_construct_at_end(other.begin(), other.end(), n);
-	}
-}
-
-template< typename TElement, typename TAllocator >
-DynamicArray< TElement, TAllocator >::DynamicArray(DynamicArray && other) noexcept(HasNothrowMoveConstructor<NodeAllocator>{}) : Base(move(other.m_allocator())) {
-	this->m_storage_begin() = other.m_storage_begin();
-	this->m_end() = other.m_end();
-	this->m_storage_end() = other.m_storage_end();
-	other.m_storage_begin() = other.m_end() = other.m_storage_end() = nullptr;
-}
-
-template< typename TElement, typename TAllocator >
-DynamicArray< TElement, TAllocator >::DynamicArray(DynamicArray && other, Allocator const & allocator) : Base(allocator) {
-	if (m_allocator() == other.m_allocator()) {
-		this->m_storage_begin() = other.m_storage_begin();
-		this->m_end() = other.m_end();
-		this->m_storage_end() = other.m_storage_end();
-		other.m_storage_begin() = other.m_end() = other.m_storage_end() = nullptr;
-	} else {
-		assign(make_move_iterator(other.begin()), make_move_iterator(other.end()));
-	}
-}
-
-template< typename TElement, typename TAllocator >
-DynamicArray< TElement, TAllocator >::DynamicArray(Size n, Allocator const & allocator = Allocator{}) : Base(allocator) {
-	if (n > 0) {
-		m_allocate(n);
-		m_construct_at_end(n);
-	}
-}
-
-template< typename TElement, typename TAllocator >
-DynamicArray< TElement, TAllocator >::DynamicArray(ConstReference x, Size n, Allocator const & allocator = Allocator{}) : Base(allocator) {
-	if (n > 0) {
-		m_allocate(n);
-		m_construct_at_end(n, x);
-	}
-}
-
-template< typename TElement, typename TAllocator >
-auto DynamicArray< TElement, TAllocator >::operator=(DynamicArray const & other) -> DynamicArray & {
-	if (this != &other) {
-		m_copy_assignment_allocator()(other);
-		assign(other.m_begin(), other.m_end());
-	}
-	return *this;
-}
-
-template< typename TElement, typename TAllocator >
-auto DynamicArray< TElement, TAllocator >::assign(Element const & x, Size n) -> DynamicArray & {
-	if (capacity() < n) {
-		m_deallocate();
-		m_allocate(m_new_capacity(n));
-		m_construct_at_end(n, x);
-	} else {
-		Size s = size();
-		fill_n(this->m_begin(), min(n, s), x);
-		if (s < n) {
-			m_construct_at_end(n - s, x);
-		} else {
-			this->m_destruct_at_end(this->m_begin() + n);
-		}
-	}
-	return *this;
-}
-
-template< typename TElement, typename TAllocator >
-auto DynamicArray< TElement, TAllocator >::reserve(Size new_capacity) -> DynamicArray & {
-	if (capacity() < new_capacity) {
-		m_reallocate(new_capacity);
-	}
-	return *this;
-}
-
-template< typename TElement, typename TAllocator >
-auto DynamicArray< TElement, TAllocator >::clamp() noexcept -> DynamicArray & {
-	if (size() < capacity()) {
-#if !defined(BR_NO_EXCEPTIONS)
-		try {
-#endif
-			m_reallocate(size());
-#if !defined(BR_NO_EXCEPTIONS)
-		} catch (...) {
-		}
-#endif
-	}
-}
-template< typename TElement, typename TAllocator >
-template< typename ... TArgs >
-auto DynamicArray< TElement, TAllocator >::emplace_back(TArgs && ... args) -> DynamicArray & {
-	if (!(this->m_end() < this->m_storage_end())) {
-		m_reallocate(m_new_capacity(size() + 1));
-	}
-	AllocatorTraits::construct(this->m_allocator(), PointerTraits::to_raw(this->m_end()), forward<TArgs>(args)...);
-	++this->m_end();
-	return *this;
-}
-
-template< typename TElement, typename TAllocator >
-template< typename ... TArgs >
-auto DynamicArray< TElement, TAllocator >::emplace(ConstIterator position, TArgs && ... args) -> Iterator {
-	Pointer p = this->m_begin() + (position - begin());
-	if (this->m_end() < this->m_storage_end()) {
-		if (p == this->m_end()) {
-			++this->m_end();
-		} else {
-			m_move_elements(p, this->m_end(), p + 1);
-		}
-	} else {
-		p = m_reallocate(m_new_capacity(size() + 1), p);
-	}
-	AllocatorTraits::construct(this->m_allocator(), PointerTraits::to_raw(p), forward<TArgs>(args)...);
-	return Iterator(p);
-}
-
-template< typename TElement, typename TAllocator >
-auto insert(ConstIterator p, Element const & x, Size s) -> Iterator {
-
-};
+} // namespace Container
 
 } // namespace BR

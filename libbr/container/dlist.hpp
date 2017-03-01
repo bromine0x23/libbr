@@ -27,6 +27,7 @@
 #include <libbr/type_traits/has_nothrow_default_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_move_assignment.hpp>
 #include <libbr/type_traits/has_nothrow_move_constructor.hpp>
+#include <libbr/type_traits/is_input_iterator.hpp>
 #include <libbr/type_traits/is_nothrow_swappable.hpp>
 #include <libbr/utility/forward.hpp>
 #include <libbr/utility/move.hpp>
@@ -87,12 +88,12 @@ private:
 
 public:
 	/**
-	 * Element &
+	 * @brief Element &
 	 */
 	using Reference = Element &;
 
 	/**
-	 * Element const &
+	 * @brief Element const &
 	 */
 	using ConstReference = Element const &;
 
@@ -111,13 +112,6 @@ public:
 	using ReverseIterator = BR::ReverseIterator<Iterator>;
 
 	using ConstReverseIterator = BR::ReverseIterator<ConstIterator>;
-
-private:
-	template< typename TIterator >
-	using IsInputIterator = BooleanAnd<
-		IsConvertible< typename IteratorTraits<TIterator>::Category, ReadableTag >,
-		IsConvertible< typename IteratorTraits<TIterator>::Category, SinglePassTraversalTag >
-	>;
 
 public:
 	/**
@@ -139,39 +133,39 @@ public:
 
 	/**
 	 * @brief Copy constructor.
-	 * @param list Another container to be used as source to initialize the elements of the container with.
+	 * @param other Another container to be used as source to initialize the elements of the container with.
 	 */
-	DList(Self const & list) : Base(Allocator(NodeAllocatorTraits::select_on_container_copy_construction(list.m_allocator()))) {
-		insert(begin(), list.begin(), list.end());
+	DList(Self const & other) : Base(Allocator(NodeAllocatorTraits::select_on_container_copy_construction(other.m_allocator()))) {
+		insert(begin(), other.begin(), other.end());
 	}
 
 	/**
 	 * @brief Copy constructor.
-	 * @param list Another container to be used as source to initialize the elements of the container with.
+	 * @param other Another container to be used as source to initialize the elements of the container with.
 	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
-	DList(Self const & list, Allocator const & allocator) : Base(allocator) {
-		insert(begin(), list.begin(), list.end());
+	DList(Self const & other, Allocator const & allocator) : Base(allocator) {
+		insert(begin(), other.begin(), other.end());
 	}
 
 	/**
 	 * @brief Move constructor.
-	 * @param list Another container to be used as source to initialize the elements of the container with.
+	 * @param other Another container to be used as source to initialize the elements of the container with.
 	 */
-	DList(Self && list) noexcept(HasNothrowMoveConstructor<NodeAllocator>{}) : Base(Allocator(move(list.m_allocator()))) {
-		splice(end(), move(list));
+	DList(Self && other) noexcept(HasNothrowMoveConstructor<NodeAllocator>{}) : Base(Allocator(move(other.m_allocator()))) {
+		splice(end(), move(other));
 	}
 
 	/**
 	 * @brief Move constructor.
-	 * @param list Another container to be used as source to initialize the elements of the container with.
+	 * @param other Another container to be used as source to initialize the elements of the container with.
 	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
-	DList(Self && list, Allocator const & allocator) : Base(allocator) {
-		if (this->m_allocator() == list.m_allocator()) {
-			splice(end(), move(list));
+	DList(Self && other, Allocator const & allocator) : Base(allocator) {
+		if (this->m_allocator() == other.m_allocator()) {
+			splice(end(), move(other));
 		} else {
-			assign(make_move_iterator(list.begin()), make_move_iterator(list.end()));
+			assign(make_move_iterator(other.begin()), make_move_iterator(other.end()));
 		}
 	}
 
@@ -427,7 +421,7 @@ public:
 	///@}
 
 	/**
-	 * @name 比较
+	 * @name Compare
 	 */
 	///@{
 	/**
@@ -455,26 +449,24 @@ public:
 	///@{
 	/**
 	 * @brief Copy assignment.
-	 * @param list Data source container.
+	 * @param other Data source container.
 	 * @return \c *this
 	 */
-	auto operator=(Self const & list) -> Self & {
-		if (this != &list) {
-			this->m_copy_assign_allocator(list);
-			assign(list.begin(), list.end());
+	auto operator=(Self const & other) -> Self & {
+		if (this != &other) {
+			this->m_copy_assign_allocator(other);
+			assign(other.begin(), other.end());
 		}
 		return *this;
 	}
 
 	/**
 	 * @brief Move assignment.
-	 * @param list Data source container.
+	 * @param other Data source container.
 	 * @return \c *this
 	 */
-	auto operator=(Self && list) noexcept(
-		BooleanAnd< typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment, HasNothrowMoveAssignment<Allocator> >{}
-	) -> Self & {
-		this->m_move_assign(list);
+	auto operator=(Self && other) noexcept(typename AllocatorTraits::IsAlwaysEqual{}) -> Self & {
+		this->m_move_assign(other);
 		return *this;
 	}
 

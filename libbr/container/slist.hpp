@@ -411,26 +411,24 @@ public:
 	///@{
 	/**
 	 * @brief Copy assignment.
-	 * @param list Data source container.
+	 * @param other Data source container.
 	 * @return \c *this
 	 */
-	auto operator=(Self const & list) -> Self & {
-		if (this != &list) {
-			this->m_copy_assign_allocator(list);
-			assign(list.begin(), list.end());
+	auto operator=(Self const & other) -> Self & {
+		if (this != &other) {
+			this->m_copy_assign_allocator(other);
+			assign(other.begin(), other.end());
 		}
 		return *this;
 	}
 
 	/**
 	 * @brief Move assignment.
-	 * @param list Data source container.
+	 * @param other Data source container.
 	 * @return \c *this
 	 */
-	auto operator=(Self && list) noexcept(
-		BooleanAnd< typename NodeAllocatorTraits::IsPropagateOnContainerMoveAssignment, HasNothrowMoveAssignment<Allocator> >{}
-	) -> Self & {
-		this->m_move_assign(list);
+	auto operator=(Self && other) noexcept(typename AllocatorTraits::IsAlwaysEqual{}) -> Self & {
+		this->m_move_assign(other);
 		return *this;
 	}
 

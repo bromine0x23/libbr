@@ -11,6 +11,7 @@
 #include <libbr/functional/equal.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>
 #include <libbr/utility/move.hpp>
+#include <libbr/utility/swap.hpp>
 
 namespace BR {
 
@@ -46,6 +47,7 @@ inline namespace Algorithm {
 
 template< typename TForwardIterator0, typename TForwardIterator1 >
 inline auto swap(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1) -> TForwardIterator1 {
+	using BR::swap;
 	for(; first0 != last0; ++first0, (void)++first1) {
 		swap(*first0, *first1);
 	}
@@ -54,6 +56,7 @@ inline auto swap(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIter
 
 template< typename TForwardIterator0, typename TForwardIterator1 >
 inline auto swap(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1) -> TForwardIterator1 {
+	using BR::swap;
 	for(; first0 != last0 && first1 != last1; ++first0, (void)++first1) {
 		swap(*first0, *first1);
 	}

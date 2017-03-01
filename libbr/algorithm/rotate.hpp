@@ -42,6 +42,7 @@ namespace Algorithm {
 
 template< typename TForwardIterator >
 inline auto rotate_left(TForwardIterator first, TForwardIterator last) -> TForwardIterator {
+	using BR::move;
 	auto tmp = move(*first);
 	auto before_last = move(next(first), last, first);
 	*before_last = move(tmp);
@@ -50,6 +51,7 @@ inline auto rotate_left(TForwardIterator first, TForwardIterator last) -> TForwa
 
 template< typename TBidirectionalIterator >
 inline auto rotate_right(TBidirectionalIterator first, TBidirectionalIterator last) -> TBidirectionalIterator {
+	using BR::move;
 	auto before_last = prev(last);
 	auto tmp = move(*before_last);
 	auto after_first = move_backward(first, before_last, last);
@@ -97,11 +99,11 @@ auto rotate_gcd(TRandomAccessIterator first, TRandomAccessIterator middle, TRand
 	}
 	auto const g = gcd(length0, length1);
 	for (auto p = first + g; p != first;) {
-		auto t = move(*--p);
+		auto t = BR::move(*--p);
 		auto p1 = p;
 		auto p2 = p1 + length0;
 		do {
-			*p1 = move(*p2);
+			*p1 = BR::move(*p2);
 			p1 = p2;
 			auto const d = last - p2;
 			if (length0 < d) {
@@ -110,7 +112,7 @@ auto rotate_gcd(TRandomAccessIterator first, TRandomAccessIterator middle, TRand
 				p2 = first + (length0 - d);
 			}
 		} while (p2 != p);
-		*p1 = move(t);
+		*p1 = BR::move(t);
 	}
 	return first + length1;
 }
