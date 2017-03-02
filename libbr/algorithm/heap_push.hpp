@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief heap_push
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -16,22 +15,27 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::push_heap
- * @tparam TRandomAccessIterator
- * @tparam TComparator
- * @param[in,out] first,last
- * @param[in] comparator
+ * @brief Adds an element to a max heap.
+ * @tparam TRandomAccessIterator Type of \p first & \p last which satisfies \em RandomAccessIterator.
+ * @tparam TComparator Type of \p comparator.
+ * @param[in,out] first,last The range of elements defining the heap to modify.
+ * @param[in] comparator comparison function object which returns <code>​true</code> if the first argument is less than the second.
  */
 template< typename TRandomAccessIterator, typename TComparator >
-void heap_push(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator);
+void heap_push(
+	TRandomAccessIterator first, TRandomAccessIterator last,
+	TComparator && comparator
+);
 
 /**
- * @brief like std::push_heap
- * @tparam TRandomAccessIterator
- * @param[in,out] first,last
+ * @brief Adds an element to a max heap.
+ * @tparam TRandomAccessIterator Type of \p first & \p last which satisfies \em RandomAccessIterator.
+ * @param[in,out] first,last The range of elements defining the heap to modify.
  */
 template< typename TRandomAccessIterator >
-void heap_push(TRandomAccessIterator first, TRandomAccessIterator last);
+void heap_push(
+	TRandomAccessIterator first, TRandomAccessIterator last
+);
 
 } // namespace Algorithm
 

@@ -1,13 +1,12 @@
 /**
  * @file
  * @brief is_heap
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/algorithm/is_sorted_until.hpp>
+#include <libbr/algorithm/is_heap_until.hpp>
 #include <libbr/functional/less.hpp>
 #include <libbr/utility/forward.hpp>
 
@@ -16,24 +15,31 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::is_heap
- * @tparam TRandomAccessIterator
- * @tparam TComparator
- * @param[in] first,last
- * @param[in] comparator
- * @return
+ * @brief Checks if the given range is a max heap.
+ * @tparam TRandomAccessIterator Type of \p first & \p last which satisfies \em RandomAccessIterator.
+ * @tparam TComparator Type of \p comparator.
+ * @param first,last The range of elements to examine.
+ * @param comparator comparison function object which returns <code>​true</code> if the first argument is less than the second.
+ * @retval true The range is max heap.
+ * @retval false Otherwise.
  */
 template< typename TRandomAccessIterator, typename TComparator >
-auto is_heap(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) -> bool;
+auto is_heap(
+	TRandomAccessIterator first, TRandomAccessIterator last,
+	TComparator && comparator
+) -> Boolean;
 
 /**
- * @brief like std::is_heap
- * @tparam TComparator
- * @param[in] first,last
- * @return
+ * @brief Checks if the given range is a max heap.
+ * @tparam TRandomAccessIterator Type of \p first & \p last which satisfies \em RandomAccessIterator.
+ * @param first,last The range of elements to examine.
+ * @retval true The range is max heap.
+ * @retval false Otherwise.
  */
 template< typename TRandomAccessIterator >
-auto is_heap(TRandomAccessIterator first, TRandomAccessIterator last) -> bool;
+auto is_heap(
+	TRandomAccessIterator first, TRandomAccessIterator last
+) -> Boolean;
 
 } // namespace Algorithm
 
@@ -42,12 +48,12 @@ auto is_heap(TRandomAccessIterator first, TRandomAccessIterator last) -> bool;
 inline namespace Algorithm {
 
 template< typename TRandomAccessIterator, typename TComparator >
-inline auto is_heap(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) -> bool {
-	return is_heap_until(first, last, forward<comparator>(comparator)) == last;
+inline auto is_heap(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) -> Boolean {
+	return is_heap_until(first, last, forward<TComparator>(comparator)) == last;
 }
 
 template< typename TRandomAccessIterator >
-inline auto is_heap(TRandomAccessIterator first, TRandomAccessIterator last) -> bool {
+inline auto is_heap(TRandomAccessIterator first, TRandomAccessIterator last) -> Boolean {
 	return is_heap(first, last, Less<>());
 }
 

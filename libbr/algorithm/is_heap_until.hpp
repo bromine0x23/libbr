@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief is_heap_until
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -15,24 +14,29 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::is_heap_until
- * @tparam TRandomAccessIterator
- * @tparam TComparator
- * @param[in] first,last
- * @param[in] comparator
- * @return
+ * @brief Finds the largest subrange that is a max heap
+ * @tparam TRandomAccessIterator Type of \p first & \p last which satisfies \em RandomAccessIterator.
+ * @tparam TComparator Type of \p comparator.
+ * @param first,last The range of elements to examine.
+ * @param comparator comparison function object which returns <code>​true</code> if the first argument is less than the second.
+ * @return The upper bound of the largest range beginning at first which is a max heap.
  */
 template< typename TRandomAccessIterator, typename TComparator >
-auto is_heap_until(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) -> TRandomAccessIterator;
+auto is_heap_until(
+	TRandomAccessIterator first, TRandomAccessIterator last,
+	TComparator && comparator
+) -> TRandomAccessIterator;
 
 /**
- * @brief like std::is_heap_until
- * @tparam TComparator
- * @param[in] first,last
- * @return
+ * @brief Finds the largest subrange that is a max heap
+ * @tparam TComparator Type of \p comparator.
+ * @param first,last The range of elements to examine.
+ * @return The upper bound of the largest range beginning at first which is a max heap.
  */
 template< typename TRandomAccessIterator >
-auto is_heap_until(TRandomAccessIterator first, TRandomAccessIterator last) -> TRandomAccessIterator;
+auto is_heap_until(
+	TRandomAccessIterator first, TRandomAccessIterator last
+) -> TRandomAccessIterator;
 
 } // namespace Algorithm
 
@@ -50,7 +54,7 @@ auto is_heap_until(TRandomAccessIterator first, TRandomAccessIterator last, TCom
 	auto pp = first;
 	for (; c < length;) {
 		auto cp = first + c;
-		if (forward<comparator>(comparator)(*pp, *cp)) {
+		if (forward<TComparator>(comparator)(*pp, *cp)) {
 			return cp;
 		}
 		++c;
@@ -58,7 +62,7 @@ auto is_heap_until(TRandomAccessIterator first, TRandomAccessIterator last, TCom
 		if (c == length) {
 			return last;
 		}
-		if (forward<comparator>(comparator)(*pp, *cp)) {
+		if (forward<TComparator>(comparator)(*pp, *cp)) {
 			return cp;
 		}
 		++p;
@@ -75,7 +79,7 @@ inline namespace Algorithm {
 
 template< typename TRandomAccessIterator, typename TComparator >
 inline auto is_heap_until(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) -> TRandomAccessIterator {
-	return Detail::Algorithm::is_heap_until(first, last, forward<comparator>(comparator));
+	return Detail::Algorithm::is_heap_until(first, last, forward<TComparator>(comparator));
 }
 
 template< typename TRandomAccessIterator >

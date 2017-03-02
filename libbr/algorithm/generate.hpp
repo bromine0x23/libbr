@@ -1,26 +1,29 @@
 /**
  * @file
  * @brief generate
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/utility/forward.hpp>
 
 namespace BR {
 
 inline namespace Algorithm {
 
 /**
- * @brief like std::generate
- * @tparam TForwardIterator
- * @tparam TGenerator
- * @param[out] first,last
- * @param[in] generator
+ * @brief Assigns the results of successive function calls to every element in a range.
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @tparam TGenerator Type of \p generator.
+ * @param[out] first,last The range of elements to generate.
+ * @param[in] generator Generator function object that will be called.
  */
 template< typename TForwardIterator, typename TGenerator >
-void generate(TForwardIterator first, TForwardIterator last, TGenerator && generator);
+void generate(
+	TForwardIterator first, TForwardIterator last,
+	TGenerator && generator
+);
 
 } // namespace Algorithm
 

@@ -1,13 +1,13 @@
 /**
  * @file
  * @brief heap_pop
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
 
 #include <libbr/config.hpp>
 #include <libbr/functional/less.hpp>
+#include <libbr/iterator/iterator_traits.hpp>
 #include <libbr/utility/forward.hpp>
 #include <libbr/utility/move.hpp>
 #include <libbr/utility/swap.hpp>
@@ -17,22 +17,27 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::pop_heap
- * @tparam TRandomAccessIterator
- * @tparam TComparator
- * @param[in,out] first,last
- * @param[in] comparator
+ * @brief Removes the largest element from a max heap.
+ * @tparam TRandomAccessIterator Type of \p first & \p last which satisfies \em RandomAccessIterator.
+ * @tparam TComparator Type of \p comparator.
+ * @param[in,out] first,last The range of elements defining the valid nonempty heap to modify.
+ * @param[in] comparator comparison function object which returns <code>​true</code> if the first argument is less than the second. 
  */
 template< typename TRandomAccessIterator, typename TComparator >
-void heap_pop(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator);
+void heap_pop(
+	TRandomAccessIterator first, TRandomAccessIterator last,
+	TComparator && comparator
+);
 
 /**
- * @brief like std::pop_heap
- * @tparam TRandomAccessIterator
- * @param[in,out] first,last
+ * @brief Removes the largest element from a max heap.
+ * @tparam TRandomAccessIterator Type of \p first & \p last which satisfies \em RandomAccessIterator.
+ * @param[in,out] first,last The range of elements defining the valid nonempty heap to modify.
  */
 template< typename TRandomAccessIterator >
-void heap_pop(TRandomAccessIterator first, TRandomAccessIterator last);
+void heap_pop(
+	TRandomAccessIterator first, TRandomAccessIterator last
+);
 
 } // namespace Algorithm
 
@@ -42,7 +47,7 @@ namespace Detail {
 namespace Algorithm {
 
 template< typename TRandomAccessIterator, typename TDifference, typename TComparator >
-void heap_shift_down(TRandomAccessIterator first, TRandomAccessIterator last, TDifference length, TRandomAccessIterator start, TComparator & comparator) {
+void heap_shift_down(TRandomAccessIterator first, TRandomAccessIterator last, TDifference length, TRandomAccessIterator start, TComparator && comparator) {
 	auto child = start - first;
 	if (length < 2 || (length - 2) / 2 < child) {
 		return;
@@ -81,6 +86,14 @@ void heap_shift_down(TRandomAccessIterator first, TRandomAccessIterator last, TD
 	*start = move(top);
 }
 
+template< typename TRandomAccessIterator, typename TComparator >
+inline void heap_pop(TRandomAccessIterator first, TRandomAccessIterator last, typename IteratorTraits<TRandomAccessIterator>::Difference length, TComparator && comparator) {
+	if (length > 1) {
+		swap(*first, *--last);
+		heap_shift_down(first, last, length - 1, first, forward<TComparator>(comparator));
+	}
+}
+
 } // namespace Algorithm
 } // namespace Detail
 
@@ -88,11 +101,7 @@ inline namespace Algorithm {
 
 template< typename TRandomAccessIterator, typename TComparator >
 inline void heap_pop(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) {
-	auto length = last - first;
-	if (length > 1) {
-		swap(*first, *--last);
-		heap_shift_down(first, last, length - 1, first, forward<TComparator>(comparator));
-	}
+	Detail::Algorithm::heap_pop(first, last, last - first, forward<TComparator>(comparator));
 }
 
 template< typename TRandomAccessIterator >
