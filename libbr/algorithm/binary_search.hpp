@@ -26,7 +26,11 @@ inline namespace Algorithm {
  * @retval false Otherwise.
  */
 template< typename TForwardIterator, typename TValue, typename TComparator >
-auto binary_search(TForwardIterator first, TForwardIterator last, TValue const & value, TComparator && comparator) -> bool;
+auto binary_search(
+	TForwardIterator first, TForwardIterator last,
+	TValue const & value,
+	TComparator && comparator
+) -> bool;
 
 /**
  * @brief Determines if an element exists in a certain range.

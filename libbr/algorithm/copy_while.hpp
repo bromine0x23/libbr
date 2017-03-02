@@ -23,7 +23,11 @@ inline namespace Algorithm {
  * @return Output iterator to the element in the destination range, one past the last element copied.
  */
 template< typename TInputIterator, typename TOutputIterator, typename TUnaryPredicate >
-auto copy_while(TInputIterator first, TInputIterator last, TOutputIterator output, TUnaryPredicate && predicate) -> TOutputIterator;
+auto copy_while(
+	TInputIterator first, TInputIterator last,
+	TOutputIterator output,
+	TUnaryPredicate && predicate
+) -> TOutputIterator;
 
 } // namespace Algorithm
 

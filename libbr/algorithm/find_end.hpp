@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief find_end
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -16,28 +15,36 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::find_end
- * @tparam TForwardIterator0
- * @tparam TForwardIterator1
- * @tparam TBinaryPredicate
- * @param[in] first0,last0
- * @param[in] first1,last1
- * @param[in] predicate
- * @return
+ * @brief Searches for the last subsequence of elements \f$ [first1, last1) \f$ in the range \f$ [first0, last0) \f$.
+ * @tparam TForwardIterator0 Type of \p first0 & \p last0 which satisfies \em ForwardIterator.
+ * @tparam TForwardIterator1 Type of \p first1 & \p last1 which satisfies \em ForwardIterator.
+ * @tparam TBinaryPredicate Type of \p predicate.
+ * @param first0,last0 The range of elements to examine.
+ * @param first1,last1 The range of elements to search for.
+ * @param predicate Binary predicate which returns ​<code>true</code> if the elements should be treated as equal.
+ * @return Iterator to the beginning of last subsequence \f$ [first1, last1) \f$ in range \f$ [first0, last0) \f$.
+ *         If \f$ [first1, last1) \f$ is empty or if no such subsequence is found, \p last0 is returned.
  */
 template< typename TForwardIterator0, typename TForwardIterator1, typename TBinaryPredicate >
-auto find_end(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1, TBinaryPredicate predicate) -> TForwardIterator0;
+auto find_end(
+	TForwardIterator0 first0, TForwardIterator0 last0,
+	TForwardIterator1 first1, TForwardIterator1 last1,
+	TBinaryPredicate predicate
+) -> TForwardIterator0;
 
 /**
- * @brief like std::find_end
- * @tparam TForwardIterator0
- * @tparam TForwardIterator1
- * @param[in] first0,last0
- * @param[in] first1,last1
+ * @brief Searches for the last subsequence of elements \f$ [first1, last1) \f$ in the range \f$ [first0, last0) \f$.
+ * @tparam TForwardIterator0 Type of \p first0 & \p last0 which satisfies \em ForwardIterator.
+ * @tparam TForwardIterator1 Type of \p first1 & \p last1 which satisfies \em ForwardIterator.
+ * @param first0,last0 The range of elements to examine.
+ * @param first1,last1 The range of elements to search for.
  * @return
  */
 template< typename TForwardIterator0, typename TForwardIterator1 >
-auto find_end(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1) -> TForwardIterator0;
+auto find_end(
+	TForwardIterator0 first0, TForwardIterator0 last0,
+	TForwardIterator1 first1, TForwardIterator1 last1
+) -> TForwardIterator0;
 
 } // namespace Algorithm
 

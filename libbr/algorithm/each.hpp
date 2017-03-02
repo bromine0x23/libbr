@@ -21,7 +21,10 @@ inline namespace Algorithm {
  * @return <code>forward&lt;TUnaryFunctor&gt;(functor)</code>
  */
 template< typename TInputIterator, typename TUnaryFunctor >
-auto each(TInputIterator first, TInputIterator last, TUnaryFunctor && functor) -> decltype(forward<TUnaryFunctor>(functor));
+auto each(
+	TInputIterator first, TInputIterator last,
+	TUnaryFunctor && functor
+) -> decltype(forward<TUnaryFunctor>(functor));
 
 } // namespace Algorithm
 

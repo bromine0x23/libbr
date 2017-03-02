@@ -22,7 +22,10 @@ inline namespace Algorithm {
  * @return
  */
 template< typename TForwardIterator, typename TBinaryPredicate >
-auto adjacent_find(TForwardIterator first, TForwardIterator last, TBinaryPredicate && predicate) -> TForwardIterator;
+auto adjacent_find(
+	TForwardIterator first, TForwardIterator last,
+	TBinaryPredicate && predicate
+) -> TForwardIterator;
 
 /**
  * @brief Finds the first two adjacent items that are equal.
@@ -31,7 +34,9 @@ auto adjacent_find(TForwardIterator first, TForwardIterator last, TBinaryPredica
  * @return
  */
 template< typename TForwardIterator >
-auto adjacent_find(TForwardIterator first, TForwardIterator last) -> TForwardIterator;
+auto adjacent_find(
+	TForwardIterator first, TForwardIterator last
+) -> TForwardIterator;
 
 } // namespace Algorithm
 

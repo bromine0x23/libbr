@@ -25,7 +25,10 @@ inline namespace Algorithm {
  * @return Iterator in the destination range, pointing past the last element copied if \f$ count > 0 \f$ or \p output otherwise.
  */
 template< typename TInputIterator, typename TSize, typename TOutputIterator >
-inline auto copy_n(TInputIterator first, TSize count, TOutputIterator output) -> TOutputIterator;
+inline auto copy_n(
+	TInputIterator first, TSize count,
+	TOutputIterator output
+) -> TOutputIterator;
 
 } // namespace Algorithm
 

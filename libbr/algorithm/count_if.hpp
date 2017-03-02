@@ -17,9 +17,9 @@ inline namespace Algorithm {
  * @brief Counts elements for which predicate \p predicate returns <code>true</code>.
  * @tparam TInputIterator Type of \p first & \p last which satisfies \em InputIterator.
  * @tparam TUnaryPredicate Type of \p predicate.
- * @param first,last
- * @param predicate
- * @return
+ * @param first,last The range of elements to examine.
+ * @param predicate Unary predicate which returns ​<code>true</code> for the required elements.
+ * @return Number of elements that predicate \p predicate returns <code>true</code>.
  */
 template< typename TInputIterator, typename TUnaryPredicate >
 auto count_if(TInputIterator first, TInputIterator last, TUnaryPredicate && predicate) -> typename IteratorTraits<TInputIterator>::Difference;

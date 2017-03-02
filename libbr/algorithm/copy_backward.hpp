@@ -27,7 +27,10 @@ inline namespace Algorithm {
  * @return Iterator to the last element copied.
  */
 template< typename TBidirectionalIterator, typename TOutputIterator >
-auto copy_backward(TBidirectionalIterator first, TBidirectionalIterator last, TOutputIterator output) -> TOutputIterator;
+auto copy_backward(
+	TBidirectionalIterator first, TBidirectionalIterator last,
+	TOutputIterator output
+) -> TOutputIterator;
 
 } // namespace Algorithm
 

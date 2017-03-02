@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief equal_range
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once

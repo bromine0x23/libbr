@@ -28,7 +28,11 @@ inline namespace Algorithm {
  * @retval false Otherwise.
  */
 template< typename TInputIterator0, typename TInputIterator1, typename TBinaryPredicate >
-auto equal(TInputIterator0 first0, TInputIterator0 last0, TInputIterator1 first1, TBinaryPredicate && predicate) -> Boolean;
+auto equal(
+	TInputIterator0 first0, TInputIterator0 last0,
+	TInputIterator1 first1,
+	TBinaryPredicate && predicate
+) -> Boolean;
 
 /**
  * @brief Determines if two sets of elements are the same.
@@ -40,7 +44,10 @@ auto equal(TInputIterator0 first0, TInputIterator0 last0, TInputIterator1 first1
  * @retval false Otherwise.
  */
 template< typename TInputIterator0, typename TInputIterator1 >
-auto equal(TInputIterator0 first0, TInputIterator0 last0, TInputIterator1 first1) -> Boolean;
+auto equal(
+	TInputIterator0 first0, TInputIterator0 last0,
+	TInputIterator1 first1
+) -> Boolean;
 
 /**
  * @brief Determines if two sets of elements are the same.
@@ -54,7 +61,11 @@ auto equal(TInputIterator0 first0, TInputIterator0 last0, TInputIterator1 first1
  * @retval false Otherwise.
  */
 template< typename TInputIterator0, typename TInputIterator1, typename TBinaryPredicate >
-auto equal(TInputIterator0 first0, TInputIterator0 last0, TInputIterator1 first1, TInputIterator1 last1, TBinaryPredicate && predicate) -> Boolean;
+auto equal(
+	TInputIterator0 first0, TInputIterator0 last0,
+	TInputIterator1 first1, TInputIterator1 last1,
+	TBinaryPredicate && predicate
+) -> Boolean;
 
 /**
  * @brief Determines if two sets of elements are the same.
@@ -66,7 +77,10 @@ auto equal(TInputIterator0 first0, TInputIterator0 last0, TInputIterator1 first1
  * @retval false Otherwise.
  */
 template< typename TInputIterator0, typename TInputIterator1 >
-auto equal(TInputIterator0 first0, TInputIterator0 last0, TInputIterator1 first1, TInputIterator1 last1) -> Boolean;
+auto equal(
+	TInputIterator0 first0, TInputIterator0 last0,
+	TInputIterator1 first1, TInputIterator1 last1
+) -> Boolean;
 
 } // namespace Algorithm
 

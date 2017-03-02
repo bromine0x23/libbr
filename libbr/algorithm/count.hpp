@@ -21,7 +21,10 @@ inline namespace Algorithm {
  * @return Number of elements that are equal to \p value.
  */
 template< typename TInputIterator, typename TValue >
-auto count(TInputIterator first, TInputIterator last, TValue const & value) -> typename IteratorTraits<TInputIterator>::Difference;
+auto count(
+	TInputIterator first, TInputIterator last,
+	TValue const & value
+) -> typename IteratorTraits<TInputIterator>::Difference;
 
 } // namespace Algorithm
 

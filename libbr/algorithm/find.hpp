@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief find
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -13,15 +12,19 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::find
- * @tparam TInputIterator
- * @tparam TValue
- * @param[in] first,last
- * @param[in] value
- * @return
+ * @brief Searches for an element equal to \p value.
+ * @tparam TInputIterator Type of \p first & \p last which satisfies \em InputIterator.
+ * @tparam TValue Type of \p value
+ * @param first,last The range of elements to examine.
+ * @param value Value to compare the elements to.
+ * @return Iterator to the first element equal to \p value
+ *         or last if no such element is found.
  */
 template< typename TInputIterator, typename TValue >
-auto find(TInputIterator first, TInputIterator last, TValue const & value) -> TInputIterator;
+auto find(
+	TInputIterator first, TInputIterator last,
+	TValue const & value
+) -> TInputIterator;
 
 } // namespace Algorithm
 
@@ -32,7 +35,7 @@ inline namespace Algorithm {
 template< typename TInputIterator, typename TValue >
 inline auto find(TInputIterator first, TInputIterator last, TValue const & value) -> TInputIterator {
 	for (; first != last; ++first) {
-		if (*first == last) {
+		if (*first == value) {
 			break;
 		}
 	}

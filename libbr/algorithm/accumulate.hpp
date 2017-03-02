@@ -24,7 +24,11 @@ inline namespace Algorithm {
  * @return
  */
 template< typename TInputIterator, typename TValue, typename TBinaryFunctor >
-auto accumulate(TInputIterator first, TInputIterator last, TValue initial, TBinaryFunctor && functor) -> TValue;
+auto accumulate(
+	TInputIterator first, TInputIterator last,
+	TValue initial,
+	TBinaryFunctor && functor
+) -> TValue;
 
 /**
  * @brief Sums up a range of elements.
@@ -35,7 +39,10 @@ auto accumulate(TInputIterator first, TInputIterator last, TValue initial, TBina
  * @return
  */
 template< typename TInputIterator, typename TValue >
-auto accumulate(TInputIterator first, TInputIterator last, TValue initial) -> TValue;
+auto accumulate(
+	TInputIterator first, TInputIterator last,
+	TValue initial
+) -> TValue;
 
 } // namespace Algorithm
 

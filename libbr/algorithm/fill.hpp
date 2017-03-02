@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief fill
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -16,14 +15,17 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::fill
- * @tparam TForwardIterator
- * @tparam TValue
- * @param[in,out] first,last
- * @param[in] value
+ * @brief Copy-assigns the given value to every element in a range.
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @tparam TValue Type of \value
+ * @param[in,out] first,last The range of elements to modify.
+ * @param[in] value the value to be assigned.
  */
 template< typename TForwardIterator, typename TValue >
-void fill(TForwardIterator first, TForwardIterator last, TValue const & value);
+void fill(
+	TForwardIterator first, TForwardIterator last,
+	TValue const & value
+);
 
 } // namespace Algorithm
 

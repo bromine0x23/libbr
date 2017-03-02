@@ -23,7 +23,10 @@ inline namespace Algorithm {
  * @retval false Otherwise.
  */
 template< typename TInputIterator, typename TUnaryPredicate >
-auto any_of(TInputIterator first, TInputIterator last, TUnaryPredicate && predicate) -> Boolean;
+auto any_of(
+	TInputIterator first, TInputIterator last,
+	TUnaryPredicate && predicate
+) -> Boolean;
 
 } // namespace Algorithm
 
