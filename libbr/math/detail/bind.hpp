@@ -63,7 +63,12 @@ union Bind64 {
 
 	constexpr Bind64(UInt64 r) : r(r) {}
 
+#if defined(BR_LITTLE_ENDIAN)
+	constexpr Bind64(UInt32 h, UInt32 l) : l(l), h(h) {}
+#endif
+#if defined(BR_BIG_ENDIAN)
 	constexpr Bind64(UInt32 h, UInt32 l) : h(h), l(l) {}
+#endif
 };
 
 } // namespace Math

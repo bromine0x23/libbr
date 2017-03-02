@@ -17,12 +17,19 @@ TEST(DynamicArray, construct) {
 	DynamicArray< RawString<char> > words2(words0);
 
 	DynamicArray< RawString<char> > words3("Mo", 5);
+
+	BR_FORCE_USE(words0);
 }
 
 TEST(DynamicArray, insert) {
+
 	DynamicArray<int> array{ 0, 1, 2, 3, 4 };
 
+	std::printf("%d %d\n", array.front(), array.back());
+
 	array.insert(array.cbegin(), 5);
+
+	std::printf("%d %d\n", array.front(), array.back());
 
 	EXPECT_EQ((DynamicArray<int>{ 5, 0, 1, 2, 3, 4 }), array);
 

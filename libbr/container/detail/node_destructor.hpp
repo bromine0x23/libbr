@@ -19,7 +19,7 @@ private:
 public:
 	using Pointer = typename AllocatorTraits::Pointer;
 
-	explicit NodeDestructor(Allocator & allocator, bool constructed = false) noexcept : m_allocator(allocator), constructed(constructed) {
+	explicit NodeDestructor(Allocator & allocator, bool constructed = false) noexcept : constructed(constructed), m_allocator(allocator) {
 	}
 
 	void operator()(Pointer pointer) noexcept {

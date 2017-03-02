@@ -8,8 +8,6 @@ using namespace BR;
 TEST(Random, generate_canonical) {
 	{
 		Ranlux24 engine;
-		constexpr auto log2_r = ilog2(engine.max() - engine.min() + UInt64(1));
-		constexpr auto b = 24;
 		engine.seed(); EXPECT_EQ(0.89641070365905761719, (generate_canonical<double, 24>(engine)));
 		engine.seed(); EXPECT_EQ(0.97298180439535997266, (generate_canonical<double, 48>(engine)));
 		engine.seed(); EXPECT_EQ(0.85136216717849999558, (generate_canonical<double, 64>(engine)));

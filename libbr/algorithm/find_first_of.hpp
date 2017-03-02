@@ -25,7 +25,11 @@ inline namespace Algorithm {
  *         If no such element is found, \p last0 is returned.
  */
 template< typename TInputIterator, typename TForwardIterator, typename TBinaryPredicate >
-auto find_first_of(TInputIterator first0, TInputIterator last0, TForwardIterator first1, TForwardIterator last1, TBinaryPredicate && predicate) -> TInputIterator;
+auto find_first_of(
+	TInputIterator first0, TInputIterator last0,
+	TForwardIterator first1, TForwardIterator last1,
+	TBinaryPredicate && predicate
+) -> TInputIterator;
 
 
 /**
@@ -38,7 +42,10 @@ auto find_first_of(TInputIterator first0, TInputIterator last0, TForwardIterator
  *         If no such element is found, \p last0 is returned.
  */
 template< typename TInputIterator, typename TForwardIterator >
-auto find_first_of(TInputIterator first0, TInputIterator last0, TForwardIterator first1, TForwardIterator last1) -> TInputIterator;
+auto find_first_of(
+	TInputIterator first0, TInputIterator last0,
+	TForwardIterator first1, TForwardIterator last1
+) -> TInputIterator;
 
 } // namespace Algorithm
 

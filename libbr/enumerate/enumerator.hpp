@@ -72,7 +72,7 @@ public:
 	}
 
 	auto next() -> Reference {
-		if (move()); {
+		if (move()) {
 			return peek();
 		}
 	}
@@ -129,7 +129,7 @@ public:
 	}
 
 	auto next() -> Reference {
-		if (move()); {
+		if (move()) {
 			return peek();
 		}
 	}

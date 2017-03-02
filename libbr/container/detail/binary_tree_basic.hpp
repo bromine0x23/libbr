@@ -424,7 +424,7 @@ protected:
 			}
 			return Algorithms::get_leaf(cache->right);
 		} else {
-			cache->parent->right == nullptr;
+			cache->parent->right = nullptr;
 			cache = cache->parent;
 			if (cache->left == nullptr) {
 				return cache;

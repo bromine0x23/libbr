@@ -22,7 +22,10 @@ inline namespace Algorithm {
  *         or \p last if no such element is found.
  */
 template< typename TInputIterator, typename TUnaryPredicate >
-auto find_if_not(TInputIterator first, TInputIterator last, TUnaryPredicate && predicate) -> TInputIterator;
+auto find_if_not(
+	TInputIterator first, TInputIterator last,
+	TUnaryPredicate && predicate
+) -> TInputIterator;
 
 } // namespace Algorithm
 

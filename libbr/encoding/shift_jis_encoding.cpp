@@ -44,7 +44,7 @@ auto ShiftJISEncoding::units_to_point(CodeUnit const * b, CodeUnit const * e) ->
 	if (l == 1) {
 		return code;
 	}
-	for (int i = 1; i < l; ++i) {
+	for (Size i = 1; i < l; ++i) {
 		if (b >= e) {
 			break;
 		}

@@ -80,8 +80,8 @@ auto libbr_sqrt_32(Float32 x) -> Float32 {
 
 	UInt32 q = 0;
 
-	for (SInt32  s = 0, r = 0x01000000U; r != 0; r >>= 1) {
-		SInt32 t = s + r;
+	for (UInt32  s = 0, r = 0x01000000U; r != 0; r >>= 1) {
+		UInt32 t = s + r;
 		if (t <= b.r) {
 			s    = t + r;
 			b.r -= t;
@@ -254,7 +254,7 @@ auto libbr_exp2_32(Float32 x) -> Float32 {
 
 	i >>= 8;
 
-	bool unsafe = abs(i) >= 124U;
+	bool unsafe = abs(i) >= 124;
 	sx.exponent += i >> unsafe;
 
 	Float32 ux = (.24022656679F * d + .69314736128F) * sx.f;

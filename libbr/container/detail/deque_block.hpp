@@ -70,16 +70,16 @@ private:
 	using PointerTraits = BR::PointerTraits<Pointer>;
 
 public:
-	DequeBlock() noexcept(HasNothrowDefaultConstructor<Allocator>{}) : m_impl(nullptr, nullptr, nullptr, nullptr) {
+	DequeBlock() noexcept(HasNothrowDefaultConstructor<Allocator>{}) : m_impl() {
 	}
 
-	explicit DequeBlock(Allocator & allocator) : m_impl(nullptr, nullptr, nullptr, nullptr, allocator) {
+	explicit DequeBlock(Allocator & allocator) : m_impl(allocator) {
 	}
 
-	explicit DequeBlock(Allocator const & allocator) : m_impl(nullptr, nullptr, nullptr, nullptr, allocator) {
+	explicit DequeBlock(Allocator const & allocator) : m_impl(allocator) {
 	}
 
-	DequeBlock(Size capacity, Size start, Allocator & allocator) : m_impl(nullptr, nullptr, nullptr, nullptr, allocator) {
+	DequeBlock(Size capacity, Size start, Allocator & allocator) : m_impl(allocator) {
 		storage_begin() = capacity != 0 ? AllocatorTraits::allocate(allocator, capacity) : nullptr;
 		begin() = end() = storage_begin() + start;
 		storage_end() = storage_begin() + capacity;
@@ -132,35 +132,35 @@ public:
 	}
 
 	auto storage_begin() noexcept -> Pointer & {
-		return m_impl.template get<0>();
+		return m_impl.template get<1>();
 	}
 
 	auto storage_begin() const noexcept -> Pointer const & {
-		return m_impl.template get<0>();
+		return m_impl.template get<1>();
 	}
 
 	auto begin() noexcept -> Pointer & {
-		return m_impl.template get<1>();
+		return m_impl.template get<2>();
 	}
 
 	auto begin() const noexcept -> Pointer const & {
-		return m_impl.template get<1>();
+		return m_impl.template get<2>();
 	}
 
 	auto end() noexcept -> Pointer & {
-		return m_impl.template get<2>();
+		return m_impl.template get<3>();
 	}
 
 	auto end() const noexcept -> Pointer const & {
-		return m_impl.template get<2>();
+		return m_impl.template get<3>();
 	}
 
 	auto storage_end() noexcept -> Pointer & {
-		return m_impl.template get<3>();
+		return m_impl.template get<4>();
 	}
 
 	auto storage_end() const noexcept -> Pointer const & {
-		return m_impl.template get<3>();
+		return m_impl.template get<4>();
 	}
 
 	auto allocator() noexcept -> Allocator & {
@@ -397,7 +397,7 @@ private:
 
 private:
 	// storage_begin, begin, end, storage_end, allocator
-	Tuple< Pointer, Pointer, Pointer, Pointer, Allocator & > m_impl;
+	Tuple< Allocator &, Pointer, Pointer, Pointer, Pointer > m_impl;
 }; // class DequeBlock< TElement, TAllocator >
 
 } // namespace Container

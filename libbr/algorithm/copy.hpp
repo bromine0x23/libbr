@@ -50,7 +50,7 @@ auto copy(TSinglePassIterator first, TSinglePassIterator last, TOutputIterator o
 
 template< typename TRandomAccessIterator, typename TOutputIterator >
 auto copy(TRandomAccessIterator first, TRandomAccessIterator last, TOutputIterator output, RandomAccessTraversalTag) -> TOutputIterator {
-	for (auto n = last - first; n > 0; --n) {
+	for (auto count = last - first; count > 0; --count) {
 		*output = *first;
 		++first;
 		++output;
@@ -65,9 +65,11 @@ inline auto copy(TInputIterator first, TInputIterator last, TOutputIterator outp
 
 template< typename TInputValue, typename TOutputValue, typename = EnableIf< BooleanAnd< IsSame< RemoveConst<TInputValue>, TOutputValue >, HasTrivialCopyAssignment<TInputValue> > > >
 inline auto copy(TInputValue * first, TInputValue * last, TOutputValue * output) -> TOutputValue * {
-	auto n = static_cast<Size>(last - first);
-	memory_move(output, first, n * sizeof(TOutputValue));
-	return output + n;
+	auto const count = static_cast<Size>(last - first);
+	if (count > 0) {
+		memory_move(output, first, count * sizeof(TOutputValue));
+	}
+	return output + count;
 }
 
 } // namespace Algorithm

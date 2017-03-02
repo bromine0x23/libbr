@@ -228,7 +228,7 @@ public:
 	explicit CompressedPairBasic(Second second) : Second(second) {
 	}
 
-	CompressedPairBasic(First first, Second second) : m_first(forward<First>(first)), Second(second) {
+	CompressedPairBasic(First first, Second second) : Second(second), m_first(forward<First>(first)) {
 	}
 
 	template< typename... T0, typename... T1, Size... I0, Size... I1 >

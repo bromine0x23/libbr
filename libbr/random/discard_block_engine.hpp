@@ -81,7 +81,7 @@ public:
 	}
 
 	auto operator()() -> Result {
-		if (m_count >= used_size) {
+		if (used_size <= m_count) {
 			m_engine.discard(block_size - used_size);
 			m_count = 0;
 		}
@@ -102,7 +102,7 @@ public:
 
 private:
 	Engine m_engine;
-	SInt m_count;
+	UInt m_count;
 }; // class DiscardBlockEngine< TUInt, p, r >
 
 } // namespace Random

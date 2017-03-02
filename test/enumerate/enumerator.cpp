@@ -5,10 +5,6 @@
 
 using namespace BR;
 
-static bool is_even(int v) {
-	return v % 2 == 0;
-}
-
 TEST(Enumerator, CArray) {
 	int array[] = { 0, 1, 2, 3, 4 };
 	auto enumerator = make_enumerator(array, array + 5);
@@ -77,5 +73,5 @@ TEST(Enumerator, Class) {
 	auto array = FixedArray< S, 5 >::build([](int i){
 		return S{i};
 	});
-	auto enumerator = make_enumerator(array.begin(), array.end());
+	make_enumerator(array.begin(), array.end());
 }

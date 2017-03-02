@@ -15,9 +15,6 @@ TEST(TypeTraits, Decay) {
 	TYPE_TRAITS_CHECKS(Decay, volatile [2][3], volatile (*)[3])
 	TYPE_TRAITS_CHECKS(Decay, const volatile [2][3], const volatile (*)[3])
 
-	using F0 = int(void);
-	using F1 = int(long);
-
-	TYPE_TRAITS_CHECK(int(*)(void), Decay, F0)
-	TYPE_TRAITS_CHECK(int(*)(long), Decay, F1)
+	TYPE_TRAITS_CHECK(int(*)(void), Decay, int(void))
+	TYPE_TRAITS_CHECK(int(*)(long), Decay, int(long))
 }

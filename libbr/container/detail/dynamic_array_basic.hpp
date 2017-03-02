@@ -68,17 +68,17 @@ protected:
 	using Buffer = Detail::Container::DequeBlock< Element, Allocator >;
 
 public:
-	Basic() noexcept(HasNothrowDefaultConstructor<Allocator>{}) : m_impl(nullptr, nullptr, nullptr) {
+	Basic() noexcept(HasNothrowDefaultConstructor<Allocator>{}) : m_impl() {
 	}
 
-	Basic(Allocator const & allocator) : m_impl(nullptr, nullptr, nullptr, allocator) {
+	Basic(Allocator const & allocator) : m_impl(allocator) {
 	}
 
 	Basic(Self && other) noexcept : m_impl(move(other.m_impl)) {
 		other.m_begin() = other.m_end() = other.m_storage_end() = nullptr;
 	}
 
-	Basic(Self && other, Allocator const & allocator) : m_impl(nullptr, nullptr, nullptr, allocator) {
+	Basic(Self && other, Allocator const & allocator) : m_impl(allocator) {
 		if (allocator == other.m_allocator()) {
 			m_begin() = other.m_begin();
 			m_end() = other.m_end();
@@ -98,11 +98,11 @@ public:
 
 protected:
 	auto m_storage_begin() noexcept -> Pointer & {
-		return m_impl.template get<0>();
+		return m_impl.template get<1>();
 	}
 
 	auto m_storage_begin() const noexcept -> Pointer const & {
-		return m_impl.template get<0>();
+		return m_impl.template get<1>();
 	}
 
 	auto m_begin() noexcept -> Pointer & {
@@ -114,19 +114,19 @@ protected:
 	}
 
 	auto m_end() noexcept -> Pointer & {
-		return m_impl.template get<1>();
+		return m_impl.template get<2>();
 	}
 
 	auto m_end() const noexcept -> Pointer const & {
-		return m_impl.template get<1>();
+		return m_impl.template get<2>();
 	}
 
 	auto m_storage_end() noexcept -> Pointer & {
-		return m_impl.template get<2>();
+		return m_impl.template get<3>();
 	}
 
 	auto m_storage_end() const noexcept -> Pointer const & {
-		return m_impl.template get<2>();
+		return m_impl.template get<3>();
 	}
 
 	auto m_allocator() noexcept -> Allocator & {
@@ -158,11 +158,13 @@ protected:
 	}
 
 	void m_allocate(Size count) {
-		if (count > m_max_size()) {
+		if (count > this->m_max_size()) {
 			throw_length_exception(BR_CURRENT_FUNCTION);
 		}
-		m_storage_begin() = m_end() = AllocatorTraits::allocate(m_allocator(), count);
-		m_storage_end() = m_storage_begin() + count;
+		auto const memory = AllocatorTraits::allocate(this->m_allocator(), count);
+		this->m_storage_begin() = memory;
+		this->m_end() = memory;
+		this->m_storage_end() = memory + count;
 	}
 
 	template< typename TIterator >
@@ -189,21 +191,8 @@ protected:
 	}
 
 	template< typename TForwardIterator >
-	void m_construct_at_end(TForwardIterator first, TForwardIterator last, Size count, EnableIf< IsForwardIterator<TForwardIterator> > * = nullptr) {
-		if (count > 0) {
-			for (; first != last; ++first) {
-				construct(m_allocator(), PointerTraits::to_raw(m_end()), *first);
-				++m_end();
-			}
-		}
-	}
-
-	template<typename TForwardIterator>
-	void m_construct_at_end(TForwardIterator first, TForwardIterator last) {
-		auto & allocator = m_allocator();
-		for (; first != last; ++first, (void) ++m_end()) {
-			AllocatorTraits::construct(allocator, PointerTraits::to_raw(m_end()), *first);
-		}
+	void m_construct_at_end(TForwardIterator first, TForwardIterator last, EnableIf< IsForwardIterator<TForwardIterator> > * = nullptr) {
+		m_end() = construct_forward(m_allocator(), first, last, m_end());
 	}
 
 	void m_destruct_at_end(Pointer new_end) noexcept {
@@ -273,8 +262,11 @@ protected:
 				AllocatorTraits::construct(m_allocator(), PointerTraits::to_raw(position), forward<TArgs>(args)...);
 			}
 		} else {
-			Buffer buffer(m_new_capacity(m_size() + 1), index, m_allocator());
-			buffer.emplace_back(forward<TArgs>(args)...);
+			auto & allocator = m_allocator();
+			Buffer buffer(m_new_capacity(m_size() + 1), index, allocator);
+			// buffer.emplace_back(forward<TArgs>(args)...);
+			AllocatorTraits::construct(m_allocator(), PointerTraits::to_raw(buffer.end()), forward<TArgs>(args)...);
+			++buffer.end();
 			position = m_swap_out_buffer(buffer, position);
 		}
 		return position;
@@ -320,7 +312,9 @@ protected:
 			++m_end();
 		} else {
 			Buffer buffer(m_new_capacity(m_size() + 1), m_size(), m_allocator());
-			buffer.emplace_back(forward<TArgs>(args)...);
+			// buffer.emplace_back(forward<TArgs>(args)...);
+			AllocatorTraits::construct(m_allocator(), PointerTraits::to_raw(buffer.end()), forward<TArgs>(args)...);
+			++buffer.end();
 			m_swap_out_buffer(buffer);
 		}
 	}
@@ -371,7 +365,7 @@ private:
 
 	auto m_swap_out_buffer(Buffer & buffer, Pointer reverse_at) -> Pointer {
 		using BR::swap;
-		auto result = buffer.begin();
+		auto const result = buffer.begin();
 		buffer.begin() = construct_backward(m_allocator(), m_begin(), reverse_at, buffer.begin());
 		buffer.end() = construct_forward(m_allocator(), reverse_at, m_end(), buffer.end());
 		BR_ASSERT(buffer.storage_begin() == buffer.begin());
@@ -391,10 +385,10 @@ private:
 	}
 
 	void m_move_elements(Pointer from_begin, Pointer from_end, Pointer to_begin) {
-		auto old_end = m_end();
-		auto n = old_end - to_begin;
-		for (auto p = from_begin + n; p < from_end; ++p, ++m_end()) {
-			construct(m_allocator(), PointerTraits::to_raw(m_end()), move(*p));
+		auto const old_end = m_end();
+		auto const n = old_end - to_begin;
+		for (auto p = from_begin + n; p < from_end; ++p, (void) ++m_end()) {
+			AllocatorTraits::construct(m_allocator(), PointerTraits::to_raw(m_end()), move(*p));
 		}
 		move_backward(from_begin, from_begin + n, old_end);
 	}
@@ -408,10 +402,10 @@ private:
 
 	template< typename TForwardIterator >
 	void m_allocate_construct(TForwardIterator first, TForwardIterator last, ForwardTraversalTag) {
-		auto const size = static_cast<Size>(distance(first, last));
-		if (size > 0) {
-			m_allocate(size);
-			m_construct_at_end(first, last, size);
+		auto const count = static_cast<Size>(distance(first, last));
+		if (count > 0) {
+			m_allocate(count);
+			m_construct_at_end(first, last);
 		}
 	}
 
@@ -429,7 +423,7 @@ private:
 		if (m_capacity() < new_size) {
 			m_deallocate();
 			m_allocate(m_new_capacity(new_size));
-			m_construct_at_end(first, last, new_size);
+			m_construct_at_end(first, last);
 		} else {
 			auto mid = last;
 			bool growing = false;
@@ -440,7 +434,7 @@ private:
 			}
 			auto new_end = copy(first, mid, m_begin());
 			if (growing) {
-				m_construct_at_end(mid, last, new_size - m_size());
+				m_construct_at_end(mid, last);
 			} else {
 				m_destruct_at_end(new_end);
 			}
@@ -472,8 +466,8 @@ private:
 	}
 
 	void m_destruct_at_end(Pointer new_end, BooleanFalse) {
-		for (; new_end != m_end(); ) {
-			AllocatorTraits::destroy(m_allocator(), PointerTraits::to_raw(--m_end()));
+		for (auto & end = m_end(); new_end != end; ) {
+			AllocatorTraits::destroy(m_allocator(), PointerTraits::to_raw(--end));
 		}
 	}
 
@@ -492,9 +486,9 @@ private:
 	void m_move_assign(Self & other, BooleanTrue) noexcept(HasNothrowMoveAssignment<Allocator>{}) {
 		m_deallocate();
 		move_allocator(m_allocator(), other.m_allocator());
-		this->m_storage_begin() = other.m_storage_begin();
-		this->m_end() = other.m_end();
-		this->m_storage_end() = other.m_storage_end();
+		m_storage_begin() = other.m_storage_begin();
+		m_end() = other.m_end();
+		m_storage_end() = other.m_storage_end();
 		other.m_storage_begin() = other.m_end() = other.m_storage_end() = nullptr;
 	}
 
@@ -534,17 +528,17 @@ private:
 	template< typename TForwardIterator >
 	auto m_insert(Size index, TForwardIterator first, TForwardIterator last, ForwardTraversalTag) -> Pointer {
 		auto position = m_begin() + index;
-		auto count = distance(first, last);
+		Size count = distance(first, last);
 		if (count > 0) {
 			if (count <= static_cast<Size>(m_storage_end() - m_end())) {
 				auto old_count = count;
 				auto old_end = m_end();
 				auto middle = last;
-				auto right = m_end() - position;
+				Size right = m_end() - position;
 				if (count > right) {
 					middle = first;
 					advance(middle, right);
-					m_construct_at_end(middle, last, count - right);
+					m_construct_at_end(middle, last);
 					count = right;
 				}
 				if (count > 0) {
@@ -561,7 +555,7 @@ private:
 	}
 
 protected:
-	Tuple< Pointer, Pointer, Pointer, Allocator > m_impl;
+	Tuple< Allocator, Pointer, Pointer, Pointer > m_impl;
 
 }; // class Basic< TElement, TAllocator >
 
