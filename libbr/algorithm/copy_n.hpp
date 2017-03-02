@@ -16,9 +16,9 @@ inline namespace Algorithm {
 
 /**
  * @brief Copies a number of elements to a new location.
- * @tparam TInputIterator An InputIterator type for \p first.
+ * @tparam TInputIterator Type of \p first & \p last which satisfies \em InputIterator.
  * @tparam TSize Type of \p count.
- * @tparam TOutputIterator An OutputIterator type for \p output.
+ * @tparam TOutputIterator Type of \p output which satisfies \em OutputIterator.
  * @param[in] first The beginning of the range of elements to copy from.
  * @param[in] count Number of the elements to copy.
  * @param[out] output The beginning of the destination range.

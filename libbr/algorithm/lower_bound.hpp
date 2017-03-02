@@ -63,7 +63,7 @@ auto lower_bound(TForwardIterator first, TForwardIterator last, TValue const & v
 
 template< typename TForwardIterator, typename TValue >
 inline auto lower_bound(TForwardIterator first, TForwardIterator last, TValue const & value) -> TForwardIterator {
-	return lower_bound(first, last, Less<>());
+	return lower_bound(first, last, value, Less<>());
 }
 
 } // namespace Algorithm

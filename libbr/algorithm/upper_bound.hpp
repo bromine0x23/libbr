@@ -50,7 +50,7 @@ template< typename TForwardIterator, typename TValue, typename TComparator >
 auto upper_bound(TForwardIterator first, TForwardIterator last, TValue const & value, TComparator && comparator) -> TForwardIterator {
 	for (auto length = distance(first, last); length != 0; ) {
 		auto half_length = length / 2;
-		auto middle = next(first, length);
+		auto middle = next(first, half_length);
 		if (forward<TComparator>(comparator)(value, *middle)) {
 			length = half_length;
 		} else {
@@ -63,7 +63,7 @@ auto upper_bound(TForwardIterator first, TForwardIterator last, TValue const & v
 
 template< typename TForwardIterator, typename TValue >
 inline auto upper_bound(TForwardIterator first, TForwardIterator last, TValue const & value) -> TForwardIterator {
-	return upper_bound(first, last, Less<>());
+	return upper_bound(first, last, value, Less<>());
 }
 
 } // namespace Algorithm

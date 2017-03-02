@@ -20,8 +20,8 @@ inline namespace Algorithm {
 
 /**
  * @brief Copies a range of elements in backwards order.
- * @tparam TBidirectionalIterator A BidirectionalIterator type of \p first & \p last.
- * @tparam TOutputIterator A BidirectionalIterator and OutputIterator type of \p output
+ * @tparam TBidirectionalIterator Type of \p first & \p last which satisfies \em BidirectionalIterator.
+ * @tparam TOutputIterator Type of \p output which satisfies \em BidirectionalIterator and \em OutputIterator.
  * @param[in] first,last The range of the elements to copy.
  * @param[out] output End of the destination range.
  * @return Iterator to the last element copied.

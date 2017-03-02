@@ -16,7 +16,7 @@ inline namespace Algorithm {
 
 /**
  * @brief Determines if an element exists in a certain range.
- * @tparam TForwardIterator ForwardIterator type of \p first & \p last
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
  * @tparam TValue Type of \p value.
  * @tparam TComparator Type of \p comparator.
  * @param first,last The range of elements to examine.

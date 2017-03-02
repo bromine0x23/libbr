@@ -15,7 +15,7 @@ inline namespace Algorithm {
 
 /**
  * @brief Finds the first two adjacent items that satisfy a given predicate.
- * @tparam TForwardIterator ForwardIterator type of \p first & \p last.
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
  * @tparam TBinaryPredicate Type of \p predicate.
  * @param first,last The range of elements to examine.
  * @param predicate Binary predicate which returns <code>​true</code> if the elements should be treated as equal.
@@ -26,7 +26,7 @@ auto adjacent_find(TForwardIterator first, TForwardIterator last, TBinaryPredica
 
 /**
  * @brief Finds the first two adjacent items that are equal.
- * @tparam TForwardIterator ForwardIterator type of \p first & \p last.
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies ForwardIterator.
  * @param first,last The range of elements to examine.
  * @return
  */

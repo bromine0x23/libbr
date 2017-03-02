@@ -1,7 +1,6 @@
 /**
  * @file
- * @brief count
- * @author Bromine0x23
+ * @brief count_if
  * @since 1.0
  */
 #pragma once
@@ -15,11 +14,11 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::count_if
- * @tparam TInputIterator
- * @tparam TUnaryPredicate
- * @param[in] first,last
- * @param[in] predicate
+ * @brief Counts elements for which predicate \p predicate returns <code>true</code>.
+ * @tparam TInputIterator Type of \p first & \p last which satisfies \em InputIterator.
+ * @tparam TUnaryPredicate Type of \p predicate.
+ * @param first,last
+ * @param predicate
  * @return
  */
 template< typename TInputIterator, typename TUnaryPredicate >

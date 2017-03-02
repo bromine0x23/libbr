@@ -15,7 +15,7 @@ inline namespace Algorithm {
 
 /**
  * @brief Sums up a range of elements.
- * @tparam TInputIterator InputIterator type of \p first & \p last.
+ * @tparam TInputIterator Type of \p first & \p last which satisfies \em InputIterator.
  * @tparam TValue Type of \p initial
  * @tparam TBinaryFunctor Type of \p functor.
  * @param first,last The range of elements to sum.
@@ -28,7 +28,7 @@ auto accumulate(TInputIterator first, TInputIterator last, TValue initial, TBina
 
 /**
  * @brief Sums up a range of elements.
- * @tparam TInputIterator InputIterator type of \p first & \p last.
+ * @tparam TInputIterator Type of \p first & \p last which satisfies InputIterator.
  * @tparam TValue Type of \p initial
  * @param first,last The range of elements to sum.
  * @param init Initial value of the sum.

@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief count
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -14,12 +13,12 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::count
- * @tparam TInputIterator
- * @tparam TValue
- * @param[in] first,last
- * @param[in] value
- * @return
+ * @brief Counts the elements that are equal to \p value.
+ * @tparam TInputIterator Type of \p first & \p last which satisfies \em InputIterator.
+ * @tparam TValue Type of \p value.
+ * @param first,last The range of elements to examine.
+ * @param value The value to count for.
+ * @return Number of elements that are equal to \p value.
  */
 template< typename TInputIterator, typename TValue >
 auto count(TInputIterator first, TInputIterator last, TValue const & value) -> typename IteratorTraits<TInputIterator>::Difference;

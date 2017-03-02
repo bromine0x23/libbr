@@ -14,7 +14,7 @@ inline namespace Algorithm {
 
 /**
  * @brief Checks if a \p predicate is <code>true</code> for all of the elements in a range.
- * @tparam TInputIterator InputIterator type of \p first & \p last.
+ * @tparam TInputIterator Type of \p first & \p last which satisfies \em InputIterator.
  * @tparam TUnaryPredicate Type of \p predicate
  * @param first,last The range of elements to examine.
  * @param predicate Unary predicate.
@@ -23,7 +23,7 @@ inline namespace Algorithm {
  * @retval false Otherwise.
  */
 template<typename TInputIterator, typename TUnaryPredicate>
-auto all_of(TInputIterator first, TInputIterator last, TUnaryPredicate && predicate) -> bool;
+auto all_of(TInputIterator first, TInputIterator last, TUnaryPredicate && predicate) -> Boolean;
 
 } // namespace Algorithm
 

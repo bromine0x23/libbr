@@ -21,8 +21,8 @@ inline namespace Algorithm {
 
 /**
  * @brief Copies a range of elements to a new location.
- * @tparam TInputIterator An InputIterator type for \p first & \p last.
- * @tparam TOutputIterator An OutputIterator type for \p output.
+ * @tparam TInputIterator Type of \p first & \p last which satisfies \em InputIterator.
+ * @tparam TOutputIterator Type of \p output which satisfies \em OutputIterator.
  * @param[in] first,last The range of elements to copy.
  * @param[out] output The beginning of the destination range.
  * @return Output iterator to the element in the destination range, one past the last element copied.
