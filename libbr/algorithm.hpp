@@ -80,7 +80,9 @@
 #include <libbr/algorithm/min_element.hpp>
 #include <libbr/algorithm/min_max.hpp>
 #include <libbr/algorithm/min_max_element.hpp>
+#include <libbr/algorithm/clamp.hpp>
 #include <libbr/algorithm/lexicographical_compare.hpp>
+
 #include <libbr/algorithm/is_permutation.hpp>
 #include <libbr/algorithm/next_permutation.hpp>
 #include <libbr/algorithm/prev_permutation.hpp>
