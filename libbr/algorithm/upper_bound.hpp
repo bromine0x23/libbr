@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief upper_bound
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -17,28 +16,36 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::upper_bound
- * @tparam TForwardIterator
- * @tparam TValue
- * @tparam TComparator
- * @param[in] first,last
- * @param[in] value
- * @param[in] comparator
- * @return
+ * @brief Returns an iterator to the first element greater than a certain value.
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @tparam TValue Type of \p value.
+ * @tparam TComparator Type of \p comparator
+ * @param first,last The range of elements to examine.
+ * @param value Value to compare the elements to.
+ * @param comparator Comparison function object which returns <code>​true</code>
+ *                   if the first argument is less than (i.e. is ordered before) the second.
+ * @return Iterator pointing to the first element that is greater than \p value, or \p last if no such element is found.
  */
 template< typename TForwardIterator, typename TValue, typename TComparator >
-auto upper_bound(TForwardIterator first, TForwardIterator last, TValue const & value, TComparator && comparator) -> TForwardIterator;
+auto upper_bound(
+	TForwardIterator first, TForwardIterator last,
+	TValue const & value,
+	TComparator && comparator
+) -> TForwardIterator;
 
 /**
  * @brief like std::upper_bound
- * @tparam TForwardIterator
- * @tparam TValue
- * @param[in] first,last
- * @param[in] value
- * @return
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @tparam TValue Type of \p value.
+ * @param first,last The range of elements to examine.
+ * @param value Value to compare the elements to.
+ * @return Iterator pointing to the first element that is greater than \p value, or \p last if no such element is found.
  */
 template< typename TForwardIterator, typename TValue >
-auto upper_bound(TForwardIterator first, TForwardIterator last, TValue const & value) -> TForwardIterator;
+auto upper_bound(
+	TForwardIterator first, TForwardIterator last,
+	TValue const & value
+) -> TForwardIterator;
 
 } // namespace Algorithm
 
