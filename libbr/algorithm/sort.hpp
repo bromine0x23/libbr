@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief sort
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -23,23 +22,28 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief 排序算法
- * @tparam TRandomAccessIterator
- * @tparam TComparator
- * @param[in,out] first,last 待排序区间
- * @param[in] comparator 比较器
+ * @brief Sorts a range into ascending order.
+ * @tparam TRandomAccessIterator Type of \p first & \p last which satisfies \em RandomAccessIterator.
+ * @tparam TComparator Type of \p comparator.
+ * @param[in,out] first,last The range of elements to sort.
+ * @param[in] comparator Comparison function object which returns <code>​true</code>
+ *                       if the first argument is less than (i.e. is ordered before) the second.
  */
 template< typename TRandomAccessIterator, typename TComparator >
-void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator);
+void sort(
+	TRandomAccessIterator first, TRandomAccessIterator last,
+	TComparator && comparator
+);
 
 /**
- * @brief 排序算法(使用BR::Less<>作比较器)
- * @tparam TRandomAccessIterator
- * @tparam TComparator
- * @param[in,out] first,last 待排序区间
+ * @brief Sorts a range into ascending order.
+ * @tparam TRandomAccessIterator Type of \p first & \p last which satisfies \em RandomAccessIterator.
+ * @param[in,out] first,last The range of elements to sort.
  */
 template< typename TRandomAccessIterator >
-void sort(TRandomAccessIterator first, TRandomAccessIterator last);
+void sort(
+	TRandomAccessIterator first, TRandomAccessIterator last
+);
 
 } // namespace Algorithm
 
@@ -156,6 +160,7 @@ inline auto sort_small(TRandomAccessIterator first, TRandomAccessIterator last, 
 
 template< typename TRandomAccessIterator, typename TComparator >
 inline auto insertion_sort_incomplete(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) -> bool {
+	using BR::move;
 	constexpr auto move_threshold = 8;
 	if (!sort_small(first, last, forward<TComparator>(comparator))) {
 		auto j = first + 2;
@@ -182,6 +187,8 @@ inline auto insertion_sort_incomplete(TRandomAccessIterator first, TRandomAccess
 
 template< typename TRandomAccessIterator, typename TComparator >
 void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator) {
+	using BR::move;
+	using BR::sort;
 	using Difference = typename IteratorTraits<TRandomAccessIterator>::Difference;
 	using Element = typename IteratorTraits<TRandomAccessIterator>::Element;
 	constexpr Difference insertion_sort_threshold = BooleanAnd< HasTrivialCopyConstructor<Element>, HasTrivialCopyAssignment<Element> >{} ? 30 : 6;
@@ -302,10 +309,10 @@ void sort(TRandomAccessIterator first, TRandomAccessIterator last, TComparator &
 			}
 		}
 		if (i - first < last - i) {
-			Algorithm::sort(first, i, forward<TComparator>(comparator));
+			sort(first, i, forward<TComparator>(comparator));
 			first = ++i;
 		} else {
-			Algorithm::sort(i + 1, last, forward<TComparator>(comparator));
+			sort(i + 1, last, forward<TComparator>(comparator));
 			last = i;
 		}
 	}

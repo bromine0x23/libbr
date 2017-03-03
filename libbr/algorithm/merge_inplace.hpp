@@ -46,7 +46,8 @@ namespace Detail {
 namespace Algorithm {
 
 template< typename TBidirectionalIterator, typename TDifference, typename TComparator >
-inline void merge_inplace(TBidirectionalIterator first, TBidirectionalIterator middle, TBidirectionalIterator last, TDifference length0, TDifference length1, TComparator & comparator) {
+void merge_inplace(TBidirectionalIterator first, TBidirectionalIterator middle, TBidirectionalIterator last, TDifference length0, TDifference length1, TComparator && comparator) {
+	using BR::rotate;
 	for (;;) {
 		if (length1 == 0) {
 			return;

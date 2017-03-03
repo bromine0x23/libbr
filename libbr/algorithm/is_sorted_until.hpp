@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief is_sorted_until
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -15,24 +14,30 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::is_sorted_until
- * @tparam TForwardIterator
- * @tparam TComparator
- * @param[in] first,last
- * @param[in] comparator
- * @return
+ * @brief Finds the largest sorted subrange.
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @tparam TComparator Type of \p comparator.
+ * @param first,last The range of elements to examine.
+ * @param comparator Comparison function object which returns <code>​true</code>
+ *                   if the first argument is less than (i.e. is ordered before) the second.
+ * @return The upper bound of the largest range beginning at first in which the elements are sorted in ascending order.
  */
 template< typename TForwardIterator, typename TComparator >
-auto is_sorted_until(TForwardIterator first, TForwardIterator last, TComparator && comparator) -> TForwardIterator;
+auto is_sorted_until(
+	TForwardIterator first, TForwardIterator last,
+	TComparator && comparator
+) -> TForwardIterator;
 
 /**
- * @brief like std::is_sorted_until
- * @tparam TForwardIterator
- * @param[in] first,last
- * @return
+ * @brief Finds the largest sorted subrange.
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @param first,last The range of elements to examine.
+ * @return The upper bound of the largest range beginning at first in which the elements are sorted in ascending order.
  */
 template< typename TForwardIterator >
-inline auto is_sorted_until(TForwardIterator first, TForwardIterator last) -> TForwardIterator;
+auto is_sorted_until(
+	TForwardIterator first, TForwardIterator last
+) -> TForwardIterator;
 
 } // namespace Algorithm
 

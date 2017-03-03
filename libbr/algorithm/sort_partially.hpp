@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief sort_partially
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -19,24 +18,30 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::partial_sort
- * @tparam TRandomAccessIterator
- * @tparam TComparator
- * @param[in,out] first,last
- * @param[in,out] middle
- * @param[in] comparator
+ * @brief Sorts the first N (\f$ middle - first \f$) elements of a range.
+ * @tparam TRandomAccessIterator Type of \p first , \p middle & \p last which satisfies \em RandomAccessIterator.
+ * @tparam TComparator Type of \p comparator.
+ * @param[in,out] first,last The range of elements to sort.
+ * @param[in,out] middle Indicate the number of elements to sort with \p first, and get the end of the range to place sorted elements.
+ * @param[in] comparator Comparison function object which returns <code>​true</code>
+ *                       if the first argument is less than (i.e. is ordered before) the second.
  */
 template< typename TRandomAccessIterator, typename TComparator >
-void sort_partially(TRandomAccessIterator first, TRandomAccessIterator middle, TRandomAccessIterator last, TComparator && comparator);
+void sort_partially(
+	TRandomAccessIterator first, TRandomAccessIterator middle, TRandomAccessIterator last,
+	TComparator && comparator
+);
 
 /**
- * @brief like std::partial_sort
- * @tparam TRandomAccessIterator
- * @param[in,out] first,last
- * @param[in,out] middle
+ * @brief Sorts the first N elements of a range.
+ * @tparam TRandomAccessIterator Type of \p first , \p middle & \p last which satisfies \em RandomAccessIterator.
+ * @param[in,out] first,last The range of elements to sort.
+ * @param[in,out] middle Indicate the number of elements to sort with \p first, and get the end of the range to place sorted elements.
  */
 template< typename TRandomAccessIterator >
-void sort_partially(TRandomAccessIterator first, TRandomAccessIterator middle, TRandomAccessIterator last);
+void sort_partially(
+	TRandomAccessIterator first, TRandomAccessIterator middle, TRandomAccessIterator last
+);
 
 } // namespace Algorithm
 

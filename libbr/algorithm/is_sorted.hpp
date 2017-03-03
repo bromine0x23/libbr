@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief is_sorted
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -16,24 +15,32 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::is_sorted
- * @tparam TForwardIterator
- * @tparam TComparator
- * @param[in] first,last
- * @param[in] comparator
- * @return
+ * @brief Checks whether a range is sorted into ascending order
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @tparam TComparator Type of \p comparator.
+ * @param first,last The range of elements to examine.
+ * @param comparator Comparison function object which returns <code>​true</code>
+ *                   if the first argument is less than (i.e. is ordered before) the second.
+ * @retval true The elements in the range are sorted in ascending order.
+ * @retval false Otherwise.
  */
 template< typename TForwardIterator, typename TComparator >
-auto is_sorted(TForwardIterator first, TForwardIterator last, TComparator && comparator) -> bool;
+auto is_sorted(
+	TForwardIterator first, TForwardIterator last,
+	TComparator && comparator
+) -> Boolean;
 
 /**
  * @brief like std::is_sorted
- * @tparam TForwardIterator
- * @param[in] first,last
- * @return
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @param first,last The range of elements to examine.
+ * @retval true The elements in the range are sorted in ascending order.
+ * @retval false Otherwise.
  */
 template< typename TForwardIterator >
-auto is_sorted(TForwardIterator first, TForwardIterator last) -> bool;
+auto is_sorted(
+	TForwardIterator first, TForwardIterator last
+) -> Boolean;
 
 } // namespace Algorithm
 

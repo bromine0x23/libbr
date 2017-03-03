@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief sort_stably
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -19,22 +18,28 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::stable_sort
- * @tparam TRandomAccessIterator
- * @tparam TComparator
- * @param[in,out] first,last
- * @param[in] comparator
+ * @brief Sorts a range of elements while preserving order between equal elements.
+ * @tparam TRandomAccessIterator Type of \p first & \p last which satisfies \em RandomAccessIterator.
+ * @tparam TComparator Type of \p comparator.
+ * @param[in,out] first,last The range of elements to sort.
+ * @param[in] comparator Comparison function object which returns <code>​true</code>
+ *                       if the first argument is less than (i.e. is ordered before) the second.
  */
 template< typename TRandomAccessIterator, typename TComparator >
-void sort_stably(TRandomAccessIterator first, TRandomAccessIterator last, TComparator && comparator);
+void sort_stably(
+	TRandomAccessIterator first, TRandomAccessIterator last,
+	TComparator && comparator
+);
 
 /**
- * @brief like std::stable_sort
- * @tparam TRandomAccessIterator
- * @param[in,out] first,last
+ * @brief Sorts a range of elements while preserving order between equal elements.
+ * @tparam TRandomAccessIterator Type of \p first & \p last which satisfies \em RandomAccessIterator.
+ * @param[in,out] first,last The range of elements to sort.
  */
 template< typename TRandomAccessIterator >
-void sort_stably(TRandomAccessIterator first, TRandomAccessIterator last);
+void sort_stably(
+	TRandomAccessIterator first, TRandomAccessIterator last
+);
 
 } // namespace Algorithm
 
@@ -45,6 +50,7 @@ namespace Algorithm {
 
 template< typename TRandomAccessIterator, typename TDifference, typename TComparator >
 void sort_stably(TRandomAccessIterator first, TRandomAccessIterator last, TDifference length, TComparator && comparator) {
+	using BR::move;
 	constexpr auto switch_threshold = 128;
 
 	switch (length) {
