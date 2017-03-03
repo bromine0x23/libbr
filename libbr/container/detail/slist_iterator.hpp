@@ -29,7 +29,7 @@ class Iterator : public IteratorWithCategory< ReadableTag, WritableTag, ForwardT
 private:
 	using NodePointer = TNodePointer;
 
-	using NodePointerTraits = PointerTraits<NodePointer>;
+	using NodePointerTraits = BR::PointerTraits<NodePointer>;
 
 	using Node = typename NodePointerTraits::Element;
 
@@ -48,6 +48,9 @@ public:
 
 	using Difference = typename NodePointerTraits::Difference;
 
+private:
+	using PointerTraits = BR::PointerTraits<Pointer>;
+
 public:
 	Iterator() noexcept : m_pointer(nullptr) {
 	}
@@ -57,7 +60,7 @@ public:
 	}
 
 	auto operator->() const -> Pointer {
-		return NodePointerTraits::make_pointer(m_pointer->element);
+		return PointerTraits::make_pointer(m_pointer->element);
 	}
 
 	auto operator++() -> Iterator & {
@@ -92,7 +95,7 @@ class ConstIterator : public IteratorWithCategory< ReadableTag, ForwardTraversal
 private:
 	using NodePointer = TNodePointer;
 
-	using NodePointerTraits = PointerTraits<NodePointer>;
+	using NodePointerTraits = BR::PointerTraits<NodePointer>;
 
 	using Node = typename NodePointerTraits::Element;
 
@@ -108,6 +111,9 @@ public:
 
 	using Difference = typename NodePointerTraits::Difference;
 
+private:
+	using PointerTraits = BR::PointerTraits<Pointer>;
+
 public:
 	ConstIterator() noexcept : m_pointer(nullptr) {
 	}
@@ -120,7 +126,7 @@ public:
 	}
 
 	auto operator->() const -> Pointer {
-		return NodePointerTraits::make_pointer(m_pointer->element);
+		return PointerTraits::make_pointer(m_pointer->element);
 	}
 
 	auto operator++() -> ConstIterator & {
