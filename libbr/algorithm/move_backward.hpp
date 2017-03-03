@@ -39,6 +39,7 @@ namespace Algorithm {
 
 template< typename TBidirectionalIterator0, typename TBidirectionalIterator1 >
 inline auto move_backward(TBidirectionalIterator0 first, TBidirectionalIterator0 last, TBidirectionalIterator1 output) -> TBidirectionalIterator1 {
+	using BR::move;
 	for (; first != last;) {
 		*--output = move(*--last);
 	}

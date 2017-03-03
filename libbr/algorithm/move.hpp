@@ -39,6 +39,7 @@ namespace Algorithm {
 
 template< typename TInputIterator, typename TOutputIterator >
 auto move(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator {
+	using BR::move;
 	for (; first != last; ++first, (void)++result) {
 		*result = move(*first);
 	}

@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief prev_permutation
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -17,24 +16,31 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::prev_permutation
- * @tparam TBidirectionalIterator
- * @tparam TComparator
- * @param[in,out] first,last
- * @param[in] comparator
- * @return
+ * @brief Generates the next smaller lexicographic permutation of a range of elements
+ * @tparam TBidirectionalIterator Type of \p first0 & \p last0 which satisfies \em BidirectionalIterator.
+ * @tparam TComparator Type of \p comparator
+ * @param[in,out] first,last The range of elements to permute.
+ * @param[in] comparator Comparison function object which returns ​<code>true</code> if the first argument is less than the second.
+ * @retval true The new permutation precedes the old in lexicographical order.
+ * @retval false The first permutation was reached and the range was reset to the last permutation.
  */
 template< typename TBidirectionalIterator, typename TComparator >
-auto prev_permutation(TBidirectionalIterator first, TBidirectionalIterator last, TComparator && comparator) -> bool;
+auto prev_permutation(
+	TBidirectionalIterator first, TBidirectionalIterator last,
+	TComparator && comparator
+) -> Boolean;
 
 /**
- * @brief like std::prev_permutation
- * @tparam TBidirectionalIterator
- * @param[in,out] first,last
- * @return
+ * @brief Generates the next smaller lexicographic permutation of a range of elements
+ * @tparam TBidirectionalIterator Type of \p first0 & \p last0 which satisfies \em BidirectionalIterator.
+ * @param[in,out] first,last The range of elements to permute.
+ * @retval true The new permutation precedes the old in lexicographical order.
+ * @retval false The first permutation was reached and the range was reset to the last permutation.
  */
 template< typename TBidirectionalIterator >
-auto prev_permutation(TBidirectionalIterator first, TBidirectionalIterator last) -> bool;
+auto prev_permutation(
+	TBidirectionalIterator first, TBidirectionalIterator last
+) -> Boolean;
 
 } // namespace Algorithm
 
@@ -43,7 +49,7 @@ auto prev_permutation(TBidirectionalIterator first, TBidirectionalIterator last)
 inline namespace Algorithm {
 
 template< typename TBidirectionalIterator, typename TComparator >
-auto prev_permutation(TBidirectionalIterator first, TBidirectionalIterator last, TComparator && comparator) -> bool {
+auto prev_permutation(TBidirectionalIterator first, TBidirectionalIterator last, TComparator && comparator) -> Boolean {
 	auto i = last;
 	if (first == last || first == --i) {
 		return false;
@@ -65,7 +71,7 @@ auto prev_permutation(TBidirectionalIterator first, TBidirectionalIterator last,
 }
 
 template< typename TBidirectionalIterator >
-inline auto prev_permutation(TBidirectionalIterator first, TBidirectionalIterator last) -> bool {
+inline auto prev_permutation(TBidirectionalIterator first, TBidirectionalIterator last) -> Boolean {
 	return prev_permutation(first, last, Less<void>());
 }
 

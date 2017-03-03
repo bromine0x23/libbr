@@ -52,6 +52,7 @@ inline auto rotate_left(TForwardIterator first, TForwardIterator last) -> TForwa
 template< typename TBidirectionalIterator >
 inline auto rotate_right(TBidirectionalIterator first, TBidirectionalIterator last) -> TBidirectionalIterator {
 	using BR::move;
+	using BR::move_backward;
 	auto before_last = prev(last);
 	auto tmp = move(*before_last);
 	auto after_first = move_backward(first, before_last, last);

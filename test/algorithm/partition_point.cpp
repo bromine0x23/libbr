@@ -2,16 +2,36 @@
 #include <libbr/algorithm/partition_point.hpp>
 
 #include <libbr/algorithm/partition.hpp>
+#include <libbr/container/dlist.hpp>
 #include <libbr/container/dynamic_array.hpp>
+#include <libbr/container/slist.hpp>
 
 using namespace BR;
 
 TEST(Algorithm, partition_point) {
-	DynamicArray<int> array{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+	{
+		DynamicArray<int> array{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
-	auto is_even = [](int x){ return x % 2 == 0; };
+		auto is_even = [](int x){ return x % 2 == 0; };
 
-	auto pivot = partition(array.begin(), array.end(), is_even);
+		auto pivot = partition(array.begin(), array.end(), is_even);
 
-	EXPECT_EQ(pivot, partition_point(array.cbegin(), array.cend(), is_even));
+		EXPECT_EQ(pivot, partition_point(array.cbegin(), array.cend(), is_even));
+	} {
+		DList<int> list{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+		auto is_even = [](int x){ return x % 2 == 0; };
+
+		auto pivot = partition(list.begin(), list.end(), is_even);
+
+		EXPECT_EQ(pivot, partition_point(list.cbegin(), list.cend(), is_even));
+	} {
+		SList<int> list{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+		auto is_even = [](int x){ return x % 2 == 0; };
+
+		auto pivot = partition(list.begin(), list.end(), is_even);
+
+		EXPECT_EQ(pivot, partition_point(list.cbegin(), list.cend(), is_even));
+	}
 }
