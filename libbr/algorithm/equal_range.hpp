@@ -25,7 +25,8 @@ inline namespace Algorithm {
  * @tparam TComparator Type of \p comparator
  * @param first,last The range of elements to examine.
  * @param value Value to compare the elements to.
- * @param comparator Comparison function which returns <code>​true</code> if the first argument is less than the second.
+ * @param comparator Comparison function object which returns <code>​true</code>
+ *                   if the first argument is less than (i.e. is ordered before) the second.
  * @return Pair containing a pair of iterators defining the wanted range,
  *         the first pointing to the first element that is not less than value and
  *         the second pointing to the first element greater than value.

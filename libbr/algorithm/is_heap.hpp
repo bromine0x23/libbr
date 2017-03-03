@@ -19,7 +19,8 @@ inline namespace Algorithm {
  * @tparam TRandomAccessIterator Type of \p first & \p last which satisfies \em RandomAccessIterator.
  * @tparam TComparator Type of \p comparator.
  * @param first,last The range of elements to examine.
- * @param comparator comparison function object which returns <code>​true</code> if the first argument is less than the second.
+ * @param comparator Comparison function object which returns <code>​true</code>
+ *                   if the first argument is less than (i.e. is ordered before) the second.
  * @retval true The range is max heap.
  * @retval false Otherwise.
  */
