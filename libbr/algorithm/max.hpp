@@ -1,12 +1,13 @@
 /**
  * @file
  * @brief max
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/algorithm/max_element.hpp>
+#include <libbr/container/initializer_list.hpp>
 #include <libbr/functional/less.hpp>
 #include <libbr/math/function/max.hpp>
 #include <libbr/utility/forward.hpp>
@@ -21,24 +22,60 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::max
- * @tparam T
- * @tparam TComparator
- * @param[in] x,y
- * @param[in] comparator
- * @return
+ * @brief Returns the larger of \p x and \p y.
+ * @tparam T Type of \p x & \p y.
+ * @tparam TComparator Type of \p comparator.
+ * @param x,y The values to compare.
+ * @param comparator Comparison function object which returns <code>​true</code>
+ *                   if the first argument is less than (i.e. is ordered before) the second.
+ * @return The larger of \p x and \p y.
+ *         If they are equivalent, returns \p x.
  */
 template< typename T, typename TComparator >
-constexpr auto max(T const & x, T const & y, TComparator && comparator) -> T const &;
+constexpr auto max(
+	T const & x, T const & y,
+	TComparator && comparator
+) -> T const &;
 
 /**
- * @brief like std::max
- * @tparam T
- * @param[in] x,y
- * @return
+ * @brief Returns the larger of \p x and \p y.
+ * @tparam T Type of \p x & \p y.
+ * @param x,y The values to compare.
+ * @return The larger of \p x and \p y.
+ *         If they are equivalent, returns \p x.
  */
 template< typename T >
-constexpr auto max(T const & x, T const & y) -> T const &;
+constexpr auto max(
+	T const & x, T const & y
+) -> T const &;
+
+/**
+ * @brief Returns the largest of the values in initializer list \p list.
+ * @tparam T Type of elements that \p list take.
+ * @tparam TComparator Type of \p comparator.
+ * @param list Initializer list with the values to compare.
+ * @param comparator Comparison function object which returns <code>​true</code>
+ *                   if the first argument is less than (i.e. is ordered before) the second.
+ * @return The largest value in \p list.
+ *         If several values are equivalent to the largest, returns the leftmost one.
+ */
+template< typename T, typename TComparator >
+BR_CONSTEXPR_AFTER_CXX11 auto max(
+	InitializerList<T> list,
+	TComparator && comparator
+) -> T;
+
+/**
+ * @brief Returns the largest of the values in initializer list \p list.
+ * @tparam T Type of elements that \p list take.
+ * @param list Initializer list with the values to compare.
+ * @return The largest value in \p list.
+ *         If several values are equivalent to the largest, returns the leftmost one.
+ */
+template< typename T >
+BR_CONSTEXPR_AFTER_CXX11 auto max(
+	InitializerList<T> list
+) -> T;
 
 } // namespace Algorithm
 
@@ -54,6 +91,16 @@ constexpr auto max(T const & x, T const & y, TComparator && comparator) -> T con
 template< typename T >
 constexpr auto max(T const & x, T const & y) -> T const & {
 	return max(x, y, Less<>());
+}
+
+template< typename T, typename TComparator >
+BR_CONSTEXPR_AFTER_CXX11 auto max(InitializerList<T> list, TComparator && comparator) -> T {
+	return *max_element(list.begin(), list.end(), forward<TComparator>(comparator));
+}
+
+template< typename T >
+BR_CONSTEXPR_AFTER_CXX11 auto max(InitializerList<T> list) -> T {
+	return *max_element(list.begin(), list.end(), Less<>());
 }
 
 } // namespace Algorithm

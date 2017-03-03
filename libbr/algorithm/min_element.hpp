@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief min_element
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -15,21 +14,26 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::min_element
- * @tparam TForwardIterator
- * @tparam TComparator
- * @param[in] first,last
- * @param[in] comparator
- * @return
+ * @brief Returns the smallest element in the range \f$ [first, last) \f$.
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @tparam TComparator Type of \p comparator.
+ * @param first,last The range of elements to examine.
+ * @param comparator Comparison function object which returns <code>​true</code>
+ *                   if the first argument is less than (i.e. is ordered before) the second.
+ * @return Iterator to the smallest element in the range \f$ [first, last) \f$.
+ *         If several elements in the range are equivalent to the smallest element, returns the iterator to the first such element.
+ *         Returns \p last if the range is empty.
  */
 template< typename TForwardIterator, typename TComparator >
 BR_CONSTEXPR_AFTER_CXX11 auto min_element(TForwardIterator first, TForwardIterator last, TComparator && comparator) -> TForwardIterator;
 
 /**
- * @brief like std::min_element
- * @tparam TForwardIterator
- * @param[in] first,last
- * @return
+ * @brief Returns the smallest element in the range \f$ [first, last) \f$.
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @param first,last The range of elements to examine.
+ * @return Iterator to the smallest element in the range \f$ [first, last) \f$.
+ *         If several elements in the range are equivalent to the smallest element, returns the iterator to the first such element.
+ *         Returns \p last if the range is empty.
  */
 template< typename TForwardIterator >
 BR_CONSTEXPR_AFTER_CXX11 auto min_element(TForwardIterator first, TForwardIterator last) -> TForwardIterator;

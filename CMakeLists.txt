@@ -23,7 +23,7 @@ option(LIBBR_INCLUDE_TESTS "Build the tests (requires gtest)." ON)
 #===============================================================================
 # Configure System
 #===============================================================================
-set(CMAKE_CXX_FLAGS_DEBUG "-Wall")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 set(LIBBR_CXX_FLAGS "")
 
 #===============================================================================

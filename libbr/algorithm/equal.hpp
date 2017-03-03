@@ -24,7 +24,7 @@ inline namespace Algorithm {
  * @param first0,last0 The first range of the elements to compare.
  * @param first1 The beginning of the second range.
  * @param predicate Binary predicate which returns <code>​true</code> if the elements should be treated as equal.
- * @retval true the range \f$ [first1, last1) \f$ is equal to the range \f$ [first2, first2 + (last1 - first1)) \f$.
+ * @retval true the range \f$ [first_0, last_0) \f$ is equal to the range \f$ [first_1, first_1 + (last_0 - first_0)) \f$.
  * @retval false Otherwise.
  */
 template< typename TInputIterator0, typename TInputIterator1, typename TBinaryPredicate >
@@ -40,7 +40,7 @@ auto equal(
  * @tparam TInputIterator1 Type of \p first1 which satisfies \em InputIterator.
  * @param first0,last0 The first range of the elements to compare.
  * @param first1 The beginning of the second range.
- * @retval true the range \f$ [first1, last1) \f$ is equal to the range \f$ [first2, first2 + (last1 - first1)) \f$.
+ * @retval true the range \f$ [first_0, last_0) \f$ is equal to the range \f$ [first_1, first_1 + (last_0 - first_0)) \f$.
  * @retval false Otherwise.
  */
 template< typename TInputIterator0, typename TInputIterator1 >

@@ -19,7 +19,7 @@ inline namespace Algorithm {
  * @brief Returns an iterator to the first element not less than the given value.
  * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
  * @tparam TValue Type of \p value.
- * @tparam TComparator Type of \p comparator
+ * @tparam TComparator Type of \p comparator.
  * @param first,last The range of elements to examine.
  * @param value Value to compare the elements to.
  * @param comparator Comparison function object which returns <code>​true</code>

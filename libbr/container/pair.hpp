@@ -136,7 +136,7 @@ private:
 	using IsParticipateOverload = BooleanAnd< IsConvertible< TOtherFirst, First >, IsConvertible< TOtherSecond, Second > >;
 
 public:
-	template< typename = EnableIf< BooleanAnd< HasDefaultConstructor<First>, HasDefaultConstructor<Second> > > >
+	template< bool dummy = true, typename = EnableIf< BooleanAnd< BooleanConstant<dummy>, HasDefaultConstructor<First>, HasDefaultConstructor<Second> > > >
 	constexpr Pair() noexcept(
 		BooleanAnd< HasNothrowDefaultConstructor<First>, HasNothrowDefaultConstructor<Second> >{}
 	) : first(), second() {

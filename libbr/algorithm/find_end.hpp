@@ -15,15 +15,15 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief Searches for the last subsequence of elements \f$ [first1, last1) \f$ in the range \f$ [first0, last0) \f$.
+ * @brief Searches for the last subsequence of elements \f$ [first_1, last_1) \f$ in the range \f$ [first_0, last_0) \f$.
  * @tparam TForwardIterator0 Type of \p first0 & \p last0 which satisfies \em ForwardIterator.
  * @tparam TForwardIterator1 Type of \p first1 & \p last1 which satisfies \em ForwardIterator.
  * @tparam TBinaryPredicate Type of \p predicate.
  * @param first0,last0 The range of elements to examine.
  * @param first1,last1 The range of elements to search for.
  * @param predicate Binary predicate which returns ​<code>true</code> if the elements should be treated as equal.
- * @return Iterator to the beginning of last subsequence \f$ [first1, last1) \f$ in range \f$ [first0, last0) \f$.
- *         If \f$ [first1, last1) \f$ is empty or if no such subsequence is found, \p last0 is returned.
+ * @return Iterator to the beginning of last subsequence \f$ [first_1, last_1) \f$ in range \f$ [first_0, last_0) \f$.
+ *         If \f$ [first_1, last_1) \f$ is empty or if no such subsequence is found, \p last0 is returned.
  */
 template< typename TForwardIterator0, typename TForwardIterator1, typename TBinaryPredicate >
 auto find_end(
@@ -33,12 +33,13 @@ auto find_end(
 ) -> TForwardIterator0;
 
 /**
- * @brief Searches for the last subsequence of elements \f$ [first1, last1) \f$ in the range \f$ [first0, last0) \f$.
+ * @brief Searches for the last subsequence of elements \f$ [first_1, last_1) \f$ in the range \f$ [first_0, last_0) \f$.
  * @tparam TForwardIterator0 Type of \p first0 & \p last0 which satisfies \em ForwardIterator.
  * @tparam TForwardIterator1 Type of \p first1 & \p last1 which satisfies \em ForwardIterator.
  * @param first0,last0 The range of elements to examine.
  * @param first1,last1 The range of elements to search for.
- * @return
+ * @return Iterator to the beginning of last subsequence \f$ [first_1, last_1) \f$ in range \f$ [first_0, last_0) \f$.
+ *         If \f$ [first_1, last_1) \f$ is empty or if no such subsequence is found, \p last0 is returned.
  */
 template< typename TForwardIterator0, typename TForwardIterator1 >
 auto find_end(

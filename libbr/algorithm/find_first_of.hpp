@@ -14,14 +14,14 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief Searches the range \f$ [first0, last0) \f$ for any of the elements in the range \f$ [first1, last1) \f$.
+ * @brief Searches the range \f$ [first_0, last_0) \f$ for any of the elements in the range \f$ [first_1, last_1) \f$.
  * @tparam TInputIterator Type of \p first0 & \p last0 which satisfies \em InputIterator.
  * @tparam TForwardIterator Type of \p first1 & \p last1 which satisfies \em ForwardIterator.
  * @tparam TBinaryPredicate Type of \p predicate.
  * @param first0,last0 The range of elements to examine.
  * @param first1,last1 The range of elements to search for.
  * @param predicate Binary predicate which returns ​<code>true</code> if the elements should be treated as equal.
- * @return Iterator to the first element in the range \f$ [first0, last0) \f$ that is equal to an element from the range \f$ [first1, last1) \f$.
+ * @return Iterator to the first element in the range \f$ [first_0, last_0) \f$ that is equal to an element from the range \f$ [first_1, last_1) \f$.
  *         If no such element is found, \p last0 is returned.
  */
 template< typename TInputIterator, typename TForwardIterator, typename TBinaryPredicate >
@@ -33,12 +33,12 @@ auto find_first_of(
 
 
 /**
- * @brief Searches the range \f$ [first0, last0) \f$ for any of the elements in the range \f$ [first1, last1) \f$.
+ * @brief Searches the range \f$ [first_0, last_0) \f$ for any of the elements in the range \f$ [first_1, last_1) \f$.
  * @tparam TInputIterator Type of \p first0 & \p last0 which satisfies \em InputIterator.
  * @tparam TForwardIterator Type of \p first1 & \p last1 which satisfies \em ForwardIterator.
  * @param first0,last0 The range of elements to examine.
  * @param first1,last1 The range of elements to search for.
- * @return Iterator to the first element in the range \f$ [first0, last0) \f$ that is equal to an element from the range \f$ [first1, last1) \f$.
+ * @return Iterator to the first element in the range \f$ [first_0, last_0) \f$ that is equal to an element from the range \f$ [first_1, last_1) \f$.
  *         If no such element is found, \p last0 is returned.
  */
 template< typename TInputIterator, typename TForwardIterator >

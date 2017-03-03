@@ -26,7 +26,7 @@ inline namespace Algorithm {
  * @param[in] comparator Comparison function object which returns <code>​true</code>
  *                       if the first argument is less than (i.e. is ordered before) the second.
  * @return An iterator to the element defining the upper boundary of the sorted range,
- *         i.e. \f$ first_output + min(last - first, last_output - first_output) \f$.
+ *         i.e. \f$ first_output + min(last - first, last_{output} - first_{output}) \f$.
  */
 template< typename TInputIterator, typename TRandomAccessIterator, typename TComparator >
 auto sort_partially_copy(
@@ -42,7 +42,7 @@ auto sort_partially_copy(
  * @param[in] first,last The range of elements to sort.
  * @param[out] first_output,last_output Random access iterators defining the destination range.
  * @return An iterator to the element defining the upper boundary of the sorted range,
- *         i.e. \f$ first_output + min(last - first, last_output - first_output) \f$.
+ *         i.e. \f$ first_output + min(last - first, last_{output} - first_{output}) \f$.
  */
 template< typename TInputIterator, typename TRandomAccessIterator >
 auto sort_partially_copy(

@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief max_min_element
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -16,24 +15,36 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::minmax_element, but give result in contrary order
- * @tparam TForwardIterator
- * @tparam TComparator
- * @param[in] first,last
- * @param[in] comparator
- * @return <max, min>
+ * @brief Returns the largest and the smallest elements in a range.
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @tparam TComparator Type of \p comparator.
+ * @param first,last The range of elements to examine.
+ * @param comparator Comparison function object which returns <code>​true</code>
+ *                   if the first argument is less than (i.e. is ordered before) the second.
+ * @return A pair consisting of an iterator to the largest element as the first element and an iterator to the smallest element as the second.
+ *         Returns <code>make_pair(first, first)</code> if the range is empty.
+ *         If several elements are equivalent to the smallest element, the iterator to the first such element is returned.
+ *         If several elements are equivalent to the largest element, the iterator to the last such element is returned.
  */
 template< typename TForwardIterator, typename TComparator >
-auto max_min_element(TForwardIterator first, TForwardIterator last, TComparator && comparator) -> Pair< TForwardIterator, TForwardIterator >;
+auto max_min_element(
+	TForwardIterator first, TForwardIterator last,
+	TComparator && comparator
+) -> Pair< TForwardIterator, TForwardIterator >;
 
 /**
- * @brief like std::minmax_element, but give result in contrary order
- * @tparam TForwardIterator
- * @param[in] first,last
- * @return <max, min>
+ * @brief Returns the largest and the smallest elements in a range.
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @param first,last The range of elements to examine.
+ * @return A pair consisting of an iterator to the largest element as the first element and an iterator to the smallest element as the second.
+ *         Returns <code>make_pair(first, first)</code> if the range is empty.
+ *         If several elements are equivalent to the smallest element, the iterator to the first such element is returned.
+ *         If several elements are equivalent to the largest element, the iterator to the last such element is returned.
  */
 template< typename TForwardIterator >
-auto max_min_element(TForwardIterator first, TForwardIterator last) -> Pair< TForwardIterator, TForwardIterator >;
+auto max_min_element(
+	TForwardIterator first, TForwardIterator last
+) -> Pair< TForwardIterator, TForwardIterator >;
 
 } // namespace Algorithm
 
@@ -43,7 +54,7 @@ inline namespace Algorithm {
 
 template< typename TForwardIterator, typename TComparator >
 auto max_min_element(TForwardIterator first, TForwardIterator last, TComparator && comparator) -> Pair< TForwardIterator, TForwardIterator > {
-	auto result = make_pair(*first, *first);
+	auto result = make_pair(first, first);
 	if (first != last) {
 		if (++first != last) {
 			if (forward<TComparator>(comparator)(*result.first, *first)) {
@@ -53,14 +64,14 @@ auto max_min_element(TForwardIterator first, TForwardIterator last, TComparator 
 			}
 			for (; ++first != last;) {
 				auto i = first;
-				if (++first == last) {
+				++first;
+				if (first == last) {
 					if (forward<TComparator>(comparator)(*result.first, *i)) {
 						result.first = i;
 					} else if (!forward<TComparator>(comparator)(*result.second, *i)) {
 						result.second = i;
-					} else {
-						break;
 					}
+					break;
 				} else {
 					if (forward<TComparator>(comparator)(*i, *first)) {
 						if (forward<TComparator>(comparator)(*result.first, *first)) {
