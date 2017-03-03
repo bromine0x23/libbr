@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief partition_point
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -16,15 +15,18 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::partition_point
- * @tparam TForwardIterator
- * @tparam TUnaryPredicate
- * @param[in] first,last
- * @param[in] predicate
- * @return
+ * @brief Locates the partition point of a partitioned range.
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @tparam TUnaryPredicate Type of \p predicate.
+ * @param first,last The partitioned range of elements to examine.
+ * @param predicate Unary predicate which returns <code>​true</code> for the elements found in the beginning of the range.
+ * @return The iterator past the end of the first partition within \f$ [first, last) \f$ or last if all elements satisfy \p predicate.
  */
 template< typename TForwardIterator, typename TUnaryPredicate >
-auto partition_point(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate) -> TForwardIterator;
+auto partition_point(
+	TForwardIterator first, TForwardIterator last,
+	TUnaryPredicate && predicate
+) -> TForwardIterator;
 
 } // namespace Algorithm
 

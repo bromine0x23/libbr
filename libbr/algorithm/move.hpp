@@ -7,12 +7,13 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/utility/move.hpp>
+#include <libbr/memory/memory_move.hpp>
 #include <libbr/type_traits/boolean_and.hpp>
 #include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/has_trivial_copy_assignment.hpp>
 #include <libbr/type_traits/is_same.hpp>
 #include <libbr/type_traits/remove_const.hpp>
+#include <libbr/utility/move.hpp>
 
 namespace BR {
 

@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief partition
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -17,15 +16,18 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::partition
- * @tparam TForwardIterator
- * @tparam TUnaryPredicate
- * @param[in,out] first,last
- * @param[in] predicate
- * @return
+ * @brief Divides a range of elements into two groups.
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @tparam TUnaryPredicate Type of \p predicate.
+ * @param[in,out] first,last The range of elements to reorder.
+ * @param[in] predicate Unary predicate which returns ​<code>true</code> if the element should be ordered before other elements.
+ * @return Iterator to the first element of the second group.
  */
 template< typename TForwardIterator, typename TUnaryPredicate >
-auto partition(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate) -> TForwardIterator;
+auto partition(
+	TForwardIterator first, TForwardIterator last,
+	TUnaryPredicate && predicate
+) -> TForwardIterator;
 
 } // namespace Algorithm
 

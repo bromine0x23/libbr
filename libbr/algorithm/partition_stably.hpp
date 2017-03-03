@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief partition_stably
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -23,15 +22,18 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::stable_partition
- * @tparam TForwardIterator
- * @tparam TUnaryPredicate
- * @param[in,out] first,last
- * @param[in] predicate
- * @return
+ * @brief Divides elements into two groups while preserving their relative order.
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @tparam TUnaryPredicate Type of \p predicate.
+ * @param[in,out] first,last The range of elements to reorder.
+ * @param[in] predicate Unary predicate which returns ​<code>true</code> if the element should be ordered before other elements.
+ * @return Iterator to the first element of the second group.
  */
 template< typename TForwardIterator, typename TUnaryPredicate >
-auto partition_stably(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate) -> TForwardIterator;
+auto partition_stably(
+	TForwardIterator first, TForwardIterator last,
+	TUnaryPredicate && predicate
+) -> TForwardIterator;
 
 } // namespace Algorithm
 
@@ -44,7 +46,6 @@ template< typename TForwardIterator, typename TDistance, typename TUnaryPredicat
 auto partition_stably(TForwardIterator first, TForwardIterator last, TDistance length, TUnaryPredicate && predicate, ForwardTraversalTag) -> TForwardIterator {
 	BR_ASSERT(!forward<TUnaryPredicate>(predicate)(*first));
 	BR_ASSERT(length >= 1);
-
 	switch (length) {
 		case 1: {
 			return first;
@@ -79,7 +80,6 @@ auto partition_stably(TForwardIterator first, TForwardIterator last, TDistance l
 			return rotate(first_false, middle, second_false);
 		}
 	}
-
 	BR_ASSERT(false);
 }
 
@@ -98,6 +98,7 @@ auto partition_stably(TForwardIterator first, TForwardIterator last, TUnaryPredi
 
 template< typename TBidirectionalIterator, typename TDistance, typename TUnaryPredicate >
 auto partition_stably(TBidirectionalIterator first, TBidirectionalIterator last, TDistance length, TUnaryPredicate && predicate, BidirectionalTraversalTag) -> TBidirectionalIterator {
+	using BR::rotate;
 	BR_ASSERT(!forward<TUnaryPredicate>(predicate)(*first));
 	BR_ASSERT(forward<TUnaryPredicate>(predicate)(*last));
 	BR_ASSERT(length >= 1);
@@ -120,7 +121,7 @@ auto partition_stably(TBidirectionalIterator first, TBidirectionalIterator last,
 		}
 		default: {
 			TDistance const half_length = length / 2;
-			auto const middle = next(first, half_length);
+			auto middle = next(first, half_length);
 
 			TDistance first_length = half_length;
 			auto first_end = middle;

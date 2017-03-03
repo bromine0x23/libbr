@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief is_partitioned
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -14,15 +13,19 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::is_partitioned
- * @tparam TInputIterator
- * @tparam TUnaryPredicate
- * @param[in] first,last
- * @param[in] predicate
- * @return
+ * @brief Determines if the range is partitioned by the given predicate.
+ * @tparam TInputIterator Type of \p first & \p last which satisfies \em InputIterator.
+ * @tparam TUnaryPredicate Type of \p predicate.
+ * @param first,last The range of elements to examine.
+ * @param predicate Unary predicate which returns ​<code>true</code> for the elements expected to be found in the beginning of the range.
+ * @retval true The range \f$ [first, last) \f$ is empty or is partitioned by \p predicate.
+ * @retval false Otherwise.
  */
 template< typename TInputIterator, typename TUnaryPredicate >
-auto is_partitioned(TInputIterator first, TInputIterator last, TUnaryPredicate && predicate) -> bool;
+auto is_partitioned(
+	TInputIterator first, TInputIterator last,
+	TUnaryPredicate && predicate
+) -> Boolean;
 
 } // namespace Algorithm
 
@@ -31,7 +34,7 @@ auto is_partitioned(TInputIterator first, TInputIterator last, TUnaryPredicate &
 inline namespace Algorithm {
 
 template< typename TInputIterator, typename TUnaryPredicate >
-auto is_partitioned(TInputIterator first, TInputIterator last, TUnaryPredicate && predicate) -> bool {
+auto is_partitioned(TInputIterator first, TInputIterator last, TUnaryPredicate && predicate) -> Boolean {
 	for (; first != last; ++first) {
 		if (!forward<TUnaryPredicate>(predicate)(*first)) {
 			break;
