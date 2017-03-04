@@ -44,13 +44,13 @@ public:
 	}
 
 	auto operator=(typename TContainer::Element const & element) -> InsertIterator & {
-		m_container->insert(m_iterator, element);
+		m_iterator = m_container->insert(m_iterator, element);
 		++m_iterator;
 		return *this;
 	}
 
 	auto operator=(typename TContainer::Element && element) -> InsertIterator & {
-		m_container->insert(m_iterator, move(element));
+		m_iterator = m_container->insert(m_iterator, move(element));
 		++m_iterator;
 		return *this;
 	}
