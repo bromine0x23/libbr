@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief nth_element
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -17,24 +16,42 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::nth_element
- * @tparam TRandomAccessIterator
- * @tparam TComparator
- * @param[in,out] first,last
- * @param[in] nth
- * @param[in] comparator
+ * @brief Partially sorts the given range making sure that it is partitioned by the given element.
+ *
+ * Rearranges elements in \f$ [first, last) \f$ such that:
+ * <ul>
+ * <li>The element pointed at by \p nth is changed to whatever element would occur in that position if \f$ [first, last) \f$ was sorted.</li>
+ * <li>All of the elements before this new \p nth element are less than or equal to the elements after the new nth element.</li>
+ * </ul>
+ * @tparam TRandomAccessIterator Type of \p first, \p nth & \p last which satisfies \em RandomAccessIterator.
+ * @tparam TComparator Type of \p comparator
+ * @param[in,out] first,last The range of elements to sort.
+ * @param[in,out] nth The sort partition point.
+ * @param[in] comparator Comparison function object which returns <code>​true</code>
+ *                       if the first argument is less than (i.e. is ordered before) the second.
  */
 template< typename TRandomAccessIterator, typename TComparator >
-void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandomAccessIterator last, TComparator && comparator);
+void nth_element(
+	TRandomAccessIterator first, TRandomAccessIterator nth, TRandomAccessIterator last,
+	TComparator && comparator
+);
 
 /**
- * @brief like std::nth_element
- * @tparam TRandomAccessIterator
- * @param[in,out] first,last
- * @param[in] nth
+ * @brief Partially sorts the given range making sure that it is partitioned by the given element.
+ *
+ * Rearranges elements in \f$ [first, last) \f$ such that:
+ * <ul>
+ * <li>The element pointed at by \p nth is changed to whatever element would occur in that position if \f$ [first, last) \f$ was sorted.</li>
+ * <li>All of the elements before this new \p nth element are less than or equal to the elements after the new nth element.</li>
+ * </ul>
+ * @tparam TRandomAccessIterator Type of \p first, \p nth & \p last which satisfies \em RandomAccessIterator.
+ * @param[in,out] first,last The range of elements to sort.
+ * @param[in,out] nth The sort partition point.
  */
 template< typename TRandomAccessIterator >
-void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandomAccessIterator last);
+void nth_element(
+	TRandomAccessIterator first, TRandomAccessIterator nth, TRandomAccessIterator last
+);
 
 } // namespace Algorithm
 
@@ -44,7 +61,7 @@ namespace Detail {
 namespace Algorithm {
 
 template< typename TRandomAccessIterator, typename TComparator >
-void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandomAccessIterator last, TComparator & comparator) {
+void nth_element(TRandomAccessIterator first, TRandomAccessIterator nth, TRandomAccessIterator last, TComparator && comparator) {
 	constexpr auto selection_sort_threshold = 7;
 	for (;;) {
 		RESTART:

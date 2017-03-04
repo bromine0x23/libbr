@@ -19,7 +19,7 @@ inline namespace Algorithm {
  * @param first,last The range of elements to examine.
  * @param predicate Unary predicate.
  * @return Returns <code>false</code> if the range is empty.
- * @retval true Unary predicate \p predicate returns true for at least one element in the range.
+ * @retval true Unary predicate \p predicate returns <code>true</code> for at least one element in the range.
  * @retval false Otherwise.
  */
 template< typename TInputIterator, typename TUnaryPredicate >
@@ -35,7 +35,7 @@ auto any_of(
 inline namespace Algorithm {
 
 template< typename TInputIterator, typename TUnaryPredicate >
-inline auto any_of(TInputIterator first, TInputIterator last, TUnaryPredicate && predicate) -> bool {
+inline auto any_of(TInputIterator first, TInputIterator last, TUnaryPredicate && predicate) -> Boolean {
 	for (; first != last; ++first) {
 		if (forward<TUnaryPredicate>(predicate)(*first)) {
 			return true;

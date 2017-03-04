@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief move
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -20,15 +19,19 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::move
- * @tparam TInputIterator
- * @tparam TOutputIterator
- * @param[in] first,last
- * @param[out] result
- * @return
+ * @brief Moves a range of elements to a new location.
+ * @tparam TInputIterator Type of \p first & \p last which satisfies \em InputIterator.
+ * @tparam TOutputIterator Type of \p output which satisfies \em OutputIterator.
+ * @param[in] first,last The range of elements to move.
+ * @param[out] output The beginning of the destination range.
+ *                    The behavior is undefined if \p output is within the range \f$ [first, last) \f$.
+ * @return Output iterator to the element past the last element moved \f$ (output + (last - first)) \f$
  */
 template< typename TInputIterator, typename TOutputIterator >
-auto move(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator;
+auto move(
+	TInputIterator first, TInputIterator last,
+	TOutputIterator output
+) -> TOutputIterator;
 
 } // namespace Algorithm
 

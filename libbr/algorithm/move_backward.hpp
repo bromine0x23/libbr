@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief move_backward
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -20,15 +19,20 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like move_backward
- * @tparam TBidirectionalIterator0
- * @tparam TBidirectionalIterator1
- * @param[in] first,last
- * @param[out] result
- * @return
+ * @brief Moves a range of elements to a new location in backwards order.
+ *
+ * Moves the elements from the range \f$ [first, last) \f$, to another range ending at \p output.
+ * @tparam TBidirectionalIterator0 Type of \p first & \p last which satisfies \em BidirectionalIterator.
+ * @tparam TBidirectionalIterator1 Type of \p output which satisfies \em BidirectionalIterator.
+ * @param[in] first,last The range of the elements to move.
+ * @param[out] output The end of the destination range.
+ * @return Iterator in the destination range, pointing at the last element moved.
  */
 template< typename TBidirectionalIterator0, typename TBidirectionalIterator1 >
-auto move_backward(TBidirectionalIterator0 first, TBidirectionalIterator0 last, TBidirectionalIterator1 result) -> TBidirectionalIterator1;
+auto move_backward(
+	TBidirectionalIterator0 first, TBidirectionalIterator0 last,
+	TBidirectionalIterator1 output
+) -> TBidirectionalIterator1;
 
 } // namespace Algorithm
 
