@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief merge_inplace
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -21,22 +20,40 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::inplace_merge
- * @tparam TBidirectionalIterator
- * @tparam TComparator
- * @param[in,out] first,middle,last
- * @param[in] comparator
+ * @brief merges two ordered ranges in-place.
+ *
+ * Merges two consecutive sorted ranges \f$ [first, middle) \f$ and \f$ [middle, last) \f$ into one sorted range \f$ [first, last) \f$.
+ * @tparam TBidirectionalIterator Type of \p first, \p middle & \p last which satisfies \em BidirectionalIterator.
+ * @tparam TComparator Type of \p comparator.
+ * @param[in,out] first The beginning of the first sorted range.
+ * @param[in,out] middle The end of the first sorted range and the beginning of the second.
+ * @param[in,out] last The end of the second sorted range.
+ * @param[in] comparator Comparison function object which returns <code>​true</code>
+ *                       if the first argument is less than (i.e. is ordered before) the second.
  */
 template< typename TBidirectionalIterator, typename TComparator >
-void merge_inplace(TBidirectionalIterator first, TBidirectionalIterator middle, TBidirectionalIterator last, TComparator && comparator);
+void merge_inplace(
+	TBidirectionalIterator first,
+	TBidirectionalIterator middle,
+	TBidirectionalIterator last,
+	TComparator && comparator
+);
 
 /**
- * @brief like std::inplace_merge
- * @tparam TBidirectionalIterator
- * @param[in,out] first,middle,last
+ * @brief merges two ordered ranges in-place.
+ *
+ * Merges two consecutive sorted ranges \f$ [first, middle) \f$ and \f$ [middle, last) \f$ into one sorted range \f$ [first, last) \f$.
+ * @tparam TBidirectionalIterator Type of \p first, \p middle & \p last which satisfies \em BidirectionalIterator.
+ * @param[in,out] first The beginning of the first sorted range.
+ * @param[in,out] middle The end of the first sorted range and the beginning of the second.
+ * @param[in,out] last The end of the second sorted range.
  */
 template< typename TBidirectionalIterator >
-void merge_inplace(TBidirectionalIterator first, TBidirectionalIterator middle, TBidirectionalIterator last);
+void merge_inplace(
+	TBidirectionalIterator first,
+	TBidirectionalIterator middle,
+	TBidirectionalIterator last
+);
 
 } // namespace Algorithm
 
@@ -108,7 +125,7 @@ inline namespace Algorithm {
 
 template< typename TBidirectionalIterator, typename TComparator >
 inline void merge_inplace(TBidirectionalIterator first, TBidirectionalIterator middle, TBidirectionalIterator last, TComparator && comparator) {
-	return Detail::Algorithm::merge_inplace(first, middle, last, forward<TComparator>(comparator));
+	return Detail::Algorithm::merge_inplace(first, middle, last, distance(first, middle), distance(middle, last), forward<TComparator>(comparator));
 }
 
 template< typename TBidirectionalIterator >

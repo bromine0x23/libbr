@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief set_difference
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -16,30 +15,46 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::set_difference
- * @tparam TInputIterator0,TInputIterator1
- * @tparam TOutputIterator
- * @tparam TComparator
- * @param[in] first0,last0
- * @param[in] first1,last1
- * @param[out] result
- * @param[in] comparator
- * @return
+ * @brief Computes the difference between two sets.
+ *
+ * Copies the elements from the sorted range \f$ [first_0, last_0) \f$ which are not found in the sorted range \f$ [first_1, last_1) \f$ to the range beginning at output.
+ * @tparam TInputIterator0 Type of \p first0 & \p last0 which satisfies \em ForwardIterator.
+ * @tparam TInputIterator1 Type of \p first1 & \p last1 which satisfies \em ForwardIterator.
+ * @tparam TOutputIterator Type of \p output which satisfies \em OutputIterator.
+ * @tparam TComparator Type of \p comparator.
+ * @param[in] first0,last0 The range of elements to examine.
+ * @param[in] first1,last1 The range of elements to search for.
+ * @param[out] output The beginning of the destination range.
+ * @param[in] comparator Comparison function object which returns <code>​true</code>
+ *                       if the first argument is less than (i.e. is ordered before) the second.
+ * @return Iterator past the end of the constructed range.
  */
 template< typename TInputIterator0, typename TInputIterator1, typename TOutputIterator, typename TComparator >
-auto set_difference(TInputIterator0 first0, TInputIterator0 last0, TInputIterator1 first1, TInputIterator1 last1, TOutputIterator result, TComparator && comparator) -> TOutputIterator;
+auto set_difference(
+	TInputIterator0 first0, TInputIterator0 last0,
+	TInputIterator1 first1, TInputIterator1 last1,
+	TOutputIterator output,
+	TComparator && comparator
+) -> TOutputIterator;
 
 /**
- * @brief like std::set_difference
- * @tparam TInputIterator0,TInputIterator1
- * @tparam TOutputIterator
- * @param[in] first0,last0
- * @param[in] first1,last1
- * @param[out] result
- * @return
+ * @brief Computes the difference between two sets.
+ *
+ * Copies the elements from the sorted range \f$ [first_0, last_0) \f$ which are not found in the sorted range \f$ [first_1, last_1) \f$ to the range beginning at output.
+ * @tparam TInputIterator0 Type of \p first0 & \p last0 which satisfies \em ForwardIterator.
+ * @tparam TInputIterator1 Type of \p first1 & \p last1 which satisfies \em ForwardIterator.
+ * @tparam TOutputIterator Type of \p output which satisfies \em OutputIterator.
+ * @param[in] first0,last0 The range of elements to examine.
+ * @param[in] first1,last1 The range of elements to search for.
+ * @param[out] output The beginning of the destination range.
+ * @return Iterator past the end of the constructed range.
  */
 template< typename TInputIterator0, typename TInputIterator1, typename TOutputIterator >
-auto set_difference(TInputIterator0 first0, TInputIterator0 last0, TInputIterator1 first1, TInputIterator1 last1, TOutputIterator result) -> TOutputIterator;
+auto set_difference(
+	TInputIterator0 first0, TInputIterator0 last0,
+	TInputIterator1 first1, TInputIterator1 last1,
+	TOutputIterator result
+) -> TOutputIterator;
 
 } // namespace Algorithm
 
@@ -48,14 +63,14 @@ auto set_difference(TInputIterator0 first0, TInputIterator0 last0, TInputIterato
 inline namespace Algorithm {
 
 template< typename TInputIterator0, typename TInputIterator1, typename TOutputIterator, typename TComparator >
-auto set_difference(TInputIterator0 first0, TInputIterator0 last0, TInputIterator1 first1, TInputIterator1 last1, TOutputIterator result, TComparator && comparator) -> TOutputIterator {
+auto set_difference(TInputIterator0 first0, TInputIterator0 last0, TInputIterator1 first1, TInputIterator1 last1, TOutputIterator output, TComparator && comparator) -> TOutputIterator {
 	for (; first0 != last0;) {
 		if (first1 == last1) {
-			return copy(first0, last0, result);
+			return copy(first0, last0, output);
 		}
 		if (forward<TComparator>(comparator)(*first0, *first1)) {
-			*result = *first0;
-			++result;
+			*output = *first0;
+			++output;
 			++first0;
 		} else {
 			if (!forward<TComparator>(comparator)(*first1, *first0)) {
@@ -64,12 +79,12 @@ auto set_difference(TInputIterator0 first0, TInputIterator0 last0, TInputIterato
 			++first1;
 		}
 	}
-	return result;
+	return output;
 }
 
 template< typename TInputIterator0, typename TInputIterator1, typename TOutputIterator >
-inline auto set_difference(TInputIterator0 first0, TInputIterator0 last0, TInputIterator1 first1, TInputIterator1 last1, TOutputIterator result) -> TOutputIterator {
-	return set_difference(first0, last0, first1, last1, result, Less<>());
+inline auto set_difference(TInputIterator0 first0, TInputIterator0 last0, TInputIterator1 first1, TInputIterator1 last1, TOutputIterator output) -> TOutputIterator {
+	return set_difference(first0, last0, first1, last1, output, Less<>());
 }
 
 } // namespace Algorithm
