@@ -1,12 +1,12 @@
 /**
  * @file
  * @brief UniformIntDistribution
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/assert/assert.hpp>
 #include <libbr/operators/equality_comparable.hpp>
 #include <libbr/type_traits/common.hpp>
 #include <libbr/type_traits/integer_traits.hpp>
@@ -64,28 +64,24 @@ public:
 		CommonResult const generator_min = generator.min();
 		CommonResult const generator_max = generator.max();
 		CommonResult const generator_range = generator.max() - generator.min();
-		CommonResult const range = CommonResult(max()) - CommonResult(min());
+		CommonResult const range = CommonResult(parameter.b()) - CommonResult(parameter.a());
 		CommonResult result;
 		if (generator_range > range) {
 			CommonResult const extended_range = range + 1;
 			CommonResult const scaling = generator_range / extended_range;
 			CommonResult const door = extended_range * scaling;
-			do {
-				result = CommonResult(generator()) - generator_min;
-			} while (result > door);
+			result = CommonResult(generator()) - generator_min;
+			BR_ASSERT(result <= door);
 			result /= scaling;
 		} else if (generator_range < range) {
-			CommonResult temp;
-			auto const extended_generator_range = generator_range + 1;
-			do {
-				temp = extended_generator_range * operator()(generator, Parameter(0, range / extended_generator_range));
-				result = temp + CommonResult(generator()) - generator_min;
-			}
-			while (result > range || result < temp);
+			CommonResult const extended_generator_range = generator_range + 1;
+			CommonResult temp = extended_generator_range * operator()(generator, Parameter(0, range / extended_generator_range));
+			result = temp + CommonResult(generator()) - generator_min;
+			BR_ASSERT(temp <= result && result <= range);
 		} else {
 			result = CommonResult(generator()) - generator_min;
 		}
-		return result + min();
+		return result + parameter.a();
 	}
 
 	constexpr auto parameter() const -> Parameter {
