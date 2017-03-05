@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief remove
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -15,15 +14,18 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::remove
- * @tparam TForwardIterator
- * @tparam TValue
- * @param[in,out] first,last
- * @param[in] value
- * @return
+ * @brief Removes elements that equal to specific value.
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @tparam TValue Type of \p value.
+ * @param[in,out] first,last The range of elements to process.
+ * @param[in] value The value of elements to remove.
+ * @return Iterator to the end of new range.
  */
 template< typename TForwardIterator, typename TValue >
-auto remove(TForwardIterator first, TForwardIterator last, TValue const & value) -> TForwardIterator;
+auto remove(
+	TForwardIterator first, TForwardIterator last,
+	TValue const & value
+) -> TForwardIterator;
 
 } // namespace Algorithm
 

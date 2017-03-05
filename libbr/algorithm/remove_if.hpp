@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief remove_if
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -16,15 +15,18 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::remove_if
- * @tparam TForwardIterator
- * @tparam TUnaryPredicate
- * @param[in,out] first,last
- * @param[in] predicate
- * @return
+ * @brief Removes elements satisfying specific criteria.
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @tparam TUnaryPredicate Type of \p predicate.
+ * @param[in,out] first,last The range of elements to process.
+ * @param[in] predicate Unary predicate which returns <code>​true</code> if the element should be removed.
+ * @return Iterator to the end of new range.
  */
 template< typename TForwardIterator, typename TUnaryPredicate >
-auto remove_if(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate) -> TForwardIterator;
+auto remove_if(
+	TForwardIterator first, TForwardIterator last,
+	TUnaryPredicate && predicate
+) -> TForwardIterator;
 
 } // namespace Algorithm
 

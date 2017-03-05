@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief min_max_element
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once

@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief remove_copy_if
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -14,17 +13,21 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::remove_copy_if
- * @tparam TInputIterator
- * @tparam TOutputIterator
- * @tparam TUnaryPredicate
- * @param[in] first,last
- * @param[out] result
- * @param[in] predicate
- * @return
+ * @brief Copies a range of elements omitting those that satisfy specific criteria.
+ * @tparam TInputIterator Type of \p first & \p last which satisfies \em InputIterator.
+ * @tparam TOutputIterator Type of\p output which satisfies \em OutputIterator.
+ * @tparam TUnaryPredicate Type of \p predicate
+ * @param[in] first,last The range of elements to copy.
+ * @param[out] output The beginning of the destination range.
+ * @param[in] predicate Unary predicate which returns ​<code>true</code> for the omitted elements.
+ * @return Iterator to the element past the last element copied.
  */
 template< typename TInputIterator, typename TOutputIterator, typename TUnaryPredicate >
-auto remove_copy_if(TInputIterator first, TInputIterator last, TOutputIterator result, TUnaryPredicate && predicate) -> TOutputIterator;
+auto remove_copy_if(
+	TInputIterator first, TInputIterator last,
+	TOutputIterator output,
+	TUnaryPredicate && predicate
+) -> TOutputIterator;
 
 } // namespace Algorithm
 
@@ -33,14 +36,14 @@ auto remove_copy_if(TInputIterator first, TInputIterator last, TOutputIterator r
 inline namespace Algorithm {
 
 template< typename TInputIterator, typename TOutputIterator, typename TUnaryPredicate >
-auto remove_copy_if(TInputIterator first, TInputIterator last, TOutputIterator result, TUnaryPredicate && predicate) -> TOutputIterator {
+auto remove_copy_if(TInputIterator first, TInputIterator last, TOutputIterator output, TUnaryPredicate && predicate) -> TOutputIterator {
 	for (; first != last; ++first) {
 		if (!forward<TUnaryPredicate>(predicate)(*first)) {
-			*result = *first;
-			++result;
+			*output = *first;
+			++output;
 		}
 	}
-	return result;
+	return output;
 }
 
 } // namespace Algorithm

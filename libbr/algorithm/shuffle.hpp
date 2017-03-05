@@ -24,7 +24,10 @@ inline namespace Algorithm {
  * @param[in] generator a UniformRandomBitGenerator whose result type is convertible to IteratorTraits<TRandomAccessIterator>::Difference.
  */
 template< typename TRandomAccessIterator, typename TUniformRandomBitGenerator >
-void shuffle(TRandomAccessIterator first, TRandomAccessIterator last, TUniformRandomBitGenerator && generator);
+void shuffle(
+	TRandomAccessIterator first, TRandomAccessIterator last,
+	TUniformRandomBitGenerator && generator
+);
 
 } // namespace Algorithm
 

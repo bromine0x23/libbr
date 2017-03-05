@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief remove_copy
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -13,17 +12,21 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::remove_copy
- * @tparam TInputIterator
- * @tparam TOutputIterator
- * @tparam TValue
- * @param[in] first,last
- * @param[out] result
- * @param[in] value
- * @return
+ * @brief Copies a range of elements omitting those that equal to specific value.
+ * @tparam TInputIterator Type of \p first & \p last which satisfies \em InputIterator.
+ * @tparam TOutputIterator Type of\p output which satisfies \em OutputIterator.
+ * @tparam TValue Type of \p value.
+ * @param[in] first,last The range of elements to copy.
+ * @param[out] output The beginning of the destination range.
+ * @param[in] value The value of the elements not to copy.
+ * @return Iterator to the element past the last element copied.
  */
 template< typename TInputIterator, typename TOutputIterator, typename TValue >
-auto remove_copy(TInputIterator first, TInputIterator last, TOutputIterator result, TValue const & value) -> TOutputIterator;
+auto remove_copy(
+	TInputIterator first, TInputIterator last,
+	TOutputIterator output,
+	TValue const & value
+) -> TOutputIterator;
 
 } // namespace Algorithm
 
@@ -32,14 +35,14 @@ auto remove_copy(TInputIterator first, TInputIterator last, TOutputIterator resu
 inline namespace Algorithm {
 
 template< typename TInputIterator, typename TOutputIterator, typename TValue >
-auto remove_copy(TInputIterator first, TInputIterator last, TOutputIterator result, TValue const & value) -> TOutputIterator {
+auto remove_copy(TInputIterator first, TInputIterator last, TOutputIterator output, TValue const & value) -> TOutputIterator {
 	for (; first != last; ++first) {
 		if (!(*first == value)) {
-			*result = *first;
-			++result;
+			*output = *first;
+			++output;
 		}
 	}
-	return result;
+	return output;
 }
 
 } // namespace Algorithm
