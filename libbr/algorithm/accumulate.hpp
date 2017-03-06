@@ -35,7 +35,7 @@ auto accumulate(
  * @tparam TInputIterator Type of \p first & \p last which satisfies InputIterator.
  * @tparam TValue Type of \p initial
  * @param first,last The range of elements to sum.
- * @param init Initial value of the sum.
+ * @param initial Initial value of the sum.
  * @return
  */
 template< typename TInputIterator, typename TValue >

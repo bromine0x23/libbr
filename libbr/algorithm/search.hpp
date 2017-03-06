@@ -23,7 +23,7 @@ inline namespace Algorithm {
  * @param[in] first0,last0 The range of elements to examine.
  * @param[in] first1,last1 The range of elements to search for.
  * @param[in] predicate Binary predicate which returns <code>​true</code> if the elements should be treated as equal.
- * @return Iterator to the beginning of first subsequence \f$ [first_1, s_last_1) \f$  in the range \f$  [first_0, last_0 - (last_1 - first_1)) \f$ .
+ * @return Iterator to the beginning of first subsequence \f$ [first_1, last_1) \f$  in the range \f$  [first_0, last_0 - (last_1 - first_1)) \f$ .
  *         If no such subsequence is found, \p last is returned.
  *         If \f$ [first_1, last_1) \f$ is empty, first is returned.
  */
@@ -40,7 +40,7 @@ auto search(
  * @tparam TForwardIterator1 Type of \p first1 & \p last1 which satisfies \em ForwardIterator.
  * @param[in] first0,last0 The range of elements to examine.
  * @param[in] first1,last1 The range of elements to search for.
- * @return Iterator to the beginning of first subsequence \f$ [first_1, s_last_1) \f$  in the range \f$  [first_0, last_0 - (last_1 - first_1)) \f$ .
+ * @return Iterator to the beginning of first subsequence \f$ [first_1, last_1) \f$  in the range \f$  [first_0, last_0 - (last_1 - first_1)) \f$ .
  *         If no such subsequence is found, \p last is returned.
  *         If \f$ [first_1, last_1) \f$ is empty, first is returned.
  */

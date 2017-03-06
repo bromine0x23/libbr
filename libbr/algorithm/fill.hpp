@@ -17,7 +17,7 @@ inline namespace Algorithm {
 /**
  * @brief Copy-assigns the given value to every element in a range.
  * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
- * @tparam TValue Type of \value
+ * @tparam TValue Type of \p value
  * @param[in,out] first,last The range of elements to modify.
  * @param[in] value the value to be assigned.
  */

@@ -53,7 +53,7 @@ template< typename TInputIterator0, typename TInputIterator1, typename TOutputIt
 auto set_difference(
 	TInputIterator0 first0, TInputIterator0 last0,
 	TInputIterator1 first1, TInputIterator1 last1,
-	TOutputIterator result
+	TOutputIterator output
 ) -> TOutputIterator;
 
 } // namespace Algorithm

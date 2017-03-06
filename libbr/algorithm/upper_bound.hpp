@@ -34,7 +34,7 @@ auto upper_bound(
 ) -> TForwardIterator;
 
 /**
- * @brief like std::upper_bound
+ * @brief Returns an iterator to the first element greater than a certain value.
  * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
  * @tparam TValue Type of \p value.
  * @param first,last The range of elements to examine.

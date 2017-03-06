@@ -45,7 +45,7 @@ auto uniquify_copy(
 template< typename TInputIterator, typename TOutputIterator >
 auto uniquify_copy(
 	TInputIterator first, TInputIterator last,
-	TOutputIterator result
+	TOutputIterator output
 ) -> TOutputIterator;
 
 } // namespace Algorithm
@@ -56,50 +56,50 @@ namespace Detail {
 namespace Algorithm {
 
 template< typename TInputIterator, typename TOutputIterator, typename TBinaryPredicate >
-auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIterator result, TBinaryPredicate && predicate, SinglePassTraversalTag, IncrementableTraversalTag) -> TOutputIterator {
+auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIterator output, TBinaryPredicate && predicate, SinglePassTraversalTag, IncrementableTraversalTag) -> TOutputIterator {
 	if (first != last) {
 		auto t = *first;
-		*result = t;
-		++result;
+		*output = t;
+		++output;
 		for (;++first != last;) {
 			if (!forward<TBinaryPredicate>(predicate)(t, *first)) {
 				t = *first;
-				*result = t;
-				++result;
+				*output = t;
+				++output;
 			}
 		}
 	}
-	return result;
+	return output;
 }
 
 template< typename TForwardIterator, typename TOutputIterator, typename TBinaryPredicate >
-auto uniquify_copy(TForwardIterator first, TForwardIterator last, TOutputIterator result, TBinaryPredicate && predicate, ForwardTraversalTag, IncrementableTraversalTag) -> TOutputIterator {
+auto uniquify_copy(TForwardIterator first, TForwardIterator last, TOutputIterator output, TBinaryPredicate && predicate, ForwardTraversalTag, IncrementableTraversalTag) -> TOutputIterator {
 	if (first != last) {
 		auto i = first;
-		*result = *i;
-		++result;
+		*output = *i;
+		++output;
 		for (; ++first != last;) {
 			if (!forward<TBinaryPredicate>(predicate)(*i, *first)) {
-				*result = *first;
-				++result;
+				*output = *first;
+				++output;
 				i = first;
 			}
 		}
 	}
-	return result;
+	return output;
 }
 
 template< typename TInputIterator, typename TForwardIterator, typename TBinaryPredicate >
-auto uniquify_copy(TInputIterator first, TInputIterator last, TForwardIterator result, TBinaryPredicate && predicate, SinglePassTraversalTag, ForwardTraversalTag) -> TForwardIterator {
+auto uniquify_copy(TInputIterator first, TInputIterator last, TForwardIterator output, TBinaryPredicate && predicate, SinglePassTraversalTag, ForwardTraversalTag) -> TForwardIterator {
 	if (first != last) {
-		for (*result = *first; ++first != last; ) {
-			if (!forward<TBinaryPredicate>(predicate)(*result, *first)) {
-				*++result = *first;
+		for (*output = *first; ++first != last; ) {
+			if (!forward<TBinaryPredicate>(predicate)(*output, *first)) {
+				*++output = *first;
 			}
 		}
-		++result;
+		++output;
 	}
-	return result;
+	return output;
 }
 
 } // namespace Algorithm
@@ -108,13 +108,13 @@ auto uniquify_copy(TInputIterator first, TInputIterator last, TForwardIterator r
 inline namespace Algorithm {
 
 template< typename TInputIterator, typename TOutputIterator, typename TBinaryPredicate >
-inline auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIterator result, TBinaryPredicate && predicate) -> TOutputIterator {
-	return Detail::Algorithm::uniquify_copy(first, last, result, forward<TBinaryPredicate>(predicate), typename IteratorTraits<TInputIterator>::Category{}, typename IteratorTraits<TOutputIterator>::Category{});
+inline auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIterator output, TBinaryPredicate && predicate) -> TOutputIterator {
+	return Detail::Algorithm::uniquify_copy(first, last, output, forward<TBinaryPredicate>(predicate), typename IteratorTraits<TInputIterator>::Category{}, typename IteratorTraits<TOutputIterator>::Category{});
 }
 
 template< typename TInputIterator, typename TOutputIterator >
-inline auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator {
-	return uniquify_copy(first, last, result, Equal<>());
+inline auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIterator output) -> TOutputIterator {
+	return uniquify_copy(first, last, output, Equal<>());
 }
 
 } // namespace Algorithm
