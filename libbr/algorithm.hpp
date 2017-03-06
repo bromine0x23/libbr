@@ -69,7 +69,7 @@
 
 #include <libbr/algorithm/transform.hpp>
 
-#include <libbr/algorithm/unique.hpp>
+#include <libbr/algorithm/uniquify.hpp>
 #include <libbr/algorithm/unique_copy.hpp>
 
 #include <libbr/algorithm/max.hpp>
