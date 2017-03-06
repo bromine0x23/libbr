@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief replace_copy_if
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -14,19 +13,24 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::replace_copy_if
- * @tparam TInputIterator
- * @tparam TOutputIterator
- * @tparam TValue
- * @tparam TUnaryPredicate
- * @param[in] first,last
- * @param[out] result
- * @param[in] new_value
- * @param[in] predicate
- * @return
+ * @brief Copies a range, replacing elements satisfying specific criteria with another value.
+ * @tparam TInputIterator Type of \p first & \p last which satisfies \em InputIterator.
+ * @tparam TOutputIterator Type of output which satisfies \em OutputIterator.
+ * @tparam TUnaryPredicate Type of \p predicate.
+ * @tparam TValue Type of \p new_value.
+ * @param[in] first,last The range of elements to copy.
+ * @param[out] output The beginning of the destination range.
+ * @param[in] predicate Unary predicate which returns <code>true</code> if the element value should be replaced.
+ * @param[in] new_value The value to use as replacement.
+ * @return Iterator to the element past the last element copied.
  */
-template< typename TInputIterator, typename TOutputIterator, typename TValue, typename TUnaryPredicate >
-auto replace_copy_if(TInputIterator first, TInputIterator last, TOutputIterator result, TValue const & new_value, TUnaryPredicate && predicate) -> TOutputIterator;
+template< typename TInputIterator, typename TOutputIterator, typename TUnaryPredicate, typename TValue >
+auto replace_copy_if(
+	TInputIterator first, TInputIterator last,
+	TOutputIterator output,
+	TUnaryPredicate && predicate,
+	TValue const & new_value
+) -> TOutputIterator;
 
 } // namespace Algorithm
 
@@ -34,12 +38,12 @@ auto replace_copy_if(TInputIterator first, TInputIterator last, TOutputIterator 
 
 inline namespace Algorithm {
 
-template< typename TInputIterator, typename TOutputIterator, typename TValue, typename TUnaryPredicate >
-inline auto replace_copy_if(TInputIterator first, TInputIterator last, TOutputIterator result, TValue const & new_value, TUnaryPredicate && predicate) -> TOutputIterator {
-	for (; first != last; ++first, (void) ++result) {
-		*result = forward<TUnaryPredicate>(predicate)(*first) ? new_value : *first;
+template< typename TInputIterator, typename TOutputIterator, typename TUnaryPredicate, typename TValue >
+inline auto replace_copy_if(TInputIterator first, TInputIterator last, TOutputIterator output, TUnaryPredicate && predicate, TValue const & new_value) -> TOutputIterator {
+	for (; first != last; ++first, (void) ++output) {
+		*output = forward<TUnaryPredicate>(predicate)(*first) ? new_value : *first;
 	}
-	return result;
+	return output;
 }
 
 } // namespace Algorithm

@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief replace
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -13,15 +12,21 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::replace
- * @tparam TForwardIterator
- * @tparam TValue
- * @param[in,out] first,last
- * @param[in] old_value
- * @param[in] new_value
+ * @brief Replaces all elements that equal to specific value.
+ *
+ * Replaces all elements that equal to \p old_value.
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @tparam TValue Type of \p old_value & \p new_value.
+ * @param[in,out] first,last The range of elements to process.
+ * @param[in] old_value The value of elements to replace.
+ * @param[in] new_value The value to use as replacement.
  */
 template< typename TForwardIterator, typename TValue >
-void replace(TForwardIterator first, TForwardIterator last, TValue const & old_value, TValue const & new_value);
+void replace(
+	TForwardIterator first, TForwardIterator last,
+	TValue const & old_value,
+	TValue const & new_value
+);
 
 } // namespace Algorithm
 
