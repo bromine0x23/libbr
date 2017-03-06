@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief rotate
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -24,14 +23,22 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::rotate
- * @tparam TForwardIterator
- * @param[in,out] first,last
- * @param[in] middle
- * @return
+ * @brief Rotates the order of elements in a range.
+ *
+ * Swaps the elements in the range \f$ [first, last) \f$ in such a way
+ * that the element \p middle becomes the first element of the new range and \f$ middle-1 \f$ becomes the last element.
+ * @tparam TForwardIterator Type of \p first, \p middle & \p last which satisfies \em ForwardIterator.
+ * @param[in,out] first The beginning of the original range.
+ * @param[in,out] middle The element that should appear at the beginning of the rotated range.
+ * @param[in,out] last The end of the original range.
+ * @return The iterator equal to \f$ first + (last - middle) \f$
  */
 template< typename TForwardIterator >
-auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIterator last) -> TForwardIterator;
+auto rotate(
+	TForwardIterator first,
+	TForwardIterator middle,
+	TForwardIterator last
+) -> TForwardIterator;
 
 } // namespace Algorithm
 
@@ -62,6 +69,7 @@ inline auto rotate_right(TBidirectionalIterator first, TBidirectionalIterator la
 
 template< typename TForwardIterator >
 auto rotate_forward(TForwardIterator first, TForwardIterator middle, TForwardIterator last) -> TForwardIterator {
+	using BR::swap;
 	for (auto i = middle;;) {
 		swap(*first, *i);
 		++first;
@@ -92,6 +100,7 @@ auto rotate_forward(TForwardIterator first, TForwardIterator middle, TForwardIte
 
 template< typename TRandomAccessIterator >
 auto rotate_gcd(TRandomAccessIterator first, TRandomAccessIterator middle, TRandomAccessIterator last) -> TRandomAccessIterator {
+	using BR::move;
 	auto const length0 = middle - first;
 	auto const length1 = last - middle;
 	if (length0 == length1) {
@@ -100,11 +109,11 @@ auto rotate_gcd(TRandomAccessIterator first, TRandomAccessIterator middle, TRand
 	}
 	auto const g = gcd(length0, length1);
 	for (auto p = first + g; p != first;) {
-		auto t = BR::move(*--p);
+		auto t = move(*--p);
 		auto p1 = p;
 		auto p2 = p1 + length0;
 		do {
-			*p1 = BR::move(*p2);
+			*p1 = move(*p2);
 			p1 = p2;
 			auto const d = last - p2;
 			if (length0 < d) {
@@ -113,7 +122,7 @@ auto rotate_gcd(TRandomAccessIterator first, TRandomAccessIterator middle, TRand
 				p2 = first + (length0 - d);
 			}
 		} while (p2 != p);
-		*p1 = BR::move(t);
+		*p1 = move(t);
 	}
 	return first + length1;
 }

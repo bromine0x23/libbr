@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief reverse
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -16,12 +15,16 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::reverse
- * @tparam TBidirectionalIterator
- * @param[in,out] first,last
+ * @brief Reverses the order of elements in a range.
+ *
+ * Reverses the order of the elements in the range \f$ [first, last) \f$.
+ * @tparam TBidirectionalIterator Type of \p first & \p last which satisfies \em BidirectionalIterator.
+ * @param[in,out] first,last The range of elements to reverse.
  */
 template< typename TBidirectionalIterator >
-void reverse(TBidirectionalIterator first, TBidirectionalIterator last);
+void reverse(
+	TBidirectionalIterator first, TBidirectionalIterator last
+);
 
 } // namespace Algorithm
 
