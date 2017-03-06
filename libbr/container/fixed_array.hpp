@@ -84,11 +84,7 @@ constexpr inline auto get(FixedArray< T, S > const && A) noexcept -> T const && 
 inline namespace Container {
 
 template< typename TElement, Size N >
-class FixedArray :
-	public Enumerable< FixedArray< TElement, N >, TElement *, TElement const * >,
-	public EqualityComparable< FixedArray< TElement, N > >,
-	public LessThanComparable< FixedArray< TElement, N > >
-{
+struct FixedArray {
 private:
 	using Self = FixedArray;
 
@@ -131,7 +127,7 @@ public:
 	 * @param element 填充值
 	 */
 	auto fill(Element const & element) -> Self & {
-		fill_n(m_elements, N, element);
+		fill_n(elements, N, element);
 		return *this;
 	}
 
@@ -140,23 +136,31 @@ public:
 	 */
 	void swap(Self & array) noexcept(IsNothrowSwappable< CArray< Element, N > >{}) {
 		using BR::swap;
-		swap(m_elements, array.m_elements);
+		swap(elements, array.elements);
 	}
 
 	auto begin() noexcept -> Iterator {
-		return Iterator(m_elements);
+		return Iterator(elements);
 	}
 
 	auto begin() const noexcept -> ConstIterator {
-		return ConstIterator(m_elements);
+		return ConstIterator(elements);
+	}
+
+	auto cbegin() const noexcept -> ConstIterator {
+		return begin();
 	}
 
 	auto end() noexcept -> Iterator {
-		return Iterator(m_elements + N);
+		return Iterator(elements + N);
 	}
 
 	auto end() const noexcept -> ConstIterator {
-		return ConstIterator(m_elements + N);
+		return ConstIterator(elements + N);
+	}
+
+	auto cend() const noexcept -> ConstIterator {
+		return end();
 	}
 
 	auto rbegin() noexcept -> ReverseIterator {
@@ -167,24 +171,16 @@ public:
 		return ConstReverseIterator(end());
 	}
 
+	auto crbegin() const noexcept -> ConstReverseIterator {
+		return rbegin();
+	}
+
 	auto rend() noexcept -> ReverseIterator {
 		return ReverseIterator(begin());
 	}
 
 	auto rend() const noexcept -> ConstReverseIterator {
 		return ConstReverseIterator(begin());
-	}
-
-	auto cbegin() const noexcept -> ConstIterator {
-		return begin();
-	}
-
-	auto crbegin() const noexcept -> ConstReverseIterator {
-		return rbegin();
-	}
-
-	auto cend() const noexcept -> ConstIterator {
-		return end();
 	}
 
 	auto crend() const noexcept -> ConstReverseIterator {
@@ -204,11 +200,11 @@ public:
 	}
 
 	auto operator[](Size i) -> Reference {
-		return m_elements[i];
+		return elements[i];
 	}
 
 	constexpr auto operator[](Size i) const -> ConstReference {
-		return m_elements[i];
+		return elements[i];
 	}
 
 	auto at(Size i) -> Reference {
@@ -242,11 +238,11 @@ public:
 	}
 
 	auto data() noexcept -> Element * {
-		return m_elements;
+		return elements;
 	}
 
 	auto data() const noexcept -> Element const * {
-		return m_elements;
+		return elements;
 	}
 
 	auto operator==(Self const & y) const -> Boolean {
@@ -257,8 +253,13 @@ public:
 		return lexicographical_compare(begin(), end(), y.begin(), y.end());
 	}
 
-private:
-	Element m_elements[N > 0 ? N : 1];
+	friend auto operator!=(Self const & x, Self const & y) -> Boolean { return !static_cast<Boolean>(x == y); }
+	friend auto operator> (Self const & x, Self const & y) -> Boolean { return y < x; }
+	friend auto operator<=(Self const & x, Self const & y) -> Boolean { return !static_cast<bool>(y < x); }
+	friend auto operator>=(Self const & x, Self const & y) -> Boolean { return !static_cast<bool>(x < y); }
+
+public:
+	Element elements[N > 0 ? N : 1];
 }; // struct FixedArray< TElement, S >
 
 } // namespace Container

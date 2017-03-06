@@ -1,6 +1,6 @@
 #include "../test.hpp"
 #include <libbr/enumerate/enumerator.hpp>
-#include <libbr/container/fixed_array.hpp>
+
 #include <libbr/container/slist.hpp>
 
 using namespace BR;
@@ -59,19 +59,4 @@ TEST(Enumerator, ForwardList) {
 
 	EXPECT_FALSE(enumerator.move());
 	EXPECT_FALSE(enumerator.move());
-}
-
-struct S {
-	int v;
-
-	bool greater_than_five() const noexcept {
-		return v > 10;
-	}
-};
-
-TEST(Enumerator, Class) {
-	auto array = FixedArray< S, 5 >::build([](int i){
-		return S{i};
-	});
-	make_enumerator(array.begin(), array.end());
 }
