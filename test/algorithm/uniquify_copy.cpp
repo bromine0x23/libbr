@@ -1,5 +1,5 @@
 #include "../test.hpp"
-#include <libbr/algorithm/unique_copy.hpp>
+#include <libbr/algorithm/uniquify_copy.hpp>
 
 #include <libbr/container/dlist.hpp>
 #include <libbr/container/dynamic_array.hpp>

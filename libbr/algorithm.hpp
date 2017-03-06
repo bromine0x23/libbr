@@ -1,7 +1,6 @@
 /**
  * @file
- * @brief 算法模块
- * @author Bromine0x23
+ * @brief Module of algorithms.
  * @since 1.0
  */
 #pragma once
@@ -70,7 +69,7 @@
 #include <libbr/algorithm/transform.hpp>
 
 #include <libbr/algorithm/uniquify.hpp>
-#include <libbr/algorithm/unique_copy.hpp>
+#include <libbr/algorithm/uniquify_copy.hpp>
 
 #include <libbr/algorithm/max.hpp>
 #include <libbr/algorithm/max_element.hpp>

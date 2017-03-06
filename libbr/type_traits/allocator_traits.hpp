@@ -7,8 +7,8 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/memory/construct.hpp>
-#include <libbr/memory/destroy.hpp>
+#include <libbr/memory/allocator_construct.hpp>
+#include <libbr/memory/allocator_destroy.hpp>
 #include <libbr/memory/memory_copy.hpp>
 #include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/integer_traits.hpp>
@@ -375,12 +375,12 @@ struct AllocatorTraits {
 
 	template<typename TElement, typename ... TArguments>
 	static void construct(Allocator & allocator, TElement * pointer, TArguments &&... arguments) {
-		BR::construct(allocator, pointer, forward<TArguments>(arguments) ...);
+		allocator_construct(allocator, pointer, forward<TArguments>(arguments) ...);
 	}
 
 	template<typename TElement>
 	static void destroy(Allocator &allocator, TElement * pointer) {
-		BR::destroy(allocator, pointer);
+		allocator_destroy(allocator, pointer);
 	}
 
 	constexpr static auto max_size(Allocator const & allocator) noexcept -> Size {

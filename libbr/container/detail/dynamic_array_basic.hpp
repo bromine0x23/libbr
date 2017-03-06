@@ -17,8 +17,8 @@
 #include <libbr/iterator/move_iterator.hpp>
 #include <libbr/iterator/iterator_traits.hpp>
 #include <libbr/memory/allocator_traits.hpp>
-#include <libbr/memory/construct_backward.hpp>
-#include <libbr/memory/construct_forward.hpp>
+#include <libbr/memory/allocator_construct_backward.hpp>
+#include <libbr/memory/allocator_construct_forward.hpp>
 #include <libbr/memory/memory_copy.hpp>
 #include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/has_nothrow_move_assignment.hpp>
@@ -192,7 +192,7 @@ protected:
 
 	template< typename TForwardIterator >
 	void m_construct_at_end(TForwardIterator first, TForwardIterator last, EnableIf< IsForwardIterator<TForwardIterator> > * = nullptr) {
-		m_end() = construct_forward(m_allocator(), first, last, m_end());
+		m_end() = allocator_construct_forward(m_allocator(), first, last, m_end());
 	}
 
 	void m_destruct_at_end(Pointer new_end) noexcept {
@@ -355,7 +355,7 @@ private:
 
 	void m_swap_out_buffer(Buffer & buffer) {
 		using BR::swap;
-		buffer.begin() = construct_backward(m_allocator(), make_move_iterator_if_noexcept(m_begin()), make_move_iterator_if_noexcept(m_end()), buffer.begin());
+		buffer.begin() = allocator_construct_backward(m_allocator(), make_move_iterator_if_noexcept(m_begin()), make_move_iterator_if_noexcept(m_end()), buffer.begin());
 		BR_ASSERT(buffer.storage_begin() == buffer.begin());
 		swap(m_begin(), buffer.begin());
 		swap(m_end(), buffer.end());
@@ -366,8 +366,8 @@ private:
 	auto m_swap_out_buffer(Buffer & buffer, Pointer reverse_at) -> Pointer {
 		using BR::swap;
 		auto const result = buffer.begin();
-		buffer.begin() = construct_backward(m_allocator(), m_begin(), reverse_at, buffer.begin());
-		buffer.end() = construct_forward(m_allocator(), reverse_at, m_end(), buffer.end());
+		buffer.begin() = allocator_construct_backward(m_allocator(), m_begin(), reverse_at, buffer.begin());
+		buffer.end() = allocator_construct_forward(m_allocator(), reverse_at, m_end(), buffer.end());
 		BR_ASSERT(buffer.storage_begin() == buffer.begin());
 		swap(m_begin(), buffer.begin());
 		swap(m_end(), buffer.end());
