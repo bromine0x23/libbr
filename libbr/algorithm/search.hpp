@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief search
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -17,26 +16,39 @@ namespace BR {
 inline namespace Algorithm {
 
 /**
- * @brief like std::search
- * @tparam TForwardIterator0,TForwardIterator1
- * @tparam TBinaryPredicate
- * @param[in] first0,last0
- * @param[in] first1,last1
- * @param[in] predicate
- * @return
+ * @brief Searches for a range of elements.
+ * @tparam TForwardIterator0 Type of \p first0 & \p last0 which satisfies \em ForwardIterator.
+ * @tparam TForwardIterator1 Type of \p first1 & \p last1 which satisfies \em ForwardIterator.
+ * @tparam TBinaryPredicate Type of \p predicate.
+ * @param[in] first0,last0 The range of elements to examine.
+ * @param[in] first1,last1 The range of elements to search for.
+ * @param[in] predicate Binary predicate which returns <code>​true</code> if the elements should be treated as equal.
+ * @return Iterator to the beginning of first subsequence \f$ [first_1, s_last_1) \f$  in the range \f$  [first_0, last_0 - (last_1 - first_1)) \f$ .
+ *         If no such subsequence is found, \p last is returned.
+ *         If \f$ [first_1, last_1) \f$ is empty, first is returned.
  */
 template< typename TForwardIterator0, typename TForwardIterator1, typename TBinaryPredicate >
-auto search(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1, TBinaryPredicate && predicate) -> TForwardIterator0;
+auto search(
+	TForwardIterator0 first0, TForwardIterator0 last0,
+	TForwardIterator1 first1, TForwardIterator1 last1,
+	TBinaryPredicate && predicate
+) -> TForwardIterator0;
 
 /**
- * @brief like std::search
- * @tparam TForwardIterator0,TForwardIterator1
- * @param[in] first0,last0
- * @param[in] first1,last1
- * @return
+ * @brief Searches for a range of elements.
+ * @tparam TForwardIterator0 Type of \p first0 & \p last0 which satisfies \em ForwardIterator.
+ * @tparam TForwardIterator1 Type of \p first1 & \p last1 which satisfies \em ForwardIterator.
+ * @param[in] first0,last0 The range of elements to examine.
+ * @param[in] first1,last1 The range of elements to search for.
+ * @return Iterator to the beginning of first subsequence \f$ [first_1, s_last_1) \f$  in the range \f$  [first_0, last_0 - (last_1 - first_1)) \f$ .
+ *         If no such subsequence is found, \p last is returned.
+ *         If \f$ [first_1, last_1) \f$ is empty, first is returned.
  */
 template< typename TForwardIterator0, typename TForwardIterator1 >
-auto search(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1) -> TForwardIterator0;
+auto search(
+	TForwardIterator0 first0, TForwardIterator0 last0,
+	TForwardIterator1 first1, TForwardIterator1 last1
+) -> TForwardIterator0;
 
 } // namespace Algorithm
 
@@ -86,7 +98,7 @@ auto search(TRandomAccessIterator0 first0, TRandomAccessIterator0 last0, TRandom
 	if (length0 < length1) {
 		return last0;
 	}
-	for (auto const start = first0 + (length1 - 1);;) {
+	for (auto const start = last0 - (length1 - 1);;) {
 		for (;; ++first0) {
 			if (first0 == start) {
 				return last0;
