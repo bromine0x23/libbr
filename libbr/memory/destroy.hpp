@@ -6,8 +6,10 @@
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/iterator/iterator_traits.hpp>
 #include <libbr/memory/address_of.hpp>
 #include <libbr/memory/destroy_at.hpp>
+#include <libbr/type_traits/has_trivial_destructor.hpp>
 
 namespace BR {
 
@@ -29,13 +31,28 @@ void destroy(
 
 
 
-inline namespace Memory {
+namespace Detail {
+namespace Memory {
 
-template< typename TForwardIterator, typename TSize >
-void destroy(TForwardIterator first, TForwardIterator last) {
+template< typename TForwardIterator >
+inline void destroy(TForwardIterator first, TForwardIterator last, BooleanTrue) noexcept {
+}
+
+template< typename TForwardIterator >
+inline void destroy(TForwardIterator first, TForwardIterator last, BooleanFalse) {
 	for (; first != last; ++first) {
 		destroy_at(address_of(*first));
 	}
+}
+
+} // namespace Memory
+} // namespace Detail
+
+inline namespace Memory {
+
+template< typename TForwardIterator >
+inline void destroy(TForwardIterator first, TForwardIterator last) {
+	Detail::Memory::destroy(first, last, HasTrivialDestructor< typename IteratorTraits<TForwardIterator>::Element >{});
 }
 
 } // namespace Memory

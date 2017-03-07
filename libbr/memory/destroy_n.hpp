@@ -6,7 +6,9 @@
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/iterator/iterator_traits.hpp>
 #include <libbr/memory/address_of.hpp>
+#include <libbr/memory/destroy.hpp>
 #include <libbr/memory/destroy_at.hpp>
 
 namespace BR {
@@ -30,13 +32,30 @@ void destroy_n(
 
 
 
-inline namespace Memory {
+namespace Detail {
+namespace Memory {
 
 template< typename TForwardIterator, typename TSize >
-void destroy_n(TForwardIterator first, TSize count) {
+inline void destroy_n(TForwardIterator first, TSize count, SinglePassTraversalTag) {
 	for (; count > 0; ++first, (void)--count) {
 		destroy_at(address_of(*first));
 	}
+}
+
+template< typename TForwardIterator, typename TSize >
+inline void destroy_n(TForwardIterator first, TSize count, RandomAccessTraversalTag) {
+	using BR::destroy;
+	destroy(first, first + count);
+}
+
+} // namespace Memory
+} // namespace Detail
+
+inline namespace Memory {
+
+template< typename TForwardIterator, typename TSize >
+inline void destroy_n(TForwardIterator first, TSize count) {
+	return Detail::Memory::destroy_n(first, count, typename IteratorTraits<TForwardIterator>::Category{});
 }
 
 } // namespace Memory
