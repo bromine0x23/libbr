@@ -12,6 +12,7 @@
 #include <libbr/algorithm/none_of.hpp>
 
 #include <libbr/algorithm/each.hpp>
+#include <libbr/algorithm/each_n.hpp>
 
 #include <libbr/algorithm/count.hpp>
 #include <libbr/algorithm/count_if.hpp>
