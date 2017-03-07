@@ -378,7 +378,7 @@ private:
 
 	void m_destruct_at_end(Pointer new_end, BooleanFalse) {
 		for (; new_end != end(); ) {
-			AllocatorTraits::destroy(allocator(), PointerTraits(--end()));
+			AllocatorTraits::destroy(allocator(), PointerTraits::to_raw(--end()));
 		}
 	}
 
