@@ -17,14 +17,20 @@
 #include <libbr/memory/default_deleter.hpp>
 #include <libbr/memory/destroy.hpp>
 #include <libbr/memory/destroy_at.hpp>
-#include <libbr/memory/destroy_n>
+#include <libbr/memory/destroy_n.hpp>
 #include <libbr/memory/new.hpp>
 #include <libbr/memory/scoped_allocator_adaptor.hpp>
 // #include <libbr/memory/scoped_pointer.hpp>
+#include <libbr/memory/uninitialized_construct.hpp>
+#include <libbr/memory/uninitialized_construct_n.hpp>
 #include <libbr/memory/uninitialized_copy.hpp>
 #include <libbr/memory/uninitialized_copy_n.hpp>
+#include <libbr/memory/uninitialized_default_construct.hpp>
+#include <libbr/memory/uninitialized_default_construct_n.hpp>
 #include <libbr/memory/uninitialized_fill.hpp>
 #include <libbr/memory/uninitialized_fill_n.hpp>
+#include <libbr/memory/uninitialized_move.hpp>
+#include <libbr/memory/uninitialized_move_n.hpp>
 #include <libbr/memory/unique_pointer.hpp>
 
 namespace BR {

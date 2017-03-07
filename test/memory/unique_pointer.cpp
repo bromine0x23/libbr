@@ -11,5 +11,5 @@ template class UniquePointer<int[]>;
 
 using namespace BR;
 
-TEST(TestUniquePointer, Constructor) {
+TEST(UniquePointer, Constructor) {
 }
