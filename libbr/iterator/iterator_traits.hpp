@@ -8,3 +8,12 @@
 
 #include <libbr/config.hpp>
 #include <libbr/type_traits/iterator_traits.hpp>
+
+namespace BR {
+inline namespace Iterator {
+
+using TypeTraits::IteratorTraits;
+
+} // namespace Iterator
+} // namespace BR
+
