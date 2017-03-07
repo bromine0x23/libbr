@@ -1,18 +1,19 @@
 /**
  * @file
  * @brief uninitialized_fill
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
 
 #include <libbr/config.hpp>
 #include <libbr/algorithm/fill.hpp>
+#include <libbr/iterator/iterator_traits.hpp>
 #include <libbr/memory/address_of.hpp>
+#include <libbr/memory/construct_at.hpp>
+#include <libbr/memory/destroy.hpp>
 #include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/has_copy_assignment.hpp>
 #include <libbr/type_traits/is_trivial.hpp>
-#include <libbr/type_traits/iterator_traits.hpp>
 #include <libbr/utility/boolean_constant.hpp>
 
 namespace BR {
@@ -20,50 +21,49 @@ namespace BR {
 inline namespace Memory {
 
 /**
- * @tparam TForwardIterator
- * @tparam TValue
- * @param[in,out] first
- * @param[in,out] last
- * @param value
- * @return
+ * @brief Copies an object to an uninitialized area of memory, defined by a range.
+ *
+ * Copies the given value to an uninitialized memory area, defined by the range \f$ [first, last) \f$.
+ * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
+ * @tparam TValue Type of \p value.
+ * @param[in,out] first,last The range of the elements to initialize
+ * @param value The value to construct the elements with.
  */
 template< typename TForwardIterator, typename TValue >
-inline auto uninitialized_fill(TForwardIterator first, TForwardIterator last, TValue const & value) -> TForwardIterator;
+void uninitialized_fill(
+	TForwardIterator first, TForwardIterator last,
+	TValue const & value
+);
 
 } // namespace Memory
+
+
 
 namespace Detail {
 namespace Memory {
 
 template< typename TForwardIterator, typename TValue >
-inline auto uninitialized_fill(TForwardIterator first, TForwardIterator last, TValue const & value, BooleanTrue) -> TForwardIterator {
-	return fill(first, last, value);
+void uninitialized_fill(TForwardIterator first, TForwardIterator last, TValue const & value, BooleanTrue) {
+	fill(first, last, value);
 }
 
 template< typename TForwardIterator, typename TValue >
-auto uninitialized_fill(TForwardIterator first, TForwardIterator last, TValue const & value, BooleanFalse) -> TForwardIterator {
-	using Element = typename IteratorTraits<TForwardIterator>::Element;
-	auto start = first;
-#if !defined(BR_NO_EXCEPTIONS)
-	try {
-#endif
-		for (; first != last; ++first) {
-			new(address_of(first)) Element(value);
+void uninitialized_fill(TForwardIterator first, TForwardIterator last, TValue const & value, BooleanFalse) {
+	using BR::destroy;
+	auto current = first;
+	BR_TRY {
+		for (; current != last; ++current) {
+			construct_at(address_of(*current), value);
 		}
-#if !defined(BR_NO_EXCEPTIONS)
-	} catch (...) {
-		for (; start != first; ++start) {
-			start->~Element();
-		}
-		throw;
+	} BR_CATCH(...) {
+		destroy(first, current);
+		BR_RETHROW;
 	}
-#endif
-	return first;
 }
 
 template< typename TForwardIterator, typename TValue >
-inline auto uninitialized_fill(TForwardIterator first, TForwardIterator last, TValue const & value) -> TForwardIterator {
-	return uninitialized_fill(first, last, value, BooleanAnd< IsTrivial<TValue>, HasCopyAssignment<TValue> >{});
+inline void uninitialized_fill(TForwardIterator first, TForwardIterator last, TValue const & value) {
+	uninitialized_fill(first, last, value, BooleanAnd< IsTrivial<TValue>, HasCopyAssignment<TValue> >{});
 }
 
 } // namespace Memory
@@ -72,8 +72,8 @@ inline auto uninitialized_fill(TForwardIterator first, TForwardIterator last, TV
 inline namespace Memory {
 
 template< typename TForwardIterator, typename TValue >
-auto uninitialized_fill(TForwardIterator first, TForwardIterator last, TValue const & value) -> TForwardIterator {
-	return Detail::Memory::uninitialized_fill(first, last, value);
+inline void uninitialized_fill(TForwardIterator first, TForwardIterator last, TValue const & value) {
+	Detail::Memory::uninitialized_fill(first, last, value);
 }
 } // namespace Memory
 
