@@ -24,6 +24,7 @@
 #include <libbr/container/tree_set.hpp>
 
 #include <libbr/container/in_place_tag.hpp>
+#include <libbr/container/null_optional_tag.hpp>
 
 namespace BR {
 
