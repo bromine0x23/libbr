@@ -9,8 +9,8 @@
 #include <libbr/container/initializer_list.hpp>
 #include <libbr/container/in_place_tag.hpp>
 #include <libbr/container/null_optional_tag.hpp>
+#include <libbr/container/detail/optional_basic.hpp>
 #include <libbr/container/detail/throw_optional_access_exception.hpp>
-#include <libbr/exception/logic_exception.hpp>
 #include <libbr/memory/address_of.hpp>
 #include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/decay.hpp>
@@ -55,111 +55,12 @@ constexpr inline auto make_optional(TValue &&value) -> Optional<Decay<TValue> > 
 
 
 
-namespace Detail {
-namespace Container {
-
-template<typename T, bool = HasTrivialDestructor<T>{}>
-class OptionalStorage;
-
-template<typename T>
-class OptionalStorage<T, true> {
-	using Value = T;
-
-protected:
-	constexpr OptionalStorage() noexcept : m_null_state(0), m_engaged(false) {
-	}
-
-	OptionalStorage(OptionalStorage const &storage) : m_engaged(storage.m_engaged) {
-		if (m_engaged) {
-			::new(address_of(m_value)) Value(storage.m_value);
-		}
-	}
-
-	OptionalStorage(OptionalStorage &&storage) noexcept(HasNothrowMoveConstructor<Value>{}) : m_engaged(
-		storage.m_engaged
-	) {
-		if (m_engaged) {
-			::new(address_of(m_value)) Value(move(storage.m_value));
-		}
-	}
-
-	constexpr OptionalStorage(Value const &value) : m_value(value), m_engaged(true) {
-	}
-
-	constexpr OptionalStorage(Value &&value) : m_value(move(value)), m_engaged(true) {
-	}
-
-	template<typename ... TArgs>
-	constexpr explicit
-	OptionalStorage(InPlaceTag, TArgs &&... args) : m_value(forward<TArgs>(args)...), m_engaged(true) {
-	}
-
-	~OptionalStorage() = default;
-
-protected:
-	union {
-		UInt8 m_null_state;
-		Value m_value;
-	};
-	bool m_engaged;
-};
-
-template<typename T>
-class OptionalStorage<T, false> {
-	using Value = T;
-
-protected:
-	constexpr OptionalStorage() noexcept : m_null_state(0), m_engaged(false) {
-	}
-
-	OptionalStorage(OptionalStorage const &storage) : m_engaged(storage.m_engaged) {
-		if (m_engaged) {
-			::new(address_of(m_value)) Value(storage.m_value);
-		}
-	}
-
-	OptionalStorage(OptionalStorage &&storage) noexcept(HasNothrowMoveConstructor<Value>::value) : m_engaged(
-		storage.m_engaged
-	) {
-		if (m_engaged) {
-			::new(address_of(m_value)) Value(move(storage.m_value));
-		}
-	}
-
-	constexpr OptionalStorage(Value const &value) : m_value(value), m_engaged(true) {
-	}
-
-	constexpr OptionalStorage(Value &&value) : m_value(move(value)), m_engaged(true) {
-	}
-
-	template<typename ... TArgs>
-	constexpr explicit
-	OptionalStorage(InPlaceTag, TArgs &&... args) : m_value(forward<TArgs>(args)...), m_engaged(true) {
-	}
-
-	~OptionalStorage() {
-		if (m_engaged) {
-			m_value.~Value();
-		}
-	}
-
-protected:
-	union {
-		UInt8 m_null_state;
-		Value m_value;
-	};
-	bool m_engaged;
-};
-
-} // namespace Container
-} // namespace Detail
-
 inline namespace Container {
 
-template<typename T>
-class Optional : private Detail::Container::OptionalStorage<T> {
+template< typename T >
+class Optional : private Detail::Container::OptionalBasic<T> {
 private:
-	using Base = Detail::Container::OptionalStorage<T>;
+	using Base = Detail::Container::OptionalBasic<T>;
 
 public:
 	using Value = T;
