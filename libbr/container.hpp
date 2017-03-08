@@ -25,6 +25,7 @@
 
 #include <libbr/container/in_place_tag.hpp>
 #include <libbr/container/null_optional_tag.hpp>
+#include <libbr/container/optional_access_exception.hpp>
 
 namespace BR {
 
