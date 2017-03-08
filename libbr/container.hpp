@@ -23,6 +23,8 @@
 #include <libbr/container/tree_map.hpp>
 #include <libbr/container/tree_set.hpp>
 
+#include <libbr/container/in_place_tag.hpp>
+
 namespace BR {
 
 /**
