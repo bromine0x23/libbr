@@ -1,11 +1,13 @@
-#include "../test.hpp"
+#include "test/test.hpp"
+#include <libbr/container/optional.hpp>
+
 #include <libbr/container/fixed_array.hpp>
 #include <libbr/container/tuple.hpp>
-#include <libbr/utility/optional.hpp>
+#include <libbr/container/optional_access_exception.hpp>
 
 using namespace BR;
 
-TEST(Utility, Optional) {
+TEST(Container, Optional) {
 	{
 		Optional<int> optional;
 

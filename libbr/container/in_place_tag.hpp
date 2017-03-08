@@ -8,7 +8,7 @@
 #include <libbr/config.hpp>
 
 namespace BR {
-namespace Container {
+inline namespace Container {
 
 /**
  * @brief Tag type for in-place construction.

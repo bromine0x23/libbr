@@ -1,5 +1,5 @@
 #include <libbr/utility/demangle.hpp>
-#include <libbr/utility/optional.hpp>
+#include <libbr/container/optional.hpp>
 
 #if defined(BR_CLANG) && defined(__has_include)
 #  if __has_include(<cxxabi.h>)
@@ -72,9 +72,6 @@ static inline auto demangle_implement(CString<NChar> name) -> RawString<NChar> {
 
 auto demangle(CString<NChar> name) -> RawString<NChar> {
 	return demangle_implement(name);
-}
-
-OptionalAccessException::~OptionalAccessException() noexcept {
 }
 
 } // namespace BR

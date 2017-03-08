@@ -8,7 +8,7 @@
 #include <libbr/config.hpp>
 
 namespace BR {
-namespace Container {
+inline namespace Container {
 
 /**
  * @brief Tag type to disengage optional objects.
@@ -21,7 +21,7 @@ struct NullOptionalTag {
 /**
  * @brief instance of NullOptionalTag
  */
-constexpr auto null_optional_tag = NullOptionalTag{};
+constexpr auto null_optional_tag = NullOptionalTag(0);
 
 } // namespace Container
 } // namespace BR
