@@ -6,12 +6,14 @@
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/assert/assert.hpp>
 #include <libbr/container/initializer_list.hpp>
 #include <libbr/container/in_place_tag.hpp>
 #include <libbr/container/null_optional_tag.hpp>
 #include <libbr/container/detail/optional_basic.hpp>
 #include <libbr/container/detail/throw_optional_access_exception.hpp>
 #include <libbr/memory/address_of.hpp>
+#include <libbr/operators/equality_comparable.hpp>
 #include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/decay.hpp>
 #include <libbr/type_traits/enable_if.hpp>
@@ -41,14 +43,14 @@ inline namespace Container {
 template<typename T>
 class Optional;
 
-template<typename T>
-inline void swap(Optional<T> &x, Optional<T> &y) noexcept(noexcept(x.swap(y))) {
+template< typename TValue >
+inline void swap(Optional<TValue> &x, Optional<TValue> &y) noexcept(noexcept(x.swap(y))) {
 	x.swap(y);
 }
 
-template<typename TValue>
-constexpr inline auto make_optional(TValue &&value) -> Optional<Decay<TValue> > {
-	return Optional<Decay<TValue> >(forward<TValue>(value));
+template< typename TValue >
+constexpr inline auto make_optional(TValue && value) -> Optional< Decay<TValue> > {
+	return Optional< Decay<TValue> >(forward<TValue>(value));
 }
 
 } // namespace Container
@@ -57,13 +59,18 @@ constexpr inline auto make_optional(TValue &&value) -> Optional<Decay<TValue> > 
 
 inline namespace Container {
 
-template< typename T >
-class Optional : private Detail::Container::OptionalBasic<T> {
+template< typename TValue >
+class Optional :
+	private Detail::Container::OptionalBasic<TValue>,
+	private EqualityComparable< Optional<TValue> >,
+	private EqualityComparable< Optional<TValue>, NullOptionalTag >,
+	private EqualityComparable< Optional<TValue>, TValue >
+{
 private:
-	using Base = Detail::Container::OptionalBasic<T>;
+	using Base = Detail::Container::OptionalBasic<TValue>;
 
 public:
-	using Value = T;
+	using Value = TValue;
 
 	static_assert(NotReference<Value>{}, "Instantiation of Optional with a reference type is ill-formed.");
 	static_assert(
@@ -298,25 +305,6 @@ public:
 	//@}
 
 	/**
-	 * !=
-	 * @param y
-	 * @return
-	 */
-	//@{
-	constexpr auto operator!=(Optional const &y) const -> bool {
-		return !operator==(y);
-	}
-
-	constexpr auto operator!=(NullOptionalTag) const -> bool {
-		return !operator==(null_optional_tag);
-	}
-
-	constexpr auto operator!=(Value value) const -> bool {
-		return !operator==(value);
-	}
-	//@}
-
-	/**
 	 * <
 	 * @param y
 	 * @return
@@ -404,16 +392,6 @@ private:
 }; // class Optional<T>
 
 template<typename T>
-constexpr auto operator==(NullOptionalTag x, Optional<T> const &y) -> bool {
-	return y == x;
-}
-
-template<typename T>
-constexpr auto operator!=(NullOptionalTag x, Optional<T> const &y) -> bool {
-	return y != x;
-}
-
-template<typename T>
 constexpr auto operator<(NullOptionalTag x, Optional<T> const &y) -> bool {
 	return y > x;
 }
@@ -431,16 +409,6 @@ constexpr auto operator<=(NullOptionalTag x, Optional<T> const &y) -> bool {
 template<typename T>
 constexpr auto operator>=(NullOptionalTag x, Optional<T> const &y) -> bool {
 	return y >= x;
-}
-
-template<typename T>
-constexpr auto operator==(T x, Optional<T> const &y) -> bool {
-	return y == x;
-}
-
-template<typename T>
-constexpr auto operator!=(T x, Optional<T> const &y) -> bool {
-	return y != x;
 }
 
 template<typename T>

@@ -32,7 +32,6 @@ TEST(Container, Optional) {
 		optional.emplace(1, 1.0);
 
 		EXPECT_EQ(tuple, optional);
-
 	} {
 		Optional< FixedArray< SInt, 5 > > optional;
 
