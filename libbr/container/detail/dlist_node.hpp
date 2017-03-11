@@ -23,9 +23,6 @@ struct BasicNode {
 
 	using BasicNodePointer = typename PointerTraits<NodePointer>::template Rebind<BasicNode>;
 
-	BasicNode() : prev(self()), next(self()) {
-	}
-
 	auto self() -> NodePointer {
 		return static_cast<NodePointer>(PointerTraits<BasicNodePointer>::make_pointer(*this));
 	}

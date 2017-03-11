@@ -87,13 +87,14 @@ template< typename T >
 struct IsNothrowConstructibleBasic< T > : public BooleanConstant< noexcept(T()) > {};
 
 template< typename T, typename TArg >
-struct IsNothrowConstructibleBasic< T, TArg > : public BooleanConstant< noexcept(static_cast<T>(make_rvalue<TArg>())) > {};
+struct IsNothrowConstructibleBasic< T, TArg > : public BooleanConstant< noexcept(T(make_rvalue<TArg>())) > {};
 
 template< typename T, typename... TArgs >
 struct IsNothrowConstructibleBasic : public BooleanConstant< noexcept(T(make_rvalue<TArgs>() ...)) > {};
 
 template< typename T, typename... TArgs >
-using IsNothrowConstructible = BooleanAnd< IsConstructible< T, TArgs... >, IsNothrowConstructibleBasic< T, TArgs... > >;
+struct IsNothrowConstructible : BooleanAnd< IsConstructible< T, TArgs... >, IsNothrowConstructibleBasic< T, TArgs... > > {
+};
 
 #endif // defined(BR_IS_NOTHROW_CONSTRUCTIBLE)
 

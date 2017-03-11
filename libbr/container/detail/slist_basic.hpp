@@ -77,7 +77,7 @@ public:
 	Basic() noexcept(HasNothrowDefaultConstructor<NodeAllocator>{}) : m_impl() {
 	}
 
-	Basic(Allocator const & allocator) : m_impl(NodeAllocator(allocator)) {
+	Basic(Allocator const & allocator) : m_impl(NodeAllocator(allocator), BasicNode{}) {
 	}
 
 	Basic(Basic && list) noexcept(HasNothrowMoveConstructor<NodeAllocator>{}) : m_impl(move(list.m_impl)) {
@@ -428,7 +428,7 @@ private:
 	}
 
 protected:
-	Tuple< NodeAllocator, BasicNode > m_impl;
+	BR::Tuple< NodeAllocator, BasicNode > m_impl;
 
 }; // class Basic<TElement, TAllocator>
 

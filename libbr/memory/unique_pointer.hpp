@@ -144,15 +144,15 @@ private:
 	>;
 
 public:
-	constexpr UniquePointer() noexcept : m_impl(Pointer()) {
+	constexpr UniquePointer() noexcept : m_impl(Pointer(), Deleter()) {
 		static_assert(NotPointer<Deleter>(), "UniquePointer constructed with null function pointer deleter");
 	}
 
-	constexpr UniquePointer(NullPointer) noexcept : m_impl(Pointer()) {
+	constexpr UniquePointer(NullPointer) noexcept : m_impl(Pointer(), Deleter()) {
 		static_assert(NotPointer<Deleter>(), "UniquePointer constructed with null function pointer deleter");
 	}
 
-	explicit UniquePointer(Pointer p) noexcept : m_impl(move(p)) {
+	explicit UniquePointer(Pointer p) noexcept : m_impl(move(p), Deleter()) {
 		static_assert(NotPointer<Deleter>(), "UniquePointer constructed with null function pointer deleter");
 	}
 
@@ -336,15 +336,15 @@ private:
 	>;
 
 public:
-	constexpr UniquePointer() noexcept : m_impl(Pointer()) {
+	constexpr UniquePointer() noexcept : m_impl(Pointer(), Deleter()) {
 		static_assert(NotPointer<TDeleter>(), "UniquePointer constructed with null function pointer deleter");
 	}
 
-	constexpr UniquePointer(NullPointer _dummy) noexcept : m_impl(Pointer()){
+	constexpr UniquePointer(NullPointer _dummy) noexcept : m_impl(Pointer(), Deleter()) {
 		static_assert(NotPointer<TDeleter>(), "UniquePointer constructed with null function pointer deleter");
 	}
 
-	explicit UniquePointer(Pointer p) noexcept : m_impl(move(p)) {
+	explicit UniquePointer(Pointer p) noexcept : m_impl(move(p), Deleter()) {
 		static_assert(NotPointer<TDeleter>(), "UniquePointer constructed with null function pointer deleter");
 	}
 

@@ -73,10 +73,12 @@ public:
 	using ConstIterator = DList::ConstIterator<NodePointer>;
 
 public:
-	Basic() noexcept(HasNothrowDefaultConstructor<NodeAllocator>{}) : m_impl(0) {
+	Basic() noexcept(HasNothrowDefaultConstructor<NodeAllocator>{}) : m_impl(0, NodeAllocator(), BasicNode{}) {
+		m_header()->prev = m_header()->next = m_header()->self();
 	}
 
-	Basic(Allocator const & allocator) : m_impl(0, NodeAllocator(allocator)) {
+	Basic(Allocator const & allocator) : m_impl(0, NodeAllocator(allocator), BasicNode{}) {
+		m_header()->prev = m_header()->next = m_header();
 	}
 
 	Basic(Basic && list) noexcept(HasNothrowMoveConstructor<NodeAllocator>{}) : m_impl(move(list.m_impl)) {
@@ -449,7 +451,7 @@ private:
 	}
 
 protected:
-	Tuple< Size, NodeAllocator, BasicNode > m_impl;
+	BR::Tuple< Size, NodeAllocator, BasicNode > m_impl;
 
 }; // class DList<TElement, TAllocator>
 

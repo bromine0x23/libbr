@@ -104,42 +104,42 @@ TEST(Tuple, Assign) {
 
 template< typename TTuple >
 static void test_forward_as_tuple0(TTuple const & t) {
-	ASSERT_EQ(TupleSize<TTuple>::value, 0);
+	EXPECT_EQ(TupleSize<TTuple>{}, 0);
 }
 
 template< typename TTuple >
 static void test_forward_as_tuple1a(TTuple const & t) {
-	ASSERT_EQ(TupleSize<TTuple>::value, 1);
-	EXPECT_TRUE((IsSame< TupleElement<0, TTuple>, int && >::value));
+	EXPECT_EQ(TupleSize<TTuple>{}, 1);
+	EXPECT_TRUE((IsSame< TupleElement<0, TTuple>, int && >{}));
 	EXPECT_EQ(1, get<0>(t));
 }
 
 template< typename TTuple >
 static void test_forward_as_tuple1b(TTuple const & t) {
-	ASSERT_EQ(TupleSize<TTuple>::value, 1);
-	EXPECT_TRUE((IsSame< TupleElement<0, TTuple>, int & >::value));
+	EXPECT_EQ(TupleSize<TTuple>{}, 1);
+	EXPECT_TRUE((IsSame< TupleElement<0, TTuple>, int & >{}));
 	EXPECT_EQ(2, get<0>(t));
 }
 
 template< typename TTuple >
 static void test_forward_as_tuple2(TTuple const & t) {
-	ASSERT_EQ(TupleSize<TTuple>::value, 2);
-	EXPECT_TRUE((IsSame< TupleElement<0, TTuple>, double & >::value));
-	EXPECT_TRUE((IsSame< TupleElement<1, TTuple>, char & >::value));
+	EXPECT_EQ(TupleSize<TTuple>{}, 2);
+	EXPECT_TRUE((IsSame< TupleElement<0, TTuple>, double & >{}));
+	EXPECT_TRUE((IsSame< TupleElement<1, TTuple>, char & >{}));
 	EXPECT_EQ(2.5, get<0>(t));
 	EXPECT_EQ('a', get<1>(t));
 }
 
 TEST(Tuple, ForwardAsTuple) {
-//	test_forward_as_tuple0(forward_as_tuple());
-//	test_forward_as_tuple1a(forward_as_tuple(1));
+	test_forward_as_tuple0(forward_as_tuple());
+	test_forward_as_tuple1a(forward_as_tuple(1));
 
-//	int i = 2;
-//	test_forward_as_tuple1b(forward_as_tuple(i));
-//
-//	double d = 2.5;
-//	char c = 'a';
-//	test_forward_as_tuple2(forward_as_tuple(d, c));
+	int i = 2;
+	test_forward_as_tuple1b(forward_as_tuple(i));
+
+	double d = 2.5;
+	char c = 'a';
+	test_forward_as_tuple2(forward_as_tuple(d, c));
 }
 
 TEST(Tuple, TupleCat) {

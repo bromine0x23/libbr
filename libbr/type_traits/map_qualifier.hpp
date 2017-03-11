@@ -39,22 +39,22 @@ namespace Detail {
 namespace TypeTraits {
 
 template< typename TFrom, typename TTo >
-struct TypeMapQualifier : TypeWrapper< TTo > {};
+struct TypeMapQualifier : public TypeWrapper<TTo> {};
 
 template< typename TFrom, typename TTo >
-struct TypeMapQualifier< TFrom &, TTo > : TypeWrapper< TypeUnwrap< TypeMapQualifier< TFrom, TTo > > & > {};
+struct TypeMapQualifier< TFrom &, TTo > : public TypeWrapper< TypeUnwrap< TypeMapQualifier< TFrom, TTo > > & > {};
 
 template< typename TFrom, typename TTo >
-struct TypeMapQualifier< TFrom &&, TTo > : TypeWrapper< TypeUnwrap< TypeMapQualifier< TFrom, TTo > > && > {};
+struct TypeMapQualifier< TFrom &&, TTo > : public TypeWrapper< TypeUnwrap< TypeMapQualifier< TFrom, TTo > > && > {};
 
 template< typename TFrom, typename TTo >
-struct TypeMapQualifier< TFrom const, TTo > : TypeWrapper< TypeUnwrap< TypeMapQualifier< TFrom, TTo > > const > {};
+struct TypeMapQualifier< TFrom const, TTo > : public TypeWrapper< TypeUnwrap< TypeMapQualifier< TFrom, TTo > > const > {};
 
 template< typename TFrom, typename TTo >
-struct TypeMapQualifier< TFrom volatile , TTo > : TypeWrapper< TypeUnwrap< TypeMapQualifier< TFrom, TTo > > volatile > {};
+struct TypeMapQualifier< TFrom volatile , TTo > : public TypeWrapper< TypeUnwrap< TypeMapQualifier< TFrom, TTo > > volatile > {};
 
 template< typename TFrom, typename TTo >
-struct TypeMapQualifier< TFrom const volatile , TTo > : TypeWrapper< TypeUnwrap< TypeMapQualifier< TFrom, TTo > > const volatile > {};
+struct TypeMapQualifier< TFrom const volatile , TTo > : public TypeWrapper< TypeUnwrap< TypeMapQualifier< TFrom, TTo > > const volatile > {};
 
 } // namespace TypeTraits
 } // namespace Detail

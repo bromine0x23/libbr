@@ -448,7 +448,7 @@ public:
 	 * @brief 指定分配器，并默认构造
 	 * @param[in] allocator 分配器
 	 */
-	explicit RawString(Allocator const & allocator) noexcept : m_impl(allocator) {
+	explicit RawString(Allocator const & allocator) noexcept : m_impl(allocator, Storage{}) {
 		m_zeroize();
 	}
 
@@ -456,7 +456,7 @@ public:
 	 * @brief 复制构造函数
 	 * @param[in] string 源字符串
 	 */
-	RawString(RawString const & string) : m_impl(AllocatorTraits::select_on_container_copy_construction(string.allocator())) {
+	RawString(RawString const & string) : m_impl(AllocatorTraits::select_on_container_copy_construction(string.allocator()), Storage{}) {
 		m_construct(string.m_get_raw_pointer(), string.m_get_size());
 	}
 
@@ -466,7 +466,7 @@ public:
 	 * @param[in] allocator 分配器
 	 * @see String(String const & string)
 	 */
-	RawString(RawString const & string, Allocator const & allocator) : m_impl(allocator) {
+	RawString(RawString const & string, Allocator const & allocator) : m_impl(allocator, Storage{}) {
 		m_construct(string.m_get_raw_pointer(), string.m_get_size());
 	}
 
@@ -487,7 +487,7 @@ public:
 	 * @see String(String && string)
 	 *
 	 */
-	RawString(RawString && string, Allocator const & allocator) : m_impl(allocator) {
+	RawString(RawString && string, Allocator const & allocator) : m_impl(allocator, Storage{}) {
 		if (allocator != string.m_allocator()) {
 			m_construct(string.m_get_raw_pointer(), string.m_get_size());
 		} else {
@@ -505,7 +505,7 @@ public:
 	 * @param[in] length 长度
 	 * @param[in] allocator 分配器
 	 */
-	RawString(CString<CodeUnit> string, Size length, Allocator const & allocator = Allocator()) : m_impl(allocator) {
+	RawString(CString<CodeUnit> string, Size length, Allocator const & allocator = Allocator()) : m_impl(allocator, Storage{}) {
 		BR_ASSERT(string != nullptr);
 		m_construct(string, length);
 	}
@@ -515,7 +515,7 @@ public:
 	 * @param string 字符串视图
 	 * @param allocator 分配器
 	 */
-	RawString(RawStringView<CodeUnit> const & string, Allocator const & allocator = Allocator()) : m_impl(allocator) {
+	RawString(RawStringView<CodeUnit> const & string, Allocator const & allocator = Allocator()) : m_impl(allocator, Storage{}) {
 		m_construct(string.data(), string.size());
 	}
 
@@ -529,7 +529,7 @@ public:
 	 * @param allocator 分配器
 	 */
 	template< typename TIterator >
-	RawString(TIterator first, TIterator last, Allocator const & allocator = Allocator(), EnableIf< IsInputIterator<TIterator> > * = nullptr) : m_impl(allocator) {
+	RawString(TIterator first, TIterator last, Allocator const & allocator = Allocator(), EnableIf< IsInputIterator<TIterator> > * = nullptr) : m_impl(allocator, Storage{}) {
 		m_construct(first, last, typename IteratorTraits<TIterator>::Category{});
 	}
 

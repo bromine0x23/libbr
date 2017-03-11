@@ -94,15 +94,15 @@ public:
 	using ConstIterator = BinaryTree::ConstIterator<NodePointer>;
 
 protected:
-	Basic() noexcept(BooleanAnd< HasNothrowDefaultConstructor<Comparator>, HasNothrowDefaultConstructor<NodeAllocator> >{}) : m_impl(0) {
+	Basic() noexcept(BooleanAnd< HasNothrowDefaultConstructor<Comparator>, HasNothrowDefaultConstructor<NodeAllocator> >{}) : m_impl(0, NodeAllocator{}, Comparator{}, BasicNode{}) {
 		Algorithms::init_header(m_header());
 	}
 
-	explicit Basic(Allocator const & allocator) : m_impl(0, NodeAllocator(allocator)) {
+	explicit Basic(Allocator const & allocator) : m_impl(0, NodeAllocator(allocator), Comparator{}, BasicNode{}) {
 		Algorithms::init_header(m_header());
 	}
 
-	Basic(Comparator const & comparator, Allocator const & allocator = Allocator{}) : m_impl(0, NodeAllocator(allocator), comparator) {
+	Basic(Comparator const & comparator, Allocator const & allocator = Allocator{}) : m_impl(0, NodeAllocator(allocator), comparator, BasicNode{}) {
 		Algorithms::init_header(m_header());
 	}
 
@@ -116,7 +116,7 @@ protected:
 		}
 	}
 
-	Basic(Basic && tree, Allocator const & allocator): m_impl(0, NodeAllocator(allocator), tree.m_comparator()) {
+	Basic(Basic && tree, Allocator const & allocator): m_impl(0, NodeAllocator(allocator), tree.m_comparator(), BasicNode{}) {
 		if (allocator != tree.m_allocator()) {
 			if (m_size() == 0) {
 				Algorithms::init_header(m_header());
@@ -513,7 +513,7 @@ private:
 	}
 
 private:
-	Tuple< Size, NodeAllocator, Comparator, BasicNode > m_impl;
+	BR::Tuple< Size, NodeAllocator, Comparator, BasicNode > m_impl;
 }; // class Basic< TElement, TComparator, TAllocator >
 
 } // namespace BinaryTree
