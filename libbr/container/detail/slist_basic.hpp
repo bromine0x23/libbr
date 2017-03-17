@@ -6,6 +6,7 @@
 #include <libbr/container/detail/slist_algorithms.hpp>
 #include <libbr/container/detail/slist_iterator.hpp>
 #include <libbr/container/detail/slist_node.hpp>
+#include <libbr/container/detail/slist_storage.hpp>
 #include <libbr/container/detail/node_destructor.hpp>
 #include <libbr/container/detail/raw_array.hpp>
 #include <libbr/memory/address_of.hpp>
@@ -21,7 +22,6 @@ namespace BR {
 namespace Detail {
 namespace Container {
 namespace SList {
-
 
 template< typename TElement, typename TAllocator >
 class Basic {
@@ -74,14 +74,14 @@ public:
 	using ConstIterator = SList::ConstIterator<NodePointer>;
 
 public:
-	Basic() noexcept(HasNothrowDefaultConstructor<NodeAllocator>{}) : m_impl() {
+	Basic() noexcept(HasNothrowDefaultConstructor<NodeAllocator>{}) : m_storage() {
 	}
 
-	Basic(Allocator const & allocator) : m_impl(NodeAllocator(allocator), BasicNode{}) {
+	Basic(Allocator const & allocator) : m_storage(NodeAllocator(allocator)) {
 	}
 
-	Basic(Basic && list) noexcept(HasNothrowMoveConstructor<NodeAllocator>{}) : m_impl(move(list.m_impl)) {
-		Algorithms::init(list.m_head());
+	Basic(Basic && list) noexcept(HasNothrowMoveConstructor<NodeAllocator>{}) : m_storage(move(list.m_storage)) {
+		Algorithms::init(list.m_header());
 	}
 
 	~Basic() {
@@ -90,23 +90,23 @@ public:
 
 protected:
 	auto m_allocator() noexcept -> NodeAllocator & {
-		return m_impl.template get<NodeAllocator>();
+		return m_storage.allocator();
 	}
 
 	auto m_allocator() const noexcept -> NodeAllocator const & {
-		return m_impl.template get<NodeAllocator>();
+		return m_storage.allocator();
 	}
 
-	auto m_head() const noexcept -> NodePointer {
-		return static_cast<NodePointer>(BasicNodePointerTraits::make_pointer(const_cast<BasicNode &>(m_impl.template get<BasicNode>())));
+	auto m_header() const noexcept -> NodePointer {
+		return static_cast<NodePointer>(BasicNodePointerTraits::make_pointer(const_cast<BasicNode &>(m_storage.node())));
 	}
 
 	auto m_before_begin() const noexcept -> NodePointer {
-		return m_head();
+		return m_header();
 	}
 
 	auto m_begin() const noexcept -> NodePointer {
-		return m_head()->next;
+		return m_header()->next;
 	}
 
 	auto m_end() const noexcept -> NodePointer {
@@ -185,7 +185,7 @@ protected:
 
 	void m_resize(Size new_size) {
 		Size size = 0;
-		auto prev = m_head(), node = m_begin();
+		auto prev = m_header(), node = m_begin();
 		for (; node != m_end() && size < new_size; prev = prev->next, node = node->next, ++size) {}
 		if (node != m_end()) {
 			m_erase_after(prev, m_end());
@@ -196,7 +196,7 @@ protected:
 
 	void m_resize(Size new_size, Element const & element) {
 		Size size = 0;
-		auto prev = m_head(), node = m_begin();
+		auto prev = m_header(), node = m_begin();
 		for (; node != m_end() && size < new_size; prev = prev->next, node = node->next, ++size) {}
 		if (node != m_end()) {
 			m_erase_after(prev, m_end());
@@ -290,12 +290,12 @@ protected:
 			destroy_node(m_allocator(), node);
 			node = next;
 		}
-		Algorithms::init(m_head());
+		Algorithms::init(m_header());
 	}
 
 	template< typename TUnaryPredicate >
 	void m_remove(TUnaryPredicate & predicate) {
-		for (auto prev = m_head(), node = m_begin(), end = m_end(); node != end; node = prev->next) {
+		for (auto prev = m_header(), node = m_begin(), end = m_end(); node != end; node = prev->next) {
 			if (predicate(node->element)) {
 				auto last = node->next;
 				for (; last != end && predicate(last->element); last = last->next) {}
@@ -312,7 +312,7 @@ protected:
 
 	void m_splice_after(NodePointer const & prev, Basic & list) {
 		if (!list.m_empty()) {
-			auto prev_first = list.m_head();
+			auto prev_first = list.m_header();
 			auto prev_last = Algorithms::find_prev(prev_first, list.m_end());
 			Algorithms::transfer_after(prev, prev_first, prev_last);
 		}
@@ -394,12 +394,12 @@ protected:
 	void m_swap(Basic & list) noexcept(typename NodeAllocatorTraits::IsAlwaysEqual{}) {
 		using BR::swap;
 		swap_allocator(m_allocator(), list.m_allocator());
-		Algorithms::swap(m_head(), list.m_head());
+		Algorithms::swap(m_header(), list.m_header());
 	}
 
 	void m_reverse() {
 		if (!m_empty()) {
-			Algorithms::reverse(m_head());
+			Algorithms::reverse(m_header());
 		}
 	}
 
@@ -428,7 +428,7 @@ private:
 	}
 
 protected:
-	BR::Tuple< NodeAllocator, BasicNode > m_impl;
+	Storage< BasicNode, NodeAllocator > m_storage;
 
 }; // class Basic<TElement, TAllocator>
 

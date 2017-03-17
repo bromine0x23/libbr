@@ -12,42 +12,42 @@
 namespace BR {
 namespace Detail {
 namespace Container {
+namespace Optional {
 
 template< typename TValue, Boolean = HasTrivialDestructor<TValue>{} >
-class OptionalBasic;
+class Basic;
 
 template< typename TValue >
-class OptionalBasic< TValue, true > {
+class Basic< TValue, true > {
 	using Value = TValue;
 
 protected:
-	constexpr OptionalBasic() noexcept : m_empty(), m_engaged(false) {
+	constexpr Basic() noexcept : m_empty(), m_engaged(false) {
 	}
 
-	OptionalBasic(OptionalBasic const & optional) : m_engaged(optional.m_engaged) {
+	Basic(Basic const & optional) : m_engaged(optional.m_engaged) {
 		if (m_engaged) {
 			construct_at(address_of(m_value), optional.m_value);
 		}
 	}
 
-	OptionalBasic(OptionalBasic && optional) noexcept(HasNothrowMoveConstructor<Value>{}) : m_engaged(optional.m_engaged) {
+	Basic(Basic && optional) noexcept(HasNothrowMoveConstructor<Value>{}) : m_engaged(optional.m_engaged) {
 		if (m_engaged) {
 			construct_at(address_of(m_value), move(optional.m_value));
 		}
 	}
 
-	constexpr OptionalBasic(Value const & value) : m_value(value), m_engaged(true) {
+	constexpr Basic(Value const & value) : m_value(value), m_engaged(true) {
 	}
 
-	constexpr OptionalBasic(Value && value) : m_value(move(value)), m_engaged(true) {
+	constexpr Basic(Value && value) : m_value(move(value)), m_engaged(true) {
 	}
 
 	template<typename ... TArgs>
-	constexpr explicit
-	OptionalBasic(InPlaceTag, TArgs &&... args) : m_value(forward<TArgs>(args)...), m_engaged(true) {
+	constexpr explicit Basic(InPlaceTag, TArgs &&... args) : m_value(forward<TArgs>(args)...), m_engaged(true) {
 	}
 
-	~OptionalBasic() = default;
+	~Basic() = default;
 
 protected:
 	struct Empty {};
@@ -56,39 +56,39 @@ protected:
 		Value m_value;
 	};
 	bool m_engaged;
-}; // class OptionalBasic< TValue, true >
+}; // class Basic< TValue, true >
 
 template< typename TValue >
-class OptionalBasic< TValue, false > {
+class Basic< TValue, false > {
 	using Value = TValue;
 
 protected:
-	constexpr OptionalBasic() noexcept : m_empty(), m_engaged(false) {
+	constexpr Basic() noexcept : m_empty(), m_engaged(false) {
 	}
 
-	OptionalBasic(OptionalBasic const & optional) : m_engaged(optional.m_engaged) {
+	Basic(Basic const & optional) : m_engaged(optional.m_engaged) {
 		if (m_engaged) {
 			construct_at(address_of(m_value), optional.m_value);
 		}
 	}
 
-	OptionalBasic(OptionalBasic && optional) noexcept(HasNothrowMoveConstructor<Value>{}) : m_engaged(optional.m_engaged) {
+	Basic(Basic && optional) noexcept(HasNothrowMoveConstructor<Value>{}) : m_engaged(optional.m_engaged) {
 		if (m_engaged) {
 			construct_at(address_of(m_value), move(optional.m_value));
 		}
 	}
 
-	constexpr OptionalBasic(Value const & value) : m_value(value), m_engaged(true) {
+	constexpr Basic(Value const & value) : m_value(value), m_engaged(true) {
 	}
 
-	constexpr OptionalBasic(Value && value) : m_value(move(value)), m_engaged(true) {
+	constexpr Basic(Value && value) : m_value(move(value)), m_engaged(true) {
 	}
 
 	template<typename ... TArgs>
-	constexpr explicit OptionalBasic(InPlaceTag, TArgs &&... args) : m_value(forward<TArgs>(args)...), m_engaged(true) {
+	constexpr explicit Basic(InPlaceTag, TArgs &&... args) : m_value(forward<TArgs>(args)...), m_engaged(true) {
 	}
 
-	~OptionalBasic() {
+	~Basic() {
 		if (m_engaged) {
 			m_value.~Value();
 		}
@@ -101,8 +101,9 @@ protected:
 		Value m_value;
 	};
 	bool m_engaged;
-}; // class OptionalBasic< TValue, false >
+}; // class Basic< TValue, false >
 
+} // namespace Optional
 } // namespace Container
 } // namespace Detail
 } // namespace BR

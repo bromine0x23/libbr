@@ -194,7 +194,7 @@ public:
 	 * @param allocator Allocator to use for all memory allocations of this container.
 	 */
 	explicit SList(Size count, Allocator const & allocator = Allocator{}) : Base(allocator) {
-		this->m_prepare_after(this->m_head(), count);
+		this->m_prepare_after(this->m_header(), count);
 	}
 
 	/**
@@ -324,7 +324,7 @@ public:
 	 * @return Iterator to the element before the first element.
 	 */
 	auto before_begin() noexcept -> Iterator {
-		return Iterator(this->m_head());
+		return Iterator(this->m_header());
 	}
 
 	/**
@@ -332,7 +332,7 @@ public:
 	 * @return Iterator to the element before the first element.
 	 */
 	auto before_begin() const noexcept -> ConstIterator {
-		return ConstIterator(this->m_head());
+		return ConstIterator(this->m_header());
 	}
 
 	/**

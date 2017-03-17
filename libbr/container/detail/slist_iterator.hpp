@@ -52,7 +52,7 @@ private:
 	using PointerTraits = BR::PointerTraits<Pointer>;
 
 public:
-	Iterator() noexcept : m_pointer(nullptr) {
+	constexpr Iterator() noexcept : m_pointer(nullptr) {
 	}
 
 	auto operator*() const -> Reference {
@@ -115,10 +115,10 @@ private:
 	using PointerTraits = BR::PointerTraits<Pointer>;
 
 public:
-	ConstIterator() noexcept : m_pointer(nullptr) {
+	constexpr ConstIterator() noexcept : m_pointer(nullptr) {
 	}
 
-	ConstIterator(Iterator<NodePointer> iterator) noexcept : m_pointer(iterator.m_pointer) {
+	constexpr ConstIterator(Iterator<NodePointer> iterator) noexcept : m_pointer(iterator.m_pointer) {
 	}
 
 	auto operator*() const -> Reference {

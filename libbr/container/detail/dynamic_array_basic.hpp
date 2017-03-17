@@ -7,7 +7,7 @@
 #include <libbr/algorithm/min.hpp>
 #include <libbr/algorithm/move_backward.hpp>
 #include <libbr/algorithm/rotate.hpp>
-#include <libbr/container/tuple.hpp>
+#include <libbr/container/detail/dynamic_array_storage.hpp>
 #include <libbr/container/detail/allocator_helpers.hpp>
 #include <libbr/container/detail/deque_block.hpp>
 #include <libbr/exception/throw.hpp>
@@ -68,17 +68,17 @@ protected:
 	using Buffer = Detail::Container::DequeBlock< Element, Allocator >;
 
 public:
-	Basic() noexcept(HasNothrowDefaultConstructor<Allocator>{}) : m_impl() {
+	Basic() noexcept(HasNothrowDefaultConstructor<Allocator>{}) : m_storage() {
 	}
 
-	Basic(Allocator const & allocator) : m_impl(nullptr, nullptr, nullptr, allocator) {
+	Basic(Allocator const & allocator) : m_storage(allocator) {
 	}
 
-	Basic(Self && other) noexcept : m_impl(move(other.m_impl)) {
+	Basic(Self && other) noexcept : m_storage(move(other.m_storage)) {
 		other.m_begin() = other.m_end() = other.m_storage_end() = nullptr;
 	}
 
-	Basic(Self && other, Allocator const & allocator) : m_impl(nullptr, nullptr, nullptr, allocator) {
+	Basic(Self && other, Allocator const & allocator) : m_storage(allocator) {
 		if (allocator == other.m_allocator()) {
 			m_begin() = other.m_begin();
 			m_end() = other.m_end();
@@ -98,43 +98,43 @@ public:
 
 protected:
 	auto m_storage_begin() noexcept -> Pointer & {
-		return m_impl.template get<0>();
+		return m_storage.storage_begin();
 	}
 
 	auto m_storage_begin() const noexcept -> Pointer const & {
-		return m_impl.template get<0>();
+		return m_storage.storage_begin();
 	}
 
 	auto m_begin() noexcept -> Pointer & {
-		return m_storage_begin();
+		return m_storage.begin();
 	}
 
 	auto m_begin() const noexcept -> Pointer const & {
-		return m_storage_begin();
+		return m_storage.begin();
 	}
 
 	auto m_end() noexcept -> Pointer & {
-		return m_impl.template get<1>();
+		return m_storage.end();
 	}
 
 	auto m_end() const noexcept -> Pointer const & {
-		return m_impl.template get<1>();
+		return m_storage.end();
 	}
 
 	auto m_storage_end() noexcept -> Pointer & {
-		return m_impl.template get<2>();
+		return m_storage.storage_end();
 	}
 
 	auto m_storage_end() const noexcept -> Pointer const & {
-		return m_impl.template get<2>();
+		return m_storage.storage_end();
 	}
 
 	auto m_allocator() noexcept -> Allocator & {
-		return m_impl.template get<Allocator>();
+		return m_storage.allocator();
 	}
 
 	auto m_allocator() const noexcept -> Allocator const & {
-		return m_impl.template get<Allocator>();
+		return m_storage.allocator();
 	}
 
 	void m_clear() noexcept {
@@ -555,7 +555,7 @@ private:
 	}
 
 protected:
-	BR::Tuple< Pointer, Pointer, Pointer, Allocator > m_impl;
+	Storage< Pointer, Allocator > m_storage;
 
 }; // class Basic< TElement, TAllocator >
 

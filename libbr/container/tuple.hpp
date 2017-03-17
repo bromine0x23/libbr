@@ -56,6 +56,13 @@ template< Size I, typename T0, typename T1 > constexpr auto get(Pair< T0, T1 > c
 template< Size I, typename T0, typename T1 > constexpr auto get(Pair< T0, T1 >       && P) noexcept -> TupleElement< I, Pair< T0, T1 > > &&;
 template< Size I, typename T0, typename T1 > constexpr auto get(Pair< T0, T1 > const && P) noexcept -> TupleElement< I, Pair< T0, T1 > > const &&;
 
+template< typename... T0, typename... T1 > constexpr auto operator==(Tuple<T0...> const & t0, Tuple<T1...> const & t1) -> Boolean;
+template< typename... T0, typename... T1 > constexpr auto operator!=(Tuple<T0...> const & t0, Tuple<T1...> const & t1) -> Boolean;
+template< typename... T0, typename... T1 > constexpr auto operator< (Tuple<T0...> const & t0, Tuple<T1...> const & t1) -> Boolean;
+template< typename... T0, typename... T1 > constexpr auto operator> (Tuple<T0...> const & t0, Tuple<T1...> const & t1) -> Boolean;
+template< typename... T0, typename... T1 > constexpr auto operator<=(Tuple<T0...> const & t0, Tuple<T1...> const & t1) -> Boolean;
+template< typename... T0, typename... T1 > constexpr auto operator>=(Tuple<T0...> const & t0, Tuple<T1...> const & t1) -> Boolean;
+
 /**
  * @brief Creates a tuple of lvalue references to its arguments or instances of std::ignore.
  * @tparam TArguments Type of \p arguments.
@@ -851,25 +858,25 @@ namespace Tuple {
 template< Size I >
 struct Compare {
 	template< typename T0, typename T1 >
-	static BR_CONSTEXPR_AFTER_CXX11 auto equal(T0 const & t0, T1 const & t1) -> bool {
-		return Compare< I-1 >::equal(t0, t1) && get< I-1 >(t0) == get< I-1 >(t1);
+	static constexpr auto equal(T0 const & t0, T1 const & t1) -> bool {
+		return Compare<I-1>::equal(t0, t1) && get<I-1>(t0) == get<I-1>(t1);
 	}
 
 	template< typename T0, typename T1 >
-	static BR_CONSTEXPR_AFTER_CXX11 auto less(T0 const & t0, T1 const & t1) -> bool {
-		return Compare< I-1 >::less(t0, t1) || (!Compare< I-1 >::less(t1, t0) && get< I-1 >(t0) < get< I-1 >(t1));
+	static constexpr auto less(T0 const & t0, T1 const & t1) -> bool {
+		return Compare< I-1 >::less(t0, t1) || (!Compare<I-1>::less(t1, t0) && get<I-1>(t0) < get<I-1>(t1));
 	}
 };
 
 template<>
 struct Compare<0> {
 	template< typename T0, typename T1 >
-	static BR_CONSTEXPR_AFTER_CXX11 auto equal(T0 const &, T1 const &) -> bool {
+	static constexpr auto equal(T0 const &, T1 const &) -> bool {
 		return true;
 	}
 
 	template< typename T0, typename T1 >
-	static BR_CONSTEXPR_AFTER_CXX11 auto less(T0 const &, T1 const &) -> bool {
+	static constexpr auto less(T0 const &, T1 const &) -> bool {
 		return false;
 	}
 };
@@ -880,33 +887,33 @@ struct Compare<0> {
 
 inline namespace Container {
 
-template< typename ... T0, typename ... T1 >
-BR_CONSTEXPR_AFTER_CXX11 auto operator==(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) -> bool {
+template< typename... T0, typename... T1 >
+constexpr auto operator==(Tuple<T0...> const & t0, Tuple<T1...> const & t1) -> Boolean {
 	return Detail::Container::Tuple::Compare< sizeof...(T0) >::equal(t0, t1);
 }
 
-template< typename ... T0, typename ... T1 >
-BR_CONSTEXPR_AFTER_CXX11 auto operator!=(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) -> bool {
-	return !(t0 == t1);
-}
-
-template< typename ... T0, typename ... T1 >
-BR_CONSTEXPR_AFTER_CXX11 auto operator<(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) -> bool {
+template< typename... T0, typename... T1 >
+constexpr auto operator<(Tuple<T0...> const & t0, Tuple<T1...> const & t1) -> Boolean {
 	return Detail::Container::Tuple::Compare< sizeof...(T0) >::less(t0, t1);
 }
 
-template< typename ... T0, typename ... T1 >
-BR_CONSTEXPR_AFTER_CXX11 auto operator>(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) -> bool {
+template< typename... T0, typename... T1 >
+constexpr auto operator!=(Tuple<T0...> const & t0, Tuple<T1...> const & t1) -> Boolean {
+	return !(t0 == t1);
+}
+
+template< typename... T0, typename... T1 >
+constexpr auto operator>(Tuple<T0...> const & t0, Tuple<T1...> const & t1) -> Boolean {
 	return t1 < t0;
 }
 
-template< typename ... T0, typename ... T1 >
-BR_CONSTEXPR_AFTER_CXX11 auto operator<=(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) -> bool {
+template< typename... T0, typename... T1 >
+constexpr auto operator<=(Tuple<T0...> const & t0, Tuple<T1...> const & t1) -> Boolean {
 	return !(t1 < t0);
 }
 
-template< typename ... T0, typename ... T1 >
-BR_CONSTEXPR_AFTER_CXX11 auto operator>=(Tuple< T0 ... > const & t0, Tuple< T1 ... > const & t1) -> bool {
+template< typename... T0, typename... T1 >
+constexpr auto operator>=(Tuple<T0...> const & t0, Tuple<T1...> const & t1) -> Boolean {
 	return !(t0 < t1);
 }
 

@@ -5,8 +5,8 @@
 #include <libbr/container/detail/binary_tree_algorithms.hpp>
 #include <libbr/container/detail/binary_tree_node.hpp>
 #include <libbr/container/detail/binary_tree_iterator.hpp>
+#include <libbr/container/detail/binary_tree_storage.hpp>
 #include <libbr/container/detail/node_destructor.hpp>
-#include <libbr/container/tuple.hpp>
 #include <libbr/memory/address_of.hpp>
 #include <libbr/memory/allocator_traits.hpp>
 #include <libbr/memory/pointer_traits.hpp>
@@ -94,19 +94,19 @@ public:
 	using ConstIterator = BinaryTree::ConstIterator<NodePointer>;
 
 protected:
-	Basic() noexcept(BooleanAnd< HasNothrowDefaultConstructor<Comparator>, HasNothrowDefaultConstructor<NodeAllocator> >{}) : m_impl(0, NodeAllocator{}, Comparator{}, BasicNode{}) {
+	Basic() noexcept(BooleanAnd< HasNothrowDefaultConstructor<Comparator>, HasNothrowDefaultConstructor<NodeAllocator> >{}) : m_storage() {
 		Algorithms::init_header(m_header());
 	}
 
-	explicit Basic(Allocator const & allocator) : m_impl(0, NodeAllocator(allocator), Comparator{}, BasicNode{}) {
+	explicit Basic(Allocator const & allocator) : m_storage(NodeAllocator(allocator)) {
 		Algorithms::init_header(m_header());
 	}
 
-	Basic(Comparator const & comparator, Allocator const & allocator = Allocator{}) : m_impl(0, NodeAllocator(allocator), comparator, BasicNode{}) {
+	Basic(Comparator const & comparator, Allocator const & allocator = Allocator{}) : m_storage(NodeAllocator(allocator), comparator) {
 		Algorithms::init_header(m_header());
 	}
 
-	Basic(Basic && tree) noexcept(BooleanAnd< HasNothrowMoveConstructor<Comparator>, HasNothrowMoveConstructor<NodeAllocator> >{}) : m_impl(move(tree.m_impl)) {
+	Basic(Basic && tree) noexcept(BooleanAnd< HasNothrowMoveConstructor<Comparator>, HasNothrowMoveConstructor<NodeAllocator> >{}) : m_storage(move(tree.m_storage)) {
 		if (m_size() == 0) {
 			Algorithms::init_header(m_header());
 		} else {
@@ -116,7 +116,7 @@ protected:
 		}
 	}
 
-	Basic(Basic && tree, Allocator const & allocator): m_impl(0, NodeAllocator(allocator), tree.m_comparator(), BasicNode{}) {
+	Basic(Basic && tree, Allocator const & allocator): m_storage(NodeAllocator(allocator), tree.m_comparator()) {
 		if (allocator != tree.m_allocator()) {
 			if (m_size() == 0) {
 				Algorithms::init_header(m_header());
@@ -139,31 +139,31 @@ protected:
 
 protected:
 	auto m_size() noexcept -> Size & {
-		return m_impl.template get<Size>();
+		return m_storage.size();
 	}
 
 	auto m_size() const noexcept -> Size const & {
-		return m_impl.template get<Size>();
+		return m_storage.size();
 	}
 
 	auto m_allocator() noexcept -> NodeAllocator & {
-		return m_impl.template get<NodeAllocator>();
+		return m_storage.allocator();
 	}
 
 	auto m_allocator() const noexcept -> NodeAllocator const & {
-		return m_impl.template get<NodeAllocator>();
+		return m_storage.allocator();
 	}
 
 	auto m_comparator() noexcept -> Comparator & {
-		return m_impl.template get<Comparator>();
+		return m_storage.comparator();
 	}
 
 	auto m_comparator() const noexcept -> Comparator const & {
-		return m_impl.template get<Comparator>();
+		return m_storage.comparator();
 	}
 
 	auto m_header() const noexcept -> NodePointer {
-		return static_cast<NodePointer>(BasicNodePointerTraits::make_pointer(const_cast<BasicNode &>(m_impl.template get<BasicNode>())));
+		return static_cast<NodePointer>(BasicNodePointerTraits::make_pointer(const_cast<BasicNode &>(m_storage.node())));
 	}
 
 	auto m_root() const noexcept -> NodePointer {
@@ -513,7 +513,7 @@ private:
 	}
 
 private:
-	BR::Tuple< Size, NodeAllocator, Comparator, BasicNode > m_impl;
+	Storage< Size, BasicNode, NodeAllocator, Comparator > m_storage;
 }; // class Basic< TElement, TComparator, TAllocator >
 
 } // namespace BinaryTree

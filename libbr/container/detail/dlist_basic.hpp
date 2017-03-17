@@ -5,6 +5,7 @@
 #include <libbr/container/detail/dlist_algorithms.hpp>
 #include <libbr/container/detail/dlist_iterator.hpp>
 #include <libbr/container/detail/dlist_node.hpp>
+#include <libbr/container/detail/dlist_storage.hpp>
 #include <libbr/container/detail/node_destructor.hpp>
 #include <libbr/container/detail/raw_array.hpp>
 #include <libbr/iterator/next.hpp>
@@ -73,15 +74,13 @@ public:
 	using ConstIterator = DList::ConstIterator<NodePointer>;
 
 public:
-	Basic() noexcept(HasNothrowDefaultConstructor<NodeAllocator>{}) : m_impl(0, NodeAllocator(), BasicNode{}) {
-		m_header()->prev = m_header()->next = m_header()->self();
+	Basic() noexcept(HasNothrowDefaultConstructor<NodeAllocator>{}) : m_storage() {
 	}
 
-	Basic(Allocator const & allocator) : m_impl(0, NodeAllocator(allocator), BasicNode{}) {
-		m_header()->prev = m_header()->next = m_header();
+	Basic(Allocator const & allocator) : m_storage(NodeAllocator(allocator)) {
 	}
 
-	Basic(Basic && list) noexcept(HasNothrowMoveConstructor<NodeAllocator>{}) : m_impl(move(list.m_impl)) {
+	Basic(Basic && list) noexcept(HasNothrowMoveConstructor<NodeAllocator>{}) : m_storage(move(list.m_storage)) {
 		if (m_size() == 0) {
 			Algorithms::init_header(m_header());
 		} else {
@@ -97,23 +96,23 @@ public:
 
 protected:
 	auto m_size() noexcept -> Size & {
-		return m_impl.template get<Size>();
+		return m_storage.size();
 	}
 
 	auto m_size() const noexcept -> Size const & {
-		return m_impl.template get<Size>();
+		return m_storage.size();
 	}
 
 	auto m_allocator() noexcept -> NodeAllocator & {
-		return m_impl.template get<NodeAllocator>();
+		return m_storage.allocator();
 	}
 
 	auto m_allocator() const noexcept -> NodeAllocator const & {
-		return m_impl.template get<NodeAllocator>();
+		return m_storage.allocator();
 	}
 
 	auto m_header() const noexcept -> NodePointer {
-		return static_cast<NodePointer>(BasicNodePointerTraits::make_pointer(const_cast<BasicNode &>(m_impl.template get<BasicNode>())));
+		return static_cast<NodePointer>(BasicNodePointerTraits::make_pointer(const_cast<BasicNode &>(m_storage.node())));
 	}
 
 	auto m_begin() const noexcept -> NodePointer {
@@ -451,7 +450,7 @@ private:
 	}
 
 protected:
-	BR::Tuple< Size, NodeAllocator, BasicNode > m_impl;
+	Storage< Size, BasicNode, NodeAllocator > m_storage;
 
 }; // class DList<TElement, TAllocator>
 

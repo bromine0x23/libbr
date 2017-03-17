@@ -40,11 +40,15 @@ namespace BR {
 
 inline namespace Container {
 
+/**
+ * @brief Manages an \e optional contained value, i.e. a value that may or may not be present.
+ * @tparam T Type of element to contain.
+ */
 template<typename T>
 class Optional;
 
 template< typename TValue >
-inline void swap(Optional<TValue> &x, Optional<TValue> &y) noexcept(noexcept(x.swap(y))) {
+inline void swap(Optional<TValue> & x, Optional<TValue> & y) noexcept(noexcept(x.swap(y))) {
 	x.swap(y);
 }
 
@@ -61,13 +65,13 @@ inline namespace Container {
 
 template< typename TValue >
 class Optional :
-	private Detail::Container::OptionalBasic<TValue>,
+	private Detail::Container::Optional::Basic<TValue>,
 	private EqualityComparable< Optional<TValue> >,
 	private EqualityComparable< Optional<TValue>, NullOptionalTag >,
 	private EqualityComparable< Optional<TValue>, TValue >
 {
 private:
-	using Base = Detail::Container::OptionalBasic<TValue>;
+	using Base = Detail::Container::Optional::Basic<TValue>;
 
 public:
 	using Value = TValue;
@@ -94,26 +98,26 @@ public:
 
 	Optional(Optional &&) = default;
 
-	~Optional() = default;
-
 	constexpr Optional(NullOptionalTag) noexcept {
 	}
 
-	constexpr Optional(Value const &value) : Base(value) {
+	constexpr Optional(Value const & value) : Base(value) {
 	}
 
-	constexpr Optional(Value &&value) : Base(move(value)) {
+	constexpr Optional(Value && value) : Base(move(value)) {
 	}
 
-	template<typename ... TArgs, typename = EnableIf<IsConstructible<Value, TArgs ...> > >
+	template<typename ... TArgs, typename = EnableIf< IsConstructible<Value, TArgs ...> > >
 	constexpr explicit Optional(InPlaceTag, TArgs &&... args) : Base(in_place_tag, forward<TArgs>(args)...) {
 	}
 
-	template<typename TOtherValue, typename ... TArgs, typename = EnableIf<IsConstructible<Value, InitializerList<TOtherValue> &, TArgs ...> > >
+	template<typename TOtherValue, typename ... TArgs, typename = EnableIf< IsConstructible<Value, InitializerList<TOtherValue> &, TArgs ...> > >
 	constexpr explicit Optional(InPlaceTag, InitializerList<TOtherValue> list, TArgs &&... args) : Base(
 		in_place_tag, list, forward<TArgs>(args)...
 	) {
 	}
+
+	~Optional() = default;
 
 	auto operator=(NullOptionalTag) noexcept -> Optional & {
 		if (this->m_engaged) {
