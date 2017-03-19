@@ -1,7 +1,6 @@
 /**
  * @file
  * @brief default_delete
- * @author Bromine0x23
  * @since 1.0
  */
 #pragma once
@@ -14,6 +13,13 @@
 
 namespace BR {
 inline namespace Memory {
+
+/**
+ * @brief The default destruction policy used by UniquePointer when no deleter is specified.
+ * @tparam TElement
+ */
+template< typename TElement >
+struct DefaultDeleter;
 
 template< typename TElement >
 struct DefaultDeleter : public UnaryFunctor<TElement *> {

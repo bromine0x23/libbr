@@ -252,7 +252,7 @@ protected:
 		auto & allocator = m_allocator();
 		NodeHolder holder(NodeAllocatorTraits::allocate(allocator, 1), NodeDestructor(allocator, 1));
 		NodeAllocatorTraits::construct(allocator, address_of(holder->element), forward<TArgs>(args)...);
-		holder.get_deleter().constructed = true;
+		holder.deleter().constructed = true;
 		return holder;
 	}
 

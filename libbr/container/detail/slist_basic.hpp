@@ -131,7 +131,7 @@ protected:
 		NodeHolder holder(NodeAllocatorTraits::allocate(allocator, 1), NodeDestructor(allocator, 1));
 		Algorithms::init(holder.get());
 		NodeAllocatorTraits::construct(allocator, address_of(holder->element), forward<TArgs>(args)...);
-		holder.get_deleter().constructed = true;
+		holder.deleter().constructed = true;
 		return holder;
 	}
 
