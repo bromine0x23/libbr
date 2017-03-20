@@ -11,6 +11,6 @@
 namespace BR {
 
 template< typename T, typename... Tn >
-struct DummyFalse : NotSame< T, T > {};
+struct DummyTrue : IsSame< T, T > {};
 
 } // namespace BR

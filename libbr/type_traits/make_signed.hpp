@@ -108,7 +108,7 @@ struct TypeMakeSignedBasic< T, false, true > : TypeMakeSignedEnum< sizeof(T) > {
 
 template< typename T >
 struct TypeMakeSignedBasic< T, true, true > {
-	static_assert(DummyFalse<T>{}, "[Fatal Error] Type cannot be both integer type and enumeration type.");
+	static_assert(DummyFalse<T>{}, "Type cannot be both integer type and enumeration type.");
 };
 
 template< typename T >

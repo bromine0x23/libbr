@@ -8,11 +8,9 @@
 
 #else
 
-namespace BR {
-
 namespace {
 
-[[noreturn]] static void assert_base(char const * format, ...) {
+[[noreturn]] static inline void libbr_assert_base(BR::CString<BR::NChar>  format, ...) {
 	va_list args;
 	va_start(args, format);
 	vfprintf(stderr, format, args);
@@ -22,15 +20,13 @@ namespace {
 
 } // namespace [anonymous]
 
-void __assert__(
-	char const * assertion,
-	char const * file,
-	Size line,
-	char const * function
+void libbr_assert(
+	BR::CString<BR::NChar>  assertion,
+	BR::CString<BR::NChar>  file,
+	BR::Size line,
+	BR::CString<BR::NChar>  function
 ) {
-	assert_base("%s:%u: %s:\n\tAssertion `%s' failed.\n", file, line, function, assertion);
+	libbr_assert_base("%s:%u: %s:\n\tAssertion `%s' failed.\n", file, line, function, assertion);
 }
-
-} // namespace BR
 
 #endif // defined

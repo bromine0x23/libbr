@@ -1,7 +1,6 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/assert/dummy_false.hpp>
 #include <libbr/container/detail/tuple_forward.hpp>
 #include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/decay.hpp>

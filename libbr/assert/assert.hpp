@@ -8,18 +8,18 @@
 
 #else
 
-namespace BR {
+extern "C" {
 
-[[noreturn]] void __assert__(
-	char const * assertion,
-	char const * file,
-	Size line,
-	char const * func
+[[noreturn]] void libbr_assert(
+	BR::CString<BR::NChar>  assertion,
+	BR::CString<BR::NChar>  file,
+	BR::Size line,
+	BR::CString<BR::NChar>  func
 );
 
-} // namespace BR
+} // extern "C"
 
-#define BR_ASSERT(expr) ((expr) ? (void)0 : BR::__assert__(BR_STRINGIFY(expr), __FILE__, __LINE__, __func__))
+#define BR_ASSERT(expr) ((expr) ? (void)0 : libbr_assert(BR_STRINGIFY(expr), __FILE__, __LINE__, __func__))
 
 #endif // NDEBUG
 
