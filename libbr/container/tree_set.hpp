@@ -291,8 +291,6 @@ public:
 		insert(list.begin(), list.end());
 	}
 
-	~TreeSet() = default;
-
 	auto operator=(TreeSet const & set) -> TreeSet & {
 		_tree_ = set._tree_;
 		return *this;

@@ -409,8 +409,6 @@ public:
 		insert(list.begin(), list.end());
 	}
 
-	~TreeMultiMap() = default;
-
 	auto operator=(TreeMultiMap const & map) -> TreeMultiMap & {
 		_tree_ = map._tree_;
 		return *this;

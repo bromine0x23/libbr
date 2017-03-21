@@ -204,7 +204,7 @@ public:
 	 */
 	using Difference = PointerDifference;
 
-	static auto category() -> Category {
+	constexpr static auto category() -> Category {
 		return Category();
 	}
 };

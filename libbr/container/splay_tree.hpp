@@ -146,9 +146,6 @@ public:
 	}
 	///@}
 
-	/// @copydoc BR::Container::BinaryTree::~BinaryTree()
-	~SplayTree() = default;
-
 	/**
 	 * @name 赋值操作
 	 */

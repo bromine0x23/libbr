@@ -225,11 +225,6 @@ public:
 	///@}
 
 	/**
-	 * @brief 析构函数
-	 */
-	~BinaryTree() = default;
-
-	/**
 	 * @name 赋值操作
 	 */
 	///@{

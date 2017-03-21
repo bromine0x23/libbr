@@ -229,16 +229,6 @@ public:
 	///@}
 
 	/**
-	 * @name Destructor
-	 */
-	///@{
-	/**
-	 * @brief Destructor.
-	 */
-	~SList() = default;
-	///@}
-
-	/**
 	 * @name Member
 	 */
 	///@{

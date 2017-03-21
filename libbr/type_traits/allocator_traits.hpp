@@ -383,7 +383,7 @@ struct AllocatorTraits {
 		allocator_destroy(allocator, pointer);
 	}
 
-	constexpr static auto max_size(Allocator const & allocator) noexcept -> Size {
+	static auto max_size(Allocator const & allocator) noexcept -> Size {
 		return Detail::TypeTraits::AllocatorTraits::MaxSize<Allocator>::call(allocator);
 	}
 

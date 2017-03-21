@@ -195,16 +195,6 @@ public:
 	///@}
 
 	/**
-	 * @name Destructor
-	 */
-	///@{
-	/**
-	 * @brief Destructor.
-	 */
-	~DynamicArray() = default;
-	///@}
-
-	/**
 	 * @name Member
 	 */
 	///@{

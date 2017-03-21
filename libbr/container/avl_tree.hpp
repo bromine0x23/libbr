@@ -148,9 +148,6 @@ public:
 	}
 	///@}
 
-	/// @copydoc BR::Container::BinaryTree::~BinaryTree()
-	~AVLTree() = default;
-
 	/**
 	 * @name 赋值操作
 	 */

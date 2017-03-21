@@ -10,6 +10,7 @@
 #include <libbr/container/initializer_list.hpp>
 #include <libbr/container/pair.hpp>
 #include <libbr/container/rb_tree.hpp>
+#include <libbr/container/tuple.hpp>
 #include <libbr/enumerate/enumerable.hpp>
 #include <libbr/exception/index_exception.hpp>
 #include <libbr/functional/less.hpp>
@@ -409,8 +410,6 @@ public:
 	TreeMap(InitializerList<Element> list, KeyComparator const & comparator, Allocator const & allocator = Allocator{}) : _tree_(Comparator(comparator), typename Tree::Allocator(allocator)) {
 		insert(list.begin(), list.end());
 	}
-
-	~TreeMap() = default;
 
 	auto operator=(TreeMap const & map) -> TreeMap & {
 		_tree_ = map._tree_;
