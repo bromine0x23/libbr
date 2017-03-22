@@ -11,10 +11,9 @@ addons:
     - llvm-toolchain-precise-3.7
     - ubuntu-toolchain-r-test
     packages:
+    - cmake
     - g++-4.9
-    - gcc-4.9
     - clang-3.7
-    - valgrind
     - libgtest-dev
 env:
   matrix:
@@ -36,8 +35,8 @@ install:
 script:
 - mkdir build || true
 - mkdir build/$LIBBR_TARGET || true
-- cd build/$LIBBR_TARGET
-- cmake -DLIBBR_ENABLE_CXX14=$ENABLE_CXX14 -DLIBBR_BUILD_32_BITS=$BUILD_32_BITS ../../
+- cd build/$LIBBR_TARGET && pwd
+- cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLIBBR_ENABLE_CXX14=$ENABLE_CXX14 -DLIBBR_BUILD_32_BITS=$BUILD_32_BITS ../../
 - cmake --build . --target br_test -- -j 8
 - ./test/br_test.exe
 sudo: false
