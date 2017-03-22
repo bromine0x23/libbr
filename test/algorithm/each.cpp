@@ -21,7 +21,7 @@ TEST(Algorithm, each) {
 		EXPECT_EQ(45, sum.sum);
 
 		sum.sum = 0;
-		each(array.begin(), array.end(), [](auto & x){ ++x; });
+		each(array.begin(), array.end(), [](int & x){ ++x; });
 		each(array.cbegin(), array.cend(), sum);
 
 		EXPECT_EQ(55, sum.sum);
@@ -33,7 +33,7 @@ TEST(Algorithm, each) {
 		EXPECT_EQ(45, sum.sum);
 
 		sum.sum = 0;
-		each(list.begin(), list.end(), [](auto & x){ ++x; });
+		each(list.begin(), list.end(), [](int & x){ ++x; });
 		each(list.cbegin(), list.cend(), sum);
 
 		EXPECT_EQ(55, sum.sum);
@@ -45,7 +45,7 @@ TEST(Algorithm, each) {
 		EXPECT_EQ(45, sum.sum);
 
 		sum.sum = 0;
-		each(list.begin(), list.end(), [](auto & x){ ++x; });
+		each(list.begin(), list.end(), [](int & x){ ++x; });
 		each(list.cbegin(), list.cend(), sum);
 
 		EXPECT_EQ(55, sum.sum);

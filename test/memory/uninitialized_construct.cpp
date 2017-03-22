@@ -10,7 +10,7 @@
 using namespace BR;
 
 TEST(Memory, uninitialized_construct) {
-	constexpr auto dimension = 9U;
+	static constexpr auto dimension = 9U;
 	{
 		DynamicArray< FixedArray<int, dimension> > matrix;
 
@@ -18,7 +18,7 @@ TEST(Memory, uninitialized_construct) {
 
 		uninitialized_construct(matrix.begin(), matrix.begin() + dimension);
 
-		auto result = all_of(matrix.cbegin(), matrix.cbegin() + dimension, [dimension](auto const & row) {
+		auto result = all_of(matrix.cbegin(), matrix.cbegin() + dimension, [dimension](FixedArray<int, dimension> const & row) {
 			return count(row.cbegin(), row.cend(), 0) == dimension;
 		});
 
@@ -32,7 +32,7 @@ TEST(Memory, uninitialized_construct) {
 
 		uninitialized_construct(matrix.begin(), matrix.begin() + dimension, value, dimension);
 
-		auto result = all_of(matrix.cbegin(), matrix.cbegin() + dimension, [value, dimension](auto const & row) {
+		auto result = all_of(matrix.cbegin(), matrix.cbegin() + dimension, [value, dimension](DList<int> const & row) {
 			return count(row.cbegin(), row.cend(), value) == dimension;
 		});
 

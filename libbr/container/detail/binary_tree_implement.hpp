@@ -484,7 +484,7 @@ protected:
 		return ConstIterator(pointer);
 	}
 
-	static auto unwrap_iterator(Iterator iterator) {
+	static auto unwrap_iterator(Iterator iterator) -> NodePointer {
 		return iterator.m_pointer;
 	}
 

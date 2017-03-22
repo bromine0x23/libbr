@@ -15,18 +15,18 @@ TEST(Algorithm, fill_n) {
 
 		fill_n(array.begin(), array.size(), 0x23);
 
-		EXPECT_TRUE(all_of(array.cbegin(), array.cend(), [](auto x){ return x == 0x23; }));
+		EXPECT_TRUE(all_of(array.cbegin(), array.cend(), [](int x){ return x == 0x23; }));
 	} {
 		DList<int> list(10);
 
 		fill_n(list.begin(), list.size(), 0x23);
 
-		EXPECT_TRUE(all_of(list.cbegin(), list.cend(), [](auto x){ return x == 0x23; }));
+		EXPECT_TRUE(all_of(list.cbegin(), list.cend(), [](int x){ return x == 0x23; }));
 	} {
 		SList<int> list(10);
 
 		fill_n(list.begin(), distance(list.cbegin(), list.cend()), 0x23);
 
-		EXPECT_TRUE(all_of(list.cbegin(), list.cend(), [](auto x){ return x == 0x23; }));
+		EXPECT_TRUE(all_of(list.cbegin(), list.cend(), [](int x){ return x == 0x23; }));
 	}
 }

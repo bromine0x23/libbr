@@ -15,7 +15,7 @@ TEST(Algorithm, copy_while) {
 
 		DynamicArray<int> to_array;
 
-		copy_while(from_array.crbegin(), from_array.crend(), make_insert_back_iterator(to_array), [](auto x){ return x > 5; });
+		copy_while(from_array.crbegin(), from_array.crend(), make_insert_back_iterator(to_array), [](int x){ return x > 5; });
 
 		EXPECT_EQ((DynamicArray<int>{ 9, 8, 7, 6 }), to_array);
 	} {
@@ -23,7 +23,7 @@ TEST(Algorithm, copy_while) {
 
 		DList<int> to_list;
 
-		copy_while(from_list.crbegin(), from_list.crend(), make_insert_back_iterator(to_list), [](auto x){ return x > 5; });
+		copy_while(from_list.crbegin(), from_list.crend(), make_insert_back_iterator(to_list), [](int x){ return x > 5; });
 
 		EXPECT_EQ((DList<int>{ 9, 8, 7, 6 }), to_list);
 	} {
@@ -31,7 +31,7 @@ TEST(Algorithm, copy_while) {
 
 		SList<int> to_list;
 
-		copy_while(from_list.cbegin(), from_list.cend(), make_insert_front_iterator(to_list), [](auto x){ return x < 5; });
+		copy_while(from_list.cbegin(), from_list.cend(), make_insert_front_iterator(to_list), [](int x){ return x < 5; });
 
 		EXPECT_EQ((SList<int>{ 4, 3, 2, 1 }), to_list);
 	}

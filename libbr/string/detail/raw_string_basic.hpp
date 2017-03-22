@@ -371,8 +371,8 @@ protected:
 		m_move_assign(other, typename AllocatorTraits::IsPropagateOnContainerMoveAssignment{});
 	}
 
-	auto m_assign(CodeUnit const * units, Size length) {
-		BR_ASSERT(length == 0 || units != nullptr);
+	void m_assign(CodeUnit const * units, Size length) {
+		BR_ASSERT_MESSAGE(length == 0 || units != nullptr, "Received nullptr.");
 		auto capacity = m_capacity();
 		if (m_capacity() > length) {
 			auto data = m_raw_data();
@@ -391,7 +391,7 @@ protected:
 	}
 
 	void m_append(CString<CodeUnit> string, Size length) {
-		BR_ASSERT(length == 0 || string != nullptr);
+		BR_ASSERT_MESSAGE(length == 0 || string != nullptr, "Received nullptr.");
 		auto capacity = m_capacity();
 		auto size = m_size();
 		if (capacity - size >= length) {
@@ -518,7 +518,7 @@ protected:
 	}
 
 	void m_replace(Size index, Size count, CString<CodeUnit> string, Size length) {
-		BR_ASSERT(length == 0 || string != nullptr);
+		BR_ASSERT_MESSAGE(length == 0 || string != nullptr, "Received nullptr.");
 		auto old_size = m_size();
 		if (index > old_size) {
 			throw_index_exception(BR_CURRENT_FUNCTION);

@@ -10,7 +10,7 @@
 using namespace BR;
 
 TEST(Algorithm, min_max_element) {
-	auto absolute = [](auto x, auto y){ return abs(x) < abs(y); };
+	auto absolute = [](int x, int y){ return abs(x) < abs(y); };
 	{
 		DynamicArray<int> array{ 3, 1, -14, 1, 5, -14, 9 };
 		{

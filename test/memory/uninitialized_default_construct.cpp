@@ -27,8 +27,8 @@ TEST(Memory, uninitialized_default_construct) {
 
 	uninitialized_default_construct(matrix.begin(), matrix.begin() + count);
 
-	auto result = all_of(matrix.cbegin(), matrix.cbegin() + count, [](auto const & row){
-		return all_of(row.cbegin(), row.cend(), [](auto x){ return x.i == 9; });
+	auto result = all_of(matrix.cbegin(), matrix.cbegin() + count, [](FixedArray<S, 5> const & row){
+		return all_of(row.cbegin(), row.cend(), [](S s){ return s.i == 9; });
 	});
 
 	EXPECT_TRUE(result);

@@ -10,7 +10,7 @@
 using namespace BR;
 
 TEST(Algorithm, replace_copy_if) {
-	auto is_even = [](auto x){ return x % 2 == 0; };
+	auto is_even = [](int x){ return x % 2 == 0; };
 	{
 		DynamicArray<int> from_array{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 

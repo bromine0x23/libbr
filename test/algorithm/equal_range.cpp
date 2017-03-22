@@ -34,33 +34,33 @@ TEST(Algorithm, equal_range) {
 		{
 			auto pair = equal_range(array.cbegin(), array.cend(), S( 2, '?' ));
 
-			EXPECT_TRUE(all_of(pair.first, pair.second, [](auto s){ return s.number == 2; }));
+			EXPECT_TRUE(all_of(pair.first, pair.second, [](S s){ return s.number == 2; }));
 		} {
 			auto pair = equal_range(array.cbegin(), array.cend(), 2, Comparator());
 
-			EXPECT_TRUE(all_of(pair.first, pair.second, [](auto s){ return s.number == 2; }));
+			EXPECT_TRUE(all_of(pair.first, pair.second, [](S s){ return s.number == 2; }));
 		}
 	} {
 		DList<S> list{ { 1, 'A' }, { 2, 'B' }, { 2, 'C' }, { 2, 'D' }, { 3, 'G' }, { 4, 'F' } };
 		{
 			auto pair = equal_range(list.cbegin(), list.cend(), S( 2, '?' ));
 
-			EXPECT_TRUE(all_of(pair.first, pair.second, [](auto s){ return s.number == 2; }));
+			EXPECT_TRUE(all_of(pair.first, pair.second, [](S s){ return s.number == 2; }));
 		} {
 			auto pair = equal_range(list.cbegin(), list.cend(), 2, Comparator());
 
-			EXPECT_TRUE(all_of(pair.first, pair.second, [](auto s){ return s.number == 2; }));
+			EXPECT_TRUE(all_of(pair.first, pair.second, [](S s){ return s.number == 2; }));
 		}
 	} {
 		SList<S> list{ { 1, 'A' }, { 2, 'B' }, { 2, 'C' }, { 2, 'D' }, { 3, 'G' }, { 4, 'F' } };
 		{
 			auto pair = equal_range(list.cbegin(), list.cend(), S( 2, '?' ));
 
-			EXPECT_TRUE(all_of(pair.first, pair.second, [](auto s){ return s.number == 2; }));
+			EXPECT_TRUE(all_of(pair.first, pair.second, [](S s){ return s.number == 2; }));
 		} {
 			auto pair = equal_range(list.cbegin(), list.cend(), 2, Comparator());
 
-			EXPECT_TRUE(all_of(pair.first, pair.second, [](auto s){ return s.number == 2; }));
+			EXPECT_TRUE(all_of(pair.first, pair.second, [](S s){ return s.number == 2; }));
 		}
 	}
 }
