@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 2.8.7)
 
 if(LIBBR_INCLUDE_TESTS)
 	enable_testing()
