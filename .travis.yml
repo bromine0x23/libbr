@@ -14,17 +14,20 @@ addons:
     - cmake
     - g++-4.9
     - clang-3.7
-    - libgtest-dev
+    - gtest
 env:
   matrix:
-  - LIBBR_TARGET=Debug-11-32   BUILD_TYPE=debug   ENABLE_CXX14=OFF BUILD_32_BITS=ON  VERBOSE_MAKE=true VERBOSE
-  - LIBBR_TARGET=Debug-11-64   BUILD_TYPE=debug   ENABLE_CXX14=OFF BUILD_32_BITS=OFF VERBOSE_MAKE=true VERBOSE
-  - LIBBR_TARGET=Debug-14-32   BUILD_TYPE=debug   ENABLE_CXX14=ON  BUILD_32_BITS=ON  VERBOSE_MAKE=true VERBOSE
-  - LIBBR_TARGET=Debug-14-64   BUILD_TYPE=debug   ENABLE_CXX14=ON  BUILD_32_BITS=OFF VERBOSE_MAKE=true VERBOSE
-  - LIBBR_TARGET=Release-11-32 BUILD_TYPE=release ENABLE_CXX14=OFF BUILD_32_BITS=ON  VERBOSE_MAKE=true VERBOSE
-  - LIBBR_TARGET=Release-11-64 BUILD_TYPE=release ENABLE_CXX14=OFF BUILD_32_BITS=OFF VERBOSE_MAKE=true VERBOSE
-  - LIBBR_TARGET=Release-14-32 BUILD_TYPE=release ENABLE_CXX14=ON  BUILD_32_BITS=ON  VERBOSE_MAKE=true VERBOSE
-  - LIBBR_TARGET=Release-14-64 BUILD_TYPE=release ENABLE_CXX14=ON  BUILD_32_BITS=OFF VERBOSE_MAKE=true VERBOSE
+  - BUILD_TYPE=debug
+  - BUILD_TYPE=release
+before_install:
+- wget https://github.com/google/googletest/archive/release-1.8.0.tar.gz
+- tar xf release-1.8.0.tar.gz
+- cd googletest-release-1.8.0
+- cmake -DBUILD_SHARED_LIBS=ON .
+- make
+- cp -r ../include/gtest ~/usr/gtest/include/
+- cp lib*.so ~/usr/gtest/lib
+- cd ..
 install:
 - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
 - if [ "$CXX" = "clang++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then export CXX="clang++-3.7" CC="clang-3.7"; fi
@@ -34,9 +37,18 @@ install:
 - ${CXX} -v
 script:
 - mkdir build || true
-- mkdir build/$LIBBR_TARGET || true
-- cd build/$LIBBR_TARGET && pwd
-- cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLIBBR_ENABLE_CXX14=$ENABLE_CXX14 -DLIBBR_BUILD_32_BITS=$BUILD_32_BITS ../../
-- cmake --build . --target br_test -- -j 8
-- ./test/br_test.exe
+- cd build
+# C++11 32bits
+- cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLIBBR_ENABLE_CXX14=OFF -DLIBBR_BUILD_32_BITS=ON  ../../
+- cmake --build . --target br_test -- -j 8 && ./test/br_test.exe
+# C++11 64bits
+- cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLIBBR_ENABLE_CXX14=OFF -DLIBBR_BUILD_32_BITS=OFF ../../
+- cmake --build . --target br_test -- -j 8 && ./test/br_test.exe
+# C++14 32bits
+- cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLIBBR_ENABLE_CXX14=ON  -DLIBBR_BUILD_32_BITS=ON  ../../
+- cmake --build . --target br_test -- -j 8 && ./test/br_test.exe
+# C++14 64bits
+- cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLIBBR_ENABLE_CXX14=ON  -DLIBBR_BUILD_32_BITS=OFF ../../
+- cmake --build . --target br_test -- -j 8 && ./test/br_test.exe
+
 sudo: false
