@@ -36,16 +36,10 @@ install:
 - ${CXX} -v
 script:
 - mkdir -p build && cd build
-# C++11 32bits
-- cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLIBBR_ENABLE_CXX14=OFF -DLIBBR_BUILD_32_BITS=ON  $TRAVIS_BUILD_DIR
-- cmake --build . --target br_test -- -j 8 && ./test/br_test.exe
-# C++11 64bits
-- cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLIBBR_ENABLE_CXX14=OFF -DLIBBR_BUILD_32_BITS=OFF $TRAVIS_BUILD_DIR
-- cmake --build . --target br_test -- -j 8 && ./test/br_test.exe
-# C++14 32bits
-- cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLIBBR_ENABLE_CXX14=ON  -DLIBBR_BUILD_32_BITS=ON  $TRAVIS_BUILD_DIR
-- cmake --build . --target br_test -- -j 8 && ./test/br_test.exe
-# C++14 64bits
-- cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLIBBR_ENABLE_CXX14=ON  -DLIBBR_BUILD_32_BITS=OFF $TRAVIS_BUILD_DIR
-- cmake --build . --target br_test -- -j 8 && ./test/br_test.exe
+# C++11
+- cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLIBBR_ENABLE_CXX14=OFF $TRAVIS_BUILD_DIR
+- cmake --build . --target br_test -- -j 8 && ./test/br_test
+# C++14
+- cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLIBBR_ENABLE_CXX14=ON  $TRAVIS_BUILD_DIR
+- cmake --build . --target br_test -- -j 8 && ./test/br_test
 sudo: false
