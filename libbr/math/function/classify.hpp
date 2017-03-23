@@ -21,29 +21,30 @@ extern "C" {
  * @return
  */
 //@{
-#if defined(BR_GCC)
-BR_CONSTEXPR_AFTER_CXX11 auto libbr_classify32(BR::Float32 x) -> BR::SInt {
-	return __builtin_fpclassify(
-		BR::to_i(BR::FloatCategory::NaN),
-		BR::to_i(BR::FloatCategory::Infinite),
-		BR::to_i(BR::FloatCategory::Normal),
-		BR::to_i(BR::FloatCategory::SubNormal),
-		BR::to_i(BR::FloatCategory::Zero),
-		x
-	);
-}
-
-BR_CONSTEXPR_AFTER_CXX11 auto libbr_classify64(BR::Float64 x) -> BR::SInt {
-	return __builtin_fpclassify(
-		BR::to_i(BR::FloatCategory::NaN),
-		BR::to_i(BR::FloatCategory::Infinite),
-		BR::to_i(BR::FloatCategory::Normal),
-		BR::to_i(BR::FloatCategory::SubNormal),
-		BR::to_i(BR::FloatCategory::Zero),
-		x
-	);
-}
-#elif defined(BR_CLANG)
+//#if defined(BR_GCC)
+//BR_CONSTEXPR_AFTER_CXX11 auto libbr_classify32(BR::Float32 x) -> BR::SInt {
+//	return __builtin_fpclassify(
+//		BR::to_i(BR::FloatCategory::NaN),
+//		BR::to_i(BR::FloatCategory::Infinite),
+//		BR::to_i(BR::FloatCategory::Normal),
+//		BR::to_i(BR::FloatCategory::SubNormal),
+//		BR::to_i(BR::FloatCategory::Zero),
+//		x
+//	);
+//}
+//
+//BR_CONSTEXPR_AFTER_CXX11 auto libbr_classify64(BR::Float64 x) -> BR::SInt {
+//	return __builtin_fpclassify(
+//		BR::to_i(BR::FloatCategory::NaN),
+//		BR::to_i(BR::FloatCategory::Infinite),
+//		BR::to_i(BR::FloatCategory::Normal),
+//		BR::to_i(BR::FloatCategory::SubNormal),
+//		BR::to_i(BR::FloatCategory::Zero),
+//		x
+//	);
+//}
+//#elif defined(BR_CLANG)
+#if defined(BR_GCC) || defined(BR_CLANG)
 inline auto libbr_classify32(BR::Float32 x) -> BR::SInt {
 	BR::SInt16 c;
 	asm("fxam;fstsw %0;and $0x4500,%0;":"=a"(c):"t"(x));
@@ -95,16 +96,16 @@ namespace BR {
 inline namespace Math {
 inline namespace Function {
 
-#if defined(BR_GCC)
-BR_CONSTEXPR_AFTER_CXX11
-#endif // defined(BR_GCC)
+//#if defined(BR_GCC)
+//BR_CONSTEXPR_AFTER_CXX11
+//#endif // defined(BR_GCC)
 inline auto classify(Float32 x) -> FloatCategory {
 	return static_cast<FloatCategory>(libbr_classify32(x));
 }
 
-#if defined(BR_GCC)
-BR_CONSTEXPR_AFTER_CXX11
-#endif // defined(BR_GCC)
+//#if defined(BR_GCC)
+//BR_CONSTEXPR_AFTER_CXX11
+//#endif // defined(BR_GCC)
 inline auto classify(Float64 x) -> FloatCategory {
 	return static_cast<FloatCategory>(libbr_classify64(x));
 }
