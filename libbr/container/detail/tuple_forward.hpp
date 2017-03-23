@@ -14,7 +14,7 @@ namespace BR {
 inline namespace Container {
 
 template< typename T, Size N >
-class FixedArray;
+struct FixedArray;
 
 template< typename TFirst, typename TSecond >
 class Pair;
