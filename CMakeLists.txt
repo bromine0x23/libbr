@@ -3,9 +3,7 @@ cmake_minimum_required(VERSION 2.8.7)
 #===============================================================================
 # Setup Project
 #===============================================================================
-project(LIBBR)
-
-enable_language(CXX)
+project(LIBBR CXX)
 
 set(PACKAGE_NAME libbr)
 

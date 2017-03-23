@@ -6,12 +6,10 @@
 #pragma once
 
 #include <libbr/config.hpp>
+#include <libbr/math/detail/bind.hpp>
 #include <libbr/math/float_category.hpp>
 #include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/is_integral.hpp>
-#if !defined(BR_GCC)
-#  include <libbr/math/detail/bind.hpp>
-#endif
 
 extern "C" {
 
@@ -21,42 +19,6 @@ extern "C" {
  * @return
  */
 //@{
-//#if defined(BR_GCC)
-//BR_CONSTEXPR_AFTER_CXX11 auto libbr_classify32(BR::Float32 x) -> BR::SInt {
-//	return __builtin_fpclassify(
-//		BR::to_i(BR::FloatCategory::NaN),
-//		BR::to_i(BR::FloatCategory::Infinite),
-//		BR::to_i(BR::FloatCategory::Normal),
-//		BR::to_i(BR::FloatCategory::SubNormal),
-//		BR::to_i(BR::FloatCategory::Zero),
-//		x
-//	);
-//}
-//
-//BR_CONSTEXPR_AFTER_CXX11 auto libbr_classify64(BR::Float64 x) -> BR::SInt {
-//	return __builtin_fpclassify(
-//		BR::to_i(BR::FloatCategory::NaN),
-//		BR::to_i(BR::FloatCategory::Infinite),
-//		BR::to_i(BR::FloatCategory::Normal),
-//		BR::to_i(BR::FloatCategory::SubNormal),
-//		BR::to_i(BR::FloatCategory::Zero),
-//		x
-//	);
-//}
-//#elif defined(BR_CLANG)
-#if defined(BR_GCC) || defined(BR_CLANG)
-inline auto libbr_classify32(BR::Float32 x) -> BR::SInt {
-	BR::SInt16 c;
-	asm("fxam;fstsw %0;and $0x4500,%0;":"=a"(c):"t"(x));
-	return c;
-}
-
-inline auto libbr_classify64(BR::Float64 x) -> BR::SInt {
-	BR::SInt16 c;
-	asm("fxam;fstsw %0;and $0x4500,%0;":"=a"(c):"t"(x));
-	return c;
-}
-#else
 inline auto libbr_classify32(BR::Float32 x) -> BR::SInt {
 	auto category = BR::FloatCategory::Normal;
 	auto r = BR::Detail::Math::Bind32{x}.r & 0x7FFFFFFFU;
@@ -87,7 +49,6 @@ inline auto libbr_classify64(BR::Float64 x) -> BR::SInt {
 	}
 	return BR::to_i(category);
 }
-#endif
 //@}
 
 }
@@ -96,16 +57,16 @@ namespace BR {
 inline namespace Math {
 inline namespace Function {
 
-//#if defined(BR_GCC)
-//BR_CONSTEXPR_AFTER_CXX11
-//#endif // defined(BR_GCC)
+#if defined(BR_GCC)
+BR_CONSTEXPR_AFTER_CXX11
+#endif // defined(BR_GCC)
 inline auto classify(Float32 x) -> FloatCategory {
 	return static_cast<FloatCategory>(libbr_classify32(x));
 }
 
-//#if defined(BR_GCC)
-//BR_CONSTEXPR_AFTER_CXX11
-//#endif // defined(BR_GCC)
+#if defined(BR_GCC)
+BR_CONSTEXPR_AFTER_CXX11
+#endif // defined(BR_GCC)
 inline auto classify(Float64 x) -> FloatCategory {
 	return static_cast<FloatCategory>(libbr_classify64(x));
 }

@@ -7,10 +7,10 @@
 #define _CRT_SECURE_NO_WARNINGS
 #elif defined(BR_CLANG)
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wall"
 #elif defined(BR_GCC)
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#pragma GCC diagnostic ignored "-Wall"
 #endif
 
 #include <gtest/gtest.h>
