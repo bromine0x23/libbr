@@ -23,11 +23,13 @@ constexpr auto libbr_make_nan_64() -> BR::Float64 {
 }
 #else
 inline auto libbr_make_nan_32() -> BR::Float32 {
-	return BR::Detail::Math::Bind32{0x7FFFFFFFU}.f;
+	BR::Detail::Math::Bind32 b = {0x7FFFFFFFU};
+	return b.f;
 }
 
 inline auto libbr_make_nan_64() -> BR::Float64 {
-	return BR::Detail::Math::Bind64{0x7FFFFFFFFFFFFFFFULL}.f;
+	BR::Detail::Math::Bind64 b = {0x7FFFFFFFFFFFFFFFULL};
+	return b.f;
 }
 #endif
 
