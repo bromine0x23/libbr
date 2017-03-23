@@ -65,7 +65,7 @@ public:
 protected:
 	using PointerTraits = BR::PointerTraits<Pointer>;
 
-	using Buffer = Detail::Container::DequeBlock< Element, Allocator >;
+	using Buffer = Detail::Container::Deque::Block< Element, Allocator & >;
 
 public:
 	Basic() noexcept(HasNothrowDefaultConstructor<Allocator>{}) : m_storage() {
@@ -344,7 +344,7 @@ protected:
 	}
 
 private:
-	constexpr auto m_new_capacity(Size new_size) noexcept -> Size {
+	BR_CONSTEXPR_AFTER_CXX11 auto m_new_capacity(Size new_size) const noexcept -> Size {
 		Size max_size = m_max_size();
 		if (max_size < new_size) {
 			throw_length_exception(BR_CURRENT_FUNCTION);

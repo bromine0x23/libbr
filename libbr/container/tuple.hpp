@@ -22,6 +22,7 @@
 #include <libbr/type_traits/remove_const_volatile.hpp>
 #include <libbr/type_traits/remove_reference.hpp>
 #include <libbr/utility/boolean_constant.hpp>
+#include <libbr/utility/types.hpp>
 
 namespace BR {
 
@@ -349,7 +350,7 @@ public:
 	 */
 	template<
 		typename TFirst, typename TSecond,
-		typename = EnableIf< typename EnableTupleLikeConstructor<sizeof...(TElements) == 2>::template Explicit<TFirst const &, TSecond const &> >
+		typename = EnableIf< typename EnableTupleLikeConstructor<sizeof...(TElements) == Types<TFirst, TSecond>::size>::template Explicit<TFirst const &, TSecond const &> >
 	>
 	explicit BR_CONSTEXPR_AFTER_CXX11 Tuple(
 		Pair<TFirst, TSecond> const & pair
@@ -366,7 +367,7 @@ public:
 	 */
 	template<
 		typename TFirst, typename TSecond,
-		EnableIf< typename EnableTupleLikeConstructor<sizeof...(TElements) == 2>::template Implicit<TFirst const &, TSecond const &>, Boolean > = true
+		EnableIf< typename EnableTupleLikeConstructor<sizeof...(TElements) == Types<TFirst, TSecond>::size>::template Implicit<TFirst const &, TSecond const &>, Boolean > = true
 	>
 	BR_CONSTEXPR_AFTER_CXX11 Tuple(
 		Pair<TFirst, TSecond> const & pair
@@ -383,7 +384,7 @@ public:
 	 */
 	template<
 		typename TFirst, typename TSecond,
-		typename = EnableIf< typename EnableTupleLikeConstructor<sizeof...(TElements) == 2>::template Explicit<TFirst &&, TSecond &&> >
+		typename = EnableIf< typename EnableTupleLikeConstructor<sizeof...(TElements) == Types<TFirst, TSecond>::size>::template Explicit<TFirst &&, TSecond &&> >
 	>
 	explicit BR_CONSTEXPR_AFTER_CXX11 Tuple(
 		Pair<TFirst, TSecond> && pair
@@ -400,7 +401,7 @@ public:
 	 */
 	template<
 		typename TFirst, typename TSecond,
-		EnableIf< typename EnableTupleLikeConstructor<sizeof...(TElements) == 2>::template Implicit<TFirst &&, TSecond &&>, Boolean > = true
+		EnableIf< typename EnableTupleLikeConstructor<sizeof...(TElements) == Types<TFirst, TSecond>::size>::template Implicit<TFirst &&, TSecond &&>, Boolean > = true
 	>
 	BR_CONSTEXPR_AFTER_CXX11 Tuple(
 		Pair<TFirst, TSecond> && pair
@@ -642,7 +643,7 @@ public:
 	template<
 		typename TAllocator,
 		typename TFirst, typename TSecond,
-		typename = EnableIf< typename EnableTupleLikeConstructor<sizeof...(TElements) == 2>::template Explicit<TFirst const &, TSecond const &> >
+		typename = EnableIf< typename EnableTupleLikeConstructor<sizeof...(TElements) == Types<TFirst, TSecond>::size>::template Explicit<TFirst const &, TSecond const &> >
 	>
 	explicit BR_CONSTEXPR_AFTER_CXX11 Tuple(
 		AllocatorArgumentTag, TAllocator const & allocator,
@@ -663,7 +664,7 @@ public:
 	template<
 		typename TAllocator,
 		typename TFirst, typename TSecond,
-		EnableIf< typename EnableTupleLikeConstructor<sizeof...(TElements) == 2>::template Implicit<TFirst const &, TSecond const &>, Boolean > = true
+		EnableIf< typename EnableTupleLikeConstructor<sizeof...(TElements) == Types<TFirst, TSecond>::size>::template Implicit<TFirst const &, TSecond const &>, Boolean > = true
 	>
 	BR_CONSTEXPR_AFTER_CXX11 Tuple(
 		AllocatorArgumentTag, TAllocator const & allocator,
@@ -684,7 +685,7 @@ public:
 	template<
 		typename TAllocator,
 		typename TFirst, typename TSecond,
-		typename = EnableIf< typename EnableTupleLikeConstructor<sizeof...(TElements) == 2>::template Explicit<TFirst &&, TSecond &&> >
+		typename = EnableIf< typename EnableTupleLikeConstructor<sizeof...(TElements) == Types<TFirst, TSecond>::size>::template Explicit<TFirst &&, TSecond &&> >
 	>
 	explicit BR_CONSTEXPR_AFTER_CXX11 Tuple(
 		AllocatorArgumentTag, TAllocator const & allocator,
@@ -705,7 +706,7 @@ public:
 	template<
 		typename TAllocator,
 		typename TFirst, typename TSecond,
-		EnableIf< typename EnableTupleLikeConstructor<sizeof...(TElements) == 2>::template Implicit<TFirst &&, TSecond &&>, Boolean > = true
+		EnableIf< typename EnableTupleLikeConstructor<sizeof...(TElements) == Types<TFirst, TSecond>::size>::template Implicit<TFirst &&, TSecond &&>, Boolean > = true
 	>
 	BR_CONSTEXPR_AFTER_CXX11 Tuple(
 		AllocatorArgumentTag, TAllocator const & allocator,

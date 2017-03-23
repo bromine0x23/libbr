@@ -4,7 +4,6 @@
 #include <libbr/algorithm/max.hpp>
 #include <libbr/algorithm/move.hpp>
 #include <libbr/algorithm/move_backward.hpp>
-#include <libbr/container/tuple.hpp>
 #include <libbr/container/detail/allocator_helpers.hpp>
 #include <libbr/iterator/category.hpp>
 #include <libbr/iterator/iterator_traits.hpp>
@@ -25,19 +24,154 @@
 namespace BR {
 namespace Detail {
 namespace Container {
+namespace Deque {
 
 template< typename TElement, typename TAllocator >
-class DequeBlock;
+class Block;
 
 template< typename TElement, typename TAllocator >
-inline void swap(DequeBlock< TElement, TAllocator> & x, DequeBlock< TElement, TAllocator > & y) noexcept(noexcept(x.swap(y)))  {
+inline void swap(Block< TElement, TAllocator> & x, Block< TElement, TAllocator > & y) noexcept(noexcept(x.swap(y)))  {
 	x.swap(y);
 }
 
+template< typename TPointer, typename TAllocator, Boolean = BooleanAnd< IsEmpty<TAllocator>, NotFinal<TAllocator> >{} >
+struct BlockStorage;
+
+
+template< typename TPointer, typename TAllocator >
+struct BlockStorage< TPointer, TAllocator, false > {
+public:
+	using Pointer = TPointer;
+
+	using Allocator = TAllocator;
+
+public:
+	BlockStorage() : m_allocator(), m_storage_begin(), m_begin(), m_end(), m_storage_end() {
+	}
+
+	BlockStorage(Allocator const & allocator) : m_allocator(allocator), m_storage_begin(), m_begin(), m_end(), m_storage_end() {
+	}
+
+	BlockStorage(BlockStorage && storage) : m_allocator(move(storage.m_allocator)), m_storage_begin(move(storage.m_storage_begin)), m_begin(move(storage.m_begin)), m_end(move(storage.m_end)), m_storage_end(move(storage.m_storage_end)) {
+	}
+
+	auto allocator() noexcept -> Allocator & {
+		return m_allocator;
+	}
+
+	auto allocator() const noexcept -> Allocator const & {
+		return m_allocator;
+	}
+
+	auto storage_begin() noexcept -> Pointer & {
+		return m_storage_begin;
+	}
+
+	auto storage_begin() const noexcept -> Pointer const & {
+		return m_storage_begin;
+	}
+
+	auto begin() noexcept -> Pointer & {
+		return m_begin;
+	}
+
+	auto begin() const noexcept -> Pointer const & {
+		return m_begin;
+	}
+
+	auto end() noexcept -> Pointer & {
+		return m_end;
+	}
+
+	auto end() const noexcept -> Pointer const & {
+		return m_end;
+	}
+
+	auto storage_end() noexcept -> Pointer & {
+		return m_storage_end;
+	}
+
+	auto storage_end() const noexcept -> Pointer const & {
+		return m_storage_end;
+	}
+
+private:
+	Allocator m_allocator;
+	Pointer m_storage_begin;
+	Pointer m_begin;
+	Pointer m_end;
+	Pointer m_storage_end;
+}; // struct BlockStorage< TPointer, TAllocator, false >
+
+
+template< typename TPointer, typename TAllocator >
+struct BlockStorage< TPointer, TAllocator, true > : private TAllocator {
+public:
+	using Pointer = TPointer;
+
+	using Allocator = TAllocator;
+
+public:
+	BlockStorage() : Allocator(), m_storage_begin(), m_begin(), m_end(), m_storage_end() {
+	}
+
+	BlockStorage(Allocator const & allocator) : Allocator(allocator), m_storage_begin(), m_begin(), m_end(), m_storage_end() {
+	}
+
+	BlockStorage(BlockStorage && storage) : Allocator(move(storage)), m_storage_begin(move(storage.m_storage_begin)), m_begin(move(storage.m_begin)), m_end(move(storage.m_end)), m_storage_end(move(storage.m_storage_end)) {
+	}
+
+	auto allocator() noexcept -> Allocator & {
+		return static_cast< Allocator & >(*this);
+	}
+
+	auto allocator() const noexcept -> Allocator const & {
+		return static_cast< Allocator const & >(*this);
+	}
+
+	auto storage_begin() noexcept -> Pointer & {
+		return m_storage_begin;
+	}
+
+	auto storage_begin() const noexcept -> Pointer const & {
+		return m_storage_begin;
+	}
+
+	auto begin() noexcept -> Pointer & {
+		return m_begin;
+	}
+
+	auto begin() const noexcept -> Pointer const & {
+		return m_begin;
+	}
+
+	auto end() noexcept -> Pointer & {
+		return m_end;
+	}
+
+	auto end() const noexcept -> Pointer const & {
+		return m_end;
+	}
+
+	auto storage_end() noexcept -> Pointer & {
+		return m_storage_end;
+	}
+
+	auto storage_end() const noexcept -> Pointer const & {
+		return m_storage_end;
+	}
+
+private:
+	Pointer m_storage_begin;
+	Pointer m_begin;
+	Pointer m_end;
+	Pointer m_storage_end;
+
+}; // struct BlockStorage< TPointer, TAllocator, true >
 
 
 template< typename TElement, typename TAllocator >
-class DequeBlock {
+class Block {
 
 public:
 	using Element = TElement;
@@ -45,10 +179,12 @@ public:
 	using Allocator = TAllocator;
 
 private:
-	using Self = DequeBlock;
+	using Self = Block;
+
+	using BareAllocator = RemoveReference<Allocator>;
 
 public:
-	using AllocatorTraits = BR::AllocatorTraits<Allocator>;
+	using AllocatorTraits = BR::AllocatorTraits<BareAllocator>;
 
 	using Reference = Element &;
 
@@ -70,26 +206,26 @@ private:
 	using PointerTraits = BR::PointerTraits<Pointer>;
 
 public:
-	DequeBlock() noexcept(HasNothrowDefaultConstructor<Allocator>{}) : m_impl() {
+	Block() noexcept(HasNothrowDefaultConstructor<Allocator>{}) : m_storage() {
 	}
 
-	explicit DequeBlock(Allocator & allocator) : m_impl(nullptr, nullptr, nullptr, nullptr, allocator) {
+	explicit Block(BareAllocator & allocator) : m_storage(allocator) {
 	}
 
-	explicit DequeBlock(Allocator const & allocator) : m_impl(nullptr, nullptr, nullptr, nullptr, allocator) {
+	explicit Block(BareAllocator const & allocator) : m_storage(allocator) {
 	}
 
-	DequeBlock(Size capacity, Size start, Allocator & allocator) : m_impl(nullptr, nullptr, nullptr, nullptr, allocator) {
+	Block(Size capacity, Size start, BareAllocator & allocator) : m_storage(allocator) {
 		storage_begin() = capacity != 0 ? AllocatorTraits::allocate(allocator, capacity) : nullptr;
 		begin() = end() = storage_begin() + start;
 		storage_end() = storage_begin() + capacity;
 	}
 
-	DequeBlock(Self && other) noexcept(HasNothrowMoveConstructor<Allocator>{}) : m_impl(move(other.m_impl)) {
+	Block(Self && other) noexcept(HasNothrowMoveConstructor<Allocator>{}) : m_storage(move(other.m_storage)) {
 		other.storage_begin() = other.begin() = other.end() = other.storage_end() = nullptr;
 	}
 
-	DequeBlock(Self && other, Allocator const & allocator) : m_impl(nullptr, nullptr, nullptr, nullptr, allocator) {
+	Block(Self && other, BareAllocator const & allocator) : m_storage(allocator) {
 		if (allocator == other.m_allocator()) {
 			storage_begin() = other.storage_begin();
 			begin() = other.begin();
@@ -105,7 +241,7 @@ public:
 		}
 	}
 
-	~DequeBlock() {
+	~Block() {
 		clear();
 		if (storage_begin() != nullptr) {
 			AllocatorTraits::deallocate(allocator(), storage_begin(), capacity());
@@ -132,43 +268,43 @@ public:
 	}
 
 	auto storage_begin() noexcept -> Pointer & {
-		return m_impl.template get<0>();
+		return m_storage.storage_begin();
 	}
 
 	auto storage_begin() const noexcept -> Pointer const & {
-		return m_impl.template get<0>();
+		return m_storage.storage_begin();
 	}
 
 	auto begin() noexcept -> Pointer & {
-		return m_impl.template get<1>();
+		return m_storage.begin();
 	}
 
 	auto begin() const noexcept -> Pointer const & {
-		return m_impl.template get<1>();
+		return m_storage.begin();
 	}
 
 	auto end() noexcept -> Pointer & {
-		return m_impl.template get<2>();
+		return m_storage.end();
 	}
 
 	auto end() const noexcept -> Pointer const & {
-		return m_impl.template get<2>();
+		return m_storage.end();
 	}
 
 	auto storage_end() noexcept -> Pointer & {
-		return m_impl.template get<3>();
+		return m_storage.storage_end();
 	}
 
 	auto storage_end() const noexcept -> Pointer const & {
-		return m_impl.template get<3>();
+		return m_storage.storage_end();
 	}
 
-	auto allocator() noexcept -> Allocator & {
-		return m_impl.template get<Allocator &>();
+	auto allocator() noexcept -> BareAllocator & {
+		return m_storage.allocator();
 	}
 
-	auto allocator() const noexcept -> Allocator const & {
-		return m_impl.template get<Allocator &>();
+	auto allocator() const noexcept -> BareAllocator const & {
+		return m_storage.allocator();
 	}
 
 	auto front_spare() const -> Size {
@@ -299,7 +435,7 @@ public:
 	void swap(Self & other) noexcept(
 		BooleanOr<
 			BooleanNot< typename AllocatorTraits::IsPropagateOnContainerSwap >,
-			IsNothrowSwappable<Allocator>
+			IsNothrowSwappable<BareAllocator>
 		>{}
 	) {
 		using BR::swap;
@@ -391,15 +527,16 @@ private:
 	}
 
 private:
-	DequeBlock(Self const &) = delete;
+	Block(Self const &) = delete;
 
-	auto operator=(DequeBlock const &) -> DequeBlock & = delete;
+	auto operator=(Block const &) -> Block & = delete;
 
 private:
 	// storage_begin, begin, end, storage_end, allocator
-	BR::Tuple< Pointer, Pointer, Pointer, Pointer, Allocator & > m_impl;
-}; // class DequeBlock< TElement, TAllocator >
+	BlockStorage< Pointer, Allocator > m_storage;
+}; // class Block< TElement, TAllocator >
 
+} // namespace Deque
 } // namespace Container
 } // namespace Detail
 } // namespace BR
