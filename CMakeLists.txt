@@ -19,7 +19,7 @@ set(PACKAGE_STRING "${PACKAGE_NAME} ${PACKAGE_VERSION}")
 option(LIBBR_ENABLE_CXX14 "Use c++14 language features if the compiler supports it." ON)
 option(LIBBR_ENABLE_SHARED "Build libbr as a shared library." OFF)
 option(LIBBR_BUILD_32_BITS "Build 32 bit libbr" OFF)
-option(LIBBR_INCLUDE_DOCUMENTATION "Build the HTML based API documentation (requires Doxygen)" ON)
+option(LIBBR_INCLUDE_DOCUMENTATION "Build the HTML based API documentation (requires Doxygen)" OFF)
 option(LIBBR_INCLUDE_TESTS "Build the tests (requires gtest)." ON)
 
 #===============================================================================
