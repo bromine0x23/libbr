@@ -23,12 +23,12 @@ constexpr auto libbr_make_infinity_64() -> BR::Float64 {
 }
 #else
 inline auto libbr_make_infinity_32() -> BR::Float32 {
-	BR::Detail::Math::Bind32 b = {UInt32(0x7F800000U)};
+	BR::Detail::Math::Bind32 b = {BR::UInt32(0x7F800000U)};
 	return b.f;
 }
 
 inline auto libbr_make_infinity_64() -> BR::Float64 {
-	BR::Detail::Math::Bind64 b = {UInt64(0x7FF0000000000000ULL)};
+	BR::Detail::Math::Bind64 b = {BR::UInt64(0x7FF0000000000000ULL)};
 	return b.f;
 }
 #endif
