@@ -22,7 +22,7 @@ extern "C" {
  */
 //@{
 #if defined(BR_GCC)
-constexpr auto libbr_classify32(BR::Float32 x) -> BR::SInt {
+BR_CONSTEXPR_AFTER_CXX11 auto libbr_classify32(BR::Float32 x) -> BR::SInt {
 	return __builtin_fpclassify(
 		BR::to_i(BR::FloatCategory::NaN),
 		BR::to_i(BR::FloatCategory::Infinite),
@@ -33,7 +33,7 @@ constexpr auto libbr_classify32(BR::Float32 x) -> BR::SInt {
 	);
 }
 
-constexpr auto libbr_classify64(BR::Float64 x) -> BR::SInt {
+BR_CONSTEXPR_AFTER_CXX11 auto libbr_classify64(BR::Float64 x) -> BR::SInt {
 	return __builtin_fpclassify(
 		BR::to_i(BR::FloatCategory::NaN),
 		BR::to_i(BR::FloatCategory::Infinite),
@@ -96,14 +96,14 @@ inline namespace Math {
 inline namespace Function {
 
 #if defined(BR_GCC)
-constexpr
+BR_CONSTEXPR_AFTER_CXX11
 #endif // defined(BR_GCC)
 inline auto classify(Float32 x) -> FloatCategory {
 	return static_cast<FloatCategory>(libbr_classify32(x));
 }
 
 #if defined(BR_GCC)
-constexpr
+BR_CONSTEXPR_AFTER_CXX11
 #endif // defined(BR_GCC)
 inline auto classify(Float64 x) -> FloatCategory {
 	return static_cast<FloatCategory>(libbr_classify64(x));

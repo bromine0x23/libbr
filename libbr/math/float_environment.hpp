@@ -169,7 +169,7 @@ struct Environment {
 	UInt16 _unused4;
 };
 
-static_assert(sizeof(Environment) == 28);
+static_assert(sizeof(Environment) == 28, "Environment should be 28 bytes.");
 
 } // namespace Floating
 } // inline namespace Math
