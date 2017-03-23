@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 2.8.7)
 #===============================================================================
 project(LIBBR)
 
+enable_language(CXX)
+
 set(PACKAGE_NAME libbr)
 
 set(PACKAGE_VERSION trunk-git)
