@@ -34,7 +34,7 @@ inline namespace Container {
  * 是类元组类型
  */
 template< typename T, Size N >
-class FixedArray;
+struct FixedArray;
 
 /**
  *
