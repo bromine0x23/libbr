@@ -4,6 +4,7 @@
 #include <libbr/assert/assert.hpp>
 #include <libbr/container/initializer_list.hpp>
 #include <libbr/iterator/reverse_iterator.hpp>
+#include <libbr/exception/throw.hpp>
 #include <libbr/math/relation.hpp>
 #include <libbr/memory/allocator.hpp>
 #include <libbr/operators/equality_comparable.hpp>
@@ -11,6 +12,7 @@
 #include <libbr/operators/template_equality_comparable.hpp>
 #include <libbr/operators/template_less_than_comparable.hpp>
 #include <libbr/string/detail/raw_string_basic.hpp>
+#include <libbr/string/raw_string_view.hpp>
 #include <libbr/string/string_length.hpp>
 #include <libbr/type_traits/boolean.hpp>
 #include <libbr/type_traits/enable_if.hpp>
@@ -24,132 +26,13 @@
 namespace BR {
 
 /**
- * @brief 字符串类
- * @tparam TCodeUnit 码元类型
- * @tparam TAllocator 分配器类型
+ * @brief Stores and manipulates sequences of code units.
+ * @tparam TCodeUnit Type of code units.
+ * @tparam TAllocator Type of allocator used to allocate internal storage.
  */
 template< typename TCodeUnit, typename TAllocator = Allocator<TCodeUnit> >
 class RawString;
 
-template< typename TCodeUnit >
-class RawStringView;
-
-template< typename TCodeUnit >
-BR_CONSTEXPR_AFTER_CXX11 auto make_raw_string_view(CString<TCodeUnit> string) -> RawStringView<TCodeUnit> {
-	BR_ASSERT(string != nullptr);
-	return RawStringView<TCodeUnit>(string);
-}
-
-template< typename TCodeUnit >
-BR_CONSTEXPR_AFTER_CXX11 auto make_raw_string_view(CString<TCodeUnit> string, Size count) -> RawStringView<TCodeUnit> {
-	BR_ASSERT(string != nullptr || count == 0);
-	return RawStringView<TCodeUnit>(string, count);
-}
-
-
-
-template< typename TCodeUnit >
-class RawStringView {
-public:
-	static_assert(IsPOD<TCodeUnit>{}, "TCodeUnit must be a POD.");
-
-	using CodeUnit = TCodeUnit;
-
-	using Element = CodeUnit;
-
-	using Reference = Element const &;
-
-	using ConstReference = Element const &;
-
-	using Pointer = Element const *;
-
-	using ConstPointer = Element const *;
-
-	using Iterator = Pointer;
-
-	using ConstIterator = ConstPointer;
-
-	using ReverseIterator = BR::ReverseIterator<Iterator>;
-
-	using ConstReverseIterator = BR::ReverseIterator<ConstIterator>;
-
-	using Size = ::BR::Size;
-
-	using Difference = PointerDifference;
-
-public:
-	constexpr RawStringView() noexcept : m_data(nullptr), m_size(0) {
-	}
-
-	constexpr RawStringView(RawStringView const &) noexcept = default;
-
-	template<typename TAllocator>
-	constexpr RawStringView(RawString< CodeUnit, TAllocator > const & string) noexcept : m_data(string.data()), m_size(string.size()) {
-	}
-
-	constexpr RawStringView(CodeUnit const * string, Size size) : m_data(string), m_size(size) {
-	}
-
-	auto operator=(RawStringView const &) noexcept -> RawStringView & = default;
-
-	constexpr auto begin() const noexcept -> ConstIterator {
-		return cbegin();
-	}
-
-	constexpr auto end() const noexcept -> ConstIterator {
-		return cend();
-	}
-
-	constexpr auto cbegin() const noexcept -> ConstIterator {
-		return m_data;
-	}
-
-	constexpr auto cend() const noexcept -> ConstIterator {
-		return m_data + m_size;
-	}
-
-	constexpr auto rbegin() const noexcept -> ConstReverseIterator {
-		return crbegin();
-	}
-
-	constexpr auto rend() const noexcept -> ConstReverseIterator {
-		return crend();
-	}
-
-	constexpr auto crbegin() const noexcept -> ConstReverseIterator {
-		return ConstReverseIterator(cend());
-	}
-
-	constexpr auto crend() const noexcept -> ConstReverseIterator {
-		return ConstReverseIterator(cbegin());
-	}
-
-	constexpr auto size() const noexcept -> Size {
-		return m_size;
-	}
-
-	constexpr auto length() const noexcept -> Size {
-		return m_size;
-	}
-
-	constexpr auto empty() const noexcept -> bool {
-		return m_size == 0;
-	}
-
-	constexpr auto data() const noexcept -> ConstPointer {
-		return m_data;
-	}
-
-	auto clear() noexcept -> RawStringView {
-		m_data = nullptr;
-		m_size = 0;
-		return *this;
-	}
-
-private:
-	CodeUnit const * m_data;
-	Size m_size;
-}; // class RawStringView<TCodeUnit>
 
 template< typename TCodeUnit, typename TAllocator >
 class RawString :
@@ -1289,8 +1172,6 @@ extern template class RawString<Char32>;
 
 inline namespace Literal {
 
-inline namespace RawStringLiteral {
-
 inline auto operator "" _rs(CString<Char8> string, Size length) -> RawString<Char8> {
 	return RawString<Char8>(string, length);
 }
@@ -1302,8 +1183,6 @@ inline auto operator "" _rs(CString<Char16> string, Size length) -> RawString<Ch
 inline auto operator "" _rs(CString<Char32> string, Size length) -> RawString<Char32> {
 	return RawString<Char32>(string, length);
 }
-
-} // inline namespace RawStringLiteral
 
 } // inline namespace Literal
 
