@@ -22,6 +22,7 @@
 #include <libbr/type_traits/is_array.hpp>
 #include <libbr/type_traits/is_assignable.hpp>
 #include <libbr/type_traits/is_convertible.hpp>
+#include <libbr/type_traits/is_pointer.hpp>
 #include <libbr/type_traits/is_reference.hpp>
 #include <libbr/type_traits/is_same.hpp>
 #include <libbr/type_traits/remove_extent.hpp>

@@ -9,7 +9,7 @@
 #include <libbr/exception/logic_exception.hpp>
 
 namespace BR {
-namespace Container {
+inline namespace Container {
 
 /**
  * @brief Exception indicating checked access to an optional that doesn't contain a value.

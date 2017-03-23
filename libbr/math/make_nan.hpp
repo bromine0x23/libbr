@@ -23,15 +23,11 @@ constexpr auto libbr_make_nan_64() -> BR::Float64 {
 }
 #else
 inline auto libbr_make_nan_32() -> BR::Float32 {
-	BR::Detail::Math::Bind32 b;
-	b.r = 0x7FFFFFFFU;
-	return b.f;
+	return BR::Detail::Math::Bind32{0x7FFFFFFFU}.f;
 }
 
 inline auto libbr_make_nan_64() -> BR::Float64 {
-	BR::Detail::Math::Bind64 b;
-	b.r = 0x7FFFFFFFFFFFFFFFULL;
-	return b.f;
+	return BR::Detail::Math::Bind64{0x7FFFFFFFFFFFFFFFULL}.f;
 }
 #endif
 
@@ -47,14 +43,22 @@ struct NANMaker {};
 
 template<>
 struct NANMaker<Float32> {
-	static constexpr auto get() -> Float32 {
+	static
+#if defined(BR_GCC)
+	constexpr
+#endif // defined(BR_GCC)
+	inline auto get() -> Float32 {
 		return libbr_make_nan_32();
 	}
 };
 
 template<>
 struct NANMaker<Float64> {
-	static constexpr auto get() -> Float64 {
+	static
+#if defined(BR_GCC)
+	constexpr
+#endif // defined(BR_GCC)
+	inline auto get() -> Float64 {
 		return libbr_make_nan_64();
 	}
 };
@@ -65,7 +69,10 @@ struct NANMaker<Float64> {
 inline namespace Math {
 
 template< typename T >
-constexpr auto make_nan() -> T {
+#if defined(BR_GCC)
+constexpr
+#endif // defined(BR_GCC)
+inline auto make_nan() -> T {
 	return Detail::Math::NANMaker<T>::get();
 }
 
