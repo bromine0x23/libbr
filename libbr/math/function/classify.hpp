@@ -57,16 +57,10 @@ namespace BR {
 inline namespace Math {
 inline namespace Function {
 
-#if defined(BR_GCC)
-BR_CONSTEXPR_AFTER_CXX11
-#endif // defined(BR_GCC)
 inline auto classify(Float32 x) -> FloatCategory {
 	return static_cast<FloatCategory>(libbr_classify32(x));
 }
 
-#if defined(BR_GCC)
-BR_CONSTEXPR_AFTER_CXX11
-#endif // defined(BR_GCC)
 inline auto classify(Float64 x) -> FloatCategory {
 	return static_cast<FloatCategory>(libbr_classify64(x));
 }
