@@ -26,7 +26,7 @@ before_install:
 - cd build
 - cmake -DBUILD_SHARED_LIBS=ON ../
 - make
-- cp lib*.so ~/usr/gtest/lib
+- cp googlemock/gtest/lib*.so ~/usr/gtest/lib
 - cd ..
 - cp -r googletest/include/gtest/ ~/usr/gtest/include/
 - cd ..
