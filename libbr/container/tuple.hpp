@@ -755,7 +755,7 @@ public:
 	 * @param pair Pair to replace the contents of this 2-tuple.
 	 * @return *this
 	 */
-	template< typename TFirst, typename TSecond, typename = EnableIf< typename EnableAssignment<sizeof...(TElements) == 2>::template Enable<TFirst const &, TSecond const &> > >
+	template< typename TFirst, typename TSecond, typename = EnableIf< typename EnableAssignment<sizeof...(TElements) == Types<TFirst, TSecond>::size>::template Enable<TFirst const &, TSecond const &> > >
 	auto operator=(Pair<TFirst, TSecond> const & pair) noexcept(IsNothrowAssignable< Implement &, Pair<TFirst, TSecond> const & >{}) -> Tuple & {
 		m_impl.operator=(pair);
 		return *this;
@@ -767,7 +767,7 @@ public:
 	 * @param pair Pair to replace the contents of this 2-tuple.
 	 * @return *this
 	 */
-	template< typename TFirst, typename TSecond, typename = EnableIf< typename EnableAssignment<sizeof...(TElements) == 2>::template Enable<TFirst &&, TSecond &&> > >
+	template< typename TFirst, typename TSecond, typename = EnableIf< typename EnableAssignment<sizeof...(TElements) == Types<TFirst, TSecond>::size>::template Enable<TFirst &&, TSecond &&> > >
 	auto operator=(Pair<TFirst, TSecond> && pair) noexcept(IsNothrowAssignable< Implement &, Pair<TFirst, TSecond> && >{}) -> Tuple & {
 		m_impl.operator=(move(pair));
 		return *this;
