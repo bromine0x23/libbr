@@ -1,36 +1,21 @@
 language: cpp
+compiler:
+- gcc
+- clang
 os:
 - linux
 #- osx
 addons:
   apt:
     sources:
+    - llvm-toolchain-precise-3.7
     - ubuntu-toolchain-r-test
     packages:
     - cmake
-matrix:
-  include:
-  - compiler: gcc
-    addons:
-      apt:
-        packages:
-        - g++-5
-        - g++-5-multilib
-    env:
-      matrix:
-      - BUILD_TYPE=debug
-      - BUILD_TYPE=release
-  - compiler: clang
-    addons:
-      apt:
-        sources:
-        - llvm-toolchain-precise-3.7
-        packages:
-        - clang-3.7
-    env:
-      matrix:
-      - BUILD_TYPE=debug
-      - BUILD_TYPE=release
+env:
+  matrix:
+  - BUILD_TYPE=debug
+  - BUILD_TYPE=release
 before_install:
 # Install gtest.
 - wget https://github.com/google/googletest/archive/release-1.8.0.tar.gz
@@ -40,8 +25,8 @@ before_install:
 - export GTEST_ROOT="`pwd`"
 - cd $TRAVIS_BUILD_DIR
 install:
-- if [ "$CXX" = "g++" ]; then export CXX="g++-5" CC="gcc-5"; fi
-- if [ "$CXX" = "clang++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then export CXX="clang++-3.8" CC="clang-3.8"; fi
+- if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-5 g++-5-multilib && export CXX="g++-5" CC="gcc-5"; fi
+- if [ "$CXX" = "clang++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then apt-get install clang-3.7 && export CXX="clang++-3.7" CC="clang-3.7"; fi
 - echo ${CXX}
 - ${CXX} --version
 - ${CXX} -v
@@ -53,6 +38,6 @@ script:
 # C++14
 - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLIBBR_ENABLE_CXX14=ON  $TRAVIS_BUILD_DIR
 - cmake --build . --target br_test -- -j 8 && ./test/br_test
-sudo: false
+sudo: true
 notifications:
   email: false
