@@ -63,7 +63,7 @@ public:
 		using CommonResult = Common< typename TGenerator::Result, MakeUnsigned<Result> >;
 		CommonResult const generator_min = generator.min();
 		CommonResult const generator_max = generator.max();
-		CommonResult const generator_range = generator.max() - generator.min();
+		CommonResult const generator_range = generator_max - generator_min;
 		CommonResult const range = CommonResult(parameter.b()) - CommonResult(parameter.a());
 		CommonResult result;
 		if (generator_range > range) {
