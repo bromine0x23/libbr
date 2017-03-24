@@ -16,6 +16,10 @@ matrix:
         packages:
         - g++-5
         - g++-5-multilib
+    env:
+      matrix:
+      - BUILD_TYPE=debug
+      - BUILD_TYPE=release
   - compiler: clang
     addons:
       apt:
@@ -23,10 +27,10 @@ matrix:
         - llvm-toolchain-precise-3.7
         packages:
         - clang-3.7
-env:
-  matrix:
-  - BUILD_TYPE=debug
-  - BUILD_TYPE=release
+    env:
+      matrix:
+      - BUILD_TYPE=debug
+      - BUILD_TYPE=release
 before_install:
 # Install gtest.
 - wget https://github.com/google/googletest/archive/release-1.8.0.tar.gz
