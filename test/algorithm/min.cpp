@@ -9,6 +9,6 @@ TEST(Algorithm, min) {
 	auto comparator = [](int x, int y){ return y < x; };
 	EXPECT_EQ(1, min(1, 5));
 	EXPECT_EQ(5, min(1, 5, comparator));
-	EXPECT_EQ(1, min(list));
-	EXPECT_EQ(5, min(list, comparator));
+	EXPECT_EQ(1, BR::min(list));
+	EXPECT_EQ(5, BR::min(list, comparator));
 }
