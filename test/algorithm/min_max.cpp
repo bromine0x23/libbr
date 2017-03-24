@@ -4,6 +4,7 @@
 using namespace BR;
 
 TEST(Algorithm, min_max) {
+	using BR::min_max;
 	auto list = { 1, 4, 5, 2, 3 };
 	auto comparator = [](int x, int y){ return y < x; };
 	EXPECT_EQ((make_pair(1, 5)), min_max(1, 5));
