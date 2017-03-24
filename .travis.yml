@@ -26,7 +26,7 @@ before_install:
 - cd $TRAVIS_BUILD_DIR
 install:
 - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-5 g++-5-multilib && export CXX="g++-5" CC="gcc-5"; fi
-- if [ "$CXX" = "clang++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then apt-get install clang-3.7 && export CXX="clang++-3.7" CC="clang-3.7"; fi
+- if [ "$CXX" = "clang++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install -qq clang-3.7 && export CXX="clang++-3.7" CC="clang-3.7"; fi
 - echo ${CXX}
 - ${CXX} --version
 - ${CXX} -v
