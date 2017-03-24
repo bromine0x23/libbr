@@ -26,11 +26,11 @@ inline namespace Random {
  */
 template< typename TReal, Size bits, typename TGenerator >
 auto generate_canonical(TGenerator & generator) -> TReal {
-	constexpr auto digits = FloatingPointTraits<TReal>::digits;
-	constexpr auto b = digits < bits ? digits : bits;
-	constexpr auto log2_r = ilog2(generator.max() - generator.min() + UInt64(1)) + 1;
-	constexpr auto m = b / log2_r + (b % log2_r != 0) + (b == 0);
-	constexpr auto range = generator.max() - generator.min() + TReal(1);
+	auto const digits = FloatingPointTraits<TReal>::digits;
+	auto const b = digits < bits ? digits : bits;
+	auto const log2_r = ilog2(generator.max() - generator.min() + UInt64(1)) + 1;
+	auto const m = b / log2_r + (b % log2_r != 0) + (b == 0);
+	auto const range = generator.max() - generator.min() + TReal(1);
 	TReal sum = 0;
 	TReal base = 1;
 	for (Size i = 0; i < m; ++i) {

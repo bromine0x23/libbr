@@ -9,6 +9,7 @@
 #include <libbr/math/function/ilog2.hpp>
 #include <libbr/operators/equality_comparable.hpp>
 #include <libbr/type_traits/conditional.hpp>
+#include <libbr/type_traits/enable_if.hpp>
 #include <libbr/type_traits/integer_traits.hpp>
 #include <libbr/utility/boolean_constant.hpp>
 
@@ -61,12 +62,11 @@ private:
 	static constexpr Size m = r == 0 ? working_digits : ilog2(r) + 1;
 	static constexpr auto n = GetN< WorkingResult, r, w, m >::value;
 	static constexpr Size w0 = w / n;
-	static constexpr Size w1 = w0 + 1;
 	static constexpr Size n0 = n - w % n;
-	static constexpr WorkingResult y0 = w0 < working_digits ? (r >> w0) << w0 : 0;
-	static constexpr WorkingResult y1 = w1 < working_digits ? (r >> w1) << w1 : 0;
-	static constexpr EngineResult mask0 = ~EngineResult() >> (engine_digits - w0);
-	static constexpr EngineResult mask1 = ~EngineResult() >> (engine_digits - w1);
+	static constexpr WorkingResult y0 = w0 < working_digits     ? (r >>  w0     ) <<  w0      : 0;
+	static constexpr WorkingResult y1 = w0 < working_digits - 1 ? (r >> (w0 + 1)) << (w0 + 1) : 0;
+	static constexpr EngineResult mask0 = w0 > 0                  ? EngineResult(~0) >> (engine_digits -  w0     ) : EngineResult( 0);
+	static constexpr EngineResult mask1 = w0 < working_digits - 1 ? EngineResult(~0) >> (engine_digits - (w0 + 1)) : EngineResult(~0);
 
 	static_assert(0 < w && w <= digits,  "IndependentBitsEngine: invalid parameters");
 
@@ -76,7 +76,7 @@ public:
 	}
 
 	static constexpr auto max() -> Result {
-		return w == digits ? ~Result() : (Result(1U) << w) - Result(1U);
+		return w == digits ? Result(~0) : (Result(1U) << w) - Result(1U);
 	}
 
 public:
@@ -126,6 +126,16 @@ public:
 	}
 
 private:
+	template< Size count >
+	auto m_lsh(Result x) -> EnableIfByValue< (count < working_digits), Result > {
+		return x << count;
+	}
+
+	template< Size count >
+	auto m_lsh(Result x) -> EnableIfByValue< (count >= working_digits), Result > {
+		return Result(0);
+	}
+
 	auto m_eval(BooleanTrue) -> Result {
 		Result s = 0;
 		for (Size k = 0; k < n0; ++k) {
@@ -133,14 +143,14 @@ private:
 			do {
 				u = m_engine() - Engine::min();
 			} while (u >= y0);
-			s = (s << w0) + (u & mask0);
+			s = static_cast<Result>(m_lsh<w0>(s) + (u & mask0));
 		}
 		for (Size k = n0; k < n; ++k) {
 			EngineResult u;
 			do {
 				u = m_engine() - Engine::min();
 			} while (u >= y1);
-			s = (s << w1) + (u & mask1);
+			s = static_cast<Result>(m_lsh<w0 + 1>(s) + (u & mask1));
 		}
 		return s;
 	}
