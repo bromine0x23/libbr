@@ -9,6 +9,11 @@
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/type_traits/intrinsics.hpp>
+#if !defined(BR_IS_TRIVIAL)
+#  include <libbr/type_traits/boolean.hpp>
+#  include <libbr/type_traits/has_trivial_copy_constructor.hpp>
+#  include <libbr/type_traits/has_trivial_default_constructor.hpp>
+#endif
 
 namespace BR {
 
@@ -71,7 +76,7 @@ using IsTrivial = BooleanConstant< BR_IS_TRIVIAL(T) >;
 #else
 
 template< typename T >
-using IsTrivial = BooleanFalse;
+using IsTrivial = BooleanAnd< HasTrivialCopyConstructor<T>, HasTrivialDefaultConstructor<T> >;
 
 #endif // defined(BR_IS_TRIVIAL)
 

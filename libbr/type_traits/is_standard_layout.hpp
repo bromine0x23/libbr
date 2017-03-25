@@ -9,6 +9,10 @@
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/type_traits/intrinsics.hpp>
+#if !defined(BR_IS_STANDARD_LAYOUT)
+#  include <libbr/type_traits/is_scalar.hpp>
+#  include <libbr/type_traits/remove_all_extents.hpp>
+#endif
 
 namespace BR {
 
@@ -71,7 +75,7 @@ using IsStandardLayout = BooleanConstant< BR_IS_STANDARD_LAYOUT(T) >;
 #else
 
 template< typename T >
-using IsStandardLayout = BooleanFalse;
+using IsStandardLayout = IsScalar< RemoveAllExtents<T> >;
 
 #endif // defined(BR_IS_STANDARD_LAYOUT)
 

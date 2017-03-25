@@ -195,6 +195,12 @@
 #  if __has_feature(is_polymorphic)
 #    define BR_IS_POLYMORPHIC(T) __is_polymorphic(T)
 #  endif
+#  if __has_feature(is_standard_layout)
+#    define BR_IS_STANDARD_LAYOUT(T) __is_standard_layout(T)
+#  endif
+#  if __has_feature(is_trivial)
+#    define BR_IS_TRIVIAL(T) __is_trivial(T)
+#  endif
 #  if __has_feature(is_union)
 #    define BR_IS_UNION(T) __is_union(T)
 #  endif
