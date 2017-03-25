@@ -28,7 +28,7 @@ public:
 			return m_p;
 		}
 
-		constexpr auto operator==(Parameter const & y) -> bool {
+		constexpr auto operator==(Parameter const & y) const -> bool {
 			return m_p == y.m_p;
 		}
 	private:
@@ -76,7 +76,7 @@ public:
 		return true;
 	}
 
-	constexpr auto operator==(BernoulliDistribution const & y) -> Boolean {
+	constexpr auto operator==(BernoulliDistribution const & y) const -> Boolean {
 		return m_parameter == y.m_parameter;
 	}
 

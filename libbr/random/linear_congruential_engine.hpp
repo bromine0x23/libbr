@@ -230,7 +230,7 @@ public:
 		return *this;
 	}
 
-	auto operator==(LinearCongruentialEngine const & y) -> bool {
+	auto operator==(LinearCongruentialEngine const & y) const -> bool {
 		return m_x == y.m_x;
 	}
 

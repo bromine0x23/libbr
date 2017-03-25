@@ -130,7 +130,7 @@ public:
 		return *this;
 	}
 
-	auto operator==(MersenneTwisterEngine const & y) -> bool {
+	auto operator==(MersenneTwisterEngine const & y) const -> bool {
 		return (m_index == y.m_index) && equal(m_state, m_state + state_size, y.m_state);
 	}
 

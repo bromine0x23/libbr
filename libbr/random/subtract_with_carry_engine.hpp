@@ -90,7 +90,7 @@ public:
 		return *this;
 	}
 
-	auto operator==(SubtractWithCarryEngine const & y) -> bool {
+	auto operator==(SubtractWithCarryEngine const & y) const -> bool {
 		return (m_carry == y.m_carry) && (m_index == y.m_index) && equal(m_terms, m_terms + long_lag, y.m_terms);
 	}
 

@@ -34,7 +34,7 @@ public:
 			return m_b;
 		}
 
-		constexpr auto operator==(Parameter const & y) -> bool {
+		constexpr auto operator==(Parameter const & y) const -> bool {
 			return m_a == y.m_a && m_b == y.m_b;
 		}
 
@@ -87,7 +87,7 @@ public:
 		return b();
 	}
 
-	constexpr auto operator==(UniformRealDistribution const & y) -> Boolean {
+	constexpr auto operator==(UniformRealDistribution const & y) const -> Boolean {
 		return m_parameter == y.m_parameter;
 	}
 

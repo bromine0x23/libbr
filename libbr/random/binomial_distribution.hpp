@@ -40,7 +40,7 @@ public:
 			return m_p;
 		}
 
-		auto operator==(Parameter const & y) -> bool {
+		auto operator==(Parameter const & y) const -> bool {
 			return m_t == y.m_t && m_p == y.m_p;
 		}
 	private:
@@ -89,7 +89,7 @@ public:
 		return t();
 	}
 
-	auto operator==(BinomialDistribution const & y) -> Boolean {
+	auto operator==(BinomialDistribution const & y) const -> Boolean {
 		return m_parameter == y.m_parameter;
 	}
 

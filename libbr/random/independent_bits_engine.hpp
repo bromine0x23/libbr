@@ -117,12 +117,8 @@ public:
 		return *this;
 	}
 
-	auto operator==(IndependentBitsEngine const & y) -> bool {
+	auto operator==(IndependentBitsEngine const & y) const -> bool {
 		return m_engine == y.m_engine;
-	}
-
-	auto operator!=(IndependentBitsEngine const & y) -> bool {
-		return !(*this == y);
 	}
 
 private:

@@ -96,7 +96,7 @@ public:
 		return *this;
 	}
 
-	auto operator==(DiscardBlockEngine const & y) -> bool {
+	auto operator==(DiscardBlockEngine const & y) const -> bool {
 		return m_count == y.m_count && m_engine == y.m_engine;
 	}
 

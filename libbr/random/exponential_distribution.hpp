@@ -45,7 +45,7 @@ public:
 			return m_lambda;
 		}
 
-		constexpr auto operator==(Parameter const & y) -> Boolean {
+		constexpr auto operator==(Parameter const & y) const -> Boolean {
 			return m_lambda == y.m_lambda;
 		}
 
@@ -143,7 +143,7 @@ public:
 	 * @retval true The distribution objects are equal.
 	 * @retval false Otherwise.
 	 */
-	constexpr auto operator==(ExponentialDistribution const & y) -> Boolean {
+	constexpr auto operator==(ExponentialDistribution const & y) const -> Boolean {
 		return m_parameter == y.m_parameter;
 	}
 

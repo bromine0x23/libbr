@@ -99,7 +99,7 @@ public:
 		return *this;
 	}
 
-	auto operator==(ShuffleOrderEngine const & y) -> bool {
+	auto operator==(ShuffleOrderEngine const & y) const -> bool {
 		return m_last == y.m_last && equal(m_table, m_table + table_size, y.m_table) && m_engine == y.m_engine;
 	}
 

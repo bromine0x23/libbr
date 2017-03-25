@@ -348,10 +348,15 @@ auto libbr_log10_64(Float64 x) -> Float64 {
 	return std::log10(x); // TODO
 }
 
+#if !defined(BR_GCC)
+auto libbr_scale_s(SFloat x, SInt n) -> SFloat {
+	return std::scalblnf(x, n);
+}
+#endif
+
 auto libbr_scale_d(DFloat x, SInt n) -> DFloat {
 	return std::scalbln(x, n);
 }
-
 
 auto libbr_sin_32(Float32 x) -> Float32 {
 	return std::sin(x); // TODO
