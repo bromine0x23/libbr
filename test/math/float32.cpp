@@ -113,6 +113,7 @@ TEST(Float32, sqrt) {
 }
 
 TEST(Float32, Exp2) {
+	using BR::exp2;
 	EXPECT_EQ(4.0F, exp2(2.0F));
 	EXPECT_EQ(16.0F, exp2(4.0F));
 }

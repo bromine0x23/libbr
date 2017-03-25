@@ -30,7 +30,7 @@ struct S {
 
 TEST(Memory, uninitialized_move) {
 	{
-		FixedArray<S, 9> from_array{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+		FixedArray<S, 9> from_array{{ 1, 2, 3, 4, 5, 6, 7, 8, 9 }};
 
 		FixedArray<S, 9> to_array;
 
@@ -38,7 +38,7 @@ TEST(Memory, uninitialized_move) {
 
 		EXPECT_EQ(9, count(from_array.cbegin(), from_array.cend(), 0));
 
-		EXPECT_EQ((FixedArray<S, 9>{ 1, 2, 3, 4, 5, 6, 7, 8, 9 }), to_array);
+		EXPECT_EQ((FixedArray<S, 9>{{ 1, 2, 3, 4, 5, 6, 7, 8, 9 }}), to_array);
 	} {
 		DynamicArray<S> from_array{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
@@ -48,7 +48,7 @@ TEST(Memory, uninitialized_move) {
 
 		EXPECT_EQ(9, count(from_array.cbegin(), from_array.cend(), 0));
 
-		EXPECT_EQ((FixedArray<S, 9>{ 1, 2, 3, 4, 5, 6, 7, 8, 9 }), to_array);
+		EXPECT_EQ((FixedArray<S, 9>{{ 1, 2, 3, 4, 5, 6, 7, 8, 9 }}), to_array);
 	} {
 		DList<S> from_list{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
@@ -58,6 +58,6 @@ TEST(Memory, uninitialized_move) {
 
 		EXPECT_EQ(9, count(from_list.cbegin(), from_list.cend(), 0));
 
-		EXPECT_EQ((FixedArray<S, 9>{ 1, 2, 3, 4, 5, 6, 7, 8, 9 }), to_array);
+		EXPECT_EQ((FixedArray<S, 9>{{ 1, 2, 3, 4, 5, 6, 7, 8, 9 }}), to_array);
 	}
 }

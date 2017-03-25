@@ -12,23 +12,23 @@ using namespace BR;
 
 TEST(Algorithm, rotate) {
 	{
-		FixedArray<int, 9> array{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+		FixedArray<int, 9> array{{ 1, 2, 3, 4, 5, 6, 7, 8, 9 }};
 
 		rotate(array.begin(), next(array.begin(), 4), array.end());
 
-		EXPECT_EQ((FixedArray<int, 9>{ 5, 6, 7, 8, 9, 1, 2, 3, 4 }), array);
+		EXPECT_EQ((FixedArray<int, 9>{{ 5, 6, 7, 8, 9, 1, 2, 3, 4 }}), array);
 	} {
-		FixedArray<int, 9> array{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+		FixedArray<int, 9> array{{ 1, 2, 3, 4, 5, 6, 7, 8, 9 }};
 
 		rotate(array.begin(), next(array.begin(), 1), array.end());
 
-		EXPECT_EQ((FixedArray<int, 9>{ 2, 3, 4, 5, 6, 7, 8, 9, 1 }), array);
+		EXPECT_EQ((FixedArray<int, 9>{{ 2, 3, 4, 5, 6, 7, 8, 9, 1 }}), array);
 	} {
-		FixedArray<int, 9> array{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+		FixedArray<int, 9> array{{ 1, 2, 3, 4, 5, 6, 7, 8, 9 }};
 
 		rotate(array.begin(), prev(array.end(), 1), array.end());
 
-		EXPECT_EQ((FixedArray<int, 9>{ 9, 1, 2, 3, 4, 5, 6, 7, 8 }), array);
+		EXPECT_EQ((FixedArray<int, 9>{{ 9, 1, 2, 3, 4, 5, 6, 7, 8 }}), array);
 	} {
 		DynamicArray<int> array{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 

@@ -103,6 +103,7 @@ TEST(Float64, IsNaN) {
 }
 
 TEST(Float64, Exp2) {
+	using BR::exp2;
 	EXPECT_EQ(4.0, exp2(2.0));
 	EXPECT_EQ(16.0, exp2(4.0));
 }

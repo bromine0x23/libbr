@@ -27,7 +27,7 @@ struct S {
 
 TEST(Memory, uninitialized_fill) {
 	{
-		FixedArray<int, 9> array{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+		FixedArray<int, 9> array({ 1, 2, 3, 4, 5, 6, 7, 8, 9 });
 
 		uninitialized_fill(array.begin(), array.end(), 0);
 
