@@ -62,14 +62,12 @@ TEST(String, At) {
 }
 
 TEST(String, Index) {
-	EXPECT_EQ('\0', S()[0]);
 	auto test = [](S s) {
 		S const & cs = s;
 		for (S::Size i = 0; i < cs.size(); ++i) {
 			EXPECT_EQ(cs[i], 'A' + i);
 			EXPECT_EQ(cs[i], s[i]);
 		}
-		EXPECT_EQ('\0', cs[cs.size()]);
 	};
 	test(S("AB"));
 	test(S("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));

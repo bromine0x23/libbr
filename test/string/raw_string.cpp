@@ -38,26 +38,22 @@ TEST(RawString, At) {
 
 TEST(RawString, Index) {
 	{
-		EXPECT_EQ('\0', NS()[0]);
 		auto test = [](NS s) {
 			NS const & cs = s;
 			for (NS::Size i = 0; i < cs.size(); ++i) {
 				EXPECT_EQ(cs[i], 'A' + i);
 				EXPECT_EQ(cs[i], s[i]);
 			}
-			EXPECT_EQ('\0', cs[cs.size()]);
 		};
 		test(NS("AB"));
 		test(NS("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
 	} {
-		EXPECT_EQ(L'\0', WS()[0]);
 		auto test = [](WS s) {
 			WS const & cs = s;
 			for (WS::Size i = 0; i < cs.size(); ++i) {
 				EXPECT_EQ(cs[i], L'A' + i);
 				EXPECT_EQ(cs[i], s[i]);
 			}
-			EXPECT_EQ(L'\0', cs[cs.size()]);
 		};
 		test(WS(L"AB"));
 		test(WS(L"ABCDEFGHIJKLMNOPQRSTUVWXYZ"));

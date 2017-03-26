@@ -74,6 +74,8 @@ public:
 	 */
 	using Size = typename Base::Size;
 
+	using Index = typename Base::Index;
+
 	/**
 	 * @brief Value 的非常量引用
 	 */
@@ -458,18 +460,18 @@ public:
 	/**
 	 * @param index
 	 */
-	auto at(Size index) -> CodeUnit & {
-		if (index >= size()) {
+	auto at(Index index) -> CodeUnit & {
+		if (index < -static_cast<Index>(size()) || index >= static_cast<Index>(size())) {
 			throw_index_exception(BR_CURRENT_FUNCTION);
 		}
-		return this->m_data()[index];
+		return this->m_data()[m_index_to_position(index)];
 	}
 
-	auto at(Size index) const -> CodeUnit const & {
-		if (index >= size()) {
+	auto at(Index index) const -> CodeUnit const & {
+		if (index < -static_cast<Index>(size()) || index >= static_cast<Index>(size())) {
 			throw_index_exception(BR_CURRENT_FUNCTION);
 		}
-		return this->m_data()[index];
+		return this->m_data()[m_index_to_position(index)];
 	}
 	//@}
 
@@ -477,14 +479,14 @@ public:
 	/**
 	 * @param index
 	 */
-	auto operator[](Size index) -> CodeUnit & {
-		BR_ASSERT(index <= size());
-		return this->m_data()[index];
+	auto operator[](Index index) -> CodeUnit & {
+		BR_ASSERT(-static_cast<Index>(size()) <= index && index < static_cast<Index>(size()));
+		return this->m_data()[m_index_to_position(index)];
 	}
 
-	auto operator[](Size index) const -> CodeUnit const & {
-		BR_ASSERT(index <= size());
-		return this->m_data()[index];
+	auto operator[](Index index) const -> CodeUnit const & {
+		BR_ASSERT(-static_cast<Index>(size()) <= index && index < static_cast<Index>(size()));
+		return this->m_data()[m_index_to_position(index)];
 	}
 	//@}
 
@@ -707,6 +709,22 @@ public:
 	}
 	//@}
 
+	auto index(Self const & string, Index start = 0) const noexcept -> Index;
+
+	auto index(RawStringView<CodeUnit> const & string, Index start = 0) const noexcept -> Index;
+
+	auto index(CString<CodeUnit> string, Size length, Index start = 0) const noexcept -> Index;
+
+	auto index(CodeUnit unit, Index start = 0) const noexcept -> Index;
+
+	auto rindex(Self const & string, Index start = 0) const noexcept -> Index;
+
+	auto rindex(RawStringView<CodeUnit> const & string, Index start = 0) const noexcept -> Index;
+
+	auto rindex(CString<CodeUnit> string, Size length, Index start = 0) const noexcept -> Index;
+
+	auto rindex(CodeUnit unit, Index start = 0) const noexcept -> Index;
+
 	//@{
 	/**
 	 * @brief 移动赋值
@@ -915,7 +933,7 @@ public:
 	 * @param index
 	 * @param string
 	 */
-	auto insert(Size index, RawString const & string) -> Self & {
+	auto insert(Index index, RawString const & string) -> Self & {
 		return insert(index, string.data(), string.size());
 	}
 
@@ -923,7 +941,7 @@ public:
 	 * @param index
 	 * @param string
 	 */
-	auto insert(Size index, RawStringView<CodeUnit> const & string) -> Self & {
+	auto insert(Index index, RawStringView<CodeUnit> const & string) -> Self & {
 		return insert(index, string.data(), string.size());
 	}
 
@@ -931,7 +949,7 @@ public:
 	 * @param index
 	 * @param string
 	 */
-	auto insert(Size index, CString<CodeUnit> string) -> Self & {
+	auto insert(Index index, CString<CodeUnit> string) -> Self & {
 		return insert(index, string, string_length(string));
 	}
 
@@ -940,8 +958,8 @@ public:
 	 * @param string
 	 * @param length
 	 */
-	auto insert(Size index, CString<CodeUnit> string, Size length) -> Self & {
-		this->m_insert(index, string, length);
+	auto insert(Index index, CString<CodeUnit> string, Size length) -> Self & {
+		this->m_insert(m_index_to_position(index), string, length);
 		return *this;
 	}
 
@@ -950,8 +968,8 @@ public:
 	 * @param unit
 	 * @return
 	 */
-	auto insert(Size index, CodeUnit unit) -> Self & {
-		this->m_insert(index, unit);
+	auto insert(Index index, CodeUnit unit) -> Self & {
+		this->m_insert(m_index_to_position(index), unit);
 		return *this;
 	}
 
@@ -960,48 +978,48 @@ public:
 	 * @param unit
 	 * @param n
 	 */
-	auto insert(Size index, CodeUnit unit, Size count) -> Self & {
-		this->m_insert(index, unit, count);
+	auto insert(Index index, CodeUnit unit, Size count) -> Self & {
+		this->m_insert(m_index_to_position(index), unit, count);
 		return *this;
 	}
 
 	/**
-	 * @param position
+	 * @param iterator
 	 * @param unit
 	 */
-	auto insert(ConstIterator position, CodeUnit unit) -> Iterator {
-		auto const index = position - cbegin();
-		insert(index, unit);
-		return begin() + index;
+	auto insert(ConstIterator iterator, CodeUnit unit) -> Iterator {
+		auto const position = iterator - cbegin();
+		insert(position, unit);
+		return begin() + position;
 	}
 
 	/**
-	 * @param position
+	 * @param iterator
 	 * @param unit
 	 * @param n
 	 */
-	auto insert(ConstIterator position, CodeUnit unit, Size count) -> Iterator {
-		auto const index = position - cbegin();
-		insert(index, unit, count);
-		return begin() + index;
+	auto insert(ConstIterator iterator, CodeUnit unit, Size count) -> Iterator {
+		auto const position = iterator - cbegin();
+		insert(position, unit, count);
+		return begin() + position;
 	}
 
 	/**
-	 * @param position
+	 * @param iterator
 	 * @param list
 	 */
-	auto insert(ConstIterator position, InitializerList<CodeUnit> list) -> Iterator {
-		return insert(position, list.begin(), list.end());
+	auto insert(ConstIterator iterator, InitializerList<CodeUnit> list) -> Iterator {
+		return insert(iterator, list.begin(), list.end());
 	}
 
 	/**
 	 * @tparam TIterator
-	 * @param position
+	 * @param iterator
 	 * @param first,last
 	 */
 	template<typename TIterator>
-	auto insert(ConstIterator position, TIterator first, TIterator last, EnableIf< IsInputIterator<TIterator> > * = nullptr) -> Iterator {
-		return begin() + this->m_insert(position - cbegin(), first, last);
+	auto insert(ConstIterator iterator, TIterator first, TIterator last, EnableIf< IsInputIterator<TIterator> > * = nullptr) -> Iterator {
+		return begin() + this->m_insert(iterator - cbegin(), first, last);
 	}
 	///@}
 
@@ -1014,7 +1032,7 @@ public:
 	 * @param count
 	 * @param string
 	 */
-	auto replace(Size index, Size count, Self const & string) -> Self & {
+	auto replace(Index index, Size count, Self const & string) -> Self & {
 		return replace(index, count, string.data(), string.size());
 	}
 
@@ -1023,7 +1041,7 @@ public:
 	 * @param count
 	 * @param string
 	 */
-	auto replace(Size index, Size count, RawStringView<CodeUnit> const & string) -> Self & {
+	auto replace(Index index, Size count, RawStringView<CodeUnit> const & string) -> Self & {
 		return replace(index, count, string.data(), string.size());
 	}
 
@@ -1032,7 +1050,7 @@ public:
 	 * @param count
 	 * @param string
 	 */
-	auto replace(Size index, Size count, CString<CodeUnit> string) -> Self & {
+	auto replace(Index index, Size count, CString<CodeUnit> string) -> Self & {
 		return replace(index, count, string, string_length(string));
 	}
 
@@ -1042,7 +1060,7 @@ public:
 	 * @param string
 	 * @param length
 	 */
-	auto replace(Size index, Size count, CString<CodeUnit> string, Size length) -> Self & {
+	auto replace(Index index, Size count, CString<CodeUnit> string, Size length) -> Self & {
 		this->m_replace(index, count, string, length);
 		return *this;
 	}
@@ -1052,8 +1070,8 @@ public:
 	 * @param count
 	 * @param unit
 	 */
-	auto replace(Size index, Size count, CodeUnit unit) -> Self & {
-		this->m_replace(index, count, unit);
+	auto replace(Index index, Size count, CodeUnit unit) -> Self & {
+		this->m_replace(m_index_to_position(index), count, unit);
 		return *this;
 	}
 
@@ -1063,8 +1081,8 @@ public:
 	 * @param unit
 	 * @param count
 	 */
-	auto replace(Size index, Size count, CodeUnit unit, Size n) -> Self & {
-		this->m_replace(index, count, unit, n);
+	auto replace(Index index, Size count, CodeUnit unit, Size n) -> Self & {
+		this->m_replace(m_index_to_position(index), count, unit, n);
 		return *this;
 	}
 
@@ -1137,18 +1155,18 @@ public:
 	 * @param index
 	 * @param count
 	 */
-	auto remove(Size index, Size count) -> Self & {
-		this->m_remove(index, count);
+	auto remove(Index index, Size count) -> Self & {
+		this->m_remove(m_index_to_position(index), count);
 		return *this;
 	}
 
 	/**
-	 * @param position
+	 * @param iterator
 	 */
-	auto remove(ConstIterator position) -> Iterator {
-		auto index = position - begin();
-		remove(static_cast<Size>(index), 1);
-		return begin() + index;
+	auto remove(ConstIterator iterator) -> Iterator {
+		auto position = iterator - begin();
+		remove(static_cast<Index>(position), 1);
+		return begin() + position;
 	}
 
 	/**
@@ -1161,6 +1179,11 @@ public:
 		return begin() + index;
 	}
 	///@}
+
+private:
+	auto m_index_to_position(Index index) const noexcept -> Size {
+		return index < 0 ? size() - index : index;
+	}
 
 }; // class RawString< TCodeUnit, TAllocator >
 

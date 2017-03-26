@@ -21,6 +21,7 @@
 #include <libbr/type_traits/is_same.hpp>
 #include <libbr/type_traits/has_nothrow_default_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_move_assignment.hpp>
+#include <libbr/type_traits/make_signed.hpp>
 
 namespace BR {
 namespace Detail {
@@ -49,6 +50,8 @@ public:
 	using Element = typename AllocatorTraits::Element;
 
 	using Size = typename AllocatorTraits::Size;
+
+	using Index = MakeSigned<Size>;
 
 	using Pointer = typename AllocatorTraits::Pointer;
 
@@ -358,6 +361,10 @@ protected:
 		}
 	}
 
+	auto m_index(CodeUnit const * units, Size length, Size position) const noexcept -> Index {
+		return 0;
+	}
+
 	void m_assign(Self const & other) {
 		if (this != &other) {
 			m_copy_assign_allocator(other, typename AllocatorTraits::IsPropagateOnContainerCopyAssignment{});
@@ -467,22 +474,22 @@ protected:
 		}
 	}
 
-	void m_insert(Size index, CodeUnit unit) {
+	void m_insert(Size position, CodeUnit unit) {
 		auto old_size = m_size();
 		auto new_size = old_size + 1;
 		auto capacity = m_capacity();
 		CodeUnit * pointer;
 		if (capacity == old_size) {
-			m_grow(capacity, 1, old_size, index, 0, 1);
+			m_grow(capacity, 1, old_size, position, 0, 1);
 			pointer =  m_raw_data();
 		} else {
 			pointer =  m_raw_data();
-			Size move_count = old_size - index;
+			Size move_count = old_size - position;
 			if (move_count > 0) {
-				string_move(pointer + index + 1, pointer + index, move_count);
+				string_move(pointer + position + 1, pointer + position, move_count);
 			}
 		}
-		pointer[index] = unit;
+		pointer[position] = unit;
 		pointer[new_size] = CodeUnit(0);
 		m_size(new_size);
 	}

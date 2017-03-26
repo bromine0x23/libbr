@@ -8,6 +8,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/string/raw_string.hpp>
+#include <libbr/string/string_view.hpp>
 #include <libbr/encoding/encoding.hpp>
 #include <libbr/type_traits/make_signed.hpp>
 #include <libbr/utility/move.hpp>
@@ -22,18 +23,6 @@ namespace BR {
 template< typename TEncoding = DefaultEncoding, typename TAllocator = Allocator<typename TEncoding::CodeUnit> >
 class String;
 
-/**
- * @brief 字符串类
- * @tparam TEncoding 编码类型
- */
-template< typename TEncoding = DefaultEncoding >
-class StringView;
-
-
-
-template< typename TEncoding >
-class StringView : public RawStringView< typename TEncoding::CodeUnit > {
-};
 
 template< typename TEncoding, typename TAllocator >
 class String : public RawString< typename TEncoding::CodeUnit, TAllocator > {
@@ -135,11 +124,11 @@ public:
 	}
 
 	auto as_raw() noexcept -> RawString & {
-		return *static_cast<RawString *>(this);
+		return static_cast<RawString &>(*this);
 	}
 
 	auto as_raw() const noexcept -> RawString const & {
-		return *static_cast<RawString const *>(this);
+		return static_cast<RawString const &>(*this);
 	}
 
 	auto to_raw() const -> RawString {
@@ -155,6 +144,14 @@ public:
 	}
 
 	auto index(StringView<Encoding> const & string, Size start = 0) const -> Index {
+		return 0;
+	}
+
+	auto index(CString<CodeUnit> string, Size start) const -> Index {
+		return 0;
+	}
+
+	auto index(CString<CodeUnit> string, Size length, Size start) const -> Index {
 		return 0;
 	}
 
