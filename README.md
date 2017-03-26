@@ -1,5 +1,7 @@
 # libbr
 
+[![Build Status](https://travis-ci.org/bromine0x23/libbr.svg?branch=master)](https://travis-ci.org/bromine0x23/libbr)
+
 A *bery* **terrible** C++ library with *bery* **ugly** code and *bery* **useless** features.
 
 ## Requirement
