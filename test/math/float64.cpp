@@ -101,9 +101,3 @@ TEST(Float64, IsNaN) {
 	EXPECT_FALSE(is_nan(neg_inf));
 	EXPECT_TRUE(is_nan(pos_nan));
 }
-
-TEST(Float64, Exp2) {
-	using BR::exp2;
-	EXPECT_EQ(4.0, exp2(2.0));
-	EXPECT_EQ(16.0, exp2(4.0));
-}

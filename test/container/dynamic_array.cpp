@@ -25,11 +25,7 @@ TEST(DynamicArray, insert) {
 
 	DynamicArray<int> array{ 0, 1, 2, 3, 4 };
 
-	std::printf("%d %d\n", array.front(), array.back());
-
 	array.insert(array.cbegin(), 5);
-
-	std::printf("%d %d\n", array.front(), array.back());
 
 	EXPECT_EQ((DynamicArray<int>{ 5, 0, 1, 2, 3, 4 }), array);
 
