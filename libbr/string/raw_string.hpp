@@ -11,6 +11,7 @@
 #include <libbr/operators/less_than_comparable.hpp>
 #include <libbr/operators/template_equality_comparable.hpp>
 #include <libbr/operators/template_less_than_comparable.hpp>
+#include <libbr/string/detail/raw_string_algorithms.hpp>
 #include <libbr/string/detail/raw_string_basic.hpp>
 #include <libbr/string/raw_string_view.hpp>
 #include <libbr/string/string_length.hpp>
@@ -709,21 +710,45 @@ public:
 	}
 	//@}
 
-	auto index(Self const & string, Index start = 0) const noexcept -> Index;
+	auto index(Self const & other, Index offset = 0) const noexcept -> Index {
+		return index(other.data(), other.size(), offset);
+	}
 
-	auto index(RawStringView<CodeUnit> const & string, Index start = 0) const noexcept -> Index;
+	auto index(RawStringView<CodeUnit> const & view, Index offset = 0) const noexcept -> Index {
+		return index(view.data(), view.size(), offset);
+	}
 
-	auto index(CString<CodeUnit> string, Size length, Index start = 0) const noexcept -> Index;
+	auto index(CodeUnit const * units, Index offset = 0) const noexcept -> Index {
+		return index(units, string_length(units), offset);
+	}
 
-	auto index(CodeUnit unit, Index start = 0) const noexcept -> Index;
+	auto index(CodeUnit const * units, Size length, Index offset) const noexcept -> Index {
+		return Detail::String::RawString::index(data(), size(), units, length, offset);
+	}
 
-	auto rindex(Self const & string, Index start = 0) const noexcept -> Index;
+	auto index(CodeUnit unit, Index offset = 0) const noexcept -> Index {
+		return Detail::String::RawString::index(data(), size(), unit, offset);
+	}
 
-	auto rindex(RawStringView<CodeUnit> const & string, Index start = 0) const noexcept -> Index;
+	auto rindex(Self const & other, Index offset = 0) const noexcept -> Index {
+		return rindex(other.data(), other.size(), offset);
+	}
 
-	auto rindex(CString<CodeUnit> string, Size length, Index start = 0) const noexcept -> Index;
+	auto rindex(RawStringView<CodeUnit> const & view, Index offset = 0) const noexcept -> Index {
+		return index(view.data(), view.size(), offset);
+	}
 
-	auto rindex(CodeUnit unit, Index start = 0) const noexcept -> Index;
+	auto rindex(CodeUnit const * units, Index offset = 0) const noexcept -> Index {
+		return rindex(units, string_length(units), offset);
+	}
+
+	auto rindex(CodeUnit const * units, Size length, Index offset) const noexcept -> Index {
+		return Detail::String::RawString::rindex(data(), size(), units, length, offset);
+	}
+
+	auto rindex(CodeUnit unit, Index offset = 0) const noexcept -> Index {
+		return Detail::String::RawString::rindex(data(), size(), unit, offset);
+	}
 
 	//@{
 	/**

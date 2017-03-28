@@ -36,7 +36,7 @@ TEST(RawString, At) {
 	}
 }
 
-TEST(RawString, Index) {
+TEST(RawString, ArrayAccess) {
 	{
 		auto test = [](NS s) {
 			NS const & cs = s;
@@ -58,7 +58,18 @@ TEST(RawString, Index) {
 		test(WS(L"AB"));
 		test(WS(L"ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
 	}
+}
 
+TEST(RawString, Index) {
+	{
+		NS s("123456");
+		EXPECT_EQ(2, s.index("34"));
+		EXPECT_EQ(-1, s.index("34", 5));
+	} {
+		WS s(L"123456");
+		EXPECT_EQ(2, s.index(L"34"));
+		EXPECT_EQ(-1, s.index(L"34", 5));
+	}
 }
 
 TEST(RawString, Front) {

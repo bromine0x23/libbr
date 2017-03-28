@@ -7,7 +7,7 @@ A *bery* **terrible** C++ library with *bery* **ugly** code and *bery* **useless
 ## Requirement
 
 * A compiler support C++11 or later standard.
-* [CMake](https://cmake.org/).
+* [CMake](https://cmake.org/) 2.8.6+.
     * [Google Test](https://github.com/google/googletest)(optional) : For test.
     * [Doxygen](http://www.stack.nl/~dimitri/doxygen/index.html)(optional) : For document.
 

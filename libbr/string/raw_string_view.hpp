@@ -8,8 +8,10 @@
 #include <libbr/math/relation.hpp>
 #include <libbr/operators/equality_comparable.hpp>
 #include <libbr/operators/less_than_comparable.hpp>
+#include <libbr/string/detail/raw_string_algorithms.hpp>
 #include <libbr/string/string_compare.hpp>
 #include <libbr/string/string_copy.hpp>
+#include <libbr/string/string_length.hpp>
 #include <libbr/type_traits/is_pod.hpp>
 #include <libbr/type_traits/integer_traits.hpp>
 #include <libbr/utility/swap.hpp>
@@ -53,6 +55,9 @@ class RawStringView :
 	public EqualityComparable< RawStringView<TCodeUnit> >,
 	public LessThanComparable< RawStringView<TCodeUnit> >
 {
+private:
+	using Self = RawStringView;
+
 public:
 	static_assert(IsPOD<TCodeUnit>{}, "TCodeUnit must be a POD.");
 
@@ -80,6 +85,8 @@ public:
 
 	using Difference = PointerDifference;
 
+	using Index = Difference;
+
 public:
 	/**
 	 * @brief Default constructor.
@@ -97,7 +104,7 @@ public:
 	 * After construction, data() is equal to other.data(), and size() is equal to other.size().
 	 * @param other Another view to initialize the view with.
 	 */
-	constexpr RawStringView(RawStringView const & other) noexcept = default;
+	constexpr RawStringView(Self const & other) noexcept = default;
 
 	/**
 	 * @brief Constructs a view of the first \p count units of the character array starting with the element pointed by \p units.
@@ -118,7 +125,7 @@ public:
 	 * @brief Replaces the view with that of view.
 	 * @return *this
 	 */
-	auto operator=(RawStringView const &) noexcept -> RawStringView & = default;
+	auto operator=(Self const &) noexcept -> Self & = default;
 
 	/**
 	 * @brief Returns an iterator to the beginning.
@@ -211,11 +218,11 @@ public:
 	 * @brief Access specified unit.
 	 *
 	 * No bounds checking is performed.
-	 * @param position Position of the unit to return.
+	 * @param index Position of the unit to return.
 	 * @return Const reference to the requested unit.
 	 */
-	constexpr auto operator[](Size position) const noexcept -> ConstReference {
-		return m_data[position];
+	constexpr auto operator[](Index index) const noexcept -> ConstReference {
+		return m_data[m_index_to_position(index)];
 	}
 
 	/**
@@ -223,11 +230,13 @@ public:
 	 *
 	 * Returns a reference to the character at specified location \p position.
 	 * Bounds checking is performed, exception of type IndexException will be thrown on invalid access.
-	 * @param position Position of the unit to return.
+	 * @param index Position of the unit to return.
 	 * @return Const reference to the requested unit.
 	 */
-	constexpr auto at(Size position) const -> ConstReference {
-		return position >= size() ? (throw_index_exception(BR_CURRENT_FUNCTION), m_data[0]) : m_data[position];
+	constexpr auto at(Index index) const -> ConstReference {
+		return index < -static_cast<Index>(size()) || index >= static_cast<Index>(size())
+			? (throw_index_exception(BR_CURRENT_FUNCTION), m_data[0])
+			: m_data[m_index_to_position(index)];
 	}
 
 	/**
@@ -264,7 +273,7 @@ public:
 	 * @brief Set to empty sequence.
 	 * @return *this;
 	 */
-	BR_CONSTEXPR_AFTER_CXX11 auto clear() noexcept -> RawStringView & {
+	BR_CONSTEXPR_AFTER_CXX11 auto clear() noexcept -> Self & {
 		m_data = nullptr;
 		m_size = 0;
 		return *this;
@@ -275,7 +284,7 @@ public:
 	 * @param count Number of units to remove from the start of the view.
 	 * @return *this
 	 */
-	BR_CONSTEXPR_AFTER_CXX11 auto remove_prefix(Size count) noexcept -> RawStringView & {
+	BR_CONSTEXPR_AFTER_CXX11 auto remove_prefix(Size count) noexcept -> Self & {
 		BR_ASSERT_MESSAGE(count <= size(), "Can't remove more than size().");
 		m_data += count;
 		m_size -= count;
@@ -287,7 +296,7 @@ public:
 	 * @param count Number of units to remove from the end of the view.
 	 * @return *this
 	 */
-	BR_CONSTEXPR_AFTER_CXX11 auto remove_suffix(Size count) noexcept -> RawStringView & {
+	BR_CONSTEXPR_AFTER_CXX11 auto remove_suffix(Size count) noexcept -> Self & {
 		BR_ASSERT_MESSAGE(count <= size(), "Can't remove more than size()");
 		m_size -= count;
 		return *this;
@@ -298,7 +307,7 @@ public:
 	 * @param other Another view to swap with.
 	 * @return *this
 	 */
-	BR_CONSTEXPR_AFTER_CXX11 auto swap(RawStringView & other) noexcept -> RawStringView & {
+	BR_CONSTEXPR_AFTER_CXX11 auto swap(Self & other) noexcept -> Self & {
 		swap(m_data, other.m_data);
 		swap(m_size, other.m_size);
 		return *this;
@@ -309,32 +318,32 @@ public:
 	 *        where copied is the smaller of \p count and size() - \p position.
 	 * @param destination Pointer to the destination unit sequence.
 	 * @param count Requested sub-sequence length.
-	 * @param position Position of the first copied unit.
+	 * @param index Position of the first copied unit.
 	 * @return Number of units copied.
 	 */
-	BR_CONSTEXPR_AFTER_CXX11 auto copy_to(CodeUnit * destination, Size count, Size position = 0) const -> Size {
-		if (position > size()) {
+	BR_CONSTEXPR_AFTER_CXX11 auto copy_to(CodeUnit * destination, Size count, Index index = 0) const -> Size {
+		if (index + 1 < -static_cast<Index>(size()) || index > static_cast<Index>(size())) {
 			throw_index_exception(BR_CURRENT_FUNCTION);
 		}
-		auto copied = min(count, size() - position);
-		string_copy(destination, data() + position, copied);
+		auto copied = min(count, size() - m_index_to_position(index));
+		string_copy(destination, data() + m_index_to_position(index), copied);
 		return copied;
 	}
 
 	/**
 	 * @brief Returns a view of the sub-sequence [position, position - min(count, size() - position)).
-	 * @param position Position of the first copied unit.
+	 * @param index Position of the first copied unit.
 	 * @param count Requested sub-sequence length.
 	 * @return View of the substring [position, position - min(count, size() - position)).
 	 */
 	//@{
-	constexpr auto slice(Size position = 0, Size count = IntegerTraits<Size>::max()) const -> RawStringView {
-		return position > size()
-			? (throw_index_exception(BR_CURRENT_FUNCTION), RawStringView())
-			: RawStringView(data() + position, min(count, size() - position));
+	constexpr auto slice(Index index = 0, Size count = IntegerTraits<Size>::max()) const -> Self {
+		return index + 1 < -static_cast<Index>(size()) || index > static_cast<Index>(size())
+			? (throw_index_exception(BR_CURRENT_FUNCTION), Self())
+			: Self(data() + m_index_to_position(index), min(count, size() - m_index_to_position(index)));
 	}
 
-	constexpr auto operator()(Size position, Size count) const -> RawStringView {
+	constexpr auto operator()(Size position, Size count) const -> Self {
 		return slice(position, count);
 	}
 	//@}
@@ -344,7 +353,7 @@ public:
 	 * @param view Another view to compare.
 	 * @return A Relation value indicate compare result.
 	 */
-	BR_CONSTEXPR_AFTER_CXX11 auto compare(RawStringView view) const noexcept -> Relation {
+	BR_CONSTEXPR_AFTER_CXX11 auto compare(Self view) const noexcept -> Relation {
 		Size min_size = min(size(), view.size());
 		auto relation = string_compare(data(), view.data(), min_size);
 		if (relation == Relation::EQ) {
@@ -378,7 +387,7 @@ public:
 	 * @retval true Two views are equal.
 	 * @retval false Otherwise.
 	 */
-	auto operator==(RawStringView y) noexcept -> Boolean {
+	auto operator==(Self y) noexcept -> Boolean {
 		return size() == y.size() ? compare(y) == Relation::EQ : false;
 	}
 
@@ -388,8 +397,45 @@ public:
 	 * @retval true This view is lexicographically less than \p y.
 	 * @retval false Otherwise.
 	 */
-	auto operator<(RawStringView y) noexcept -> Boolean {
+	auto operator<(Self y) noexcept -> Boolean {
 		return compare(y) == Relation::LT;
+	}
+
+	BR_CONSTEXPR_AFTER_CXX11 auto index(Self const & other, Index offset = 0) const noexcept -> Index {
+		return index(other.data(), other.size(), offset);
+	}
+
+	BR_CONSTEXPR_AFTER_CXX11 auto index(CodeUnit const * units, Index offset = 0) const noexcept -> Index {
+		return index(units, string_length(units), offset);
+	}
+
+	BR_CONSTEXPR_AFTER_CXX11 auto index(CodeUnit const * units, Size length, Index offset) const noexcept -> Index {
+		return Detail::String::RawString::index(data(), size(), units, length, offset);
+	}
+
+	BR_CONSTEXPR_AFTER_CXX11 auto index(CodeUnit unit, Index offset = 0) const noexcept -> Index {
+		return Detail::String::RawString::index(data(), size(), unit, offset);
+	}
+
+	BR_CONSTEXPR_AFTER_CXX11 auto rindex(Self const & other, Index offset = 0) const noexcept -> Index {
+		return rindex(other.data(), other.size(), offset);
+	}
+
+	BR_CONSTEXPR_AFTER_CXX11 auto rindex(CodeUnit const * units, Index offset = 0) const noexcept -> Index {
+		return rindex(units, string_length(units), offset);
+	}
+
+	BR_CONSTEXPR_AFTER_CXX11 auto rindex(CodeUnit const * units, Size length, Index offset) const noexcept -> Index {
+		return Detail::String::RawString::rindex(data(), size(), units, length, offset);
+	}
+
+	BR_CONSTEXPR_AFTER_CXX11 auto rindex(CodeUnit unit, Index offset = 0) const noexcept -> Index {
+		return Detail::String::RawString::rindex(data(), size(), unit, offset);
+	}
+
+private:
+	constexpr auto m_index_to_position(Index index) const noexcept -> Size {
+		return index < 0 ? size() - index : index;
 	}
 
 private:
