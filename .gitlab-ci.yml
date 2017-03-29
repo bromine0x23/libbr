@@ -2,7 +2,7 @@
 # use the official gcc image, based on debian
 # can use verions as well, like gcc:5.2
 # see https://hub.docker.com/_/gcc/
-image: gcc:5.0
+image: gcc:6.0
 
 variables:
   BUILD_TYPE: 'debug'
@@ -17,8 +17,9 @@ build:
   # - apt update && apt -y install g++ g++-multilib cmake doxygen
   script:
   - env | sort
-  - g++ -v
-  - g++ --version
+  - export CXX="g++-6" CC="gcc-6"
+  - ${CXX} -v
+  - ${CXX} --version
   - cmake --version
   - mkdir -p build && cd build
   - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLIBBR_ENABLE_CXX14=$ENABLE_CXX14 -DLIBBR_INCLUDE_TESTS=OFF $CI_PROJECT_DIR
