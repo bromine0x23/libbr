@@ -16,12 +16,13 @@ build:
   # before_script: 
   # - apt update && apt -y install g++ g++-multilib cmake doxygen
   script:
+  - env | sort
   - g++ -v
   - g++ --version
   - cmake --version
   - mkdir -p build && cd build
   - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLIBBR_ENABLE_CXX14=$ENABLE_CXX14 -DLIBBR_INCLUDE_TESTS=OFF $CI_PROJECT_DIR
-  - cmake --build $CI_PROJECT_DIR/build --target libbr -- -j 8
+  - cmake --build $CI_PROJECT_DIR/build --target br -- -j 8
   - cd $CI_PROJECT_DIR
   artifacts:
     paths:
@@ -30,5 +31,7 @@ build:
 test:
  stage: test
  script:
+ - env | sort
+ - cmake --version
  - cmake --build build --target br_test -- -j 8
  - build/test/br_test
