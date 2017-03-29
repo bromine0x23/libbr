@@ -25,10 +25,10 @@ build:
   - cd $CI_PROJECT_DIR
   artifacts:
     paths:
-    - build/libbr/libbr.a
+    - build/*.a
 # run tests using the binary built before
 test:
  stage: test
  script:
- - cmake --build $CI_PROJECT_DIR/build --target br_test -- -j 8
- - $CI_PROJECT_DIR/build/test/br_test
+ - cmake --build build --target br_test -- -j 8
+ - build/test/br_test
