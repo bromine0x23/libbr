@@ -4,13 +4,20 @@
 # see https://hub.docker.com/_/gcc/
 image: gcc:5.0
 
-before_script: 
-- apt update && apt -y install g++ g++-multilib cmake doxygen 
+variables:
+  BUILD_TYPE: debug
+  ENABLE_CXX14: OFF
 
 build:
+  stage: build
+  # before_script: 
+  # - apt update && apt -y install g++ g++-multilib cmake doxygen
   script:
+  - g++ -v
+  - g++ --version
+  - cmake --version
   - mkdir -p build && cd build
-  - cmake -DCMAKE_BUILD_TYPE=debug -DLIBBR_ENABLE_CXX14=OFF -DLIBBR_INCLUDE_TESTS=OFF $TRAVIS_BUILD_DIR
+  - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLIBBR_ENABLE_CXX14=$ENABLE_CXX14 -DLIBBR_INCLUDE_TESTS=OFF $CI_PROJECT_PATH
   - cmake --build build --target libbr -- -j 8
   - cd $CI_PROJECT_PATH
   artifacts:
