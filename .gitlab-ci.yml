@@ -4,12 +4,11 @@
 # see https://hub.docker.com/_/gcc/
 image: gcc:5.0
 
-variables:
-  BUILD_TYPE: debug
-  ENABLE_CXX14: OFF
-
 build:
   stage: build
+  variables:
+    BUILD_TYPE: debug
+    ENABLE_CXX14: OFF
   # before_script: 
   # - apt update && apt -y install g++ g++-multilib cmake doxygen
   script:
