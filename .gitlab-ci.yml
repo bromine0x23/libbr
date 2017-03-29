@@ -1,0 +1,27 @@
+# This file is a template, and might need editing before it works on your project.
+# use the official gcc image, based on debian
+# can use verions as well, like gcc:5.2
+# see https://hub.docker.com/_/gcc/
+image: gcc:5.0
+
+build:
+  stage: build
+  before_script: 
+  - apt update && apt -y install g++ g++-multilib cmake doxygen 
+  script:
+  - mkdir -p build && cd build
+  - cmake -DCMAKE_BUILD_TYPE=debug -DLIBBR_ENABLE_CXX14=OFF -DLIBBR_INCLUDE_TESTS=OFF $TRAVIS_BUILD_DIR
+  - cmake --build build --target libbr -- -j 8
+  - cd ..
+  artifacts:
+    paths:
+    - build/libbr/libbr.a
+  cache:
+    paths:
+    - build/
+# run tests using the binary built before
+# test:
+#  stage: test
+#  script:
+#  - cmake --build build --target br_test -- -j 8
+#  - ./build/test/br_test
