@@ -7,6 +7,9 @@ image: gcc:5.0
 variables:
   BUILD_TYPE: 'debug'
   ENABLE_CXX14: 'OFF'
+cache:
+  paths:
+  - build/
 
 build:
   stage: build
@@ -23,12 +26,9 @@ build:
   artifacts:
     paths:
     - build/libbr/libbr.a
-  cache:
-    paths:
-    - build/
 # run tests using the binary built before
 test:
  stage: test
  script:
  - cmake --build $CI_PROJECT_DIR/build --target br_test -- -j 8
- - ./build/test/br_test
+ - $CI_PROJECT_DIR/build/test/br_test
