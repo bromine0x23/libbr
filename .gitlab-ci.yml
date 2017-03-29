@@ -1,111 +1,164 @@
-image: gcc:6.0
-
 before_script:
 - env | sort
 - cmake --version
+variables:
+  BUILD_ARGS: "-j 2"
 cache:
   paths:
   - build/
 
-build:g++6-debug-c++11:
+
+.build: &build
   stage: build
-  variables:
-    CXX: 'g++-6'
-    CC: 'gcc-6'
-    BUILD_TYPE: 'debug'
-    ENABLE_CXX14: 'OFF'
   script:
   - ${CXX} -v
   - ${CXX} --version
-  - mkdir -p "build-g++6-debug-c++11" && cd "build-g++6-debug-c++11"
-  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF ${CI_PROJECT_DIR}
-  - cmake --build . --target br
+  - mkdir -p "build/${CXX}-${BUILD_TYPE}-c++${CXX_STANDARD}" && cd "build/${CXX}-${BUILD_TYPE}-c++${CXX_STANDARD}"
+  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_CXX_STANDARD=${CXX_STANDARD} ${CI_PROJECT_DIR}
+  - cmake --build . --target br -- ${BUILD_ARGS}
   artifacts:
     paths:
-    - build-g++6-debug-c++11/libbr/libbr.a
-test:g++6-debug-c++11:
+    - ${CI_JOB_NAME}/libbr/libbr.a
+.test: &test
   stage: test
   script:
-  - cd build-g++6-debug-c++11
-  - cmake --build . --target br_test
+  - cd "build/${CXX}-${BUILD_TYPE}-c++${CXX_STANDARD}"
+  - cmake --build . --target br_test -- ${BUILD_ARGS}
   - ./test/br_test
-  dependencies:
-  - build:g++6-debug-c++11
 
 
-build:g++6-debug-c++14:
-  stage: build
+.variables: &variables
+  CXX: 'g++-6'
+  CC: 'gcc-6'
+  BUILD_TYPE: 'debug'
+  CXX_STANDARD: '11'
+build/g++-6-debug-c++11:
+  <<: *build
   variables:
-    CXX: 'g++-6'
-    CC: 'gcc-6'
-    BUILD_TYPE: 'debug'
-    ENABLE_CXX14: 'ON'
-  script:
-  - ${CXX} -v
-  - ${CXX} --version
-  - mkdir -p "build-g++6-debug-c++14" && cd "build-g++6-debug-c++14"
-  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF ${CI_PROJECT_DIR}
-  - cmake --build . --target br
-  artifacts:
-    paths:
-    - build-g++6-debug-c++14/libbr/libbr.a
-test:g++6-debug-c++14:
-  stage: test
-  script:
-  - cd build-g++6-debug-c++14
-  - cmake --build . --target br_test
-  - ./test/br_test
-  dependencies:
-  - build:g++6-debug-c++14
-
-
-build:g++6-release-c++11:
-  stage: build
+    <<: *variables
+test/g++-6-debug-c++11:
+  <<: *test
   variables:
-    CXX: 'g++-6'
-    CC: 'gcc-6'
-    BUILD_TYPE: 'release'
-    ENABLE_CXX14: 'OFF'
-  script:
-  - ${CXX} -v
-  - ${CXX} --version
-  - mkdir -p "build-g++6-release-c++11" && cd "build-g++6-release-c++11"
-  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF ${CI_PROJECT_DIR}
-  - cmake --build . --target br
-  artifacts:
-    paths:
-    - build-g++6-release-c++11/libbr/libbr.a
-test:g++6-release-c++11:
-  stage: test
-  script:
-  - cd build-g++6-release-c++11
-  - cmake --build . --target br_test
-  - ./test/br_test
+    <<: *variables
   dependencies:
-  - build:g++6-release-c++11
+  - build/g++-6-debug-c++11
 
 
-build:g++6-release-c++14:
-  stage: build
+.variables: &variables
+  CXX: 'g++-6'
+  CC: 'gcc-6'
+  BUILD_TYPE: 'debug'
+  CXX_STANDARD: '14'
+build/g++-6-debug-c++14:
+  <<: *build
   variables:
-    CXX: 'g++-6'
-    CC: 'gcc-6'
-    BUILD_TYPE: 'release'
-    ENABLE_CXX14: 'ON'
-  script:
-  - ${CXX} -v
-  - ${CXX} --version
-  - mkdir -p "build-g++6-release-c++14" && cd "build-g++6-release-c++14"
-  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF ${CI_PROJECT_DIR}
-  - cmake --build . --target br
-  artifacts:
-    paths:
-    - build-g++6-release-c++14/libbr/libbr.a
-test:g++6-release-c++14:
-  stage: test
-  script:
-  - cd build-g++6-release-c++14
-  - cmake --build . --target br_test
-  - ./test/br_test
+    <<: *variables
+test/g++-6-debug-c++14:
+  <<: *test
+  variables:
+    <<: *variables
   dependencies:
-  - build:g++6-release-c++14
+  - build/g++-6-debug-c++14
+
+
+.variables: &variables
+  CXX: 'g++-6'
+  CC: 'gcc-6'
+  BUILD_TYPE: 'release'
+  CXX_STANDARD: '11'
+build/g++-6-release-c++11:
+  <<: *build
+  variables:
+    <<: *variables
+test/g++-6-release-c++11:
+  <<: *test
+  variables:
+    <<: *variables
+  dependencies:
+  - build/g++-6-release-c++11
+
+
+.variables: &variables
+  CXX: 'g++-6'
+  CC: 'gcc-6'
+  BUILD_TYPE: 'release'
+  CXX_STANDARD: '14'
+build/g++-6-release-c++14:
+  <<: *build
+  variables:
+    <<: *variables
+test/g++-6-release-c++14:
+  <<: *test
+  variables:
+    <<: *variables
+  dependencies:
+  - build/g++-6-release-c++14
+
+
+.variables: &variables
+  CXX: 'clang++-4.0'
+  CC: 'clang-4.0'
+  BUILD_TYPE: 'debug'
+  CXX_STANDARD: '11'
+build/clang++-4.0-debug-c++11:
+  <<: *build
+  variables:
+    <<: *variables
+test/clang++-4.0-debug-c++11:
+  <<: *test
+  variables:
+    <<: *variables
+  dependencies:
+  - build/clang++-4.0-debug-c++11
+
+
+.variables: &variables
+  CXX: 'clang++-4.0'
+  CC: 'clang-4.0'
+  BUILD_TYPE: 'debug'
+  CXX_STANDARD: '14'
+build/clang++-4.0-debug-c++14:
+  <<: *build
+  variables:
+    <<: *variables
+    CXX_STANDARD: '14'
+test/clang++-4.0-debug-c++14:
+  <<: *test
+  variables:
+    <<: *variables
+  dependencies:
+  - build/clang++-4.0-debug-c++14
+
+
+.variables: &variables
+  CXX: 'clang++-4.0'
+  CC: 'clang-4.0'
+  BUILD_TYPE: 'release'
+  CXX_STANDARD: '11'
+build/clang++-4.0-release-c++11:
+  <<: *build
+  variables:
+    <<: *variables
+test/clang++-4.0-release-c++11:
+  <<: *test
+  variables:
+    <<: *variables
+  dependencies:
+  - build/clang++-4.0-release-c++11
+
+
+.variables: &variables
+  CXX: 'clang++-4.0'
+  CC: 'clang-4.0'
+  BUILD_TYPE: 'release'
+  CXX_STANDARD: '14'
+build/clang++-4.0-release-c++14:
+  <<: *build
+  variables:
+    <<: *variables
+test/clang++-4.0-release-c++14:
+  <<: *test
+  variables:
+    <<: *variables
+  dependencies:
+  - build/clang++-4.0-release-c++14

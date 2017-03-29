@@ -14,11 +14,12 @@ set(PACKAGE_STRING "${PACKAGE_NAME} ${PACKAGE_VERSION}")
 #===============================================================================
 # Setup CMake Options
 #===============================================================================
-option(LIBBR_ENABLE_CXX14 "Use c++14 language features if the compiler supports it." ON)
+# option(LIBBR_ENABLE_CXX14 "Use c++14 language features if the compiler supports it." ON)
 option(LIBBR_ENABLE_SHARED "Build libbr as a shared library." OFF)
 option(LIBBR_BUILD_32_BITS "Build 32 bit libbr" OFF)
 option(LIBBR_INCLUDE_DOCUMENTATION "Build the HTML based API documentation (requires Doxygen)" OFF)
 option(LIBBR_INCLUDE_TESTS "Build the tests (requires gtest)." ON)
+set(LIBBR_CXX_STANDARD 14 CACHE STRING "C++ standard version expected to compile libbr.")
 
 #===============================================================================
 # Configure System
@@ -29,30 +30,36 @@ set(LIBBR_CXX_FLAGS "")
 #===============================================================================
 # Setup Compiler Flags
 #===============================================================================
-if (MSVC)
+if(MSVC)
 	add_definitions(/wd4819)
 else()
 	include(CheckCXXCompilerFlag)
+	CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
 	CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX14)
 
 	set(CMAKE_CXX_STANDARD_REQUIRED ON)
-	if (COMPILER_SUPPORTS_CXX14 AND LIBBR_ENABLE_CXX14)
+	if (NOT LIBBR_CXX_STANDARD LESS 17 AND COMPILER_SUPPORTS_CXX17)
+		set(CMAKE_CXX_STANDARD 17)
+		list(APPEND LIBBR_CXX_FLAGS "-std=c++17")
+	elseif(NOT LIBBR_CXX_STANDARD LESS 14 AND COMPILER_SUPPORTS_CXX14)
 		set(CMAKE_CXX_STANDARD 14)
 		list(APPEND LIBBR_CXX_FLAGS "-std=c++14")
-	else()
+	elseif(NOT LIBBR_CXX_STANDARD LESS 11)
 		set(CMAKE_CXX_STANDARD 11)
 		list(APPEND LIBBR_CXX_FLAGS "-std=c++11")
+	else()
+		message(FATAL_ERROR "Unsupported C++ standard version: ${LIBBR_CXX_STANDARD}")
 	endif()
 endif()
 
-if (LIBBR_ENABLE_SHARED)
+if(LIBBR_ENABLE_SHARED)
 	add_definitions(-DBR_BUILD_SHARED)
 else()
 	add_definitions(-DBR_BUILD_STATIC)
 endif()
 
-if (LIBBR_BUILD_32_BITS)
-	if (CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT WIN32)
+if(LIBBR_BUILD_32_BITS)
+	if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT WIN32)
 		message(STATUS "Building 32 bits executables and libraries.")
 		list(APPEND LIBBR_CXX_FLAGS "-m32")
 	else()
