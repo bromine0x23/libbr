@@ -19,7 +19,7 @@ build:g++6-debug-c++11:
   - ${CXX} --version
   - mkdir -p "build-g++6-debug-c++11" && cd "build-g++6-debug-c++11"
   - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF ${CI_PROJECT_DIR}
-  - make br
+  - cmake --build . --target br
   artifacts:
     paths:
     - build-g++6-debug-c++11/libbr/libbr.a
@@ -27,7 +27,7 @@ test:g++6-debug-c++11:
   stage: test
   script:
   - cd build-g++6-debug-c++11
-  - make br_test
+  - cmake --build . --target br_test
   - ./test/br_test
   dependencies:
   - build:g++6-debug-c++11
@@ -45,7 +45,7 @@ build:g++6-debug-c++14:
   - ${CXX} --version
   - mkdir -p "build-g++6-debug-c++14" && cd "build-g++6-debug-c++14"
   - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF ${CI_PROJECT_DIR}
-  - make br
+  - cmake --build . --target br
   artifacts:
     paths:
     - build-g++6-debug-c++14/libbr/libbr.a
@@ -53,7 +53,7 @@ test:g++6-debug-c++14:
   stage: test
   script:
   - cd build-g++6-debug-c++14
-  - make br_test
+  - cmake --build . --target br_test
   - ./test/br_test
   dependencies:
   - build:g++6-debug-c++14
@@ -71,7 +71,7 @@ build:g++6-release-c++11:
   - ${CXX} --version
   - mkdir -p "build-g++6-release-c++11" && cd "build-g++6-release-c++11"
   - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF ${CI_PROJECT_DIR}
-  - make br
+  - cmake --build . --target br
   artifacts:
     paths:
     - build-g++6-release-c++11/libbr/libbr.a
@@ -79,7 +79,7 @@ test:g++6-release-c++11:
   stage: test
   script:
   - cd build-g++6-release-c++11
-  - make br_test
+  - cmake --build . --target br_test
   - ./test/br_test
   dependencies:
   - build:g++6-release-c++11
@@ -97,7 +97,7 @@ build:g++6-release-c++14:
   - ${CXX} --version
   - mkdir -p "build-g++6-release-c++14" && cd "build-g++6-release-c++14"
   - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF ${CI_PROJECT_DIR}
-  - make br
+  - cmake --build . --target br
   artifacts:
     paths:
     - build-g++6-release-c++14/libbr/libbr.a
@@ -105,7 +105,7 @@ test:g++6-release-c++14:
   stage: test
   script:
   - cd build-g++6-release-c++14
-  - make br_test
+  - cmake --build . --target br_test
   - ./test/br_test
   dependencies:
   - build:g++6-release-c++14
