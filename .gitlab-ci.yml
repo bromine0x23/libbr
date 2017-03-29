@@ -17,12 +17,21 @@ build:g++6-debug-c++11:
   script:
   - ${CXX} -v
   - ${CXX} --version
-  - mkdir -p build && cd build
+  - mkdir -p "build-g++6-debug-c++11" && cd "build-g++6-debug-c++11"
   - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_CC_COMPILER=${CC} ${CI_PROJECT_DIR}
-  - make br -j 2
+  - make br
   artifacts:
     paths:
-    - build/libbr/libbr.a
+    - build-g++6-debug-c++11/libbr/libbr.a
+test:g++6-debug-c++11:
+  stage: test
+  script:
+  - cd build-g++6-debug-c++11
+  - make br_test
+  - ./test/br_test
+  dependencies:
+  - build:g++6-debug-c++11
+
 
 build:g++6-debug-c++14:
   stage: build
@@ -34,12 +43,21 @@ build:g++6-debug-c++14:
   script:
   - ${CXX} -v
   - ${CXX} --version
-  - mkdir -p build && cd build
+  - mkdir -p "build-g++6-debug-c++14" && cd "build-g++6-debug-c++14"
   - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_CC_COMPILER=${CC} ${CI_PROJECT_DIR}
-  - make br -j 2
+  - make br
   artifacts:
     paths:
-    - build/libbr/libbr.a
+    - build-g++6-debug-c++14/libbr/libbr.a
+test:g++6-debug-c++14:
+  stage: test
+  script:
+  - cd build-g++6-debug-c++14
+  - make br_test
+  - ./test/br_test
+  dependencies:
+  - build:g++6-debug-c++14
+
 
 build:g++6-release-c++11:
   stage: build
@@ -51,12 +69,21 @@ build:g++6-release-c++11:
   script:
   - ${CXX} -v
   - ${CXX} --version
-  - mkdir -p build && cd build
+  - mkdir -p "build-g++6-release-c++11" && cd "build-g++6-release-c++11"
   - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_CC_COMPILER=${CC} ${CI_PROJECT_DIR}
-  - make br -j 2
+  - make br
   artifacts:
     paths:
-    - build/libbr/libbr.a
+    - build-g++6-release-c++11/libbr/libbr.a
+test:g++6-release-c++11:
+  stage: test
+  script:
+  - cd build-g++6-release-c++11
+  - make br_test
+  - ./test/br_test
+  dependencies:
+  - build:g++6-release-c++11
+
 
 build:g++6-release-c++14:
   stage: build
@@ -68,45 +95,17 @@ build:g++6-release-c++14:
   script:
   - ${CXX} -v
   - ${CXX} --version
-  - mkdir -p build && cd build
+  - mkdir -p "build-g++6-release-c++14" && cd "build-g++6-release-c++14"
   - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_CC_COMPILER=${CC} ${CI_PROJECT_DIR}
-  - make br -j 2
+  - make br
   artifacts:
     paths:
-    - build/libbr/libbr.a
-
-test:g++6-debug-c++11:
-  stage: test
-  script:
-  - cd build
-  - make br_test -j 2
-  - ./test/br_test
-  dependencies:
-  - build:g++6-debug-c++11
-
-test:g++6-debug-c++14:
-  stage: test
-  script:
-  - cd build
-  - make br_test -j 2
-  - ./test/br_test
-  dependencies:
-  - build:g++6-debug-c++14
-
-test:g++6-release-c++11:
-  stage: test
-  script:
-  - cd build
-  - make br_test -j 2
-  - ./test/br_test
-  dependencies:
-  - build:g++6-release-c++11
-
+    - build-g++6-release-c++14/libbr/libbr.a
 test:g++6-release-c++14:
   stage: test
   script:
-  - cd build
-  - make br_test -j 2
+  - cd build-g++6-release-c++14
+  - make br_test
   - ./test/br_test
   dependencies:
   - build:g++6-release-c++14
