@@ -30,5 +30,5 @@ build:
 test:
  stage: test
  script:
- - cmake --build build --target br_test -- -j 8
+ - cmake --build $CI_PROJECT_DIR/build --target br_test -- -j 8
  - ./build/test/br_test
