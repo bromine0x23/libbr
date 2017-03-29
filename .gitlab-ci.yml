@@ -4,38 +4,38 @@
 # see https://hub.docker.com/_/gcc/
 image: gcc:6.0
 
-variables:
-  BUILD_TYPE: 'debug'
-  ENABLE_CXX14: 'OFF'
+before_script:
+- env | sort
+- cmake --version
 cache:
   paths:
   - build/
 
-build:
+build:g++6-debug-c++11:
   stage: build
-  # before_script: 
-  # - apt update && apt -y install g++ g++-multilib cmake doxygen
+  variables:
+    CXX: 'g++-6'
+    CC: 'gcc-6'
+    BUILD_TYPE: 'debug'
+    ENABLE_CXX14: 'OFF'
   script:
-  - env | sort
-  - export CXX="g++-6" CC="gcc-6"
   - ${CXX} -v
   - ${CXX} --version
-  - cmake --version
   - mkdir -p build && cd build
   - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_CC_COMPILER=${CC} ${CI_PROJECT_DIR}
-  # - cmake --build $CI_PROJECT_DIR/build --target br -- -j 4
   - make br -j 4
   - cd ${CI_PROJECT_DIR}
   artifacts:
     paths:
-    - build/*.a
+    - build/libbr/libbr.a
+
 # run tests using the binary built before
-test:
- stage: test
- script:
- - env | sort
- - cmake --version
- - cd build
- - make br_test -j 4
- # - cmake --build build --target br_test -- -j 4
- - build/test/br_test
+test:g++6-debug-c++11:
+  stage: test
+  script:
+  - cd build
+  - make br_test -j 4
+  # - cmake --build build --target br_test -- -j 4
+  - ./test/br_test
+  dependencies:
+  - build:g++6-debug-c++11
