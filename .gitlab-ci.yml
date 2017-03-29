@@ -1,12 +1,11 @@
-# This file is a template, and might need editing before it works on your project.
-# use the official gcc image, based on debian
-# can use verions as well, like gcc:5.2
-# see https://hub.docker.com/_/gcc/
 image: gcc:6.0
 
 before_script:
 - env | sort
 - cmake --version
+artifacts:
+  paths:
+  - build/libbr/libbr.a
 cache:
   paths:
   - build/
@@ -23,19 +22,82 @@ build:g++6-debug-c++11:
   - ${CXX} --version
   - mkdir -p build && cd build
   - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_CC_COMPILER=${CC} ${CI_PROJECT_DIR}
-  - make br -j 4
-  - cd ${CI_PROJECT_DIR}
-  artifacts:
-    paths:
-    - build/libbr/libbr.a
+  - make br -j 2
 
-# run tests using the binary built before
+build:g++6-debug-c++14:
+  stage: build
+  variables:
+    CXX: 'g++-6'
+    CC: 'gcc-6'
+    BUILD_TYPE: 'debug'
+    ENABLE_CXX14: 'ON'
+  script:
+  - ${CXX} -v
+  - ${CXX} --version
+  - mkdir -p build && cd build
+  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_CC_COMPILER=${CC} ${CI_PROJECT_DIR}
+  - make br -j 2
+
+build:g++6-release-c++11:
+  stage: build
+  variables:
+    CXX: 'g++-6'
+    CC: 'gcc-6'
+    BUILD_TYPE: 'release'
+    ENABLE_CXX14: 'OFF'
+  script:
+  - ${CXX} -v
+  - ${CXX} --version
+  - mkdir -p build && cd build
+  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_CC_COMPILER=${CC} ${CI_PROJECT_DIR}
+  - make br -j 2
+
+build:g++6-release-c++14:
+  stage: build
+  variables:
+    CXX: 'g++-6'
+    CC: 'gcc-6'
+    BUILD_TYPE: 'release'
+    ENABLE_CXX14: 'ON'
+  script:
+  - ${CXX} -v
+  - ${CXX} --version
+  - mkdir -p build && cd build
+  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF -DCMAKE_CXX_COMPILER=${CXX} -DCMAKE_CC_COMPILER=${CC} ${CI_PROJECT_DIR}
+  - make br -j 2
+
 test:g++6-debug-c++11:
   stage: test
   script:
   - cd build
-  - make br_test -j 4
-  # - cmake --build build --target br_test -- -j 4
+  - make br_test -j 2
   - ./test/br_test
   dependencies:
   - build:g++6-debug-c++11
+
+test:g++6-debug-c++14:
+  stage: test
+  script:
+  - cd build
+  - make br_test -j 2
+  - ./test/br_test
+  dependencies:
+  - build:g++6-debug-c++14
+
+test:g++6-release-c++11:
+  stage: test
+  script:
+  - cd build
+  - make br_test -j 2
+  - ./test/br_test
+  dependencies:
+  - build:g++6-release-c++11
+
+test:g++6-release-c++14:
+  stage: test
+  script:
+  - cd build
+  - make br_test -j 2
+  - ./test/br_test
+  dependencies:
+  - build:g++6-release-c++14
