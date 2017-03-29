@@ -18,7 +18,7 @@ build:g++6-debug-c++11:
   - ${CXX} -v
   - ${CXX} --version
   - mkdir -p "build-g++6-debug-c++11" && cd "build-g++6-debug-c++11"
-  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF -DCMAKE_CXX_COMPILER=${CXX} ${CI_PROJECT_DIR}
+  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF ${CI_PROJECT_DIR}
   - make br
   artifacts:
     paths:
@@ -44,7 +44,7 @@ build:g++6-debug-c++14:
   - ${CXX} -v
   - ${CXX} --version
   - mkdir -p "build-g++6-debug-c++14" && cd "build-g++6-debug-c++14"
-  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF -DCMAKE_CXX_COMPILER=${CXX} ${CI_PROJECT_DIR}
+  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF ${CI_PROJECT_DIR}
   - make br
   artifacts:
     paths:
@@ -70,7 +70,7 @@ build:g++6-release-c++11:
   - ${CXX} -v
   - ${CXX} --version
   - mkdir -p "build-g++6-release-c++11" && cd "build-g++6-release-c++11"
-  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF -DCMAKE_CXX_COMPILER=${CXX} ${CI_PROJECT_DIR}
+  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF ${CI_PROJECT_DIR}
   - make br
   artifacts:
     paths:
@@ -96,7 +96,7 @@ build:g++6-release-c++14:
   - ${CXX} -v
   - ${CXX} --version
   - mkdir -p "build-g++6-release-c++14" && cd "build-g++6-release-c++14"
-  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF -DCMAKE_CXX_COMPILER=${CXX} ${CI_PROJECT_DIR}
+  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF ${CI_PROJECT_DIR}
   - make br
   artifacts:
     paths:
