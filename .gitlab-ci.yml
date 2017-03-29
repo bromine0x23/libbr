@@ -1,34 +1,111 @@
-# This file is a template, and might need editing before it works on your project.
-# use the official gcc image, based on debian
-# can use verions as well, like gcc:5.2
-# see https://hub.docker.com/_/gcc/
-image: gcc:5.0
+image: gcc:6.0
 
-variables:
-  BUILD_TYPE: 'debug'
-  ENABLE_CXX14: 'OFF'
+before_script:
+- env | sort
+- cmake --version
+cache:
+  paths:
+  - build/
 
-build:
+build:g++6-debug-c++11:
   stage: build
-  # before_script: 
-  # - apt update && apt -y install g++ g++-multilib cmake doxygen
+  variables:
+    CXX: 'g++-6'
+    CC: 'gcc-6'
+    BUILD_TYPE: 'debug'
+    ENABLE_CXX14: 'OFF'
   script:
-  - g++ -v
-  - g++ --version
-  - cmake --version
-  - mkdir -p build && cd build
-  - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLIBBR_ENABLE_CXX14=$ENABLE_CXX14 -DLIBBR_INCLUDE_TESTS=OFF $CI_PROJECT_DIR
-  - cmake --build . --target libbr -- -j 8
-  - cd $CI_PROJECT_DIR
+  - ${CXX} -v
+  - ${CXX} --version
+  - mkdir -p "build-g++6-debug-c++11" && cd "build-g++6-debug-c++11"
+  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF ${CI_PROJECT_DIR}
+  - cmake --build . --target br
   artifacts:
     paths:
-    - build/libbr/libbr.a
-  cache:
+    - build-g++6-debug-c++11/libbr/libbr.a
+test:g++6-debug-c++11:
+  stage: test
+  script:
+  - cd build-g++6-debug-c++11
+  - cmake --build . --target br_test
+  - ./test/br_test
+  dependencies:
+  - build:g++6-debug-c++11
+
+
+build:g++6-debug-c++14:
+  stage: build
+  variables:
+    CXX: 'g++-6'
+    CC: 'gcc-6'
+    BUILD_TYPE: 'debug'
+    ENABLE_CXX14: 'ON'
+  script:
+  - ${CXX} -v
+  - ${CXX} --version
+  - mkdir -p "build-g++6-debug-c++14" && cd "build-g++6-debug-c++14"
+  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF ${CI_PROJECT_DIR}
+  - cmake --build . --target br
+  artifacts:
     paths:
-    - build/
-# run tests using the binary built before
-# test:
-#  stage: test
-#  script:
-#  - cmake --build build --target br_test -- -j 8
-#  - ./build/test/br_test
+    - build-g++6-debug-c++14/libbr/libbr.a
+test:g++6-debug-c++14:
+  stage: test
+  script:
+  - cd build-g++6-debug-c++14
+  - cmake --build . --target br_test
+  - ./test/br_test
+  dependencies:
+  - build:g++6-debug-c++14
+
+
+build:g++6-release-c++11:
+  stage: build
+  variables:
+    CXX: 'g++-6'
+    CC: 'gcc-6'
+    BUILD_TYPE: 'release'
+    ENABLE_CXX14: 'OFF'
+  script:
+  - ${CXX} -v
+  - ${CXX} --version
+  - mkdir -p "build-g++6-release-c++11" && cd "build-g++6-release-c++11"
+  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF ${CI_PROJECT_DIR}
+  - cmake --build . --target br
+  artifacts:
+    paths:
+    - build-g++6-release-c++11/libbr/libbr.a
+test:g++6-release-c++11:
+  stage: test
+  script:
+  - cd build-g++6-release-c++11
+  - cmake --build . --target br_test
+  - ./test/br_test
+  dependencies:
+  - build:g++6-release-c++11
+
+
+build:g++6-release-c++14:
+  stage: build
+  variables:
+    CXX: 'g++-6'
+    CC: 'gcc-6'
+    BUILD_TYPE: 'release'
+    ENABLE_CXX14: 'ON'
+  script:
+  - ${CXX} -v
+  - ${CXX} --version
+  - mkdir -p "build-g++6-release-c++14" && cd "build-g++6-release-c++14"
+  - cmake -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DLIBBR_ENABLE_CXX14=${ENABLE_CXX14} -DLIBBR_INCLUDE_TESTS=OFF ${CI_PROJECT_DIR}
+  - cmake --build . --target br
+  artifacts:
+    paths:
+    - build-g++6-release-c++14/libbr/libbr.a
+test:g++6-release-c++14:
+  stage: test
+  script:
+  - cd build-g++6-release-c++14
+  - cmake --build . --target br_test
+  - ./test/br_test
+  dependencies:
+  - build:g++6-release-c++14
