@@ -1,6 +1,7 @@
 # libbr
 
-[![Build Status](https://travis-ci.org/bromine0x23/libbr.svg?branch=master)](https://travis-ci.org/bromine0x23/libbr)
+[![Travis-CI build status](https://travis-ci.org/bromine0x23/libbr.svg)](https://travis-ci.org/bromine0x23/libbr)
+[![Gitlab build status](http://git.bakachu.cn/Bromine0x23/libbr/badges/master/build.svg)](http://git.bakachu.cn/Bromine0x23/libbr/commits/master)
 
 A *bery* **terrible** C++ library with *bery* **ugly** code and *bery* **useless** features.
 
