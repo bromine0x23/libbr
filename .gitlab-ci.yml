@@ -18,7 +18,7 @@ build:
   # - apt update && apt -y install g++ g++-multilib cmake doxygen
   script:
   - env | sort
-  - export CXX="clang++-4" CC="clang-4"
+  - export CXX="clang++" CC="clang"
   - ${CXX} -v
   - ${CXX} --version
   - cmake --version
