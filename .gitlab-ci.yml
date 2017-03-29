@@ -18,7 +18,7 @@ build:
   - cmake --version
   - mkdir -p build && cd build
   - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLIBBR_ENABLE_CXX14=$ENABLE_CXX14 -DLIBBR_INCLUDE_TESTS=OFF $CI_PROJECT_DIR
-  - cmake --build build --target libbr -- -j 8
+  - cmake --build . --target libbr -- -j 8
   - cd $CI_PROJECT_DIR
   artifacts:
     paths:
