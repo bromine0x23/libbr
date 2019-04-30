@@ -51,7 +51,7 @@ struct IntegralConstant : public TypeWrapper<IntegralConstant<TValue, v>> {
  * @brief 整型常量重包装
  * @tparam TConstant 包装器
  */
-template<typename TI>
+template<typename TConstant>
 using IntegralRewrap = IntegralConstant<typename TConstant::Value, TConstant::value>;
 
 /**
