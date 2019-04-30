@@ -19,4 +19,5 @@ inline namespace Utility {
 
 #include <libbr/utility/boolean_constant.hpp>
 #include <libbr/utility/integral_constant.hpp>
+#include <libbr/utility/forward.hpp>
 #include <libbr/utility/type_wrapper.hpp>
