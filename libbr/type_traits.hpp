@@ -22,6 +22,7 @@ inline namespace TypeTraits {
 #include <libbr/type_traits/is_lvalue_reference.hpp>
 #include <libbr/type_traits/is_member_pointer.hpp>
 #include <libbr/type_traits/is_null_pointer.hpp>
+#include <libbr/type_traits/is_pointer.hpp>
 #include <libbr/type_traits/is_reference.hpp>
 #include <libbr/type_traits/is_rvalue_reference.hpp>
 #include <libbr/type_traits/is_void.hpp>
