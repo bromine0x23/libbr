@@ -25,4 +25,5 @@ inline namespace TypeTransform {
 #include <libbr/type_transform/remove_const_volatile.hpp>
 #include <libbr/type_transform/remove_volatile.hpp>
 
+#include <libbr/type_transform/add_lvalue_reference.hpp>
 #include <libbr/type_transform/remove_reference.hpp>

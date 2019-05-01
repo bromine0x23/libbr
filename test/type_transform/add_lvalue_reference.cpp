@@ -1,0 +1,45 @@
+#include "test.hpp"
+
+#include <libbr/type_transform/add_lvalue_reference.hpp>
+
+using namespace BR;
+
+TEST(TypeTransform, AddLValueReference) {
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, BR_EMPTY, &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, const, const &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, volatile, volatile &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, const volatile, const volatile &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, *, * &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, * const, * const &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, * volatile, * volatile &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, * const volatile, * const volatile &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, const *, const * &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, volatile *, volatile * &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, const * const, const * const &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, const * volatile, const * volatile &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, const * const volatile, const * const volatile &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, &, &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, const &, const &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, volatile &, volatile &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, const volatile &, const volatile &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, &&, &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, const &&, const &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, volatile &&, volatile &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, const volatile &&, const volatile &)
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, [2], (&)[2])
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, const[2], const(&)[2])
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, volatile[2], volatile(&)[2])
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, const volatile[2], const volatile(&)[2])
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, [2][3], (&)[2][3])
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, const[2][3], const(&)[2][3])
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, volatile[2][3], volatile(&)[2][3])
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, const volatile[2][3], const volatile(&)[2][3])
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, [][3], (&)[][3])
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, const[][3], const(&)[][3])
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, volatile[][3], volatile(&)[][3])
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, const volatile[][3], const volatile(&)[][3])
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, (&)[2], (&)[2])
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, (&&)[2], (&)[2])
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, (&)[2][3], (&)[2][3])
+	SUFFIX_TRANSFORM_CHECK_COMMON_TYPES(AddLValueReference, (&&)[2][3], (&)[2][3])
+}
