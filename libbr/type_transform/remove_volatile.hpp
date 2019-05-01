@@ -52,6 +52,6 @@ inline namespace TypeTransform {
 template< typename T >
 struct TypeRemoveVolatile : public TypeRewrap< _::TypeTransform::TypeRemoveVolatile<T> > {};
 
-} // namespace TypeTraits
+} // namespace TypeTransform
 
 } // namespace BR

@@ -50,7 +50,7 @@ struct TypeRemoveConstVolatile< T volatile > : public TypeWrapper<T> {};
 template< typename T >
 struct TypeRemoveConstVolatile< T const volatile > : public TypeWrapper<T> {};
 
-} // namespace TypeTraits
+} // namespace TypeTransform
 } // namespace _
 
 inline namespace TypeTransform {
@@ -58,6 +58,6 @@ inline namespace TypeTransform {
 template< typename T >
 struct TypeRemoveConstVolatile : public TypeRewrap< _::TypeTransform::TypeRemoveConstVolatile<T> > {};
 
-} // namespace TypeTraits
+} // namespace TypeTransform
 
 } // namespace BR

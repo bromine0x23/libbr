@@ -52,6 +52,6 @@ inline namespace TypeTransform {
 template< typename T >
 struct TypeRemoveConst : public TypeRewrap< _::TypeTransform::TypeRemoveConst<T> > {};
 
-} // namespace TypeTraits
+} // namespace TypeTransform
 
 } // namespace BR
