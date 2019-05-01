@@ -18,6 +18,7 @@ inline namespace TypeTransform {
 } // namespace BR
 
 
+#include <libbr/type_transform/add_const.hpp>
 #include <libbr/type_transform/remove_const.hpp>
 #include <libbr/type_transform/remove_const_volatile.hpp>
 #include <libbr/type_transform/remove_volatile.hpp>
