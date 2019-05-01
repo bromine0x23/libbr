@@ -18,6 +18,7 @@ inline namespace TypeTraits {
 } // namespace BR
 
 // 类型类别特性
+#include <libbr/type_traits/is_arithmetic.hpp>
 #include <libbr/type_traits/is_array.hpp>
 #include <libbr/type_traits/is_floating_point.hpp>
 #include <libbr/type_traits/is_integral.hpp>
