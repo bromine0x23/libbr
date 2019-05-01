@@ -23,7 +23,10 @@ inline namespace Utility {
 #include <libbr/utility/type_wrapper.hpp>
 
 #include <libbr/utility/conditional.hpp>
-#include <libbr/utility/conjunction.hpp>
 #include <libbr/utility/enable_if.hpp>
+
+#include <libbr/utility/abjunction.hpp>
+#include <libbr/utility/conjunction.hpp>
 #include <libbr/utility/disjunction.hpp>
+#include <libbr/utility/implication.hpp>
 #include <libbr/utility/negation.hpp>
