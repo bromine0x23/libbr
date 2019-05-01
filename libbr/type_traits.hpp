@@ -19,6 +19,7 @@ inline namespace TypeTraits {
 
 // 类型类别特性
 #include <libbr/type_traits/is_lvalue_reference.hpp>
+#include <libbr/type_traits/is_reference.hpp>
 #include <libbr/type_traits/is_rvalue_reference.hpp>
 #include <libbr/type_traits/is_void.hpp>
 
