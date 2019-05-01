@@ -21,6 +21,7 @@ inline namespace TypeTraits {
 #include <libbr/type_traits/is_arithmetic.hpp>
 #include <libbr/type_traits/is_array.hpp>
 #include <libbr/type_traits/is_floating_point.hpp>
+#include <libbr/type_traits/is_fundamental.hpp>
 #include <libbr/type_traits/is_integral.hpp>
 #include <libbr/type_traits/is_lvalue_reference.hpp>
 #include <libbr/type_traits/is_member_pointer.hpp>
