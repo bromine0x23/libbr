@@ -31,3 +31,5 @@ inline namespace TypeTransform {
 #include <libbr/type_transform/add_lvalue_reference.hpp>
 #include <libbr/type_transform/add_rvalue_reference.hpp>
 #include <libbr/type_transform/remove_reference.hpp>
+
+#include <libbr/type_transform/remove_extent.hpp>
