@@ -50,6 +50,7 @@ inline namespace TypeTraits {
 #include <libbr/type_traits/is_polymorphic.hpp>
 #include <libbr/type_traits/is_signed.hpp>
 #include <libbr/type_traits/is_standard_layout.hpp>
+#include <libbr/type_traits/is_unsigned.hpp>
 #include <libbr/type_traits/is_volatile.hpp>
 #include <libbr/type_traits/rank.hpp>
 
