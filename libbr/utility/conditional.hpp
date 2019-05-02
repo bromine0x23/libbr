@@ -20,7 +20,7 @@ inline namespace Utility {
  *
  * 如果 \em condition为 \em true，则包装有类型 \em TWhenTrue ；否则包装有类型 \em TWhenFalse
  */
-template< bool condition, typename TWhenTrue, typename TWhenFalse = void >
+template< Boolean condition, typename TWhenTrue, typename TWhenFalse = void >
 struct TypeConditionalByValue;
 
 /**
@@ -30,7 +30,7 @@ struct TypeConditionalByValue;
  * @tparam TWhenFalse \em condition 为 \em false 时的结果类型
  * @see TypeConditionalByValue
  */
-template< bool condition, typename TWhenTrue, typename TWhenFalse = void >
+template< Boolean condition, typename TWhenTrue, typename TWhenFalse = void >
 using ConditionalByValue = TypeUnwrap< TypeConditionalByValue< condition, TWhenTrue, TWhenFalse > >;
 
 /**

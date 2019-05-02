@@ -15,7 +15,7 @@ inline namespace Utility {
 /**
  * @brief 布尔常量封装类
  */
-template< bool value >
+template< Boolean value >
 using BooleanConstant = IntegralConstant< Boolean, value >;
 
 /**
@@ -42,7 +42,7 @@ using BooleanRewrap = BooleanRewrapPositive< TConstant >;
  * @tparam TConstant
  */
 template< typename TConstant >
-constexpr bool boolean_constant = integral_constant<TConstant>;
+constexpr Boolean boolean_constant = integral_constant<TConstant>;
 
 } // namespace Utility
 

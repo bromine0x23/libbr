@@ -32,3 +32,5 @@ inline namespace Utility {
 #include <libbr/utility/disjunction.hpp>
 #include <libbr/utility/implication.hpp>
 #include <libbr/utility/negation.hpp>
+#include <libbr/utility/non_conjunction.hpp>
+#include <libbr/utility/non_disjunction.hpp>
