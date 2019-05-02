@@ -32,6 +32,7 @@ inline namespace TypeTraits {
 #include <libbr/type_traits/is_void.hpp>
 
 // 类型属性特性
+#include <libbr/type_traits/extent.hpp>
 #include <libbr/type_traits/is_const.hpp>
 #include <libbr/type_traits/is_volatile.hpp>
 
