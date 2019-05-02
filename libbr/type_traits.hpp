@@ -38,6 +38,7 @@ inline namespace TypeTraits {
 #include <libbr/type_traits/is_fundamental.hpp>
 #include <libbr/type_traits/is_member_pointer.hpp>
 #include <libbr/type_traits/is_reference.hpp>
+#include <libbr/type_traits/is_scalar.hpp>
 
 // 类型属性
 #include <libbr/type_traits/extent.hpp>
