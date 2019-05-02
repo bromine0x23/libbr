@@ -35,6 +35,7 @@ inline namespace TypeTraits {
 
 // 类型复合类别
 #include <libbr/type_traits/is_arithmetic.hpp>
+#include <libbr/type_traits/is_compound.hpp>
 #include <libbr/type_traits/is_fundamental.hpp>
 #include <libbr/type_traits/is_member_pointer.hpp>
 #include <libbr/type_traits/is_object.hpp>
