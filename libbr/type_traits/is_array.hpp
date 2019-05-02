@@ -17,39 +17,39 @@ inline namespace TypeTraits {
  * @brief 检查 \em T 是否是约束长度的数组类型(<tt>U[S]</tt>)
  * @tparam T 待检查类型
  * @see IntegerConstant
- * @see NotArrayKnownBounds
+ * @see NotBoundedArray
  *
  * 如果 \em T 是约束长度的数组类型，那么封装的值为 true ；否则为 false
  */
 template< typename T >
-struct IsArrayKnownBounds;
+struct IsBoundedArray;
 
 /**
- * @brief IsArrayKnownBounds 的否定
+ * @brief IsBoundedArray 的否定
  * @tparam T 待检查类型
- * @see IsArrayKnownBounds
+ * @see IsBoundedArray
  */
 template< typename T >
-struct NotArrayKnownBounds;
+struct NotBoundedArray;
 
 /**
  * @brief 检查 \em T 是否是不约束长度的数组类型(<tt>U[]</tt>)
  * @tparam T 待检查类型
  * @see IntegerConstant
- * @see NotArrayUnknownBounds
+ * @see NotUnboundedArray
  *
  * 如果 \em T 是不约束长度的数组类型，那么封装的值为 true ；否则为 false
  */
 template< typename T >
-struct IsArrayUnknownBounds;
+struct IsUnboundedArray;
 
 /**
- * @brief IsArrayUnknownBounds 的否定
+ * @brief IsUnboundedArray 的否定
  * @tparam T 待检查类型
- * @see IsArrayUnknownBounds
+ * @see IsUnboundedArray
  */
 template< typename T >
-struct NotArrayUnknownBounds;
+struct NotUnboundedArray;
 
 /**
  * @brief 检查 \em T 是否是数组类型(<tt>U[S]</tt>或<tt>U[]</tt>)
@@ -73,40 +73,40 @@ template< typename T >
 struct NotArray;
 
 /**
- * @brief IsArrayKnownBounds 的模板变量版本
+ * @brief IsBoundedArray 的模板变量版本
  * @tparam T 待检查类型
- * @see IsArrayKnownBounds
- * @see not_array_known_bounds
+ * @see IsBoundedArray
+ * @see not_bounded_array
  */
 template< typename T >
-constexpr auto is_array_known_bounds = boolean_constant< IsArrayKnownBounds<T> >;
+constexpr auto is_bounded_array = boolean_constant< IsBoundedArray<T> >;
 
 /**
- * @brief NotArrayKnownBounds 的模板变量版本
+ * @brief NotBoundedArray 的模板变量版本
  * @tparam T 待检查类型
- * @see NotArrayKnownBounds
- * @see is_array_known_bounds
+ * @see NotBoundedArray
+ * @see is_bounded_array
  */
 template< typename T >
-constexpr auto not_array_known_bounds = boolean_constant< NotArrayKnownBounds<T> >;
+constexpr auto not_bounded_array = boolean_constant< NotBoundedArray<T> >;
 
 /**
- * @brief IsArrayUnknownBounds 的模板变量版本
+ * @brief IsUnboundedArray 的模板变量版本
  * @tparam T 待检查类型
- * @see IsArrayUnknownBounds
- * @see not_array_unknown_bounds
+ * @see IsUnboundedArray
+ * @see not_unbounded_array
  */
 template< typename T >
-constexpr auto is_array_unknown_bounds = boolean_constant< IsArrayUnknownBounds<T> >;
+constexpr auto is_unbounded_array = boolean_constant< IsUnboundedArray<T> >;
 
 /**
- * @brief NotArrayUnknownBounds 的模板变量版本
+ * @brief NotUnboundedArray 的模板变量版本
  * @tparam T 待检查类型
- * @see NotArrayUnknownBounds
- * @see is_array_unknown_bounds
+ * @see NotUnboundedArray
+ * @see is_unbounded_array
  */
 template< typename T >
-constexpr auto not_array_unknown_bounds = boolean_constant< NotArrayUnknownBounds<T> >;
+constexpr auto not_unbounded_array = boolean_constant< NotUnboundedArray<T> >;
 
 /**
  * @brief IsArray 的模板变量版本
@@ -134,19 +134,19 @@ namespace _ {
 namespace TypeTraits {
 
 template< typename T >
-struct IsArrayKnownBounds : public BooleanFalse {};
+struct IsBoundedArray : public BooleanFalse {};
 
 template< typename T, Size S >
-struct IsArrayKnownBounds< T [S] > : public BooleanTrue {};
+struct IsBoundedArray< T [S] > : public BooleanTrue {};
 
 template< typename T >
-struct IsArrayUnknownBounds : public BooleanFalse {};
+struct IsUnboundedArray : public BooleanFalse {};
 
 template< typename T >
-struct IsArrayUnknownBounds< T [] > : public BooleanTrue {};
+struct IsUnboundedArray< T [] > : public BooleanTrue {};
 
 template< typename T >
-using IsArray = Disjunction< IsArrayKnownBounds<T>, IsArrayUnknownBounds<T> >;
+using IsArray = Disjunction< IsBoundedArray<T>, IsUnboundedArray<T> >;
 
 } // namespace TypeTraits
 } // namespace _
@@ -154,16 +154,16 @@ using IsArray = Disjunction< IsArrayKnownBounds<T>, IsArrayUnknownBounds<T> >;
 inline namespace TypeTraits {
 
 template< typename T >
-struct IsArrayKnownBounds : public BooleanRewrapPositive< _::TypeTraits::IsArrayKnownBounds<T> > {};
+struct IsBoundedArray : public BooleanRewrapPositive< _::TypeTraits::IsBoundedArray<T> > {};
 
 template< typename T >
-struct NotArrayKnownBounds : public BooleanRewrapNegative< _::TypeTraits::IsArrayKnownBounds<T> > {};
+struct NotBoundedArray : public BooleanRewrapNegative< _::TypeTraits::IsBoundedArray<T> > {};
 
 template< typename T >
-struct IsArrayUnknownBounds : public BooleanRewrapPositive< _::TypeTraits::IsArrayUnknownBounds<T> > {};
+struct IsUnboundedArray : public BooleanRewrapPositive< _::TypeTraits::IsUnboundedArray<T> > {};
 
 template< typename T >
-struct NotArrayUnknownBounds : public BooleanRewrapNegative< _::TypeTraits::IsArrayUnknownBounds<T> > {};
+struct NotUnboundedArray : public BooleanRewrapNegative< _::TypeTraits::IsUnboundedArray<T> > {};
 
 template< typename T >
 struct IsArray : public BooleanRewrapPositive< _::TypeTraits::IsArray<T> > {};
