@@ -94,10 +94,10 @@ struct DisjunctionByValue<value> : public BooleanConstant<value> {};
 inline namespace Utility {
 
 template< typename... TBooleans >
-struct Disjunction : public BooleanRewrapPositive< _::Utility::Disjunction<TBooleans...> > {};
+struct Disjunction : public BooleanRewrap< _::Utility::Disjunction<TBooleans...> > {};
 
 template< Boolean... values >
-struct DisjunctionByValue : public BooleanRewrapPositive< _::Utility::DisjunctionByValue<values...> > {};
+struct DisjunctionByValue : public BooleanRewrap< _::Utility::DisjunctionByValue<values...> > {};
 
 } // namespace Utility
 
