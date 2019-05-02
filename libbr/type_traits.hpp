@@ -40,6 +40,7 @@ inline namespace TypeTraits {
 
 // 类型属性
 #include <libbr/type_traits/extent.hpp>
+#include <libbr/type_traits/is_abstract.hpp>
 #include <libbr/type_traits/is_const.hpp>
 #include <libbr/type_traits/is_final.hpp>
 #include <libbr/type_traits/is_polymorphic.hpp>
