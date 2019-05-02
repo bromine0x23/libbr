@@ -20,6 +20,7 @@ inline namespace TypeTraits {
 // 类型基本类别
 #include <libbr/type_traits/is_array.hpp>
 #include <libbr/type_traits/is_floating_point.hpp>
+#include <libbr/type_traits/is_function.hpp>
 #include <libbr/type_traits/is_integral.hpp>
 #include <libbr/type_traits/is_lvalue_reference.hpp>
 #include <libbr/type_traits/is_null_pointer.hpp>
