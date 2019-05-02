@@ -60,7 +60,7 @@ template< Boolean p, Boolean q >
 struct AbjunctionByValue : public BooleanFalse {};
 
 template<>
-struct AbjunctionByValue<false, true> : public BooleanTrue {};
+struct AbjunctionByValue<true, false> : public BooleanTrue {};
 
 } // namespace Utility
 

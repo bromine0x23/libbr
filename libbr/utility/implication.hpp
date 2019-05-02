@@ -54,7 +54,7 @@ constexpr auto implication_by_value = boolean_constant< ImplicationByValue<p, q>
 inline namespace Utility {
 
 template< typename TP, typename TQ >
-struct Implication : public Conditional< TP, TQ, BooleanTrue > {};
+struct Implication : public Conditional< TP, BooleanRewrapPositive<TQ>, BooleanTrue > {};
 
 template< Boolean p, Boolean q >
 struct ImplicationByValue : public BooleanTrue {};
