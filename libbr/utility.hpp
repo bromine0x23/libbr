@@ -27,6 +27,7 @@ inline namespace Utility {
 
 #include <libbr/utility/abjunction.hpp>
 #include <libbr/utility/conjunction.hpp>
+#include <libbr/utility/converse_abjunction.hpp>
 #include <libbr/utility/converse_implication.hpp>
 #include <libbr/utility/disjunction.hpp>
 #include <libbr/utility/implication.hpp>
