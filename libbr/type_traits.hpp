@@ -48,4 +48,5 @@ inline namespace TypeTraits {
 #include <libbr/type_traits/rank.hpp>
 
 // 类型关系
+#include <libbr/type_traits/is_base_of.hpp>
 #include <libbr/type_traits/is_same.hpp>
