@@ -35,6 +35,7 @@ inline namespace TypeTraits {
 #include <libbr/type_traits/extent.hpp>
 #include <libbr/type_traits/is_const.hpp>
 #include <libbr/type_traits/is_volatile.hpp>
+#include <libbr/type_traits/rank.hpp>
 
 // 类型关系特性
 #include <libbr/type_traits/is_same.hpp>
