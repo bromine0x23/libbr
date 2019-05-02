@@ -15,7 +15,7 @@ inline namespace TypeTransform {
 /**
  * @brief 添加左值引用修饰
  * @tparam T
- * @see TypeWrapper
+ * @see Utility::TypeWrapper
  * @see AddLValueReference
  *
  * 包装 \em T 添加左值引用修饰(<tt>T &</tt>)后的类型

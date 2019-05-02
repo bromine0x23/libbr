@@ -16,7 +16,7 @@ inline namespace TypeTransform {
 /**
  * @brief 添加指针修饰
  * @tparam T
- * @see TypeWrapper
+ * @see Utility::TypeWrapper
  * @see AddPointer
  *
  * 包装 \em T 添加指针修饰(<tt>T *</tt>)后的类型

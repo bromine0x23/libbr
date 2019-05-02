@@ -16,7 +16,7 @@ inline namespace TypeTraits {
 /**
  * @brief 检查 \em T 是否是浮点类型
  * @tparam T 待检查类型
- * @see IntegerConstant
+ * @see Utility::IntegralConstant
  * @see NotFloatingPoint
  *
  * 如果\em T 是浮点类型(\em float、\em double、\em long \em double 及其带CV修饰的版本)，那么封装的值为 \em true ；否则为 \em false

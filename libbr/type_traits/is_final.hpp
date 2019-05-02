@@ -16,7 +16,8 @@ inline namespace TypeTraits {
 /**
  * @brief 检查 \em T 是否是 \em final 类
  * @tparam T 待检查类型
- * @see IntegerConstant
+ * @see Utility::IntegralConstant
+ * @see BR_IS_FINAL
  * @see NotFinal
  *
  * 如果 \em T 是带\em final 修饰的类类型，那么封装的值为 \em true ；否则为 \em false

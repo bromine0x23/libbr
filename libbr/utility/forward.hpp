@@ -15,6 +15,9 @@ inline namespace Utility {
 
 /**
  * @brief 完美转发
+ * @tparam T 被转发实例基础类型
+ * @param t 被转发实例
+ * @return `static_cast< T && >(t)`
  */
 template< typename T >
 constexpr auto forward(RemoveReference<T> & t) noexcept -> T && {
@@ -23,6 +26,9 @@ constexpr auto forward(RemoveReference<T> & t) noexcept -> T && {
 
 /**
  * @brief 完美转发
+ * @tparam T 被转发实例基础类型
+ * @param t 被转发实例
+ * @return `static_cast< T && >(t)`
  */
 template< typename T >
 constexpr auto forward(RemoveReference<T> && t) noexcept -> T && {

@@ -18,7 +18,7 @@ inline namespace TypeTraits {
 /**
  * @brief 检查 \em T 是否是指针类型
  * @tparam T 待检查类型
- * @see IntegerConstant
+ * @see Utility::IntegralConstant
  * @see NotPointer
  *
  * 如果 \em T 是对象指针类型或函数指针类型(但不是空指针或非静态成员对象或成员函数指针)，那么封装的值为 \em true ；否则为 \em false

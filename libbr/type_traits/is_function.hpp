@@ -15,7 +15,7 @@ inline namespace TypeTraits {
 /**
  * @brief 检查 \em T 是否是函数类型
  * @tparam T 待检查类型
- * @see IntegerConstant
+ * @see Utility::IntegralConstant
  * @see NotFunction
  *
  * 如果\em T 是函数类型(不包括lambda等可调用对象)，那么封装的值为 \em true ；否则为 \em false

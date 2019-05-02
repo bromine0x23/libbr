@@ -15,7 +15,7 @@ inline namespace TypeTransform {
 /**
  * @brief 移除引用修饰
  * @tparam T
- * @see TypeWrapper
+ * @see Utility::TypeWrapper
  * @see RemoveReference
  *
  * 包装 \em T 顶层引用修饰(如果存在)后的类型

@@ -16,7 +16,7 @@ inline namespace TypeTraits {
 /**
  * @brief 获取数组类型的维度
  * @tparam T
- * @see IntegerConstant
+ * @see Utility::IntegralConstant
  * @see NotMemberObjectPointer
  *
  * 如果 \em T 是数组类型，那么封装的值为数组类型的维度；否则为 0

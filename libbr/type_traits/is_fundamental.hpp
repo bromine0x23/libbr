@@ -19,7 +19,7 @@ inline namespace TypeTraits {
 /**
  * @brief 检查 \em T 是否是基本类型
  * @tparam T 待检查类型
- * @see IntegerConstant
+ * @see Utility::IntegralConstant
  * @see NotFundamental
  *
  * 如果 \em T 是基本类型(算术类型或 \em void)，那么封装的值为 \em true ；否则为 \em false

@@ -15,7 +15,7 @@ inline namespace TypeTraits {
 /**
  * @brief 检查 \em T 是否是左值引用类型
  * @tparam T 待检查类型
- * @see IntegerConstant
+ * @see Utility::IntegralConstant
  * @see IsRValueReference
  * @see NotLValueReference
  *

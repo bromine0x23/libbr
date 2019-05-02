@@ -15,7 +15,7 @@ inline namespace TypeTransform {
 /**
  * @brief 添加 \em const 修饰
  * @tparam T
- * @see TypeWrapper
+ * @see Utility::TypeWrapper
  * @see AddConst
  *
  * 包装 \em T 添加 \em const 修饰后的类型

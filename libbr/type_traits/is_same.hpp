@@ -15,7 +15,7 @@ inline namespace TypeTraits {
 /**
  * @brief 检查 \em T0 、 \em T1 是否相同
  * @tparam T0,T1 待检查类型
- * @see IntegerConstant
+ * @see Utility::IntegralConstant
  * @see NotSame
  *
  * 如果 \em T0 、 \em T1 是相同，那么封装的值为 \em true ；否则为 \em false

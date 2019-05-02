@@ -15,7 +15,7 @@ inline namespace TypeTraits {
 /**
  * @brief 检查 \em T 是否包含 \em volatile 修饰
  * @tparam T 待检查类型
- * @see IntegerConstant
+ * @see Utility::IntegralConstant
  * @see NotVolatile
  *
  * 如果 \em T 包含顶层 \em volatile 修饰，那么封装的值为 \em true ；否则为 \em false

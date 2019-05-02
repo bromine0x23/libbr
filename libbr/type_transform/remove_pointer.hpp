@@ -15,7 +15,7 @@ inline namespace TypeTransform {
 /**
  * @brief 移除指针修饰
  * @tparam T
- * @see TypeWrapper
+ * @see Utility::TypeWrapper
  * @see RemovePointer
  *
  * 包装 \em T 顶层指针修饰(如果存在)后的类型

@@ -17,7 +17,7 @@ inline namespace TypeTraits {
  * @brief 获取数组指定维度的大小
  * @tparam T
  * @tparam I 维度
- * @see IntegerConstant
+ * @see Utility::IntegralConstant
  *
  * 如果 \em T 是至少 \em I 维的数组类型，那么封装的值第 \em I 维的大小；否则为 0
  */

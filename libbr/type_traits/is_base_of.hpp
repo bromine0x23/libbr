@@ -26,9 +26,9 @@ inline namespace TypeTraits {
  * @brief 检查 \em TDerived 是否是 \em TBase 的基类(不考虑CV修饰符)
  * @tparam TBase 待检查类型，作为基类
  * @tparam TDerived 待检查类型，作为派生类
- * @see IntegerConstant
+ * @see Utility::IntegralConstant
  * @see BR_IS_BASE_OF
- * @see NotAssignable
+ * @see NotBaseOf
  *
  * 如果 \em TDerived 是否是 \em TBase 或派生自 \em TBase ，
  * 那么封装的值为 \em true ；否则为 \em false

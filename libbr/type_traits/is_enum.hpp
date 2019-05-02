@@ -29,7 +29,7 @@ inline namespace TypeTraits {
 /**
  * @brief 检查 \em T 是否是枚举类型
  * @tparam T 待检查类型
- * @see IntegerConstant
+ * @see Utility::IntegralConstant
  * @see BR_IS_ENUM
  * @see NotEnum
  *

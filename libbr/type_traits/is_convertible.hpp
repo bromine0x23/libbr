@@ -27,7 +27,7 @@ inline namespace TypeTraits {
  * @brief 检查 \em TFrom 是否能转换为 \em TTo
  * @tparam TFrom 被转换类型
  * @tparam TTo 转换目标类型
- * @see IntegerConstant
+ * @see Utility::IntegralConstant
  * @see BR_IS_CONVERTIBLE
  * @see NotConvertible
  *

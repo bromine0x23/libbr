@@ -10,7 +10,7 @@
 namespace BR {
 
 /**
- * @brief 实用工具名字空间
+ * @brief 实用工具
  */
 inline namespace Utility {
 } // namespace Utility

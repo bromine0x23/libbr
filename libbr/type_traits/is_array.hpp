@@ -16,7 +16,7 @@ inline namespace TypeTraits {
 /**
  * @brief 检查 \em T 是否是约束长度的数组类型(<tt>U[S]</tt>)
  * @tparam T 待检查类型
- * @see IntegerConstant
+ * @see Utility::IntegralConstant
  * @see NotBoundedArray
  *
  * 如果 \em T 是约束长度的数组类型，那么封装的值为 true ；否则为 false
@@ -35,7 +35,7 @@ struct NotBoundedArray;
 /**
  * @brief 检查 \em T 是否是不约束长度的数组类型(<tt>U[]</tt>)
  * @tparam T 待检查类型
- * @see IntegerConstant
+ * @see Utility::IntegralConstant
  * @see NotUnboundedArray
  *
  * 如果 \em T 是不约束长度的数组类型，那么封装的值为 true ；否则为 false
@@ -54,9 +54,9 @@ struct NotUnboundedArray;
 /**
  * @brief 检查 \em T 是否是数组类型(<tt>U[S]</tt>或<tt>U[]</tt>)
  * @tparam T 待检查类型
- * @see IntegerConstant
- * @see IsArrayKnownBounds
- * @see IsArrayUnknownBounds
+ * @see Utility::IntegralConstant
+ * @see IsBoundedArray
+ * @see IsUnboundedArray
  * @see NotArray
  *
  * 如果 \em T 是数组类型，那么封装的值为 true ；否则为 false

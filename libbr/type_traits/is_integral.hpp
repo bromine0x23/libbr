@@ -16,7 +16,7 @@ inline namespace TypeTraits {
 /**
  * @brief 检查 \em T 是否是整型类型
  * @tparam T 待检查类型
- * @see IntegerConstant
+ * @see Utility::IntegralConstant
  * @see NotIntegral
  *
  * 如果 \em T 是整型类型(\em bool、\em char、\em char16_t、\em char32_t、\em wchar_t、\em short、\em int、\em long、<em>long long</em>及扩展整型类型，包括 \em signed 和 \em unsigned 和带CV修饰的版本)，

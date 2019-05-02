@@ -20,7 +20,7 @@ inline namespace TypeTraits {
 /**
  * @brief 检查 \em T 是否满足 \em standard-layout 约束
  * @tparam T 待检查类型
- * @see IntegerConstant
+ * @see Utility::IntegralConstant
  * @see BR_IS_STANDARD_LAYOUT
  * @see NotStandardLayout
  *

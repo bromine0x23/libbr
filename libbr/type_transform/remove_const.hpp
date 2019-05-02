@@ -15,7 +15,7 @@ inline namespace TypeTransform {
 /**
  * @brief 移除 \em const 修饰
  * @tparam T
- * @see TypeWrapper
+ * @see Utility::TypeWrapper
  * @see RemoveConst
  *
  * 包装 \em T 移除顶层的 \em const 修饰(如果存在)后的类型

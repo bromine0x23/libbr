@@ -81,3 +81,23 @@ add_subdirectory(libbr)
 # Tests
 #===============================================================================
 add_subdirectory(test)
+
+#===============================================================================
+# Setup Doxygen Target
+#===============================================================================
+
+if(LIBBR_BUILD_DOCUMENTATION)
+	find_package(Doxygen)
+
+	if(NOT DOXYGEN_FOUND)
+		message(FATAL_ERROR "Doxygen is needed to build the documentation.")
+	endif()
+
+	add_custom_target(document
+		COMMAND ${DOXYGEN_EXECUTABLE} "${PROJECT_SOURCE_DIR}/Doxyfile"
+		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+		COMMENT "Generating API documentation with Doxygen"
+		VERBATIM
+		USES_TERMINAL
+		)
+endif()

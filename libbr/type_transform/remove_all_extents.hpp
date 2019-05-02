@@ -15,7 +15,7 @@ inline namespace TypeTransform {
 /**
  * @brief 移除数组的所有维度
  * @tparam T
- * @see TypeWrapper
+ * @see Utility::TypeWrapper
  * @see RemoveAllExtents
  *
  * 如果 \em T 是 \em U 的任意维度的数组类型，则包装的类型为 \em U ；否则为 \em T
