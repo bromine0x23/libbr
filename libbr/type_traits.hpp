@@ -17,25 +17,27 @@ inline namespace TypeTraits {
 
 } // namespace BR
 
-// 类型类别特性
-#include <libbr/type_traits/is_arithmetic.hpp>
+// 类型基本类别
 #include <libbr/type_traits/is_array.hpp>
 #include <libbr/type_traits/is_floating_point.hpp>
-#include <libbr/type_traits/is_fundamental.hpp>
 #include <libbr/type_traits/is_integral.hpp>
 #include <libbr/type_traits/is_lvalue_reference.hpp>
-#include <libbr/type_traits/is_member_pointer.hpp>
 #include <libbr/type_traits/is_null_pointer.hpp>
 #include <libbr/type_traits/is_pointer.hpp>
-#include <libbr/type_traits/is_reference.hpp>
 #include <libbr/type_traits/is_rvalue_reference.hpp>
 #include <libbr/type_traits/is_void.hpp>
 
-// 类型属性特性
+// 类型复合类别
+#include <libbr/type_traits/is_arithmetic.hpp>
+#include <libbr/type_traits/is_fundamental.hpp>
+#include <libbr/type_traits/is_member_pointer.hpp>
+#include <libbr/type_traits/is_reference.hpp>
+
+// 类型属性
 #include <libbr/type_traits/extent.hpp>
 #include <libbr/type_traits/is_const.hpp>
 #include <libbr/type_traits/is_volatile.hpp>
 #include <libbr/type_traits/rank.hpp>
 
-// 类型关系特性
+// 类型关系
 #include <libbr/type_traits/is_same.hpp>
