@@ -54,6 +54,9 @@ inline namespace TypeTraits {
 #include <libbr/type_traits/is_volatile.hpp>
 #include <libbr/type_traits/rank.hpp>
 
+// 支持的操作
+#include <libbr/type_traits/has_destructor.hpp>
+
 // 类型关系
 #include <libbr/type_traits/is_base_of.hpp>
 #include <libbr/type_traits/is_convertible.hpp>

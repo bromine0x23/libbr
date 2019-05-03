@@ -13,6 +13,7 @@
 
 #endif
 
+#include "has_traits_check.hpp"
 #include "integral_traits_check.hpp"
 #include "is_traits_check.hpp"
 #include "types.hpp"
