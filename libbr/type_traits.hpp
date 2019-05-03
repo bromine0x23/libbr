@@ -56,6 +56,7 @@ inline namespace TypeTraits {
 
 // 支持的操作
 #include <libbr/type_traits/has_destructor.hpp>
+#include <libbr/type_traits/has_nothrow_destructor.hpp>
 #include <libbr/type_traits/has_trivial_destructor.hpp>
 
 // 类型关系
