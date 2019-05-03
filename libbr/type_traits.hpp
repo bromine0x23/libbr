@@ -61,6 +61,7 @@ inline namespace TypeTraits {
 
 // 类型关系
 #include <libbr/type_traits/is_base_of.hpp>
+#include <libbr/type_traits/is_constructible.hpp>
 #include <libbr/type_traits/is_convertible.hpp>
 #include <libbr/type_traits/is_same.hpp>
 #include <libbr/type_traits/is_static_castable.hpp>
