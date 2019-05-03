@@ -40,7 +40,7 @@ inline namespace TypeTraits {
  * @see BR_IS_CONSTRUCTIBLE
  * @see NotConstructible
  *
- * 如果表达式 <tt>T(BR::declare_rvalue<TArgs>()...)</tt> 是合法的，那么封装的值为 \em true ；否则为 \em false
+ * 如果表达式 <tt>T(BR::declare_value<TArgs>()...)</tt> 是合法的，那么封装的值为 \em true ；否则为 \em false
  */
 template< typename T, typename... TArgs >
 struct IsConstructible;
