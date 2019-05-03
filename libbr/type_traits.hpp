@@ -58,6 +58,9 @@ inline namespace TypeTraits {
 #include <libbr/type_traits/is_constructible.hpp>
 #include <libbr/type_traits/is_nothrow_constructible.hpp>
 #include <libbr/type_traits/is_trivially_constructible.hpp>
+#include <libbr/type_traits/is_assignable.hpp>
+#include <libbr/type_traits/is_nothrow_assignable.hpp>
+#include <libbr/type_traits/is_trivially_assignable.hpp>
 #include <libbr/type_traits/has_default_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_default_constructor.hpp>
 #include <libbr/type_traits/has_trivial_default_constructor.hpp>
