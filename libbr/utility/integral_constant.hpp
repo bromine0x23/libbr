@@ -34,7 +34,7 @@ struct IntegralConstant : public TypeWrapper<IntegralConstant<TValue, v>> {
 
 	/**
 	 * @brief 返回整型常量值
-	  * @return 被包装的整型常量值
+	 * @return 被包装的整型常量值
 	 */
 	constexpr operator TValue() const noexcept {
 		return value;
@@ -42,7 +42,7 @@ struct IntegralConstant : public TypeWrapper<IntegralConstant<TValue, v>> {
 
 	/**
 	 * @brief 返回整型常量值
-	  * @return 被包装的整型常量值
+	 * @return 被包装的整型常量值
 	 */
 	constexpr auto operator()() const noexcept -> TValue {
 		return value;

@@ -43,7 +43,6 @@ inline namespace TypeTraits {
 #include <libbr/type_traits/is_scalar.hpp>
 
 // 类型属性
-#include <libbr/type_traits/extent.hpp>
 #include <libbr/type_traits/is_abstract.hpp>
 #include <libbr/type_traits/is_const.hpp>
 #include <libbr/type_traits/is_final.hpp>
@@ -52,22 +51,23 @@ inline namespace TypeTraits {
 #include <libbr/type_traits/is_standard_layout.hpp>
 #include <libbr/type_traits/is_unsigned.hpp>
 #include <libbr/type_traits/is_volatile.hpp>
+#include <libbr/type_traits/extent.hpp>
 #include <libbr/type_traits/rank.hpp>
 
 // 支持的操作
-#include <libbr/type_traits/has_copy_constructor.hpp>
-#include <libbr/type_traits/has_default_constructor.hpp>
-#include <libbr/type_traits/has_destructor.hpp>
-#include <libbr/type_traits/has_nothrow_copy_constructor.hpp>
-#include <libbr/type_traits/has_nothrow_default_constructor.hpp>
-#include <libbr/type_traits/has_nothrow_destructor.hpp>
-#include <libbr/type_traits/has_trivial_copy_constructor.hpp>
-#include <libbr/type_traits/has_trivial_default_constructor.hpp>
-#include <libbr/type_traits/has_trivial_destructor.hpp>
-#include <libbr/type_traits/has_virtual_destructor.hpp>
 #include <libbr/type_traits/is_constructible.hpp>
 #include <libbr/type_traits/is_nothrow_constructible.hpp>
 #include <libbr/type_traits/is_trivially_constructible.hpp>
+#include <libbr/type_traits/has_default_constructor.hpp>
+#include <libbr/type_traits/has_nothrow_default_constructor.hpp>
+#include <libbr/type_traits/has_trivial_default_constructor.hpp>
+#include <libbr/type_traits/has_copy_constructor.hpp>
+#include <libbr/type_traits/has_nothrow_copy_constructor.hpp>
+#include <libbr/type_traits/has_trivial_copy_constructor.hpp>
+#include <libbr/type_traits/has_destructor.hpp>
+#include <libbr/type_traits/has_nothrow_destructor.hpp>
+#include <libbr/type_traits/has_trivial_destructor.hpp>
+#include <libbr/type_traits/has_virtual_destructor.hpp>
 
 // 类型关系
 #include <libbr/type_traits/is_base_of.hpp>
