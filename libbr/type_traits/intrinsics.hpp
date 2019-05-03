@@ -138,6 +138,7 @@
 #  define BR_IS_POLYMORPHIC(T) __is_polymorphic(T)
 #  define BR_IS_STANDARD_LAYOUT(T) __is_standard_layout(T)
 #  define BR_IS_TRIVIAL(T) __is_trivial(T)
+#  define BR_IS_TRIVIALLY_CONSTRUCTIBLE(T, ...) __is_trivially_constructible(T, ##__VA_ARGS__)
 #  define BR_IS_UNION(T) __is_union(T)
 
 #  define BR_HAS_TRIVIAL_COPY_ASSIGNMENT(T) __has_trivial_assign(T)
@@ -212,6 +213,7 @@
 #  endif
 
 #  define BR_HAS_INTRINSICS
+
 #endif
 
 #elif defined(BR_MSVC)
