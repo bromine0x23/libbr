@@ -55,10 +55,13 @@ inline namespace TypeTraits {
 #include <libbr/type_traits/rank.hpp>
 
 // 支持的操作
+#include <libbr/type_traits/has_copy_constructor.hpp>
 #include <libbr/type_traits/has_default_constructor.hpp>
 #include <libbr/type_traits/has_destructor.hpp>
+#include <libbr/type_traits/has_nothrow_copy_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_default_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_destructor.hpp>
+#include <libbr/type_traits/has_trivial_copy_constructor.hpp>
 #include <libbr/type_traits/has_trivial_default_constructor.hpp>
 #include <libbr/type_traits/has_trivial_destructor.hpp>
 #include <libbr/type_traits/has_virtual_destructor.hpp>
