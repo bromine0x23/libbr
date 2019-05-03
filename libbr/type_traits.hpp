@@ -58,6 +58,7 @@ inline namespace TypeTraits {
 #include <libbr/type_traits/has_destructor.hpp>
 #include <libbr/type_traits/has_nothrow_destructor.hpp>
 #include <libbr/type_traits/has_trivial_destructor.hpp>
+#include <libbr/type_traits/has_virtual_destructor.hpp>
 #include <libbr/type_traits/is_constructible.hpp>
 #include <libbr/type_traits/is_nothrow_constructible.hpp>
 #include <libbr/type_traits/is_trivially_constructible.hpp>
