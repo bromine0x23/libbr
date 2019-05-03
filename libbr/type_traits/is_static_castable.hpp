@@ -7,7 +7,7 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/utility/declare.hpp>
+#include <libbr/utility/declare_value.hpp>
 
 namespace BR {
 
@@ -63,7 +63,7 @@ namespace _ {
 namespace TypeTraits {
 
 struct IsStaticCastableTest {
-	template< typename TFrom, typename TTo, typename = decltype(static_cast<TTo>(declare_rvalue<TFrom>())) >
+	template< typename TFrom, typename TTo, typename = decltype(static_cast<TTo>(declare_value<TFrom>())) >
 	static BooleanTrue test(int);
 
 	template< typename TFrom, typename TTo >

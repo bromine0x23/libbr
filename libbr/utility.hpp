@@ -34,5 +34,5 @@ inline namespace Utility {
 #include <libbr/utility/non_conjunction.hpp>
 #include <libbr/utility/non_disjunction.hpp>
 
-#include <libbr/utility/declare.hpp>
+#include <libbr/utility/declare_value.hpp>
 #include <libbr/utility/forward.hpp>

@@ -14,7 +14,7 @@
 #  include <libbr/type_traits/is_void.hpp>
 #  include <libbr/utility/conjunction.hpp>
 #  include <libbr/utility/converse_abjunction.hpp>
-#  include <libbr/utility/declare.hpp>
+#  include <libbr/utility/declare_value.hpp>
 #  include <libbr/utility/disjunction.hpp>
 #  include <libbr/utility/non_disjunction.hpp>
 #endif // !BR_IS_CONVERTIBLE
@@ -85,7 +85,7 @@ struct IsConvertibleTest {
 	static void test_aux(T);
 
 	template< typename TFrom, typename TTo >
-	static auto test(int) -> decltype((test_aux<TTo>(declare_rvalue<TFrom>()), BooleanTrue()));
+	static auto test(int) -> decltype((test_aux<TTo>(declare_value<TFrom>()), BooleanTrue()));
 
 	template< typename TFrom, typename TTo >
 	static auto test(...) -> BooleanFalse;

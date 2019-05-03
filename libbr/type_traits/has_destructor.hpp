@@ -16,7 +16,7 @@
 #  include <libbr/type_traits/is_void.hpp>
 #  include <libbr/type_transform/remove_all_extents.hpp>
 #  include <libbr/utility/conjunction.hpp>
-#  include <libbr/utility/declare.hpp>
+#  include <libbr/utility/declare_value.hpp>
 #  include <libbr/utility/disjunction.hpp>
 #  include <libbr/utility/non_disjunction.hpp>
 #endif
@@ -28,7 +28,7 @@ inline namespace TypeTraits {
 /**
  * @brief 检查 \em T 具有析构函数
  * @tparam T 待检查类型
- * @see IntegerConstant
+ * @see Utility::IntegralConstant
  * @see BR_HAS_DESTRUCTOR
  * @see NoDestructor
  *
@@ -78,7 +78,7 @@ using HasDestructor = BooleanConstant< BR_HAS_DESTRUCTOR(T) >;
 #else
 
 struct HasDestructorTest {
-	template< typename T, typename = decltype(declare_reference<T>().~T()) >
+	template< typename T, typename = decltype(declare_value<T &>().~T()) >
 	static auto test(T *) -> BooleanTrue;
 
 	template< typename T >

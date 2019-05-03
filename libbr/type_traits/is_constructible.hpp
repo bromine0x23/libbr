@@ -24,7 +24,7 @@
 #  include <libbr/utility/conditional.hpp>
 #  include <libbr/utility/conjunction.hpp>
 #  include <libbr/utility/converse_abjunction.hpp>
-#  include <libbr/utility/declare.hpp>
+#  include <libbr/utility/declare_value.hpp>
 #  include <libbr/utility/disjunction.hpp>
 #endif
 
@@ -144,7 +144,7 @@ using IsConstructibleReferenceCast = Abjunction<
 >;
 
 struct IsConstructibleOneTest {
-	template< typename T, typename TArg, typename = decltype(::new T(declare_rvalue<TArg>())) >
+	template< typename T, typename TArg, typename = decltype(::new T(declare_value<TArg>())) >
 	static auto test(int) -> BooleanTrue;
 
 	template< typename T, typename TArg >
@@ -165,7 +165,7 @@ using IsConstructibleOne = Conditional<
 >;
 
 struct IsConstructibleManyTest {
-	template< typename T, typename... TArgs, typename = decltype(T(declare_rvalue<TArgs>()...)) >
+	template< typename T, typename... TArgs, typename = decltype(T(declare_value<TArgs>()...)) >
 	static auto test(int) -> BooleanTrue;
 
 	template< typename T, typename... TArg >

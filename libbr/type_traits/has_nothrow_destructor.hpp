@@ -11,7 +11,7 @@
 #if !defined(BR_HAS_NOTHROW_DESTRUCTOR)
 #  include <libbr/type_traits/has_destructor.hpp>
 #  include <libbr/utility/conjunction.hpp>
-#  include <libbr/utility/declare.hpp>
+#  include <libbr/utility/declare_value.hpp>
 #endif
 
 namespace BR {
@@ -72,7 +72,7 @@ using HasNothrowDestructor = BooleanConstant< BR_HAS_NOTHROW_DESTRUCTOR(T) >;
 #else
 
 template< typename T >
-struct HasNothrowDestructorBasic : public BooleanConstant< noexcept(declare_rvalue<T>().~T()) > {};
+struct HasNothrowDestructorBasic : public BooleanConstant< noexcept(declare_value<T>().~T()) > {};
 
 template< typename T >
 struct HasNothrowDestructor : public Conjunction<
