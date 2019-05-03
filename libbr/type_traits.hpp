@@ -70,6 +70,9 @@ inline namespace TypeTraits {
 #include <libbr/type_traits/has_move_constructor.hpp>
 #include <libbr/type_traits/has_nothrow_move_constructor.hpp>
 #include <libbr/type_traits/has_trivial_move_constructor.hpp>
+#include <libbr/type_traits/has_copy_assignment.hpp>
+#include <libbr/type_traits/has_nothrow_copy_assignment.hpp>
+#include <libbr/type_traits/has_trivial_copy_assignment.hpp>
 #include <libbr/type_traits/has_destructor.hpp>
 #include <libbr/type_traits/has_nothrow_destructor.hpp>
 #include <libbr/type_traits/has_trivial_destructor.hpp>
