@@ -34,3 +34,5 @@ inline namespace TypeTransform {
 
 #include <libbr/type_transform/remove_all_extents.hpp>
 #include <libbr/type_transform/remove_extent.hpp>
+
+#include <libbr/type_transform/decay.hpp>
