@@ -80,9 +80,12 @@ inline namespace TypeTraits {
 #include <libbr/type_traits/has_nothrow_destructor.hpp>
 #include <libbr/type_traits/has_trivial_destructor.hpp>
 #include <libbr/type_traits/has_virtual_destructor.hpp>
+#include <libbr/type_traits/has_member_function.hpp>
 
 // 类型关系
 #include <libbr/type_traits/is_base_of.hpp>
 #include <libbr/type_traits/is_convertible.hpp>
 #include <libbr/type_traits/is_same.hpp>
 #include <libbr/type_traits/is_static_castable.hpp>
+
+
