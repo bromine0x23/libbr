@@ -51,6 +51,7 @@ inline namespace TypeTraits {
 #include <libbr/type_traits/is_standard_layout.hpp>
 #include <libbr/type_traits/is_unsigned.hpp>
 #include <libbr/type_traits/is_volatile.hpp>
+#include <libbr/type_traits/alignment_of.hpp>
 #include <libbr/type_traits/extent.hpp>
 #include <libbr/type_traits/rank.hpp>
 
