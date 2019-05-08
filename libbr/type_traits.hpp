@@ -81,6 +81,7 @@ inline namespace TypeTraits {
 #include <libbr/type_traits/has_trivial_destructor.hpp>
 #include <libbr/type_traits/has_virtual_destructor.hpp>
 #include <libbr/type_traits/has_member_function.hpp>
+#include <libbr/type_traits/has_member_type.hpp>
 
 // 类型关系
 #include <libbr/type_traits/is_base_of.hpp>
