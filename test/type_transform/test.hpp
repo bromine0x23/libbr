@@ -5,17 +5,21 @@
 
 #if defined(BR_SKIP_TYPE_TRANSFORM_TEST)
 
-#define TRANSFORM_CHECK(...)
+#define TYPE_CHECK(...)
 
 #else
 
 #include <libbr/type_traits/is_same.hpp>
 
-#define TRANSFORM_CHECK(expected_type, actual_type) EXPECT_TRUE((::BR::is_same< expected_type, actual_type >))
+#define TYPE_CHECK(expected_type, actual_type) EXPECT_TRUE((::BR::is_same< expected_type, actual_type >))
 
 #endif
 
 #define TRANSFORM_APPLY_FULL( name, ...) Type ## name< __VA_ARGS__ >::Type
 #define TRANSFORM_APPLY_SHORT(name, ...)         name< __VA_ARGS__ >
+
+#define TRANSFORM_CHECK(traits, expected_type, ...)\
+	TYPE_CHECK(expected_type, TRANSFORM_APPLY_FULL( traits, ##__VA_ARGS__));\
+	TYPE_CHECK(expected_type, TRANSFORM_APPLY_SHORT(traits, ##__VA_ARGS__));
 
 #include "suffix_transform_check.hpp"
