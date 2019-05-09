@@ -39,7 +39,7 @@ inline auto uncaught_exception() noexcept -> bool {
 	return std::uncaught_exception();
 }
 
-#if defined(BR_CXX17)
+#if defined(BR_SINCE_CXX17)
 inline auto uncaught_exceptions() noexcept -> int {
 	return std::uncaught_exceptions();
 }

@@ -5,25 +5,32 @@
  */
 #pragma once
 
-#if __cplusplus == 201402L
-#  define BR_STANDARD "C++14"
-#elif __cplusplus == 201703L
-#  define BR_STANDARD "C++17"
-#endif
+#define _CXX14 201402L
+#define _CXX17 201703L
 
-#if __cplusplus >= 201402L
+#if __cplusplus == _CXX14
+#  define BR_STANDARD "C++14"
 #  define BR_CXX14
 #endif
 
-#if __cplusplus >= 201703L
+#if __cplusplus == _CXX17
+#  define BR_STANDARD "C++17"
 #  define BR_CXX17
 #endif
 
-#if __cplusplus > 201402L
+#if __cplusplus >= _CXX14
+#  define BR_SINCE_CXX14
+#endif
+
+#if __cplusplus >= _CXX17
+#  define BR_SINCE_CXX17
+#endif
+
+#if __cplusplus > _CXX14
 #  define BR_AFTER_CXX14
 #endif
 
-#if __cplusplus > 201703L
+#if __cplusplus > _CXX17
 #  define BR_AFTER_CXX17
 #endif
 
@@ -93,3 +100,6 @@
 #  define BR_CATCH(e) catch(e)
 #  define BR_RETHROW throw
 #endif
+
+#undef _CXX14
+#undef _CXX17

@@ -6,7 +6,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#ifdef BR_AFTER_CXX14
+#ifdef BR_SINCE_CXX17
 #  include <libbr/memory/alignment.hpp>
 #endif
 
@@ -51,7 +51,7 @@ public:
 	~Allocator() noexcept = default;
 
 	auto allocate(Size size) -> Element * {
-#if defined(BR_CXX17)
+#if defined(BR_SINCE_CXX17)
 		if (alignof(Element) > __STDCPP_DEFAULT_NEW_ALIGNMENT__) {
 			Alignment alignment = Alignment(alignof(Element));
 			return static_cast<Element *>(::operator new(size * sizeof(Element), alignment));
@@ -61,7 +61,7 @@ public:
 	}
 
 	void deallocate(Element * pointer, Size) noexcept {
-#if defined(BR_CXX17)
+#if defined(BR_SINCE_CXX17)
 		if (alignof(Element) > __STDCPP_DEFAULT_NEW_ALIGNMENT__) {
 			::operator delete(pointer, Alignment(alignof(Element)));
 			return;
@@ -82,7 +82,7 @@ public:
 
 }; // class BR::Allocator<TElement>
 
-#if !defined(BR_CXX17)
+#if !defined(BR_SINCE_CXX17)
 template< typename TElement >
 constexpr Boolean Allocator<TElement>::IS_ALWAYS_EQUAL;
 
