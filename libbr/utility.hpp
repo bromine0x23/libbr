@@ -36,3 +36,4 @@ inline namespace Utility {
 
 #include <libbr/utility/declare_value.hpp>
 #include <libbr/utility/forward.hpp>
+#include <libbr/utility/transfer.hpp>
