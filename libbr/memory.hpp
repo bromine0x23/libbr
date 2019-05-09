@@ -1,0 +1,22 @@
+/**
+ * @file
+ * @brief 内存管理
+ * @author Bromine0x23
+ */
+#pragma once
+
+#include <libbr/config.hpp>
+
+namespace BR {
+
+/**
+ * @brief 内存管理
+ */
+inline namespace Memory {
+} // namespace Memory
+
+} // namespace BR
+
+#include <libbr/memory/alignment.hpp>
+
+#include <libbr/memory/allocator.hpp>
