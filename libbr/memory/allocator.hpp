@@ -27,7 +27,7 @@ class Allocator;
 
 inline namespace Memory {
 
-template<typename TElement>
+template< typename TElement >
 class Allocator {
 public:
 	using Element = TElement;
@@ -36,9 +36,9 @@ public:
 
 	using Different = PointerDifference;
 
-	constexpr static Boolean IS_PROPAGATE_ON_CONTAINER_MOVE_ASSIGNMENT = true;
-
 	constexpr static Boolean IS_ALWAYS_EQUAL = true;
+
+	constexpr static Boolean IS_PROPAGATE_ON_CONTAINER_MOVE_ASSIGNMENT = true;
 
 	constexpr Allocator() noexcept = default;
 
@@ -51,7 +51,7 @@ public:
 	~Allocator() noexcept = default;
 
 	auto allocate(Size size) -> Element * {
-#ifdef BR_AFTER_CXX14
+#if defined(BR_CXX17)
 		if (alignof(Element) > __STDCPP_DEFAULT_NEW_ALIGNMENT__) {
 			Alignment alignment = Alignment(alignof(Element));
 			return static_cast<Element *>(::operator new(size * sizeof(Element), alignment));
@@ -61,7 +61,7 @@ public:
 	}
 
 	void deallocate(Element * pointer, Size) noexcept {
-#ifdef BR_AFTER_CXX14
+#if defined(BR_CXX17)
 		if (alignof(Element) > __STDCPP_DEFAULT_NEW_ALIGNMENT__) {
 			::operator delete(pointer, Alignment(alignof(Element)));
 			return;
@@ -81,6 +81,14 @@ public:
 	}
 
 }; // class BR::Allocator<TElement>
+
+#if !defined(BR_CXX17)
+template< typename TElement >
+constexpr Boolean Allocator<TElement>::IS_ALWAYS_EQUAL;
+
+template< typename TElement >
+constexpr Boolean Allocator<TElement>::IS_PROPAGATE_ON_CONTAINER_MOVE_ASSIGNMENT;
+#endif
 
 } // namespace Memory
 
