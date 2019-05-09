@@ -24,6 +24,7 @@ inline namespace TypeTransform {
 #include <libbr/type_transform/remove_const.hpp>
 #include <libbr/type_transform/remove_const_volatile.hpp>
 #include <libbr/type_transform/remove_volatile.hpp>
+#include <libbr/type_transform/copy_const_volatile.hpp>
 
 #include <libbr/type_transform/add_pointer.hpp>
 #include <libbr/type_transform/remove_pointer.hpp>
