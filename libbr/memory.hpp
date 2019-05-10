@@ -23,3 +23,4 @@ inline namespace Memory {
 
 #include <libbr/memory/memory_copy.hpp>
 #include <libbr/memory/memory_copy_unsafely.hpp>
+#include <libbr/memory/memory_fill.hpp>
