@@ -20,3 +20,6 @@ inline namespace Memory {
 #include <libbr/memory/alignment.hpp>
 
 #include <libbr/memory/allocator.hpp>
+
+#include <libbr/memory/memory_copy.hpp>
+#include <libbr/memory/memory_copy_unsafely.hpp>
