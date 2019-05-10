@@ -37,3 +37,6 @@ inline namespace TypeTransform {
 #include <libbr/type_transform/remove_extent.hpp>
 
 #include <libbr/type_transform/decay.hpp>
+
+#include <libbr/type_transform/make_signed.hpp>
+#include <libbr/type_transform/make_unsigned.hpp>
