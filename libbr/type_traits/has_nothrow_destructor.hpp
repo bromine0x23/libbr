@@ -80,11 +80,18 @@ struct HasNothrowDestructor : public Conjunction<
 	HasNothrowDestructorBasic<T>
 > {};
 
+template<>
+struct HasNothrowDestructor<void> : public BooleanFalse {};
+
 template< typename T, Size S >
 struct HasNothrowDestructor<T[S]> : public HasNothrowDestructor<T> {};
 
 template< typename T >
-struct HasNothrowDestructor<T&> : public HasNothrowDestructor<T> {};
+struct HasNothrowDestructor<T &> : public HasNothrowDestructor<T> {};
+
+template< typename T >
+struct HasNothrowDestructor<T &&> : public HasNothrowDestructor<T> {};
+
 
 #endif // defined(BR_HAS_NOTHROW_DESTRUCTOR)
 
