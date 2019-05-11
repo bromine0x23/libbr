@@ -7,7 +7,9 @@
 
 #include <libbr/config.hpp>
 #include <libbr/utility/boolean_constant.hpp>
-#include <libbr/utility/declare_value.hpp>
+#if !defined(BR_IS_ASSIGNABLE)
+#  include <libbr/utility/declare_value.hpp>
+#endif
 
 namespace BR {
 
@@ -62,6 +64,13 @@ constexpr auto not_assignable = boolean_constant< NotAssignable< T, TArg > >;
 namespace _ {
 namespace TypeTraits {
 
+#if defined(BR_IS_ASSIGNABLE)
+
+template< typename T, typename TArg >
+using IsAssignable = BooleanConstant< BR_IS_ASSIGNABLE(T, TArg) >;
+
+#else
+
 struct IsAssignableTest {
 	template< typename T, typename TArg, typename = decltype(declare_value<T>() = declare_value<TArg>()) >
 	static auto test(int) -> BooleanTrue;
@@ -72,6 +81,8 @@ struct IsAssignableTest {
 
 template< typename T, typename TArg >
 using IsAssignable = decltype(IsAssignableTest::test< T, TArg >(0));
+
+#endif // defined(BR_IS_ASSIGNABLE)
 
 } // namespace TypeTraits
 } // namespace _

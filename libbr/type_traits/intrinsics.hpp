@@ -101,6 +101,11 @@
 #define BR_IS_NOTHROW_CONSTRUCTIBLE(T, TArgs...)
 
 /**
+ * @brief 当且仅当 \em T 具有以 \em TArg 为参数的赋值运算符时返回 \em true.
+ */
+#define BR_IS_ASSIGNABLE(T, TArg)
+
+/**
  * @brief 当且仅当 \em T 具有以 \em TArg 为参数的 \em trivial 赋值运算符时返回 \em true.
  */
 #define BR_IS_TRIVIALLY_ASSIGNABLE(T, TArg)
@@ -119,6 +124,11 @@
  * @brief 当且仅当 \em T 具有平凡的析构函数时返回 \em true.
  */
 #define BR_HAS_TRIVIAL_DESTRUCTOR(T)
+
+/**
+ * @brief 当且仅当 \em T 具有 nothrow 的析构函数时返回 \em true.
+ */
+#define BR_HAS_NOTHROW_DESTRUCTOR(T)
 
 /**
  * @brief 当且仅当 \em T 具有虚析构函数时返回 \em true.
@@ -203,7 +213,7 @@
 #    define BR_IS_NOTHROW_CONSTRUCTIBLE(T, ...) __is_nothrow_constructible(T, ##__VA_ARGS__)
 #  endif
 #  if __has_feature(is_trivially_assignable)
-#    define BR_IS_TRIVIALLY_ASSIGNABLE(T0, T1) __is_trivially_assignable(T0, T1)
+#    define BR_IS_TRIVIALLY_ASSIGNABLE(T, TArg) __is_trivially_assignable(T, TArg)
 #  endif
 #  if __has_feature(has_trivial_destructor)
 #    define BR_HAS_TRIVIAL_DESTRUCTOR(T) __has_trivial_destructor(T)
@@ -232,15 +242,17 @@
 #  define BR_IS_TRIVIAL(T) __is_trivial(T)
 #  define BR_IS_UNION(T) __is_union(T)
 
-#  define BR_IS_CONSTRUCTIBLE __is_constructible
-#  define BR_IS_TRIVIALLY_CONSTRUCTIBLE __is_trivially_constructible
-#  define BR_IS_NOTHROW_CONSTRUCTIBLE __is_nothrow_constructible
+#  define BR_IS_CONSTRUCTIBLE(T, ...) __is_constructible(T, ##__VA_ARGS__)
+#  define BR_IS_TRIVIALLY_CONSTRUCTIBLE(T, ...) __is_trivially_constructible(T, ##__VA_ARGS__)
+#  define BR_IS_NOTHROW_CONSTRUCTIBLE(T, ...) __is_nothrow_constructible(T, ##__VA_ARGS__)
 
-#  define BR_IS_TRIVIALLY_ASSIGNABLE(T0, T1) __is_trivially_assignable(T0, T1)
-#  define BR_IS_NOTHROW_ASSIGNABLE(T0, T1) __is_nothrow_assignable(T0, T1)
+#  define BR_IS_ASSIGNABLE(T, TArg) __is_assignable(T, TArg)
+#  define BR_IS_TRIVIALLY_ASSIGNABLE(T, TArg) __is_trivially_assignable(T, TArg)
+#  define BR_IS_NOTHROW_ASSIGNABLE(T, TArg) __is_nothrow_assignable(T, TArg)
 
 #  define BR_HAS_DESTRUCTOR(T) __is_destructible(T)
-#  define BR_HAS_TRIVIAL_DESTRUCTOR(T) __has_trivial_destructor(T)
+#  define BR_HAS_TRIVIAL_DESTRUCTOR(T) __is_trivially_destructible(T)
+#  define BR_HAS_NOTHROW_DESTRUCTOR(T) __is_nothrow_destructible(T)
 #  define BR_HAS_VIRTUAL_DESTRUCTOR(T) __has_virtual_destructor(T)
 
 #  define BR_HAS_INTRINSICS
