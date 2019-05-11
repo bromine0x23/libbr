@@ -42,4 +42,5 @@ inline namespace TypeTransform {
 #include <libbr/type_transform/make_signed.hpp>
 #include <libbr/type_transform/make_unsigned.hpp>
 
+#include <libbr/type_transform/template_arguments.hpp>
 #include <libbr/type_transform/replace_first_template_argument.hpp>
