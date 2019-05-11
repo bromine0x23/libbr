@@ -19,11 +19,11 @@ endmacro()
 # Add a list of flags to all of 'CMAKE_CXX_FLAGS', 'CMAKE_C_FLAGS',
 # 'LIBBR_COMPILE_FLAGS' and 'LIBBR_LINK_FLAGS'.
 macro(add_target_flags)
-	foreach(value ${ARGN})
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${value}")
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${value}")
-		list(APPEND LIBBR_COMPILE_FLAGS ${value})
-		list(APPEND LIBBR_LINK_FLAGS ${value})
+	foreach(flag ${ARGN})
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}")
+		list(APPEND LIBBR_COMPILE_FLAGS ${flag})
+		list(APPEND LIBBR_LINK_FLAGS ${flag})
 	endforeach()
 endmacro()
 
@@ -65,8 +65,8 @@ endmacro()
 
 # Add a list of flags to 'LIBBR_COMPILE_FLAGS'.
 macro(add_compile_flags)
-	foreach(f ${ARGN})
-		list(APPEND LIBBR_COMPILE_FLAGS ${f})
+	foreach(flag ${ARGN})
+		list(APPEND LIBBR_COMPILE_FLAGS ${flag})
 	endforeach()
 endmacro()
 
@@ -90,8 +90,8 @@ endmacro()
 
 # Add a list of flags to 'LIBBR_LINK_FLAGS'.
 macro(add_link_flags)
-	foreach(f ${ARGN})
-		list(APPEND LIBBR_LINK_FLAGS ${f})
+	foreach(flag ${ARGN})
+		list(APPEND LIBBR_LINK_FLAGS ${flag})
 	endforeach()
 endmacro()
 

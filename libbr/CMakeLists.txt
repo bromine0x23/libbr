@@ -47,13 +47,13 @@ if (LIBBR_ENABLE_SHARED)
 	set_target_properties(
 		libbr
 		PROPERTIES
-		COMPILE_FLAGS "${LIBBR_COMPILE_FLAGS}"
-		LINK_FLAGS "${LIBBR_LINK_FLAGS}"
 		VERSION "${LIBBR_VERSION}.0"
 		SOVERSION "${LIBBR_VERSION}"
 		OUTPUT_NAME "br"
 	)
+	target_compile_options(libbr PRIVATE ${LIBBR_COMPILE_FLAGS})
 	target_compile_definitions(libbr PRIVATE LIBBR_EXPORTS)
+	target_link_options(libbr PRIVATE ${LIBBR_LINK_FLAGS})
 	target_include_directories(libbr INTERFACE "$<INSTALL_INTERFACE:include/>")
 	install(
 		TARGETS libbr
@@ -67,11 +67,11 @@ if (LIBBR_ENABLE_STATIC)
 	set_target_properties(
 		libbr-static
 		PROPERTIES
-		COMPILE_FLAGS "${LIBBR_COMPILE_FLAGS}"
-		LINK_FLAGS "${LIBBR_LINK_FLAGS}"
 		OUTPUT_NAME "br"
 	)
+	target_compile_options(libbr-static PRIVATE ${LIBBR_COMPILE_FLAGS})
 	target_compile_definitions(libbr-static PRIVATE LIBBR_STATIC)
+	target_link_options(libbr-static PRIVATE ${LIBBR_LINK_FLAGS})
 	target_include_directories(libbr-static INTERFACE "$<INSTALL_INTERFACE:include/>")
 	install(
 		TARGETS libbr-static
