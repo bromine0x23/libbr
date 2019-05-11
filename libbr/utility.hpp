@@ -21,6 +21,8 @@ inline namespace Utility {
 #include <libbr/utility/integral_constant.hpp>
 #include <libbr/utility/type_wrapper.hpp>
 
+#include <libbr/utility/type_sequence.hpp>
+
 #include <libbr/utility/conditional.hpp>
 #include <libbr/utility/enable_if.hpp>
 
