@@ -91,4 +91,6 @@ inline namespace TypeTraits {
 #include <libbr/type_traits/is_same.hpp>
 #include <libbr/type_traits/is_static_castable.hpp>
 
+#include <libbr/type_traits/integer_traits.hpp>
+
 
