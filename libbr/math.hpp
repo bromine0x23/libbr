@@ -16,3 +16,5 @@ inline namespace Math {
 } // namespace Math
 
 } // namespace BR
+
+#include <libbr/math/relation.hpp>
