@@ -27,4 +27,5 @@ inline namespace Memory {
 #include <libbr/memory/memory_fill.hpp>
 #include <libbr/memory/memory_search.hpp>
 
+#include <libbr/memory/allocator_traits.hpp>
 #include <libbr/memory/pointer_traits.hpp>

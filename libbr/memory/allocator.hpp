@@ -36,9 +36,9 @@ public:
 
 	using Different = PointerDifference;
 
-	constexpr static Boolean IS_ALWAYS_EQUAL = true;
-
 	constexpr static Boolean IS_PROPAGATE_ON_CONTAINER_MOVE_ASSIGNMENT = true;
+
+	constexpr static Boolean IS_ALWAYS_EQUAL = true;
 
 	constexpr Allocator() noexcept = default;
 
