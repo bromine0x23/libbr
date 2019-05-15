@@ -12,6 +12,7 @@ namespace BR {
 
 #include <libbr/assert.hpp>
 #include <libbr/exceptions.hpp>
+#include <libbr/memory.hpp>
 #include <libbr/type_traits.hpp>
 #include <libbr/type_transform.hpp>
 #include <libbr/utility.hpp>
