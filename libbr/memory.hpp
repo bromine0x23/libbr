@@ -22,6 +22,7 @@ inline namespace Memory {
 #include <libbr/memory/allocator.hpp>
 
 #include <libbr/memory/address_of.hpp>
+#include <libbr/memory/memory_compare.hpp>
 #include <libbr/memory/memory_copy.hpp>
 #include <libbr/memory/memory_copy_unsafely.hpp>
 #include <libbr/memory/memory_fill.hpp>
