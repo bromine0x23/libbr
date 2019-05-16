@@ -5,6 +5,7 @@ set(
 	LIBBR_COMPONENTS
 	assert
 	exceptions
+	iterators
 	math
 	memory
 	utility
