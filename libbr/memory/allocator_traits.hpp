@@ -57,7 +57,7 @@ using Element = typename TAllocator::Element;
 //
 BR_HAS_MEMBER_TYPE(Pointer)
 
-template<typename TAllocator, Boolean = HasMemberTypePointer<TAllocator>{} >
+template<typename TAllocator, Boolean = has_member_type_Pointer<TAllocator> >
 struct TypePointer;
 
 template<typename TAllocator>
@@ -75,7 +75,7 @@ using Pointer = TypeUnwrap<TypePointer<TAllocator>>;
 //
 BR_HAS_MEMBER_TYPE(ConstPointer)
 
-template<typename TAllocator, bool = HasMemberTypeConstPointer<TAllocator>{}>
+template<typename TAllocator, Boolean = has_member_type_ConstPointer<TAllocator> >
 struct TypeConstPointer;
 
 template<typename TAllocator>
@@ -93,7 +93,7 @@ using ConstPointer = TypeUnwrap< TypeConstPointer<TAllocator> >;
 //
 BR_HAS_MEMBER_TYPE(VoidPointer)
 
-template< typename TAllocator, bool = HasMemberTypeVoidPointer<TAllocator>{} >
+template< typename TAllocator, Boolean = has_member_type_VoidPointer<TAllocator> >
 struct TypeVoidPointer;
 
 template< typename TAllocator >
@@ -111,7 +111,7 @@ using VoidPointer = TypeUnwrap< TypeVoidPointer<TAllocator> >;
 //
 BR_HAS_MEMBER_TYPE(ConstVoidPointer)
 
-template< typename TAllocator, bool = HasMemberTypeConstVoidPointer<TAllocator>{} >
+template< typename TAllocator, Boolean = has_member_type_ConstVoidPointer<TAllocator> >
 struct TypeConstVoidPointer;
 
 template< typename TAllocator >
@@ -129,7 +129,7 @@ using ConstVoidPointer = TypeUnwrap< TypeConstVoidPointer<TAllocator> >;
 //
 BR_HAS_MEMBER_TYPE(Difference)
 
-template< typename TAllocator, Boolean = HasMemberTypeDifference<TAllocator>{} >
+template< typename TAllocator, Boolean = has_member_type_Difference<TAllocator> >
 struct TypeDifference;
 
 template< typename TAllocator >
@@ -147,7 +147,7 @@ using Difference = TypeUnwrap< TypeDifference<TAllocator> >;
 //
 BR_HAS_MEMBER_TYPE(Size)
 
-template< typename TAllocator, Boolean = HasMemberTypeSize<TAllocator>{} >
+template< typename TAllocator, Boolean = has_member_type_Size<TAllocator> >
 struct TypeSize;
 
 template< typename TAllocator >
@@ -252,11 +252,11 @@ using Rebind = TypeUnwrap< TypeRebind< TAllocator, TElement > >;
 //
 BR_HAS_MEMBER_FUNCTION(allocate)
 
-template< bool has_member_function, typename TAllocator, typename ... TArgs >
+template< Boolean has_member_function, typename TAllocator, typename ... TArgs >
 struct AllocateBasic;
 
 template< typename TAllocator, typename ... TArgs >
-struct Allocate : AllocateBasic< HasMemberFunction_allocate< TAllocator, TArgs ... >{}, TAllocator, TArgs ... > {};
+struct Allocate : AllocateBasic< has_member_function_allocate< TAllocator, TArgs ... >, TAllocator, TArgs ... > {};
 
 template< typename TAllocator, typename ... TArgs >
 struct AllocateBasic< true, TAllocator, TArgs ... > {
@@ -282,7 +282,7 @@ template< bool has_member_function, typename TAllocator, typename ... TArguments
 struct MaxSizeBasic;
 
 template< typename TAllocator, typename ... TArguments >
-struct MaxSize : MaxSizeBasic< HasMemberFunction_max_size< TAllocator, TArguments ... >{}, TAllocator, TArguments ... > {};
+struct MaxSize : MaxSizeBasic< has_member_function_max_size< TAllocator, TArguments ... >, TAllocator, TArguments ... > {};
 
 template< typename TAllocator, typename ... TArguments >
 struct MaxSizeBasic< true, TAllocator, TArguments ... > {
@@ -308,7 +308,11 @@ template< bool has_member_function, typename TAllocator, typename ... TArguments
 struct SelectOnContainerCopyConstructionBasic;
 
 template< typename TAllocator, typename ... TArguments >
-struct SelectOnContainerCopyConstruction : SelectOnContainerCopyConstructionBasic< HasMemberFunction_select_on_container_copy_construction< TAllocator, TArguments ... >{}, TAllocator, TArguments ... > {};
+struct SelectOnContainerCopyConstruction : SelectOnContainerCopyConstructionBasic<
+	has_member_function_select_on_container_copy_construction< TAllocator, TArguments ... >,
+	TAllocator,
+	TArguments...
+> {};
 
 template< typename TAllocator, typename ... TArguments >
 struct SelectOnContainerCopyConstructionBasic< true, TAllocator, TArguments ... > {
