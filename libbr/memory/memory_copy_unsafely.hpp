@@ -29,7 +29,7 @@ inline namespace Memory {
  * @param[in] count
  * @see libbr_memory_copy_unsafely
  */
-inline void memory_copy_unsafely(void const * source, void * destination, BR::Size count) {
+inline void memory_copy_unsafely(void const * source, void * destination, Size count) {
 	return libbr_memory_copy_unsafely(source, destination, count);
 }
 

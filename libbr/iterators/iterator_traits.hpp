@@ -121,7 +121,7 @@ template<typename TIterator>
 struct TypeDifference<TIterator, true> : TypeWrapper<typename TIterator::Difference> {};
 
 template<typename TIterator>
-struct TypeDifference<TIterator, false> : TypeWrapper<BR::PointerDifference> {};
+struct TypeDifference<TIterator, false> : TypeWrapper<PointerDifference> {};
 
 template<typename TIterator>
 using Difference = TypeUnwrap<TypeDifference<TIterator>>;

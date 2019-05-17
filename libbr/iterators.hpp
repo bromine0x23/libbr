@@ -15,7 +15,7 @@ namespace BR {
 inline namespace Iterators {
 } // namespace Iterators
 
+} // namespace BR
+
 #include <libbr/iterators/categories.hpp>
 #include <libbr/iterators/iterator_traits.hpp>
-
-} // namespace BR
