@@ -19,3 +19,5 @@ inline namespace Iterators {
 
 #include <libbr/iterators/categories.hpp>
 #include <libbr/iterators/iterator_traits.hpp>
+
+#include <libbr/iterators/advance.hpp>
