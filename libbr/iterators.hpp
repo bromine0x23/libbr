@@ -21,5 +21,6 @@ inline namespace Iterators {
 #include <libbr/iterators/iterator_traits.hpp>
 
 #include <libbr/iterators/advance.hpp>
+#include <libbr/iterators/distance.hpp>
 #include <libbr/iterators/next.hpp>
 #include <libbr/iterators/prev.hpp>
