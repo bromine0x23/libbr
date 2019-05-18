@@ -7,6 +7,14 @@
 
 #include <libbr/config.hpp>
 
+#if defined(BR_CLANG) && defined(__has_builtin) && __has_builtin(__builtin_addressof)
+#  define _HAS_BUILTIN
+#elif defined(BR_GCC) && BR_GCC_VER >= 700
+#  define _HAS_BUILTIN
+#elif defined(BR_MSVC) && BR_MSVC_VER >= 1910
+#  define _HAS_BUILTIN
+#endif
+
 namespace BR {
 inline namespace Memory {
 
@@ -17,8 +25,15 @@ inline namespace Memory {
  * @return
  */
 template< typename T >
-constexpr auto address_of(T & t) noexcept -> T * {
-	return reinterpret_cast<T *>(&const_cast<char &>(reinterpret_cast<char const volatile &>(t)));
+#if defined(_HAS_BUILTIN)
+constexpr
+#endif
+inline auto address_of(T & t) noexcept -> T * {
+#if defined(_HAS_BUILTIN)
+	return __builtin_addressof(t);
+#else
+	return reinterpret_cast<T *>(const_cast<char &>(reinterpret_cast<char const volatile &>(t)));
+#endif
 }
 
 template <class T>
