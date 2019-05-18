@@ -21,3 +21,4 @@ inline namespace Iterators {
 #include <libbr/iterators/iterator_traits.hpp>
 
 #include <libbr/iterators/advance.hpp>
+#include <libbr/iterators/next.hpp>

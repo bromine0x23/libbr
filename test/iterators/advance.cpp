@@ -2,8 +2,6 @@
 
 #include <libbr/iterators/advance.hpp>
 
-#include <libbr/type_traits/is_same.hpp>
-
 using namespace BR;
 
 TEST(Iterators, advance) {
