@@ -7,12 +7,18 @@
 
 #include <libbr/config.hpp>
 
-#if defined(BR_CLANG) && defined(__has_builtin) && __has_builtin(__builtin_addressof)
-#  define _HAS_BUILTIN
-#elif defined(BR_GCC) && BR_GCC_VER >= 700
-#  define _HAS_BUILTIN
-#elif defined(BR_MSVC) && BR_MSVC_VER >= 1910
-#  define _HAS_BUILTIN
+#if defined(BR_CLANG)
+#  if defined(__has_builtin) && __has_builtin(__builtin_addressof)
+#    define _HAS_BUILTIN
+#  endif
+#elif defined(BR_GCC)
+#  if BR_GCC_VER >= 700
+#    define _HAS_BUILTIN
+#  endif
+#elif defined(BR_MSVC)
+#  if BR_MSVC_VER >= 1910
+#    define _HAS_BUILTIN
+#  endif
 #endif
 
 namespace BR {
