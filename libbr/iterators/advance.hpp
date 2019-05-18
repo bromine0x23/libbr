@@ -14,7 +14,7 @@ namespace BR {
 inline namespace Iterators {
 
 template< typename TIterator >
-void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step);
+constexpr void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step);
 
 } // namespace Iterators
 
@@ -24,14 +24,14 @@ namespace _ {
 namespace Iterators {
 
 template< typename TIterator >
-inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step, IncrementableTraversalTag) {
+constexpr inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step, IncrementableTraversalTag) {
 	for (; step > 0; --step) {
 		++iterator;
 	}
 }
 
 template< typename TIterator >
-inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step, BidirectionalTraversalTag) {
+constexpr inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step, BidirectionalTraversalTag) {
 	if (step >= 0) {
 		for (; step > 0; --step) {
 			++iterator;
@@ -44,7 +44,7 @@ inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Di
 }
 
 template< typename TIterator >
-inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step, RandomAccessTraversalTag) {
+constexpr inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step, RandomAccessTraversalTag) {
 	iterator += step;
 }
 
@@ -54,7 +54,7 @@ inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Di
 inline namespace Iterators {
 
 template< typename TIterator >
-inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step) {
+constexpr inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step) {
 	_::Iterators::advance(iterator, step, IteratorTraits<TIterator>::iterator_category());
 }
 
