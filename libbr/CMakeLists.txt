@@ -8,6 +8,8 @@ set(
 	iterators
 	math
 	memory
+	type_traits
+	type_transform
 	utility
 )
 
@@ -37,7 +39,7 @@ foreach (component ${LIBBR_COMPONENTS})
 			source_group("Header Files\\${component}" FILES ${LIBBR_HEADERS_${component}})
 		endif ()
 	endif ()
-endforeach (component)
+endforeach ()
 
 if (NOT WIN32)
 	add_flags_if_supported(-fPIC)

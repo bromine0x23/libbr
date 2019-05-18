@@ -7,21 +7,41 @@ if (LIBBR_BUILD_TESTS)
 	find_package(Threads REQUIRED)
 
 	include_directories(${GTEST_INCLUDE_DIR})
-	include_directories(support)
 
-	file(GLOB_RECURSE LIBBR_TESTS ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-	file(GLOB LIBBR_TEST_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/support/*)
+	set(
+		LIBBR_COMPONENT_TESTS
+		iterators
+		math
+		memory
+		type_traits
+		type_transform
+		utility
+	)
 
-	add_executable(libbr-test ${LIBBR_HEADERS} ${LIBBR_TESTS} ${LIBBR_TEST_HEADERS})
+	set(LIBBR_TEST_SOURCES "")
+	foreach (component ${LIBBR_COMPONENT_TESTS})
+		string(TOUPPER ${component} COMPONENT)
+
+		option(LIBBR_ENABLE_TEST_${COMPONENT} "Build tests for component `${component}`" ON)
+
+		if (LIBBR_ENABLE_TEST_${COMPONENT})
+			file(GLOB LIBBR_TEST_SOURCES_${COMPONENT} ${component}/*.cpp)
+			list(APPEND LIBBR_TEST_SOURCES ${LIBBR_TEST_SOURCES_${COMPONENT}})
+		endif()
+	endforeach ()
+
+	add_executable(libbr-test test.cpp ${LIBBR_TEST_SOURCES})
 
 	target_compile_options(libbr-test PRIVATE ${LIBBR_COMPILE_FLAGS})
-	target_link_options(libbr-test PRIVATE ${LIBBR_LINK_FLAGS})
+	target_link_options(libbr-test PRIVATE ${LIBBR_LINK_FLAGS}  -s)
 
 	if (LIBBR_ENABLE_STATIC)
-		target_link_libraries(libbr-test libbr-static ${GTEST_BOTH_LIBRARIES})
+		target_link_libraries(libbr-test libbr-static)
 	else ()
-		target_link_libraries(libbr-test libbr        ${GTEST_BOTH_LIBRARIES})
+		target_link_libraries(libbr-test libbr)
 	endif ()
+
+	target_link_libraries(libbr-test ${GTEST_LIBRARY})
 
 	if (NOT MSVC)
 		target_link_libraries(libbr-test pthread)
