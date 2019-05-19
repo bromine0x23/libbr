@@ -19,3 +19,4 @@ inline namespace Algorithms {
 
 #include <libbr/algorithms/all_of.hpp>
 #include <libbr/algorithms/any_of.hpp>
+#include <libbr/algorithms/none_of.hpp>
