@@ -24,3 +24,5 @@ inline namespace Iterators {
 #include <libbr/iterators/distance.hpp>
 #include <libbr/iterators/next.hpp>
 #include <libbr/iterators/prev.hpp>
+
+#include <libbr/iterators/reverse_iterator.hpp>
