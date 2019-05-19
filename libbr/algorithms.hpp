@@ -18,3 +18,4 @@ inline namespace Algorithms {
 } // namespace BR
 
 #include <libbr/algorithms/all_of.hpp>
+#include <libbr/algorithms/any_of.hpp>
