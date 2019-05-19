@@ -25,6 +25,7 @@ inline namespace Utility {
 
 #include <libbr/utility/conditional.hpp>
 #include <libbr/utility/enable_if.hpp>
+#include <libbr/utility/voidance.hpp>
 
 #include <libbr/utility/abjunction.hpp>
 #include <libbr/utility/conjunction.hpp>
