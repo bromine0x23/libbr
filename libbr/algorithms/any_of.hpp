@@ -23,7 +23,7 @@ inline namespace Algorithms {
  * @retval false Otherwise.
  */
 template< typename TInputIterator, typename TUnaryPredicate >
-auto any_of(
+constexpr auto any_of(
 	TInputIterator first, TInputIterator last,
 	TUnaryPredicate && predicate
 ) -> Boolean;
@@ -35,7 +35,7 @@ auto any_of(
 inline namespace Algorithms {
 
 template< typename TInputIterator, typename TUnaryPredicate >
-inline auto any_of(TInputIterator first, TInputIterator last, TUnaryPredicate && predicate) -> Boolean {
+constexpr inline auto any_of(TInputIterator first, TInputIterator last, TUnaryPredicate && predicate) -> Boolean {
 	for (; first != last; ++first) {
 		if (forward<TUnaryPredicate>(predicate)(*first)) {
 			return true;
