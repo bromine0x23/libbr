@@ -16,3 +16,5 @@ inline namespace Algorithms {
 } // namespace Algorithms
 
 } // namespace BR
+
+#include <libbr/algorithms/all_of.hpp>
