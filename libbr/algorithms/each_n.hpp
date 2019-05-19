@@ -22,7 +22,7 @@ inline namespace Algorithms {
  * @return \f$ first + count \f$
  */
 template< typename TInputIterator, typename TSize, typename TUnaryFunctor >
-auto each_n(
+constexpr auto each_n(
 	TInputIterator first,
 	TSize count,
 	TUnaryFunctor && functor
@@ -35,7 +35,7 @@ auto each_n(
 inline namespace Algorithms {
 
 template< typename TInputIterator, typename TSize, typename TUnaryFunctor >
-inline auto each_n(TInputIterator first, TSize count, TUnaryFunctor && functor) -> TInputIterator {
+constexpr inline auto each_n(TInputIterator first, TSize count, TUnaryFunctor && functor) -> TInputIterator {
 	for (; count > 0; ++first, (void)--count) {
 		forward<TUnaryFunctor>(functor)(*first);
 	}
