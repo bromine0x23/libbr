@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.12)
 
 set(
 	LIBBR_COMPONENTS
+	algorithms
 	assert
 	exceptions
 	iterators

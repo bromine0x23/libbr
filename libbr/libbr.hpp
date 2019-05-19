@@ -10,6 +10,7 @@ namespace BR {
 
 #include <libbr/config.hpp>
 
+#include <libbr/algorithms.hpp>
 #include <libbr/assert.hpp>
 #include <libbr/exceptions.hpp>
 #include <libbr/iterators.hpp>
