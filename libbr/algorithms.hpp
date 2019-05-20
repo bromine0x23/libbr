@@ -26,3 +26,5 @@ inline namespace Algorithms {
 #include <libbr/algorithms/find_if.hpp>
 #include <libbr/algorithms/find_unless.hpp>
 #include <libbr/algorithms/none_of.hpp>
+
+#include <libbr/algorithms/copy.hpp>
