@@ -345,10 +345,10 @@ struct AllocatorTraits {
 	using Difference       = _::Memory::AllocatorTraits::Difference<Allocator>;
 	using Size             = _::Memory::AllocatorTraits::Size<Allocator>;
 
-	constexpr static auto IS_PROPAGATE_ON_CONTAINER_COPY_ASSIGNMENT = boolean_constant< _::Memory::AllocatorTraits::IsPropagateOnContainerCopyAssignment<Allocator> >;
-	constexpr static auto IS_PROPAGATE_ON_CONTAINER_MOVE_ASSIGNMENT = boolean_constant< _::Memory::AllocatorTraits::IsPropagateOnContainerMoveAssignment<Allocator> >;
-	constexpr static auto IS_PROPAGATE_ON_CONTAINER_SWAP            = boolean_constant< _::Memory::AllocatorTraits::IsPropagateOnContainerSwap<Allocator> >;
-	constexpr static auto IS_ALWAYS_EQUAL                           = boolean_constant< _::Memory::AllocatorTraits::IsAlwaysEqual<Allocator> >;
+	constexpr static Boolean IS_PROPAGATE_ON_CONTAINER_COPY_ASSIGNMENT = boolean_constant< _::Memory::AllocatorTraits::IsPropagateOnContainerCopyAssignment<Allocator> >;
+	constexpr static Boolean IS_PROPAGATE_ON_CONTAINER_MOVE_ASSIGNMENT = boolean_constant< _::Memory::AllocatorTraits::IsPropagateOnContainerMoveAssignment<Allocator> >;
+	constexpr static Boolean IS_PROPAGATE_ON_CONTAINER_SWAP            = boolean_constant< _::Memory::AllocatorTraits::IsPropagateOnContainerSwap<Allocator> >;
+	constexpr static Boolean IS_ALWAYS_EQUAL                           = boolean_constant< _::Memory::AllocatorTraits::IsAlwaysEqual<Allocator> >;
 
 	template<typename TElement>
 	using Rebind = _::Memory::AllocatorTraits::Rebind<TAllocator, TElement>;
@@ -382,7 +382,21 @@ struct AllocatorTraits {
 	static auto select_on_container_copy_construction(Allocator const & allocator) noexcept -> Allocator {
 		return _::Memory::AllocatorTraits::SelectOnContainerCopyConstruction<Allocator>::call(allocator);
 	}
-};
+}; // AllocatorTraits<TAllocator>
+
+#if !defined(BR_AFTER_CXX14)
+template<typename TAllocator>
+constexpr Boolean BR::Memory::AllocatorTraits<TAllocator>::IS_PROPAGATE_ON_CONTAINER_COPY_ASSIGNMENT;
+
+template<typename TAllocator>
+constexpr Boolean BR::Memory::AllocatorTraits<TAllocator>::IS_PROPAGATE_ON_CONTAINER_MOVE_ASSIGNMENT;
+
+template<typename TAllocator>
+constexpr Boolean BR::Memory::AllocatorTraits<TAllocator>::IS_PROPAGATE_ON_CONTAINER_SWAP;
+
+template<typename TAllocator>
+constexpr Boolean BR::Memory::AllocatorTraits<TAllocator>::IS_ALWAYS_EQUAL;
+#endif
 
 } // namespace Memory
 
