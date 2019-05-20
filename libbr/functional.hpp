@@ -18,4 +18,5 @@ inline namespace Functional {
 } // namespace BR
 
 #include <libbr/functional/basic_functor.hpp>
+#include <libbr/functional/unary_functor.hpp>
 #include <libbr/functional/binary_functor.hpp>
