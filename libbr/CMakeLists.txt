@@ -6,6 +6,7 @@ set(
 	algorithms
 	assert
 	exceptions
+	functional
 	iterators
 	math
 	memory

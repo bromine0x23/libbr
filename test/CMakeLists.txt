@@ -11,6 +11,7 @@ if (LIBBR_BUILD_TESTS)
 	set(
 		LIBBR_COMPONENT_TESTS
 		algorithms
+		functional
 		iterators
 		math
 		memory

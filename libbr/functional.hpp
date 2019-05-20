@@ -1,0 +1,18 @@
+/**
+ * @file
+ * @brief 仿函数模块
+ * @author Bromine0x23
+ */
+#pragma once
+
+#include <libbr/config.hpp>
+
+namespace BR {
+
+/**
+ * @brief 仿函数模块
+ */
+inline namespace Functional {
+} // namespace Functional
+
+} // namespace BR
