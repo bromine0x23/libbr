@@ -23,5 +23,6 @@ inline namespace Functional {
 #include <libbr/functional/variadic_functor.hpp>
 
 #include <libbr/functional/greater.hpp>
+#include <libbr/functional/greater_equal.hpp>
 #include <libbr/functional/less.hpp>
 #include <libbr/functional/less_equal.hpp>
