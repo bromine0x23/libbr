@@ -28,3 +28,4 @@ inline namespace Algorithms {
 #include <libbr/algorithms/none_of.hpp>
 
 #include <libbr/algorithms/copy.hpp>
+#include <libbr/algorithms/copy_if.hpp>
