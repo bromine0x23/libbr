@@ -15,5 +15,6 @@ TEST(Functional, Greater) {
 
 		EXPECT_TRUE(greater(2, 1));
 		EXPECT_TRUE(greater(-1, 2));
+		EXPECT_FALSE(greater(-2, -1));
 	}
 }

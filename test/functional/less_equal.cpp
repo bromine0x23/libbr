@@ -19,5 +19,6 @@ TEST(Functional, LessEqual) {
 		EXPECT_TRUE(less_equal(1, 2));
 		EXPECT_TRUE(less_equal(-1, -1));
 		EXPECT_FALSE(less_equal(-1, 2));
+		EXPECT_TRUE(less_equal(-2, -1));
 	}
 }
