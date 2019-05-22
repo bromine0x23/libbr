@@ -1,18 +1,18 @@
 /**
  * @file
  * @brief fill
- * @since 1.0
+ * @author Bromine0x23
  */
 #pragma once
 
 #include <libbr/config.hpp>
 #include <libbr/algorithms/fill_n.hpp>
 #include <libbr/iterators/categories.hpp>
-#include <libbr/type_traits/iterator_traits.hpp>
+#include <libbr/iterators/iterator_traits.hpp>
 
 namespace BR {
 
-inline namespace Algorithm {
+inline namespace Algorithms {
 
 /**
  * @brief Copy-assigns the given value to every element in a range.
@@ -27,12 +27,12 @@ void fill(
 	TValue const & value
 );
 
-} // namespace Algorithm
+} // namespace Algorithms
 
 
 
-namespace Detail {
-namespace Algorithm {
+namespace _ {
+namespace Algorithms {
 
 template< typename TForwardIterator, typename TValue >
 inline void fill(TForwardIterator first, TForwardIterator last, TValue const & value, ForwardTraversalTag) {
@@ -46,16 +46,16 @@ inline void fill(TRandomAccessIterator first, TRandomAccessIterator last, TValue
 	fill_n(first, last - first, value);
 }
 
-} // namespace Algorithm
-} // namespace Detail
+} // namespace Algorithms
+} // namespace _
 
-inline namespace Algorithm {
+inline namespace Algorithms {
 
 template< typename TForwardIterator, typename TValue >
 inline void fill(TForwardIterator first, TForwardIterator last, TValue const & value) {
-	Detail::Algorithm::fill(first, last, value, typename IteratorTraits<TForwardIterator>::Category{});
+	_::Algorithms::fill(first, last, value, IteratorTraits<TForwardIterator>::iterator_category());
 }
 
-} // namespace Algorithm
+} // namespace Algorithms
 
 } // namespace BR
