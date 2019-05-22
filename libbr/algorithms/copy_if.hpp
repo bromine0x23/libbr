@@ -1,6 +1,7 @@
 /**
  * @file
  * @brief copy_if
+ * @author Bromine0x23
  */
 #pragma once
 

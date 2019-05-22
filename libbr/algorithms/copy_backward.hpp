@@ -1,7 +1,7 @@
 /**
  * @file
  * @brief copy_backward
- * @since 1.0
+ * @author Bromine0x23
  */
 #pragma once
 
