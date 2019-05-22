@@ -4,7 +4,7 @@
 
 using namespace BR;
 
-TEST(Algorithm, copy_if) {
+TEST(Algorithms, copy_if) {
 	int from_array[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
 	decltype(from_array) to_array = {};
