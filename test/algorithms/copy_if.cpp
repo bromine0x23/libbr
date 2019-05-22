@@ -5,7 +5,7 @@
 using namespace BR;
 
 TEST(Algorithms, copy_if) {
-	int from_array[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+	int from_array[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
 	decltype(from_array) to_array = {};
 
@@ -17,4 +17,5 @@ TEST(Algorithms, copy_if) {
 	EXPECT_EQ(4, to_array[1]);
 	EXPECT_EQ(6, to_array[2]);
 	EXPECT_EQ(8, to_array[3]);
+	EXPECT_EQ(10, to_array[4]);
 }
