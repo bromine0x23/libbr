@@ -32,5 +32,6 @@ inline namespace Algorithms {
 #include <libbr/algorithms/copy_if.hpp>
 #include <libbr/algorithms/fill.hpp>
 #include <libbr/algorithms/fill_n.hpp>
+#include <libbr/algorithms/generate.hpp>
 #include <libbr/algorithms/move.hpp>
 #include <libbr/algorithms/transform.hpp>
