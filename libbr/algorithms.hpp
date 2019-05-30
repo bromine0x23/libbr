@@ -40,4 +40,6 @@ inline namespace Algorithms {
 #include <libbr/algorithms/remove_copy.hpp>
 #include <libbr/algorithms/remove_copy_if.hpp>
 #include <libbr/algorithms/remove_if.hpp>
+#include <libbr/algorithms/replace.hpp>
+#include <libbr/algorithms/replace_if.hpp>
 #include <libbr/algorithms/transform.hpp>
