@@ -23,6 +23,7 @@ inline namespace Algorithms {
 #include <libbr/algorithms/count_if.hpp>
 #include <libbr/algorithms/each.hpp>
 #include <libbr/algorithms/each_n.hpp>
+#include <libbr/algorithms/find.hpp>
 #include <libbr/algorithms/find_if.hpp>
 #include <libbr/algorithms/find_unless.hpp>
 #include <libbr/algorithms/none_of.hpp>
