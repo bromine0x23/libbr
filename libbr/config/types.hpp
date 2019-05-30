@@ -174,24 +174,30 @@ using OWord = UInt128;
 using NullPointer = decltype(nullptr);
 
 /**
+ * @brief C风格指针
+ */
+template< typename T >
+using CPointer = T *;
+
+/**
  * @brief C风格数组
  */
-template<typename T, Size S>
+template< typename T, Size S >
 using CArray = T[S];
 
 /**
  * @brief 无界C风格数组
  */
-template<typename T>
+template< typename T >
 using CArrayUnbound = T[];
 
 /**
  * @brief C风格字符串
  */
-template<typename TChar>
+template< typename TChar >
 using CString = TChar const *;
 
-template<typename TResult, typename ... TArguments>
+template< typename TResult, typename ... TArguments >
 using CFunction = auto (TArguments...) -> TResult;
 
 template<typename TClass, typename TMember>
