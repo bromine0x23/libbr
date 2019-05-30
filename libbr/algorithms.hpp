@@ -37,5 +37,6 @@ inline namespace Algorithms {
 #include <libbr/algorithms/generate_n.hpp>
 #include <libbr/algorithms/move.hpp>
 #include <libbr/algorithms/remove.hpp>
+#include <libbr/algorithms/remove_copy.hpp>
 #include <libbr/algorithms/remove_if.hpp>
 #include <libbr/algorithms/transform.hpp>
