@@ -17,4 +17,5 @@ inline namespace Math {
 
 } // namespace BR
 
+#include <libbr/math/gcd.hpp>
 #include <libbr/math/relation.hpp>
