@@ -15,6 +15,8 @@
 
 namespace BR {
 
+inline namespace Utility {
+
 /**
  * @tparam T
  * @param a
@@ -39,6 +41,8 @@ constexpr inline void swap(CArray<T, S> & lhs, CArray<T, S> & rhs) noexcept(bool
 		swap(lhs[i], rhs[i]);
 	}
 }
+
+} // namespace Utility
 
 } // namespace BR
 
