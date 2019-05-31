@@ -51,3 +51,5 @@ inline namespace Algorithms {
 #include <libbr/algorithms/rotate_copy.hpp>
 #include <libbr/algorithms/swap.hpp>
 #include <libbr/algorithms/transform.hpp>
+#include <libbr/algorithms/uniquify.hpp>
+#include <libbr/algorithms/uniquify_copy.hpp>
