@@ -46,5 +46,7 @@ inline namespace Algorithms {
 #include <libbr/algorithms/replace_if.hpp>
 #include <libbr/algorithms/reverse.hpp>
 #include <libbr/algorithms/reverse_copy.hpp>
+#include <libbr/algorithms/rotate.hpp>
+#include <libbr/algorithms/rotate_copy.hpp>
 #include <libbr/algorithms/swap.hpp>
 #include <libbr/algorithms/transform.hpp>
