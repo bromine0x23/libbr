@@ -12,4 +12,6 @@ TEST(Algorithms, find_adjacent) {
 	EXPECT_EQ(array + 4, find_adjacent(array, array + 9));
 
 	EXPECT_EQ(array + 7, find_adjacent(array, array + 9, Greater<>{}));
+
+	EXPECT_EQ(array + 9, find_adjacent(array, array + 9, [](auto x, auto y){ return x + y >= 100; }));
 }
