@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief search_sequence
+ * @brief search
  * @author Bromine0x23
  */
 #pragma once
@@ -134,7 +134,7 @@ constexpr inline auto search(TForwardIterator0 first0, TForwardIterator0 last0, 
 
 template< typename TForwardIterator0, typename TForwardIterator1 >
 constexpr inline auto search(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1) -> TForwardIterator0 {
-	return search(first0, last0, first1, last1, Equal<>());
+	return search(first0, last0, first1, last1, Equal<>{});
 }
 
 } // namespace Algorithms
