@@ -59,3 +59,4 @@ inline namespace Algorithms {
 #include <libbr/algorithms/uniquify_copy.hpp>
 
 #include <libbr/algorithms/is_partitioned.hpp>
+#include <libbr/algorithms/partition.hpp>
