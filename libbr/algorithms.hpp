@@ -60,3 +60,4 @@ inline namespace Algorithms {
 
 #include <libbr/algorithms/is_partitioned.hpp>
 #include <libbr/algorithms/partition.hpp>
+#include <libbr/algorithms/partition_stably.hpp>
