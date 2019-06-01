@@ -31,6 +31,7 @@ inline namespace Algorithms {
 #include <libbr/algorithms/none_of.hpp>
 #include <libbr/algorithms/search.hpp>
 #include <libbr/algorithms/search_last.hpp>
+#include <libbr/algorithms/search_repeated.hpp>
 
 #include <libbr/algorithms/copy.hpp>
 #include <libbr/algorithms/copy_backward.hpp>
