@@ -64,3 +64,4 @@ inline namespace Algorithms {
 #include <libbr/algorithms/partition_stably.hpp>
 
 #include <libbr/algorithms/sort.hpp>
+#include <libbr/algorithms/sorted_until.hpp>
