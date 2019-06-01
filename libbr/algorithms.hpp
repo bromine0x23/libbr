@@ -57,3 +57,5 @@ inline namespace Algorithms {
 #include <libbr/algorithms/transform.hpp>
 #include <libbr/algorithms/uniquify.hpp>
 #include <libbr/algorithms/uniquify_copy.hpp>
+
+#include <libbr/algorithms/is_partitioned.hpp>
