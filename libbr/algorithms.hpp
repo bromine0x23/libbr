@@ -66,3 +66,5 @@ inline namespace Algorithms {
 #include <libbr/algorithms/is_sorted.hpp>
 #include <libbr/algorithms/sort.hpp>
 #include <libbr/algorithms/sorted_until.hpp>
+
+#include <libbr/algorithms/merge.hpp>
