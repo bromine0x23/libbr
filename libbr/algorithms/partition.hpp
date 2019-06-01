@@ -75,13 +75,19 @@ auto partition(TBidirectionalIterator first, TBidirectionalIterator last, TUnary
 	}
 }
 
+template< typename TForwardIterator, typename TUnaryPredicate >
+inline auto partition(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate) -> TForwardIterator {
+	return partition(first, last, forward<TUnaryPredicate>(predicate), IteratorTraits<TForwardIterator>::iterator_category());
+}
+
 } // namespace Algorithms
 } // namespace _
 
 inline namespace Algorithms {
+
 template< typename TForwardIterator, typename TUnaryPredicate >
 inline auto partition(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate) -> TForwardIterator {
-	return _::Algorithms::partition(first, last, forward<TUnaryPredicate>(predicate), IteratorTraits<TForwardIterator>::iterator_category());
+	return _::Algorithms::partition(first, last, forward<TUnaryPredicate>(predicate));
 }
 
 } // namespace Algorithms

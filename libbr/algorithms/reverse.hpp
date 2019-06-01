@@ -53,6 +53,11 @@ inline void reverse(TRandomAccessIterator first, TRandomAccessIterator last, Ran
 	}
 }
 
+template< typename TBidirectionalIterator >
+inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last) {
+	return reverse(first, last, IteratorTraits<TBidirectionalIterator>::iterator_category());
+}
+
 } // namespace Algorithms
 } // namespace _
 
@@ -60,7 +65,7 @@ inline namespace Algorithms {
 
 template< typename TBidirectionalIterator >
 inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last) {
-	return _::Algorithms::reverse(first, last, IteratorTraits<TBidirectionalIterator>::iterator_category());
+	return _::Algorithms::reverse(first, last);
 }
 
 } // namespace Algorithms

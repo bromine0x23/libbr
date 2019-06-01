@@ -100,6 +100,11 @@ auto uniquify_copy(TInputIterator first, TInputIterator last, TForwardIterator o
 	return output;
 }
 
+template< typename TInputIterator, typename TOutputIterator, typename TBinaryPredicate >
+inline auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIterator output, TBinaryPredicate && predicate) -> TOutputIterator {
+	return uniquify_copy(first, last, output, forward<TBinaryPredicate>(predicate), IteratorTraits<TInputIterator>::iterator_category(), IteratorTraits<TOutputIterator>::iterator_category());
+}
+
 } // namespace Algorithms
 } // namespace _
 
@@ -107,7 +112,7 @@ inline namespace Algorithms {
 
 template< typename TInputIterator, typename TOutputIterator, typename TBinaryPredicate >
 inline auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIterator output, TBinaryPredicate && predicate) -> TOutputIterator {
-	return _::Algorithms::uniquify_copy(first, last, output, forward<TBinaryPredicate>(predicate), IteratorTraits<TInputIterator>::iterator_category(), IteratorTraits<TOutputIterator>::iterator_category());
+	return _::Algorithms::uniquify_copy(first, last, output, forward<TBinaryPredicate>(predicate));
 }
 
 template< typename TInputIterator, typename TOutputIterator >

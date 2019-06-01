@@ -46,6 +46,11 @@ inline void fill(TRandomAccessIterator first, TRandomAccessIterator last, TValue
 	fill_n(first, last - first, value);
 }
 
+template< typename TForwardIterator, typename TValue >
+inline void fill(TForwardIterator first, TForwardIterator last, TValue const & value) {
+	fill(first, last, value, IteratorTraits<TForwardIterator>::iterator_category());
+}
+
 } // namespace Algorithms
 } // namespace _
 
@@ -53,7 +58,7 @@ inline namespace Algorithms {
 
 template< typename TForwardIterator, typename TValue >
 inline void fill(TForwardIterator first, TForwardIterator last, TValue const & value) {
-	_::Algorithms::fill(first, last, value, IteratorTraits<TForwardIterator>::iterator_category());
+	_::Algorithms::fill(first, last, value);
 }
 
 } // namespace Algorithms

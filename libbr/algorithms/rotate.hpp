@@ -160,11 +160,6 @@ inline auto rotate(TRandomAccessIterator first, TRandomAccessIterator middle, TR
 	return rotate_forward(first, middle, last);
 }
 
-} // namespace Algorithms
-} // namespace _
-
-inline namespace Algorithms {
-
 template< typename TForwardIterator >
 inline auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIterator last) -> TForwardIterator {
 	if (first == middle) {
@@ -173,7 +168,17 @@ inline auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIter
 	if (middle == last) {
 		return first;
 	}
-	return _::Algorithms::rotate(first, middle, last, IteratorTraits<TForwardIterator>::iterator_category());
+	return rotate(first, middle, last, IteratorTraits<TForwardIterator>::iterator_category());
+}
+
+} // namespace Algorithms
+} // namespace _
+
+inline namespace Algorithms {
+
+template< typename TForwardIterator >
+inline auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIterator last) -> TForwardIterator {
+	return _::Algorithms::rotate(first, middle, last);
 }
 
 } // namespace Algorithms

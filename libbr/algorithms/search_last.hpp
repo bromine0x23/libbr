@@ -87,7 +87,7 @@ constexpr auto search_last(TForwardIterator0 first0, TForwardIterator0 last0, TF
 			}
 		}
 	}
-};
+}
 
 template< typename TBidirectionalIterator0, typename TBidirectionalIterator1, typename TBinaryPredicate >
 constexpr auto search_last(TBidirectionalIterator0 first0, TBidirectionalIterator0 last0, TBidirectionalIterator1 first1, TBidirectionalIterator1 last1, TBinaryPredicate && predicate, BidirectionalTraversalTag, BidirectionalTraversalTag) -> TBidirectionalIterator0 {
@@ -156,6 +156,11 @@ constexpr auto search_last(TRandomAccessIterator0 first0, TRandomAccessIterator0
 	}
 }
 
+template< typename TForwardIterator0, typename TForwardIterator1, typename TBinaryPredicate >
+constexpr inline auto search_last(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1, TBinaryPredicate predicate) -> TForwardIterator0 {
+	return search_last(first0, last0, first1, last1, forward<TBinaryPredicate>(predicate), IteratorTraits<TForwardIterator0>::iterator_category(), IteratorTraits<TForwardIterator1>::iterator_category());
+}
+
 } // namespace Algorithms
 } // namespace _
 
@@ -163,7 +168,7 @@ inline namespace Algorithms {
 
 template< typename TForwardIterator0, typename TForwardIterator1, typename TBinaryPredicate >
 constexpr inline auto search_last(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1, TBinaryPredicate predicate) -> TForwardIterator0 {
-	return _::Algorithms::search_last(first0, last0, first1, last1, forward<TBinaryPredicate>(predicate), IteratorTraits<TForwardIterator0>::iterator_category(), IteratorTraits<TForwardIterator1>::iterator_category());
+	return _::Algorithms::search_last(first0, last0, first1, last1, forward<TBinaryPredicate>(predicate));
 }
 
 template< typename TForwardIterator0, typename TForwardIterator1 >

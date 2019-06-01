@@ -125,6 +125,11 @@ constexpr auto search_repeated(TForwardIterator first, TForwardIterator last, TS
 	}
 }
 
+template< typename TForwardIterator, typename TSize, typename TValue, typename TBinaryPredicate >
+constexpr inline auto search_repeated(TForwardIterator first, TForwardIterator last, TSize count, TValue const & value, TBinaryPredicate && predicate) -> TForwardIterator {
+	return search_repeated(first, last, count, value, forward<TBinaryPredicate>(predicate), IteratorTraits<TForwardIterator>::iterator_category());
+}
+
 } // namespace Algorithms
 } // namespace _
 
@@ -132,7 +137,7 @@ inline namespace Algorithms {
 
 template< typename TForwardIterator, typename TSize, typename TValue, typename TBinaryPredicate >
 constexpr inline auto search_repeated(TForwardIterator first, TForwardIterator last, TSize count, TValue const & value, TBinaryPredicate && predicate) -> TForwardIterator {
-	return _::Algorithms::search_repeated(first, last, count, value, forward<TBinaryPredicate>(predicate), IteratorTraits<TForwardIterator>::iterator_category());
+	return _::Algorithms::search_repeated(first, last, count, value, forward<TBinaryPredicate>(predicate));
 }
 
 template< typename TForwardIterator, typename TSize, typename TValue >

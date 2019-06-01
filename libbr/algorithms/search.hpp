@@ -122,6 +122,11 @@ constexpr auto search(TRandomAccessIterator0 first0, TRandomAccessIterator0 last
 	}
 }
 
+template< typename TForwardIterator0, typename TForwardIterator1, typename TBinaryPredicate >
+constexpr inline auto search(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1, TBinaryPredicate && predicate) -> TForwardIterator0 {
+	return search(first0, last0, first1, last1, forward<TBinaryPredicate>(predicate), IteratorTraits<TForwardIterator0>::iterator_category(), IteratorTraits<TForwardIterator1>::iterator_category());
+}
+
 } // namespace Algorithms
 } // namespace _
 
@@ -129,7 +134,7 @@ inline namespace Algorithms {
 
 template< typename TForwardIterator0, typename TForwardIterator1, typename TBinaryPredicate >
 constexpr inline auto search(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1, TBinaryPredicate && predicate) -> TForwardIterator0 {
-	return _::Algorithms::search(first0, last0, first1, last1, forward<TBinaryPredicate>(predicate), IteratorTraits<TForwardIterator0>::iterator_category(), IteratorTraits<TForwardIterator1>::iterator_category());
+	return _::Algorithms::search(first0, last0, first1, last1, forward<TBinaryPredicate>(predicate));
 }
 
 template< typename TForwardIterator0, typename TForwardIterator1 >
