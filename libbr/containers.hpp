@@ -16,3 +16,5 @@ inline namespace Containers {
 } // namespace Containers
 
 } // namespace BR
+
+#include <libbr/containers/pair.hpp>
