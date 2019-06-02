@@ -72,3 +72,4 @@ inline namespace Algorithms {
 
 #include <libbr/algorithms/max_element.hpp>
 #include <libbr/algorithms/min_element.hpp>
+#include <libbr/algorithms/minmax_element.hpp>
