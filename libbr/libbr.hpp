@@ -18,6 +18,7 @@ namespace BR {
 #include <libbr/iterators.hpp>
 #include <libbr/math.hpp>
 #include <libbr/memory.hpp>
+#include <libbr/strings.hpp>
 #include <libbr/type_traits.hpp>
 #include <libbr/type_transform.hpp>
 #include <libbr/utility.hpp>

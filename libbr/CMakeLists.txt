@@ -11,6 +11,7 @@ set(
 	iterators
 	math
 	memory
+	strings
 	type_traits
 	type_transform
 	utility
