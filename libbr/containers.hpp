@@ -1,0 +1,18 @@
+/**
+ * @file
+ * @brief 容器模块
+ * @author Bromine0x23
+ */
+#pragma once
+
+#include <libbr/config.hpp>
+
+namespace BR {
+
+/**
+ * @brief 容器模块
+ */
+inline namespace Containers {
+} // namespace Containers
+
+} // namespace BR

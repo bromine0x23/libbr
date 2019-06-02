@@ -5,6 +5,7 @@ set(
 	LIBBR_COMPONENTS
 	algorithms
 	assert
+	containers
 	exceptions
 	functional
 	iterators
