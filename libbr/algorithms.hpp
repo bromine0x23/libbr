@@ -69,3 +69,6 @@ inline namespace Algorithms {
 #include <libbr/algorithms/sorted_until.hpp>
 
 #include <libbr/algorithms/merge.hpp>
+
+#include <libbr/algorithms/max_element.hpp>
+#include <libbr/algorithms/min_element.hpp>
