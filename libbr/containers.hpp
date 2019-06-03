@@ -17,4 +17,5 @@ inline namespace Containers {
 
 } // namespace BR
 
+#include <libbr/containers/initializer_list.hpp>
 #include <libbr/containers/pair.hpp>
