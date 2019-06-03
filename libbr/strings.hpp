@@ -16,3 +16,5 @@ inline namespace Strings {
 } // namespace Strings
 
 } // namespace BR
+
+#include <libbr/strings/string_compare.hpp>
