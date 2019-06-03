@@ -71,5 +71,6 @@ inline namespace Algorithms {
 #include <libbr/algorithms/merge.hpp>
 
 #include <libbr/algorithms/max_element.hpp>
+#include <libbr/algorithms/maxmin_element.hpp>
 #include <libbr/algorithms/min_element.hpp>
 #include <libbr/algorithms/minmax_element.hpp>
