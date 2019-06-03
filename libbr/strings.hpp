@@ -19,3 +19,4 @@ inline namespace Strings {
 
 #include <libbr/strings/string_compare.hpp>
 #include <libbr/strings/string_fill.hpp>
+#include <libbr/strings/string_length.hpp>

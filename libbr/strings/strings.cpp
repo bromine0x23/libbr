@@ -28,3 +28,11 @@ auto libbr_nstring_fill(BR::NChar * destination, BR::Size count, BR::NChar value
 auto libbr_wstring_fill(BR::WChar * destination, BR::Size count, BR::WChar value) -> BR::WChar * {
 	return std::wmemset(destination, value, count);
 }
+
+auto libbr_nstring_length(BR::CString<BR::NChar> string) -> BR::Size {
+	return std::strlen(string);
+}
+
+auto libbr_wstring_length(BR::CString<BR::WChar> string) -> BR::Size {
+	return std::wcslen(string);
+}
