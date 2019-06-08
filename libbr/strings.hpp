@@ -18,5 +18,6 @@ inline namespace Strings {
 } // namespace BR
 
 #include <libbr/strings/string_compare.hpp>
+#include <libbr/strings/string_copy_unsafely.hpp>
 #include <libbr/strings/string_fill.hpp>
 #include <libbr/strings/string_length.hpp>
