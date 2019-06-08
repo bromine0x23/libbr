@@ -21,6 +21,14 @@ auto libbr_wstring_compare_n(BR::CString<BR::WChar> x, BR::CString<BR::WChar> y,
 	return BR::to_relation(std::wcsncmp(x, y, count));
 }
 
+auto libbr_nstring_copy(BR::CString<BR::NChar> source, BR::NChar * destination, BR::Size count) -> BR::NChar * {
+	return reinterpret_cast<BR::NChar *>(std::memmove(destination, source, count));
+}
+
+auto libbr_wstring_cop(BR::CString<BR::WChar> source, BR::WChar * destination, BR::Size count) -> BR::WChar * {
+	return std::wmemmove(destination, source, count);
+}
+
 auto libbr_nstring_copy_unsafely(BR::CString<BR::NChar> source, BR::NChar * destination) -> BR::NChar * {
 	return std::strcpy(destination, source);
 }
