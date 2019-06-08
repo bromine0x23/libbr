@@ -5,6 +5,22 @@
 
 using namespace BR;
 
+auto libbr_nstring_append(BR::NChar * destination, BR::CString<BR::NChar> source) -> BR::NChar * {
+	return std::strcat(destination, source);
+}
+
+auto libbr_wstring_append(BR::WChar * destination, BR::CString<BR::WChar> source) -> BR::WChar * {
+	return std::wcscat(destination, source);
+}
+
+auto libbr_nstring_append_n(BR::NChar * destination, BR::CString<BR::NChar> source, BR::Size count) -> BR::NChar * {
+	return std::strncat(destination, source, count);
+}
+
+auto libbr_wstring_append_n(BR::WChar * destination, BR::CString<BR::WChar> source, BR::Size count) -> BR::WChar * {
+	return std::wcsncat(destination, source, count);
+}
+
 auto libbr_nstring_compare(BR::CString<BR::NChar> x, BR::CString<BR::NChar> y) -> BR::Relation {
 	return BR::to_relation(std::strcmp(x, y));
 }

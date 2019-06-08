@@ -17,6 +17,7 @@ inline namespace Strings {
 
 } // namespace BR
 
+#include <libbr/strings/string_append.hpp>
 #include <libbr/strings/string_compare.hpp>
 #include <libbr/strings/string_copy.hpp>
 #include <libbr/strings/string_copy_unsafely.hpp>
