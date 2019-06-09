@@ -21,3 +21,4 @@ inline namespace Operators {
 #include <libbr/operators/equivalent.hpp>
 #include <libbr/operators/incrementable.hpp>
 #include <libbr/operators/partially_ordered.hpp>
+#include <libbr/operators/totally_ordered.hpp>
