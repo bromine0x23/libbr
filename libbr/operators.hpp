@@ -17,5 +17,7 @@ inline namespace Operators {
 
 } // namespace BR
 
+#include <libbr/operators/decrementable.hpp>
 #include <libbr/operators/equivalent.hpp>
+#include <libbr/operators/incrementable.hpp>
 #include <libbr/operators/partially_ordered.hpp>
