@@ -16,3 +16,5 @@ inline namespace Operators {
 } // namespace Operators
 
 } // namespace BR
+
+#include <libbr/operators/equivalent.hpp>
