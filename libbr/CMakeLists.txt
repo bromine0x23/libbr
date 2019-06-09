@@ -11,6 +11,7 @@ set(
 	iterators
 	math
 	memory
+	operators
 	strings
 	type_traits
 	type_transform
