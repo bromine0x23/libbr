@@ -31,3 +31,5 @@ inline namespace Memory {
 
 #include <libbr/memory/allocator_traits.hpp>
 #include <libbr/memory/pointer_traits.hpp>
+
+#include <libbr/memory/unique_pointer.hpp>
