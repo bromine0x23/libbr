@@ -62,19 +62,9 @@ constexpr static auto BIT_PER_BYTE = CHAR_BIT;
 
 constexpr static auto BIT_PER_CHAR = CHAR_BIT;
 
-using SSize = decltype(static_cast<char *>(nullptr) - static_cast<char *>(nullptr));
+using Size = decltype(sizeof(char));
 
-using USize = decltype(sizeof(char));
-
-/**
- * @deprecated
- */
-using Size = USize;
-
-/**
- * @deprecated
- */
-using PointerDifference = SSize;
+using PointerDifference = decltype(static_cast<char *>(nullptr) - static_cast<char *>(nullptr));
 
 #if defined(BR_HAS_INTPTR)
 
@@ -84,9 +74,9 @@ using UIntPointer = BR_UINTPTR;
 
 #else
 
-using SIntPointer = SSize;
+using SIntPointer = PointerDifference;
 
-using UIntPointer = USize;
+using UIntPointer = Size;
 
 #endif // defined(BR_HAS_INTPTR)
 
