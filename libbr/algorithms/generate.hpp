@@ -20,7 +20,7 @@ inline namespace Algorithms {
  * @param[in] generator Generator function object that will be called.
  */
 template< typename TForwardIterator, typename TGenerator >
-void generate(
+constexpr void generate(
 	TForwardIterator first, TForwardIterator last,
 	TGenerator && generator
 );
@@ -32,7 +32,7 @@ void generate(
 inline namespace Algorithms {
 
 template< typename TForwardIterator, typename TGenerator >
-inline void generate(TForwardIterator first, TForwardIterator last, TGenerator && generator) {
+constexpr inline void generate(TForwardIterator first, TForwardIterator last, TGenerator && generator) {
 	for (; first != last; ++first) {
 		*first = forward<TGenerator>(generator)();
 	}

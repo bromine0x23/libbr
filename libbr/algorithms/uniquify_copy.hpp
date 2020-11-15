@@ -26,7 +26,7 @@ inline namespace Algorithms {
  * @return Output iterator to the element past the last written element.
  */
 template< typename TInputIterator, typename TOutputIterator, typename TBinaryPredicate >
-auto uniquify_copy(
+constexpr auto uniquify_copy(
 	TInputIterator first, TInputIterator last,
 	TOutputIterator output,
 	TBinaryPredicate && predicate
@@ -41,7 +41,7 @@ auto uniquify_copy(
  * @return Output iterator to the element past the last written element.
  */
 template< typename TInputIterator, typename TOutputIterator >
-auto uniquify_copy(
+constexpr auto uniquify_copy(
 	TInputIterator first, TInputIterator last,
 	TOutputIterator output
 ) -> TOutputIterator;
@@ -53,7 +53,7 @@ auto uniquify_copy(
 namespace _::Algorithms {
 
 template< typename TInputIterator, typename TOutputIterator, typename TBinaryPredicate >
-auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIterator output, TBinaryPredicate && predicate, SinglePassTraversalTag, IncrementableTraversalTag) -> TOutputIterator {
+constexpr auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIterator output, TBinaryPredicate && predicate, SinglePassTraversalTag, IncrementableTraversalTag) -> TOutputIterator {
 	if (first != last) {
 		auto t = *first;
 		*output = t;
@@ -70,7 +70,7 @@ auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIterator ou
 }
 
 template< typename TForwardIterator, typename TOutputIterator, typename TBinaryPredicate >
-auto uniquify_copy(TForwardIterator first, TForwardIterator last, TOutputIterator output, TBinaryPredicate && predicate, ForwardTraversalTag, IncrementableTraversalTag) -> TOutputIterator {
+constexpr auto uniquify_copy(TForwardIterator first, TForwardIterator last, TOutputIterator output, TBinaryPredicate && predicate, ForwardTraversalTag, IncrementableTraversalTag) -> TOutputIterator {
 	if (first != last) {
 		auto i = first;
 		*output = *i;
@@ -87,7 +87,7 @@ auto uniquify_copy(TForwardIterator first, TForwardIterator last, TOutputIterato
 }
 
 template< typename TInputIterator, typename TForwardIterator, typename TBinaryPredicate >
-auto uniquify_copy(TInputIterator first, TInputIterator last, TForwardIterator output, TBinaryPredicate && predicate, ForwardTraversalTag, ForwardTraversalTag) -> TForwardIterator {
+constexpr auto uniquify_copy(TInputIterator first, TInputIterator last, TForwardIterator output, TBinaryPredicate && predicate, ForwardTraversalTag, ForwardTraversalTag) -> TForwardIterator {
 	if (first != last) {
 		for (*output = *first; ++first != last; ) {
 			if (!forward<TBinaryPredicate>(predicate)(*output, *first)) {
@@ -100,7 +100,7 @@ auto uniquify_copy(TInputIterator first, TInputIterator last, TForwardIterator o
 }
 
 template< typename TInputIterator, typename TOutputIterator, typename TBinaryPredicate >
-inline auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIterator output, TBinaryPredicate && predicate) -> TOutputIterator {
+constexpr inline auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIterator output, TBinaryPredicate && predicate) -> TOutputIterator {
 	return uniquify_copy(first, last, output, forward<TBinaryPredicate>(predicate), IteratorTraits<TInputIterator>::iterator_category(), IteratorTraits<TOutputIterator>::iterator_category());
 }
 
@@ -109,12 +109,12 @@ inline auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIter
 inline namespace Algorithms {
 
 template< typename TInputIterator, typename TOutputIterator, typename TBinaryPredicate >
-inline auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIterator output, TBinaryPredicate && predicate) -> TOutputIterator {
+constexpr inline auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIterator output, TBinaryPredicate && predicate) -> TOutputIterator {
 	return _::Algorithms::uniquify_copy(first, last, output, forward<TBinaryPredicate>(predicate));
 }
 
 template< typename TInputIterator, typename TOutputIterator >
-inline auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIterator output) -> TOutputIterator {
+constexpr inline auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIterator output) -> TOutputIterator {
 	return uniquify_copy(first, last, output, Equal<>{});
 }
 

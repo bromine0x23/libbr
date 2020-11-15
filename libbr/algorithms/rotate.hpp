@@ -34,7 +34,7 @@ inline namespace Algorithms {
  * @return The iterator equal to \f$ first + (last - middle) \f$
  */
 template< typename TForwardIterator >
-auto rotate(
+constexpr auto rotate(
 	TForwardIterator first,
 	TForwardIterator middle,
 	TForwardIterator last
@@ -47,7 +47,7 @@ auto rotate(
 namespace _::Algorithms {
 
 template< typename TForwardIterator >
-inline auto rotate_left(TForwardIterator first, TForwardIterator last) -> TForwardIterator {
+constexpr inline auto rotate_left(TForwardIterator first, TForwardIterator last) -> TForwardIterator {
 	auto tmp = transfer(*first);
 	auto before_last = move(next(first), last, first);
 	*before_last = transfer(tmp);
@@ -55,7 +55,7 @@ inline auto rotate_left(TForwardIterator first, TForwardIterator last) -> TForwa
 }
 
 template< typename TBidirectionalIterator >
-inline auto rotate_right(TBidirectionalIterator first, TBidirectionalIterator last) -> TBidirectionalIterator {
+constexpr inline auto rotate_right(TBidirectionalIterator first, TBidirectionalIterator last) -> TBidirectionalIterator {
 	auto before_last = prev(last);
 	auto tmp = transfer(*before_last);
 	auto after_first = move_backward(first, before_last, last);
@@ -64,7 +64,7 @@ inline auto rotate_right(TBidirectionalIterator first, TBidirectionalIterator la
 }
 
 template< typename TForwardIterator >
-auto rotate_forward(TForwardIterator first, TForwardIterator middle, TForwardIterator last) -> TForwardIterator {
+constexpr auto rotate_forward(TForwardIterator first, TForwardIterator middle, TForwardIterator last) -> TForwardIterator {
 	using BR::swap;
 	for (auto i = middle;;) {
 		swap(*first, *i);
@@ -95,7 +95,7 @@ auto rotate_forward(TForwardIterator first, TForwardIterator middle, TForwardIte
 }
 
 template< typename TRandomAccessIterator >
-auto rotate_gcd(TRandomAccessIterator first, TRandomAccessIterator middle, TRandomAccessIterator last) -> TRandomAccessIterator {
+constexpr auto rotate_gcd(TRandomAccessIterator first, TRandomAccessIterator middle, TRandomAccessIterator last) -> TRandomAccessIterator {
 	auto const length0 = middle - first;
 	auto const length1 = last - middle;
 	if (length0 == length1) {
@@ -123,8 +123,8 @@ auto rotate_gcd(TRandomAccessIterator first, TRandomAccessIterator middle, TRand
 }
 
 template< typename TForwardIterator >
-inline auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIterator last, ForwardTraversalTag) -> TForwardIterator {
-	if (HasTrivialMoveAssignment< typename IteratorTraits<TForwardIterator>::Element >{}) {
+constexpr inline auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIterator last, ForwardTraversalTag) -> TForwardIterator {
+	if constexpr (has_trivial_move_assignment< typename IteratorTraits<TForwardIterator>::Element >) {
 		if (next(first) == middle) {
 			return rotate_left(first, last);
 		}
@@ -133,8 +133,8 @@ inline auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIter
 }
 
 template< typename TBidirectionalIterator >
-inline auto rotate(TBidirectionalIterator first, TBidirectionalIterator middle, TBidirectionalIterator last, BidirectionalTraversalTag) -> TBidirectionalIterator {
-	if (HasTrivialMoveAssignment< typename IteratorTraits<TBidirectionalIterator>::Element >{}) {
+constexpr inline auto rotate(TBidirectionalIterator first, TBidirectionalIterator middle, TBidirectionalIterator last, BidirectionalTraversalTag) -> TBidirectionalIterator {
+	if constexpr (has_trivial_move_assignment< typename IteratorTraits<TBidirectionalIterator>::Element >) {
 		if (next(first) == middle) {
 			return rotate_left(first, last);
 		}
@@ -146,8 +146,8 @@ inline auto rotate(TBidirectionalIterator first, TBidirectionalIterator middle, 
 }
 
 template< typename TRandomAccessIterator >
-inline auto rotate(TRandomAccessIterator first, TRandomAccessIterator middle, TRandomAccessIterator last, RandomAccessTraversalTag) -> TRandomAccessIterator {
-	if (HasTrivialMoveAssignment< typename IteratorTraits<TRandomAccessIterator>::Element >{}) {
+constexpr inline auto rotate(TRandomAccessIterator first, TRandomAccessIterator middle, TRandomAccessIterator last, RandomAccessTraversalTag) -> TRandomAccessIterator {
+	if constexpr (has_trivial_move_assignment< typename IteratorTraits<TRandomAccessIterator>::Element >) {
 		if (next(first) == middle) {
 			return rotate_left(first, last);
 		}
@@ -160,7 +160,7 @@ inline auto rotate(TRandomAccessIterator first, TRandomAccessIterator middle, TR
 }
 
 template< typename TForwardIterator >
-inline auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIterator last) -> TForwardIterator {
+constexpr inline auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIterator last) -> TForwardIterator {
 	if (first == middle) {
 		return last;
 	}
@@ -175,7 +175,7 @@ inline auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIter
 inline namespace Algorithms {
 
 template< typename TForwardIterator >
-inline auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIterator last) -> TForwardIterator {
+constexpr inline auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIterator last) -> TForwardIterator {
 	return _::Algorithms::rotate(first, middle, last);
 }
 

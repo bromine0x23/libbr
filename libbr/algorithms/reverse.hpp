@@ -22,7 +22,7 @@ inline namespace Algorithms {
  * @param[in,out] first,last The range of elements to reverse.
  */
 template< typename TBidirectionalIterator >
-void reverse(
+constexpr void reverse(
 	TBidirectionalIterator first, TBidirectionalIterator last
 );
 
@@ -33,7 +33,7 @@ void reverse(
 namespace _::Algorithms {
 
 template< typename TBidirectionalIterator >
-inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last, BidirectionalTraversalTag) {
+constexpr inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last, BidirectionalTraversalTag) {
 	for (; first != last; ++first) {
 		if (first == --last) {
 			break;
@@ -44,7 +44,7 @@ inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last, B
 
 
 template< typename TRandomAccessIterator >
-inline void reverse(TRandomAccessIterator first, TRandomAccessIterator last, RandomAccessTraversalTag) {
+constexpr inline void reverse(TRandomAccessIterator first, TRandomAccessIterator last, RandomAccessTraversalTag) {
 	if (first != last) {
 		for (; first < --last; ++first) {
 			swap(*first, *last);
@@ -53,7 +53,7 @@ inline void reverse(TRandomAccessIterator first, TRandomAccessIterator last, Ran
 }
 
 template< typename TBidirectionalIterator >
-inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last) {
+constexpr inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last) {
 	return reverse(first, last, IteratorTraits<TBidirectionalIterator>::iterator_category());
 }
 
@@ -62,7 +62,7 @@ inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last) {
 inline namespace Algorithms {
 
 template< typename TBidirectionalIterator >
-inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last) {
+constexpr inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last) {
 	return _::Algorithms::reverse(first, last);
 }
 

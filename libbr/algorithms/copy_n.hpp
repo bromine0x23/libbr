@@ -25,7 +25,7 @@ inline namespace Algorithms {
  * @return Iterator in the destination range, pointing past the last element copied if \f$ count > 0 \f$ or \p output otherwise.
  */
 template< typename TInputIterator, typename TSize, typename TOutputIterator >
-inline auto copy_n(
+constexpr inline auto copy_n(
 	TInputIterator first, TSize count,
 	TOutputIterator output
 ) -> TOutputIterator;
@@ -37,12 +37,13 @@ inline auto copy_n(
 namespace _::Algorithms {
 
 template< typename TSinglePassIterator, typename TSize, typename TOutputIterator >
-auto copy_n(TSinglePassIterator first, TSize count, TOutputIterator output, SinglePassTraversalTag) -> TOutputIterator {
+constexpr inline auto copy_n(TSinglePassIterator first, TSize count, TOutputIterator output, SinglePassTraversalTag) -> TOutputIterator {
 	if (count > 0) {
 		*output = *first;
 		++output;
 		for (--count; count > 0; --count) {
-			*output = *++first;
+			++first;
+			*output = *first;
 			++output;
 		}
 	}
@@ -50,8 +51,13 @@ auto copy_n(TSinglePassIterator first, TSize count, TOutputIterator output, Sing
 }
 
 template< typename TRandomAccessIterator, typename TSize, typename TOutputIterator >
-inline auto copy_n(TRandomAccessIterator first, TSize count, TOutputIterator output, RandomAccessTraversalTag) -> TOutputIterator {
+constexpr inline auto copy_n(TRandomAccessIterator first, TSize count, TOutputIterator output, RandomAccessTraversalTag) -> TOutputIterator {
 	return copy(first, first + count, output);
+}
+
+template< typename TInputIterator, typename TSize, typename TOutputIterator >
+constexpr inline auto copy_n(TInputIterator first, TSize count, TOutputIterator output) -> TOutputIterator {
+	return copy_n(first, count, output, IteratorTraits<TInputIterator>::iterator_category());
 }
 
 } // namespace _::Algorithms
@@ -59,8 +65,8 @@ inline auto copy_n(TRandomAccessIterator first, TSize count, TOutputIterator out
 inline namespace Algorithms {
 
 template< typename TInputIterator, typename TSize, typename TOutputIterator >
-auto copy_n(TInputIterator first, TSize count, TOutputIterator output) -> TOutputIterator {
-	return _::Algorithms::copy_n(first, count, output, IteratorTraits<TInputIterator>::iterator_category());
+constexpr inline auto copy_n(TInputIterator first, TSize count, TOutputIterator output) -> TOutputIterator {
+	return _::Algorithms::copy_n(first, count, output);
 }
 
 } // namespace Algorithms

@@ -22,7 +22,7 @@ inline namespace Algorithms {
  * @param[in] new_value The value to use as replacement.
  */
 template< typename TForwardIterator, typename TValue >
-void replace(
+constexpr void replace(
 	TForwardIterator first, TForwardIterator last,
 	TValue const & old_value,
 	TValue const & new_value
@@ -35,7 +35,7 @@ void replace(
 inline namespace Algorithms {
 
 template< typename TForwardIterator, typename TValue >
-inline void replace(TForwardIterator first, TForwardIterator last, TValue const & old_value, TValue const & new_value) {
+constexpr inline void replace(TForwardIterator first, TForwardIterator last, TValue const & old_value, TValue const & new_value) {
 	for (; first != last; ++first) {
 		if (*first == old_value) {
 			*first = new_value;

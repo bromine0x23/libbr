@@ -6,8 +6,6 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#include <libbr/iterators/categories.hpp>
-#include <libbr/iterators/iterator_traits.hpp>
 #include <libbr/memory/memory_copy.hpp>
 #include <libbr/type_traits/has_trivial_copy_assignment.hpp>
 #include <libbr/type_traits/is_same.hpp>
@@ -39,32 +37,17 @@ auto copy(
 
 namespace _::Algorithms {
 
-template< typename TSinglePassIterator, typename TOutputIterator >
-auto copy(TSinglePassIterator first, TSinglePassIterator last, TOutputIterator output, SinglePassTraversalTag) -> TOutputIterator {
-	for ( ; first != last; ++output, ++first) {
-		*output = *first;
-	}
-	return output;
-}
-
-template< typename TRandomAccessIterator, typename TOutputIterator >
-auto copy(TRandomAccessIterator first, TRandomAccessIterator last, TOutputIterator output, RandomAccessTraversalTag) -> TOutputIterator {
-	for (auto count = last - first; count > 0; --count) {
-		*output = *first;
-		++first;
-		++output;
-	}
-	return output;
-}
-
 template< typename TInputIterator, typename TOutputIterator >
-inline auto copy(TInputIterator first, TInputIterator last, TOutputIterator output) -> TOutputIterator {
-	return copy(first, last, output, IteratorTraits<TInputIterator>::iterator_category());
+constexpr inline auto copy(TInputIterator first, TInputIterator last, TOutputIterator output) -> TOutputIterator {
+	for (; first != last; ++first, (void) ++output) {
+		*output = *first;
+	}
+	return output;
 }
 
 template< typename TInputValue, typename TOutputValue, typename = EnableIf< Conjunction< IsSame< RemoveConst<TInputValue>, TOutputValue >, HasTrivialCopyAssignment<TInputValue> > > >
 inline auto copy(TInputValue * first, TInputValue * last, TOutputValue * output) -> TOutputValue * {
-	auto const count = static_cast<USize>(last - first);
+	auto const count = static_cast<Size>(last - first);
 	if (count > 0) {
 		memory_copy(first, output, count * sizeof(TOutputValue));
 	}

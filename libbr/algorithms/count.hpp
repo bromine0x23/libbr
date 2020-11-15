@@ -34,7 +34,7 @@ inline namespace Algorithms {
 
 template< typename TInputIterator, typename TValue >
 constexpr inline auto count(TInputIterator first, TInputIterator last, TValue const & value) -> typename IteratorTraits<TInputIterator>::Difference {
-	typename IteratorTraits<TInputIterator>::Difference result(0);
+	auto result = typename IteratorTraits<TInputIterator>::Difference(0);
 	for (; first != last; ++first) {
 		if (*first == value) {
 			++result;

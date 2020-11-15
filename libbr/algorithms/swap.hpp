@@ -21,7 +21,7 @@ inline namespace Algorithms {
  * @return Iterator to the element past the last element exchanged in the range beginning with \p first1.
  */
 template< typename TForwardIterator0, typename TForwardIterator1 >
-auto swap(
+constexpr auto swap(
 	TForwardIterator0 first0, TForwardIterator0 last0,
 	TForwardIterator1 first1
 ) -> TForwardIterator1;
@@ -35,7 +35,7 @@ auto swap(
  * @return Iterator to the element past the last element exchanged in the range beginning with \p first1.
  */
 template< typename TForwardIterator0, typename TForwardIterator1 >
-auto swap(
+constexpr auto swap(
 	TForwardIterator0 first0, TForwardIterator0 last0,
 	TForwardIterator1 first1, TForwardIterator1 last1
 ) -> TForwardIterator1;
@@ -47,7 +47,7 @@ auto swap(
 inline namespace Algorithms {
 
 template< typename TForwardIterator0, typename TForwardIterator1 >
-inline auto swap(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1) -> TForwardIterator1 {
+constexpr inline auto swap(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1) -> TForwardIterator1 {
 	using BR::Utility::swap;
 	for(; first0 != last0; ++first0, (void)++first1) {
 		swap(*first0, *first1);
@@ -56,7 +56,7 @@ inline auto swap(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIter
 }
 
 template< typename TForwardIterator0, typename TForwardIterator1 >
-inline auto swap(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1) -> TForwardIterator1 {
+constexpr inline auto swap(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1) -> TForwardIterator1 {
 	using BR::Utility::swap;
 	for(; first0 != last0 && first1 != last1; ++first0, (void)++first1) {
 		swap(*first0, *first1);

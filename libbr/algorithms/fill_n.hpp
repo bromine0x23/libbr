@@ -28,7 +28,7 @@ inline namespace Algorithms {
  * @return Iterator one past the last element assigned if count > 0, first otherwise.
  */
 template< typename TOutputIterator, typename TSize, typename TValue >
-auto fill_n(
+constexpr auto fill_n(
 	TOutputIterator first, TSize count,
 	TValue const & value
 ) -> TOutputIterator;
@@ -37,44 +37,14 @@ auto fill_n(
 
 
 
-namespace _::Algorithms {
+inline namespace Algorithms {
 
 template< typename TOutputIterator, typename TSize, typename TValue >
-inline auto fill_n(TOutputIterator first, TSize count, TValue const & value) -> TOutputIterator {
+constexpr inline auto fill_n(TOutputIterator first, TSize count, TValue const & value) -> TOutputIterator {
 	for (; count > 0; ++first, (void)--count) {
 		*first = value;
 	}
 	return first;
-}
-
-template<
-	typename TOutputValue,
-	typename TSize,
-	typename TValue,
-	typename = EnableIf<
-		Conjunction<
-			IsIntegral<TOutputValue>,
-			BooleanConstant< sizeof(TOutputValue) == 1 >,
-			NotSame< TOutputValue, bool >,
-			IsIntegral<TValue>,
-			BooleanConstant< sizeof(TValue) == 1 >
-		>
-	>
->
-inline auto fill_n(TOutputValue * first, TSize count, TValue const & value) -> TOutputValue * {
-	if (count > 0) {
-		memory_fill(first, count, value);
-	}
-	return first;
-}
-
-} // namespace _::Algorithms
-
-inline namespace Algorithms {
-
-template< typename TOutputIterator, typename TSize, typename TValue >
-inline auto fill_n(TOutputIterator first, TSize count, TValue const & value) -> TOutputIterator {
-	return _::Algorithms::fill_n(first, count, value);
 }
 
 } // namespace Algorithms

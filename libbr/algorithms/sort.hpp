@@ -51,7 +51,7 @@ void sort(
 namespace _::Algorithms {
 
 template< typename TForwardIterator, typename TComparator >
-inline auto sort3(TForwardIterator a, TForwardIterator b, TForwardIterator c, TComparator && comparator) -> Size {
+constexpr inline auto sort3(TForwardIterator a, TForwardIterator b, TForwardIterator c, TComparator && comparator) -> Size {
 	Size swap_count = 0;
 	if (forward<TComparator>(comparator)(*b, *a)) {
 		if (forward<TComparator>(comparator)(*c, *b)) {
@@ -86,7 +86,7 @@ inline auto sort3(TForwardIterator a, TForwardIterator b, TForwardIterator c, TC
 }
 
 template< typename TForwardIterator, typename TComparator >
-inline auto sort4(TForwardIterator a, TForwardIterator b, TForwardIterator c, TForwardIterator d, TComparator && comparator) -> Size {
+constexpr inline auto sort4(TForwardIterator a, TForwardIterator b, TForwardIterator c, TForwardIterator d, TComparator && comparator) -> Size {
 	auto swap_count = sort3(a, b, c, forward<TComparator>(comparator));
 	if (forward<TComparator>(comparator)(*d, *c)) {
 		swap(*c, *d);
@@ -104,7 +104,7 @@ inline auto sort4(TForwardIterator a, TForwardIterator b, TForwardIterator c, TF
 }
 
 template< typename TForwardIterator, typename TComparator >
-inline auto sort5(TForwardIterator a, TForwardIterator b, TForwardIterator c, TForwardIterator d, TForwardIterator e, TComparator && comparator) -> Size {
+constexpr inline auto sort5(TForwardIterator a, TForwardIterator b, TForwardIterator c, TForwardIterator d, TForwardIterator e, TComparator && comparator) -> Size {
 	auto swap_count = sort4(a, b, c, d, forward<TComparator>(comparator));
 	if (forward<TComparator>(comparator)(*e, *d)) {
 		swap(*d, *e);
@@ -220,7 +220,7 @@ void introsort(TRandomAccessIterator first, TRandomAccessIterator last, TCompara
 		auto middle = first; advance(middle, half_length);
 		auto before_last = last; --before_last;
 
-		Size swap_count = 0;
+		Size swap_count;
 		if (length >= pivot_select_threshold) {
 			auto delta = half_length / 2;
 			swap_count = sort5(first, first + delta, middle, middle + delta, before_last, forward<TComparator>(comparator));

@@ -23,7 +23,7 @@ inline namespace Algorithms {
  * @return Iterator to the element past the last element copied.
  */
 template< typename TInputIterator, typename TOutputIterator, typename TValue >
-auto replace_copy(
+constexpr auto replace_copy(
 	TInputIterator first, TInputIterator last,
 	TOutputIterator output,
 	TValue const & old_value,
@@ -37,7 +37,7 @@ auto replace_copy(
 inline namespace Algorithms {
 
 template< typename TInputIterator, typename TOutputIterator, typename TValue >
-inline auto replace_copy(TInputIterator first, TInputIterator last, TOutputIterator output, TValue const & old_value, TValue const & new_value) -> TOutputIterator {
+constexpr inline auto replace_copy(TInputIterator first, TInputIterator last, TOutputIterator output, TValue const & old_value, TValue const & new_value) -> TOutputIterator {
 	for (; first != last; ++first, (void) ++output) {
 		*output = (*first == old_value) ? new_value : *first;
 	}

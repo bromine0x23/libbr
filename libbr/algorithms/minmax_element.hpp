@@ -26,7 +26,7 @@ inline namespace Algorithms {
  *         If several elements are equivalent to the largest element, the iterator to the last such element is returned.
  */
 template< typename TForwardIterator, typename TComparator >
-auto minmax_element(
+constexpr auto minmax_element(
 	TForwardIterator first, TForwardIterator last,
 	TComparator && comparator
 ) -> Pair< TForwardIterator, TForwardIterator >;
@@ -41,7 +41,7 @@ auto minmax_element(
  *         If several elements are equivalent to the largest element, the iterator to the last such element is returned.
  */
 template< typename TForwardIterator >
-auto minmax_element(
+constexpr auto minmax_element(
 	TForwardIterator first, TForwardIterator last
 ) -> Pair< TForwardIterator, TForwardIterator >;
 
@@ -52,7 +52,7 @@ auto minmax_element(
 inline namespace Algorithms {
 
 template< typename TForwardIterator, typename TComparator >
-auto minmax_element(TForwardIterator first, TForwardIterator last, TComparator && comparator) -> Pair< TForwardIterator, TForwardIterator > {
+constexpr auto minmax_element(TForwardIterator first, TForwardIterator last, TComparator && comparator) -> Pair< TForwardIterator, TForwardIterator > {
 	auto result = make_pair(first, first);
 	if (first != last) {
 		if (++first != last) {
@@ -62,25 +62,25 @@ auto minmax_element(TForwardIterator first, TForwardIterator last, TComparator &
 				result.second = first;
 			}
 			for (; ++first != last;) {
-				auto i = first;
+				auto current = first;
 				if (++first == last) {
-					if (forward<TComparator>(comparator)(*i, *result.first)) {
-						result.first = i;
-					} else if (!forward<TComparator>(comparator)(*i, *result.second)) {
-						result.second = i;
+					if (forward<TComparator>(comparator)(*current, *result.first)) {
+						result.first = current;
+					} else if (!forward<TComparator>(comparator)(*current, *result.second)) {
+						result.second = current;
 					}
 					break;
 				} else {
-					if (forward<TComparator>(comparator)(*first, *i)) {
+					if (forward<TComparator>(comparator)(*first, *current)) {
 						if (forward<TComparator>(comparator)(*first, *result.first)) {
 							result.first = first;
 						}
-						if (!forward<TComparator>(comparator)(*i, *result.second)) {
-							result.second = i;
+						if (!forward<TComparator>(comparator)(*current, *result.second)) {
+							result.second = current;
 						}
 					} else {
-						if (forward<TComparator>(comparator)(*i, *result.first)) {
-							result.first = i;
+						if (forward<TComparator>(comparator)(*current, *result.first)) {
+							result.first = current;
 						}
 						if (!forward<TComparator>(comparator)(*first, *result.second)) {
 							result.second = first;
@@ -94,7 +94,7 @@ auto minmax_element(TForwardIterator first, TForwardIterator last, TComparator &
 }
 
 template< typename TForwardIterator >
-inline auto minmax_element(TForwardIterator first, TForwardIterator last) -> Pair< TForwardIterator, TForwardIterator > {
+constexpr inline auto minmax_element(TForwardIterator first, TForwardIterator last) -> Pair< TForwardIterator, TForwardIterator > {
 	return minmax_element(first, last, Less<>{});
 }
 

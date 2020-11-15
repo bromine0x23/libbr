@@ -38,7 +38,7 @@ auto copy_backward(
 namespace _::Algorithms {
 
 template< typename TBidirectionalIterator, typename TOutputIterator >
-inline auto copy_backward(TBidirectionalIterator first, TBidirectionalIterator last, TOutputIterator output) -> TOutputIterator {
+constexpr inline auto copy_backward(TBidirectionalIterator first, TBidirectionalIterator last, TOutputIterator output) -> TOutputIterator {
 	for (; first != last;) {
 		*--output = *--last;
 	}
@@ -47,9 +47,11 @@ inline auto copy_backward(TBidirectionalIterator first, TBidirectionalIterator l
 
 template< typename TInputValue, typename TOutputValue, typename = EnableIf< Conjunction< IsSame< RemoveConst<TInputValue>, TOutputValue >, HasTrivialCopyAssignment<TOutputValue> > > >
 inline auto copy_backward(TInputValue * first, TInputValue * last, TOutputValue * output) -> TOutputValue * {
-	auto n = static_cast<USize>(last - first);
-	output -= n;
-	memory_copy(first, output, n * sizeof(TOutputValue));
+	auto const count = static_cast<Size>(last - first);
+	if (count > 0) {
+		output -= count;
+		memory_copy(first, output, count * sizeof(TOutputValue));
+	}
 	return output;
 }
 

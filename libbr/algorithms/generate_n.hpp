@@ -23,7 +23,7 @@ inline namespace Algorithms {
  * @return Iterator one past the last element assigned if \f$ count > 0 \f$, or \p first otherwise.
  */
 template< typename TOutputIterator, typename TSize, typename TGenerator >
-auto generate_n(
+constexpr auto generate_n(
 	TOutputIterator first, TSize count,
 	TGenerator && generator
 ) -> TOutputIterator;
@@ -35,7 +35,7 @@ auto generate_n(
 inline namespace Algorithms {
 
 template< typename TOutputIterator, typename TSize, typename TGenerator >
-inline auto generate_n(TOutputIterator first, TSize count, TGenerator && generator) -> TOutputIterator {
+constexpr inline auto generate_n(TOutputIterator first, TSize count, TGenerator && generator) -> TOutputIterator {
 	for (; count > 0; ++first, (void)--count) {
 		*first = forward<TGenerator>(generator)();
 	}

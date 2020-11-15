@@ -23,7 +23,7 @@ inline namespace Algorithms {
  * @return The iterator past the end of the first partition within \f$ [first, last) \f$ or last if all elements satisfy \p predicate.
  */
 template< typename TForwardIterator, typename TUnaryPredicate >
-auto partition_point(
+constexpr auto partition_point(
 	TForwardIterator first, TForwardIterator last,
 	TUnaryPredicate && predicate
 ) -> TForwardIterator;
@@ -35,7 +35,7 @@ auto partition_point(
 inline namespace Algorithms {
 
 template< typename TForwardIterator, typename TUnaryPredicate >
-auto partition_point(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate) -> TForwardIterator {
+constexpr auto partition_point(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate) -> TForwardIterator {
 	for (auto length = distance(first, last); length != 0;) {
 		auto half_length = length / 2;
 		auto middle = first;

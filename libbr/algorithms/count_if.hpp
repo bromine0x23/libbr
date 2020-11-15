@@ -36,7 +36,7 @@ inline namespace Algorithms {
 
 template< typename TInputIterator, typename TUnaryPredicate >
 constexpr inline auto count_if(TInputIterator first, TInputIterator last, TUnaryPredicate && predicate) -> typename IteratorTraits<TInputIterator>::Difference {
-	typename IteratorTraits<TInputIterator>::Difference result(0);
+	auto result = typename IteratorTraits<TInputIterator>::Difference(0);
 	for (; first != last; ++first) {
 		if (forward<TUnaryPredicate>(predicate)(*first)) {
 			++result;

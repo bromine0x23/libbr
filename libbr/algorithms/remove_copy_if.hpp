@@ -23,7 +23,7 @@ inline namespace Algorithms {
  * @return Iterator to the element past the last element copied.
  */
 template< typename TInputIterator, typename TOutputIterator, typename TUnaryPredicate >
-auto remove_copy_if(
+constexpr auto remove_copy_if(
 	TInputIterator first, TInputIterator last,
 	TOutputIterator output,
 	TUnaryPredicate && predicate
@@ -36,7 +36,7 @@ auto remove_copy_if(
 inline namespace Algorithms {
 
 template< typename TInputIterator, typename TOutputIterator, typename TUnaryPredicate >
-auto remove_copy_if(TInputIterator first, TInputIterator last, TOutputIterator output, TUnaryPredicate && predicate) -> TOutputIterator {
+constexpr auto remove_copy_if(TInputIterator first, TInputIterator last, TOutputIterator output, TUnaryPredicate && predicate) -> TOutputIterator {
 	for (; first != last; ++first) {
 		if (!forward<TUnaryPredicate>(predicate)(*first)) {
 			*output = *first;

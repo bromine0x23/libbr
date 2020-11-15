@@ -26,7 +26,7 @@ inline namespace Algorithms {
  * @return Output iterator to the element past the last element transformed.
  */
 template< typename TInputIterator, typename TOutputIterator, typename TOperation, typename ...TInputIterators >
-auto transform(
+constexpr auto transform(
 	TInputIterator first, TInputIterator last,
 	TOutputIterator output,
 	TOperation && operation,
@@ -40,7 +40,7 @@ auto transform(
 namespace _::Algorithms {
 
 template< typename TInputIterator, typename TOutputIterator, typename TUnaryOperation >
-inline auto transform(TInputIterator first, TInputIterator last, TOutputIterator output, TUnaryOperation && operation) -> TOutputIterator {
+constexpr inline auto transform(TInputIterator first, TInputIterator last, TOutputIterator output, TUnaryOperation && operation) -> TOutputIterator {
 	for (; first != last; ++first, (void)++output) {
 		*output = forward<TUnaryOperation>(operation)(*first);
 	}
@@ -48,7 +48,7 @@ inline auto transform(TInputIterator first, TInputIterator last, TOutputIterator
 }
 
 template< typename TInputIterator, typename TOutputIterator, typename TOperation, typename ...TInputIterators >
-inline auto transform(TInputIterator first, TInputIterator last, TOutputIterator output, TOperation && operation, TInputIterators... additions) -> TOutputIterator {
+constexpr inline auto transform(TInputIterator first, TInputIterator last, TOutputIterator output, TOperation && operation, TInputIterators... additions) -> TOutputIterator {
 	for (; first != last; ++first, (void)++output) {
 		*output = forward<TOperation>(operation)(*first, *additions...);
 		swallow(++additions...);
@@ -61,7 +61,7 @@ inline auto transform(TInputIterator first, TInputIterator last, TOutputIterator
 inline namespace Algorithms {
 
 template< typename TInputIterator, typename TOutputIterator, typename TOperation, typename ...TInputIterators >
-inline auto transform(TInputIterator first, TInputIterator last, TOutputIterator output, TOperation && operation, TInputIterators... additions) -> TOutputIterator {
+constexpr inline auto transform(TInputIterator first, TInputIterator last, TOutputIterator output, TOperation && operation, TInputIterators... additions) -> TOutputIterator {
 	return _::Algorithms::transform(first, last, output, forward<TOperation>(operation), additions...);
 }
 

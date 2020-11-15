@@ -24,7 +24,7 @@ inline namespace Algorithms {
  * @param[in] new_value The value to use as replacement.
  */
 template< typename TForwardIterator, typename TUnaryPredicate, typename TValue >
-void replace_if(
+constexpr void replace_if(
 	TForwardIterator first, TForwardIterator last,
 	TUnaryPredicate && predicate,
 	TValue const & new_value
@@ -37,7 +37,7 @@ void replace_if(
 inline namespace Algorithms {
 
 template< typename TForwardIterator, typename TUnaryPredicate, typename TValue >
-inline void replace_if(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate, TValue const & new_value) {
+constexpr inline void replace_if(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate, TValue const & new_value) {
 	for (; first != last; ++first) {
 		if (forward<TUnaryPredicate>(predicate)(*first)) {
 			*first = new_value;

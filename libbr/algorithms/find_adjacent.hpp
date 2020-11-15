@@ -18,11 +18,11 @@ inline namespace Algorithms {
  * @tparam TForwardIterator Type of \p first & \p last which satisfies \em ForwardIterator.
  * @tparam TBinaryPredicate Type of \p predicate.
  * @param first,last The range of elements to examine.
- * @param predicate Binary predicate which returns <code>​true</code> if the elements should be treated as equal.
+ * @param predicate Binary predicate which returns <code>true</code> if the elements should be treated as equal.
  * @return
  */
 template< typename TForwardIterator, typename TBinaryPredicate >
-auto find_adjacent(
+constexpr auto find_adjacent(
 	TForwardIterator first, TForwardIterator last,
 	TBinaryPredicate && predicate
 ) -> TForwardIterator;
@@ -34,7 +34,7 @@ auto find_adjacent(
  * @return
  */
 template< typename TForwardIterator >
-auto find_adjacent(
+constexpr auto find_adjacent(
 	TForwardIterator first, TForwardIterator last
 ) -> TForwardIterator;
 
@@ -45,7 +45,7 @@ auto find_adjacent(
 inline namespace Algorithms {
 
 template< typename TForwardIterator, typename TBinaryPredicate >
-auto find_adjacent(TForwardIterator first, TForwardIterator last, TBinaryPredicate && predicate) -> TForwardIterator {
+constexpr auto find_adjacent(TForwardIterator first, TForwardIterator last, TBinaryPredicate && predicate) -> TForwardIterator {
 	if (first != last) {
 		for (auto i = first; ++i != last; first = i) {
 			if (forward<TBinaryPredicate>(predicate)(*first, *i)) {
@@ -57,7 +57,7 @@ auto find_adjacent(TForwardIterator first, TForwardIterator last, TBinaryPredica
 }
 
 template< typename TForwardIterator >
-inline auto find_adjacent(TForwardIterator first, TForwardIterator last) -> TForwardIterator {
+constexpr inline auto find_adjacent(TForwardIterator first, TForwardIterator last) -> TForwardIterator {
 	return find_adjacent(first, last, Equal<>{});
 }
 

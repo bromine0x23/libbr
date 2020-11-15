@@ -22,7 +22,7 @@ inline namespace Algorithms {
  * @return Iterator to the end of new range.
  */
 template< typename TForwardIterator, typename TValue >
-auto remove(
+constexpr auto remove(
 	TForwardIterator first, TForwardIterator last,
 	TValue const & value
 ) -> TForwardIterator;
@@ -34,7 +34,7 @@ auto remove(
 inline namespace Algorithms {
 
 template< typename TForwardIterator, typename TValue >
-auto remove(TForwardIterator first, TForwardIterator last, TValue const & value) -> TForwardIterator {
+constexpr auto remove(TForwardIterator first, TForwardIterator last, TValue const & value) -> TForwardIterator {
 	first = find(first, last, value);
 	if (first != last) {
 		for (auto iterator = first; ++iterator != last; ) {

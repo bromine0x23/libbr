@@ -23,7 +23,7 @@ inline namespace Algorithms {
  * @return
  */
 template< typename TBidirectionalIterator, typename TOutputIterator >
-auto reverse_copy(
+constexpr auto reverse_copy(
 	TBidirectionalIterator first, TBidirectionalIterator last,
 	TOutputIterator output
 ) -> TOutputIterator;
@@ -35,7 +35,7 @@ auto reverse_copy(
 inline namespace Algorithms {
 
 template< typename TBidirectionalIterator, typename TOutputIterator >
-inline auto reverse_copy(TBidirectionalIterator first, TBidirectionalIterator last, TOutputIterator output) -> TOutputIterator {
+constexpr inline auto reverse_copy(TBidirectionalIterator first, TBidirectionalIterator last, TOutputIterator output) -> TOutputIterator {
 	for (; first != last; ++output) {
 		*output = *--last;
 	}

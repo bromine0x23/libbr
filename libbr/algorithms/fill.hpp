@@ -22,7 +22,7 @@ inline namespace Algorithms {
  * @param[in] value the value to be assigned.
  */
 template< typename TForwardIterator, typename TValue >
-void fill(
+constexpr void fill(
 	TForwardIterator first, TForwardIterator last,
 	TValue const & value
 );
@@ -34,19 +34,19 @@ void fill(
 namespace _::Algorithms {
 
 template< typename TForwardIterator, typename TValue >
-inline void fill(TForwardIterator first, TForwardIterator last, TValue const & value, ForwardTraversalTag) {
+constexpr inline void fill(TForwardIterator first, TForwardIterator last, TValue const & value, ForwardTraversalTag) {
 	for (; first != last; ++first) {
 		*first = value;
 	}
 }
 
 template< typename TRandomAccessIterator, typename TValue >
-inline void fill(TRandomAccessIterator first, TRandomAccessIterator last, TValue const & value, RandomAccessTraversalTag) {
+constexpr inline void fill(TRandomAccessIterator first, TRandomAccessIterator last, TValue const & value, RandomAccessTraversalTag) {
 	fill_n(first, last - first, value);
 }
 
 template< typename TForwardIterator, typename TValue >
-inline void fill(TForwardIterator first, TForwardIterator last, TValue const & value) {
+constexpr inline void fill(TForwardIterator first, TForwardIterator last, TValue const & value) {
 	fill(first, last, value, IteratorTraits<TForwardIterator>::iterator_category());
 }
 
@@ -55,7 +55,7 @@ inline void fill(TForwardIterator first, TForwardIterator last, TValue const & v
 inline namespace Algorithms {
 
 template< typename TForwardIterator, typename TValue >
-inline void fill(TForwardIterator first, TForwardIterator last, TValue const & value) {
+constexpr inline void fill(TForwardIterator first, TForwardIterator last, TValue const & value) {
 	_::Algorithms::fill(first, last, value);
 }
 

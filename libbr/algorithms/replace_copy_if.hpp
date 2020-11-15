@@ -25,7 +25,7 @@ inline namespace Algorithms {
  * @return Iterator to the element past the last element copied.
  */
 template< typename TInputIterator, typename TOutputIterator, typename TUnaryPredicate, typename TValue >
-auto replace_copy_if(
+constexpr auto replace_copy_if(
 	TInputIterator first, TInputIterator last,
 	TOutputIterator output,
 	TUnaryPredicate && predicate,
@@ -39,7 +39,7 @@ auto replace_copy_if(
 inline namespace Algorithms {
 
 template< typename TInputIterator, typename TOutputIterator, typename TUnaryPredicate, typename TValue >
-inline auto replace_copy_if(TInputIterator first, TInputIterator last, TOutputIterator output, TUnaryPredicate && predicate, TValue const & new_value) -> TOutputIterator {
+constexpr inline auto replace_copy_if(TInputIterator first, TInputIterator last, TOutputIterator output, TUnaryPredicate && predicate, TValue const & new_value) -> TOutputIterator {
 	for (; first != last; ++first, (void) ++output) {
 		*output = forward<TUnaryPredicate>(predicate)(*first) ? new_value : *first;
 	}

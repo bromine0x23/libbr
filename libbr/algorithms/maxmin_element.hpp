@@ -27,7 +27,7 @@ inline namespace Algorithms {
  *         If several elements are equivalent to the largest element, the iterator to the last such element is returned.
  */
 template< typename TForwardIterator, typename TComparator >
-auto maxmin_element(
+constexpr auto maxmin_element(
 	TForwardIterator first, TForwardIterator last,
 	TComparator && comparator
 ) -> Pair< TForwardIterator, TForwardIterator >;
@@ -42,7 +42,7 @@ auto maxmin_element(
  *         If several elements are equivalent to the largest element, the iterator to the last such element is returned.
  */
 template< typename TForwardIterator >
-auto maxmin_element(
+constexpr auto maxmin_element(
 	TForwardIterator first, TForwardIterator last
 ) -> Pair< TForwardIterator, TForwardIterator >;
 
@@ -53,7 +53,7 @@ auto maxmin_element(
 inline namespace Algorithms {
 
 template< typename TForwardIterator, typename TComparator >
-auto maxmin_element(TForwardIterator first, TForwardIterator last, TComparator && comparator) -> Pair< TForwardIterator, TForwardIterator > {
+constexpr auto maxmin_element(TForwardIterator first, TForwardIterator last, TComparator && comparator) -> Pair< TForwardIterator, TForwardIterator > {
 	auto result = make_pair(first, first);
 	if (first != last) {
 		if (++first != last) {
@@ -96,7 +96,7 @@ auto maxmin_element(TForwardIterator first, TForwardIterator last, TComparator &
 }
 
 template< typename TForwardIterator >
-inline auto maxmin_element(TForwardIterator first, TForwardIterator last) -> Pair< TForwardIterator, TForwardIterator > {
+constexpr inline auto maxmin_element(TForwardIterator first, TForwardIterator last) -> Pair< TForwardIterator, TForwardIterator > {
 	return maxmin_element(first, last, Less<>{});
 }
 

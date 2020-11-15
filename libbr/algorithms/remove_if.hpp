@@ -23,7 +23,7 @@ inline namespace Algorithms {
  * @return Iterator to the end of new range.
  */
 template< typename TForwardIterator, typename TUnaryPredicate >
-auto remove_if(
+constexpr auto remove_if(
 	TForwardIterator first, TForwardIterator last,
 	TUnaryPredicate && predicate
 ) -> TForwardIterator;
@@ -35,7 +35,7 @@ auto remove_if(
 inline namespace Algorithms {
 
 template< typename TForwardIterator, typename TUnaryPredicate >
-auto remove_if(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate) -> TForwardIterator {
+constexpr auto remove_if(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate) -> TForwardIterator {
 	first = find_if(first, last, predicate);
 	if (first != last) {
 		for (auto iterator = first; ++iterator != last; ) {

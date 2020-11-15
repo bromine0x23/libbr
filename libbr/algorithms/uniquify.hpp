@@ -24,7 +24,7 @@ inline namespace Algorithms {
  * @return Forward iterator to the new end of the range.
  */
 template< typename TForwardIterator, typename TBinaryPredicate >
-auto uniquify(
+constexpr auto uniquify(
 	TForwardIterator first, TForwardIterator last,
 	TBinaryPredicate && predicate
 ) -> TForwardIterator;
@@ -36,7 +36,7 @@ auto uniquify(
  * @return Forward iterator to the new end of the range.
  */
 template< typename TForwardIterator, typename TBinaryPredicate >
-auto uniquify(
+constexpr auto uniquify(
 	TForwardIterator first, TForwardIterator last
 ) -> TForwardIterator;
 
@@ -47,7 +47,7 @@ auto uniquify(
 inline namespace Algorithms {
 
 template< typename TForwardIterator, typename TBinaryPredicate >
-auto uniquify(TForwardIterator first, TForwardIterator last, TBinaryPredicate && predicate) -> TForwardIterator {
+constexpr auto uniquify(TForwardIterator first, TForwardIterator last, TBinaryPredicate && predicate) -> TForwardIterator {
 	first = find_adjacent(first, last, forward<TBinaryPredicate>(predicate));
 	if (first != last) {
 		auto iterator = first;
@@ -61,7 +61,7 @@ auto uniquify(TForwardIterator first, TForwardIterator last, TBinaryPredicate &&
 }
 
 template< typename TForwardIterator >
-inline auto uniquify(TForwardIterator first, TForwardIterator last) -> TForwardIterator {
+constexpr inline auto uniquify(TForwardIterator first, TForwardIterator last) -> TForwardIterator {
 	return uniquify(first, last, Equal<>{});
 }
 

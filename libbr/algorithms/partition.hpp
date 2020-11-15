@@ -36,7 +36,7 @@ auto partition(
 namespace _::Algorithms {
 
 template< typename TForwardIterator, typename TUnaryPredicate >
-auto partition(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate, ForwardTraversalTag) -> TForwardIterator {
+constexpr auto partition(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate, ForwardTraversalTag) -> TForwardIterator {
 	for (;; ++first) {
 		if (first == last) {
 			return first;
@@ -55,7 +55,7 @@ auto partition(TForwardIterator first, TForwardIterator last, TUnaryPredicate &&
 }
 
 template< typename TBidirectionalIterator, typename TUnaryPredicate >
-auto partition(TBidirectionalIterator first, TBidirectionalIterator last, TUnaryPredicate && predicate, BidirectionalTraversalTag) -> TBidirectionalIterator {
+constexpr auto partition(TBidirectionalIterator first, TBidirectionalIterator last, TUnaryPredicate && predicate, BidirectionalTraversalTag) -> TBidirectionalIterator {
 	for (;; ++first) {
 		for (;; ++first) {
 			if (first == last) {
