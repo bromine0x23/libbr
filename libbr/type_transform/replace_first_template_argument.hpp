@@ -36,8 +36,7 @@ using ReplaceFirstTemplateArgument = TypeUnwrap<TypeReplaceFirstTemplateArgument
 
 
 
-namespace _ {
-namespace TypeTransform {
+namespace _::TypeTransform {
 
 template<typename T, typename TNewArg>
 struct TypeReplaceFirstTemplateArgument {
@@ -47,8 +46,7 @@ struct TypeReplaceFirstTemplateArgument {
 template<template<typename, typename...> class TemplateClass, typename TArg0, typename... TArgs, typename TNewArg>
 struct TypeReplaceFirstTemplateArgument<TemplateClass<TArg0, TArgs...>, TNewArg> : TypeWrapper<TemplateClass<TNewArg, TArgs...>> {};
 
-} // namespace TypeTransform
-} // namespace _
+} // namespace _::TypeTransform
 
 inline namespace TypeTransform {
 

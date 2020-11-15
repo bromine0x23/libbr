@@ -29,8 +29,7 @@ void allocator_destroy(
 
 
 
-namespace _ {
-namespace Memory {
+namespace _::Memory {
 
 BR_HAS_MEMBER_FUNCTION(destroy)
 
@@ -49,8 +48,7 @@ inline void allocator_destroy(TAllocator & allocator, TValue * pointer) {
 	allocator_destroy(HasMemberFunction_destroy< TAllocator, TValue * >{}, allocator, pointer);
 };
 
-} // namespace Memory
-} // namespace _
+} // namespace _::Memory
 
 inline namespace Memory {
 

@@ -36,14 +36,12 @@ using AddPointer = TypeUnwrap< TypeAddPointer<T> >;
 
 
 
-namespace _ {
-namespace TypeTransform {
+namespace _::TypeTransform {
 
 template< typename T >
 struct TypeAddPointer : public TypeWrapper< RemoveReference<T> * > {};
 
-} // namespace TypeTransform
-} // namespace _
+} // namespace _::TypeTransform
 
 inline namespace TypeTransform {
 

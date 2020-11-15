@@ -53,8 +53,7 @@ constexpr auto not_const = boolean_constant< NotConst<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 struct IsConst : public BooleanFalse {};
@@ -62,8 +61,7 @@ struct IsConst : public BooleanFalse {};
 template< typename T >
 struct IsConst< T const > : public BooleanTrue {};
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

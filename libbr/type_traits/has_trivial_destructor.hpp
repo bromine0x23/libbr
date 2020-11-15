@@ -62,8 +62,7 @@ constexpr auto no_trivial_destructor = boolean_constant< NoTrivialDestructor<T> 
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_HAS_TRIVIAL_DESTRUCTOR)
 
@@ -80,8 +79,7 @@ using HasTrivialDestructor = HasTrivialDestructorBasic< RemoveAllExtents<T> >;
 
 #endif // defined(BR_HAS_TRIVIAL_DESTRUCTOR)
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

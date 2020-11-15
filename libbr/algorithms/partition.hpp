@@ -33,8 +33,7 @@ auto partition(
 
 
 
-namespace _ {
-namespace Algorithms {
+namespace _::Algorithms {
 
 template< typename TForwardIterator, typename TUnaryPredicate >
 auto partition(TForwardIterator first, TForwardIterator last, TUnaryPredicate && predicate, ForwardTraversalTag) -> TForwardIterator {
@@ -80,8 +79,7 @@ inline auto partition(TForwardIterator first, TForwardIterator last, TUnaryPredi
 	return partition(first, last, forward<TUnaryPredicate>(predicate), IteratorTraits<TForwardIterator>::iterator_category());
 }
 
-} // namespace Algorithms
-} // namespace _
+} // namespace _::Algorithms
 
 inline namespace Algorithms {
 

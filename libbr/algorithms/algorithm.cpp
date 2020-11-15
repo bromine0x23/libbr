@@ -2,8 +2,7 @@
 
 namespace BR {
 
-namespace _ {
-namespace Algorithms {
+namespace _::Algorithms {
 
 template void introsort(NChar  * first, NChar  * last, Less<> && comparator);
 template void introsort(WChar  * first, WChar  * last, Less<> && comparator);
@@ -19,8 +18,7 @@ template void introsort(SFloat * first, SFloat * last, Less<> && comparator);
 template void introsort(DFloat * first, DFloat * last, Less<> && comparator);
 template void introsort(QFloat * first, QFloat * last, Less<> && comparator);
 
-} // namespace Algorithms
-} // namespace _
+} // namespace _::Algorithms
 
 inline namespace Algorithms {
 } // namespace Algorithms

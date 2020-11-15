@@ -56,14 +56,12 @@ constexpr auto no_nothrow_default_constructor = boolean_constant< NoNothrowDefau
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using HasNothrowDefaultConstructor = IsNothrowConstructible<T>;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

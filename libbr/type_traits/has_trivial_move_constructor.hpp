@@ -57,14 +57,12 @@ constexpr auto no_trivial_move_constructor = boolean_constant< NoTrivialMoveCons
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using HasTrivialMoveConstructor = IsTriviallyConstructible < T, AddRValueReference<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

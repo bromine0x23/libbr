@@ -130,8 +130,7 @@ constexpr auto not_array = boolean_constant< NotArray<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 struct IsBoundedArray : public BooleanFalse {};
@@ -148,8 +147,7 @@ struct IsUnboundedArray< T [] > : public BooleanTrue {};
 template< typename T >
 using IsArray = Disjunction< IsBoundedArray<T>, IsUnboundedArray<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

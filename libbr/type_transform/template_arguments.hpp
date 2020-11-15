@@ -33,8 +33,7 @@ using TemplateArguments = TypeUnwrap< TypeTemplateArguments<T> >;
 
 
 
-namespace _ {
-namespace TypeTransform {
+namespace _::TypeTransform {
 
 template< typename T >
 struct TypeTemplateArguments {
@@ -44,8 +43,7 @@ struct TypeTemplateArguments {
 template< template< typename ... > class TemplateClass, typename... TArgs >
 struct TypeTemplateArguments< TemplateClass< TArgs... > > : TypeWrapper< TypeSequence< TArgs... > >  {};
 
-} // namespace TypeTransform
-} // namespace _
+} // namespace _::TypeTransform
 
 inline namespace TypeTransform {
 

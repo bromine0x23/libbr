@@ -20,8 +20,7 @@ constexpr auto distance(TIterator head, TIterator tail) -> typename IteratorTrai
 
 
 
-namespace _ {
-namespace Iterators {
+namespace _::Iterators {
 
 template< typename TIterator >
 constexpr inline auto distance(TIterator head, TIterator tail, SinglePassTraversalTag) -> typename IteratorTraits<TIterator>::Difference {
@@ -37,8 +36,7 @@ constexpr inline auto distance(TIterator head, TIterator tail, RandomAccessTrave
 	return tail - head;
 }
 
-} // namespace Iterators
-} // namespace _
+} // namespace _::Iterators
 
 inline namespace Iterators {
 

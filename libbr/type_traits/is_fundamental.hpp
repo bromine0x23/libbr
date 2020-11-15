@@ -57,14 +57,12 @@ constexpr auto not_fundamental = boolean_constant< NotFundamental<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using IsFundamental = Disjunction< IsArithmetic<T>, IsVoid<T>, IsNullPointer<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

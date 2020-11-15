@@ -23,3 +23,5 @@ inline namespace Strings {
 #include <libbr/strings/string_copy_unsafely.hpp>
 #include <libbr/strings/string_fill.hpp>
 #include <libbr/strings/string_length.hpp>
+
+#include <libbr/strings/raw_string.hpp>

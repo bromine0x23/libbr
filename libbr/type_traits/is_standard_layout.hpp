@@ -59,8 +59,7 @@ constexpr auto not_standard_layout = boolean_constant< NotStandardLayout<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_IS_STANDARD_LAYOUT)
 
@@ -74,8 +73,7 @@ using IsStandardLayout = IsScalar< RemoveAllExtents<T> >;
 
 #endif // defined(BR_IS_STANDARD_LAYOUT)
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

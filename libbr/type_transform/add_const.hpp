@@ -35,14 +35,12 @@ using AddConst = TypeUnwrap< TypeAddConst<T> >;
 
 
 
-namespace _ {
-namespace TypeTransform {
+namespace _::TypeTransform {
 
 template< typename T >
 struct TypeAddConst : public TypeWrapper< T const > {};
 
-} // namespace TypeTransform
-} // namespace _
+} // namespace _::TypeTransform
 
 inline namespace TypeTransform {
 

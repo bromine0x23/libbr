@@ -35,15 +35,9 @@ inline auto get_terminate() noexcept -> STLTerminateHandler {
 	std::terminate();
 }
 
-inline auto uncaught_exception() noexcept -> bool {
-	return std::uncaught_exception();
-}
-
-#if defined(BR_SINCE_CXX17)
 inline auto uncaught_exceptions() noexcept -> int {
 	return std::uncaught_exceptions();
 }
-#endif
 
 inline auto current_exception() noexcept -> STLExceptionPointer {
 	return std::current_exception();

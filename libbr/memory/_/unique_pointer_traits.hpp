@@ -7,10 +7,7 @@
 #include <libbr/utility/conditional.hpp>
 #include <libbr/utility/type_wrapper.hpp>
 
-namespace BR {
-namespace _ {
-namespace Memory {
-namespace UniquePointer {
+namespace BR::_::Memory::UniquePointer {
 
 BR_HAS_MEMBER_TYPE(Pointer);
 
@@ -32,7 +29,4 @@ using DeleterLValue = Conditional< IsReference<TDeleter>, TDeleter, TDeleter con
 template< typename TDeleter >
 using DeleterRValue = RemoveReference<TDeleter> &&;
 
-} // namespace UniquePointer
-} // namespace Memory
-} // namespace _
-} // namespace BR
+} // namespace BR::_::Memory::UniquePointer

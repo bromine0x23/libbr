@@ -5,29 +5,11 @@
  */
 #pragma once
 
-#define _CXX14 201402L
 #define _CXX17 201703L
-
-#if __cplusplus == _CXX14
-#  define BR_STANDARD "C++14"
-#  define BR_CXX14
-#endif
 
 #if __cplusplus == _CXX17
 #  define BR_STANDARD "C++17"
 #  define BR_CXX17
-#endif
-
-#if __cplusplus >= _CXX14
-#  define BR_SINCE_CXX14
-#endif
-
-#if __cplusplus >= _CXX17
-#  define BR_SINCE_CXX17
-#endif
-
-#if __cplusplus > _CXX14
-#  define BR_AFTER_CXX14
 #endif
 
 #if __cplusplus > _CXX17
@@ -63,6 +45,11 @@
 #if !defined(BR_NOINLINE)
 #  define BR_NO_NOINLINE
 #  define BR_NOINLINE
+#endif
+
+#if !defined(BR_MAY_ALIAS)
+#  define BR_NO_MAY_ALIAS
+#  define BR_MAY_ALIAS
 #endif
 
 #if !defined(BR_EXPECT)
@@ -101,5 +88,4 @@
 #  define BR_RETHROW throw
 #endif
 
-#undef _CXX14
 #undef _CXX17

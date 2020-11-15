@@ -20,8 +20,7 @@ constexpr void advance(TIterator & iterator, typename IteratorTraits<TIterator>:
 
 
 
-namespace _ {
-namespace Iterators {
+namespace _::Iterators {
 
 template< typename TIterator >
 constexpr inline void advance(TIterator & iterator, typename IteratorTraits<TIterator>::Difference step, IncrementableTraversalTag) {
@@ -48,8 +47,7 @@ constexpr inline void advance(TIterator & iterator, typename IteratorTraits<TIte
 	iterator += step;
 }
 
-} // namespace Iterators
-} // namespace _
+} // namespace _::Iterators
 
 inline namespace Iterators {
 

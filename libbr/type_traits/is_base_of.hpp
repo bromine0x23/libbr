@@ -69,8 +69,7 @@ constexpr auto not_base_of = boolean_constant< NotBaseOf< TBase, TDerived > >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_IS_BASE_OF)
 
@@ -111,8 +110,7 @@ using IsBaseOf = Conjunction<
 
 #endif // BR_IS_BASE_OF
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

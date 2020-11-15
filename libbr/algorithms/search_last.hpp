@@ -51,8 +51,7 @@ constexpr auto search_last(
 
 
 
-namespace _ {
-namespace Algorithms {
+namespace _::Algorithms {
 
 template< typename TForwardIterator0, typename TForwardIterator1, typename TBinaryPredicate >
 constexpr auto search_last(TForwardIterator0 first0, TForwardIterator0 last0, TForwardIterator1 first1, TForwardIterator1 last1, TBinaryPredicate && predicate, ForwardTraversalTag, ForwardTraversalTag) -> TForwardIterator0 {
@@ -161,8 +160,7 @@ constexpr inline auto search_last(TForwardIterator0 first0, TForwardIterator0 la
 	return search_last(first0, last0, first1, last1, forward<TBinaryPredicate>(predicate), IteratorTraits<TForwardIterator0>::iterator_category(), IteratorTraits<TForwardIterator1>::iterator_category());
 }
 
-} // namespace Algorithms
-} // namespace _
+} // namespace _::Algorithms
 
 inline namespace Algorithms {
 

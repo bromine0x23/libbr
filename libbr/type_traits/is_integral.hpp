@@ -55,8 +55,7 @@ constexpr auto not_integral = boolean_constant< NotIntegral<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 struct IsIntegralBasic : public BooleanFalse {};
@@ -86,8 +85,7 @@ template<> struct IsIntegralBasic< UInt128 > : public BooleanTrue {};
 template< typename T >
 using IsIntegral = IsIntegralBasic< RemoveConstVolatile<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

@@ -37,8 +37,8 @@ if (LIBBR_BUILD_TESTS)
 
 	add_executable(libbr-test test.cpp ${LIBBR_TEST_SOURCES})
 
-	target_compile_options(libbr-test PRIVATE ${LIBBR_COMPILE_FLAGS})
-	target_link_options(libbr-test PRIVATE ${LIBBR_LINK_FLAGS}  -s)
+	target_compile_options(libbr-test PRIVATE ${LIBBR_COMPILE_FLAGS} -fprofile-arcs -ftest-coverage)
+	target_link_options(libbr-test PRIVATE ${LIBBR_LINK_FLAGS} -fprofile-arcs -ftest-coverage -s)
 
 	if (LIBBR_ENABLE_STATIC)
 		target_link_libraries(libbr-test libbr-static)

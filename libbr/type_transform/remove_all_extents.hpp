@@ -35,8 +35,7 @@ using RemoveAllExtents = TypeUnwrap< TypeRemoveAllExtents<T> >;
 
 
 
-namespace _ {
-namespace TypeTransform {
+namespace _::TypeTransform {
 
 template< typename T >
 struct TypeRemoveAllExtents : public TypeWrapper<T> {
@@ -50,8 +49,7 @@ template< typename T, Size S >
 struct TypeRemoveAllExtents< T[S] > : public TypeRemoveAllExtents<T> {
 };
 
-} // namespace TypeTransform
-} // namespace _
+} // namespace _::TypeTransform
 
 inline namespace TypeTransform {
 

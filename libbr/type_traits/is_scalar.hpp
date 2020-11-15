@@ -64,14 +64,12 @@ constexpr auto not_scalar = boolean_constant< NotScalar<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using IsScalar = Disjunction< IsArithmetic<T>, IsEnum<T>, IsPointer<T>, IsNullPointer<T>, IsMemberPointer<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

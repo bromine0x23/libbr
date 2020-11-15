@@ -30,8 +30,7 @@ void reverse(
 
 
 
-namespace _ {
-namespace Algorithms {
+namespace _::Algorithms {
 
 template< typename TBidirectionalIterator >
 inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last, BidirectionalTraversalTag) {
@@ -58,8 +57,7 @@ inline void reverse(TBidirectionalIterator first, TBidirectionalIterator last) {
 	return reverse(first, last, IteratorTraits<TBidirectionalIterator>::iterator_category());
 }
 
-} // namespace Algorithms
-} // namespace _
+} // namespace _::Algorithms
 
 inline namespace Algorithms {
 

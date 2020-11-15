@@ -56,8 +56,7 @@ constexpr auto no_virtual_destructor = boolean_constant< NoVirtualDestructor<T> 
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_HAS_VIRTUAL_DESTRUCTOR)
 
@@ -71,8 +70,7 @@ using HasVirtualDestructor = BooleanFalse;
 
 #endif // BR_HAS_VIRTUAL_DESTRUCTOR
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

@@ -36,8 +36,7 @@ constexpr auto rank = integral_constant< Rank<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 struct Rank : public IntegralConstant< Size, 0 > {};
@@ -48,8 +47,7 @@ struct Rank< T [] > : public IntegralConstant< Size, (Rank< RemoveConstVolatile<
 template< typename T, Size S >
 struct Rank< T [S] > : public IntegralConstant< Size, (Rank< RemoveConstVolatile<T> >{})() + 1 > {};
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

@@ -35,8 +35,7 @@ using AddRValueReference = TypeUnwrap< TypeAddRValueReference<T> >;
 
 
 
-namespace _ {
-namespace TypeTransform {
+namespace _::TypeTransform {
 
 template< typename T >
 struct TypeAddRValueReference : public TypeWrapper< T && > {};
@@ -53,8 +52,7 @@ struct TypeAddRValueReference< void volatile > : public TypeWrapper< void volati
 template<>
 struct TypeAddRValueReference< void const volatile > : public TypeWrapper< void const volatile > {};
 
-} // namespace TypeTransform
-} // namespace _
+} // namespace _::TypeTransform
 
 inline namespace TypeTransform {
 

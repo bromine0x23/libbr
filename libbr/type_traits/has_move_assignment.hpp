@@ -57,14 +57,12 @@ constexpr auto no_move_assignment = boolean_constant< NoMoveAssignment<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using HasMoveAssignment = IsAssignable< AddLValueReference<T>, AddRValueReference<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

@@ -61,8 +61,7 @@ constexpr auto not_empty = boolean_constant< NotEmpty<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_IS_EMPTY)
 
@@ -89,8 +88,7 @@ struct IsEmpty : public Conjunction< IsClass<T>, IsEmptyBasic< RemoveConstVolati
 
 #endif // !BR_IS_EMPTY
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

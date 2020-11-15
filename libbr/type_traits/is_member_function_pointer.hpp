@@ -55,8 +55,7 @@ constexpr auto not_member_function_pointer = boolean_constant< NotMemberFunction
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 struct IsMemberFunctionPointerBasic : public BooleanFalse {};
@@ -67,8 +66,7 @@ struct IsMemberFunctionPointerBasic< MemberPointer<TClass, TMember> > : public I
 template< typename T >
 using IsMemberFunctionPointer = IsMemberFunctionPointerBasic< RemoveConstVolatile<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

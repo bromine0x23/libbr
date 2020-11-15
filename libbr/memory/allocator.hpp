@@ -6,9 +6,7 @@
 #pragma once
 
 #include <libbr/config.hpp>
-#ifdef BR_SINCE_CXX17
-#  include <libbr/memory/alignment.hpp>
-#endif
+#include <libbr/memory/alignment.hpp>
 
 namespace BR {
 
@@ -51,22 +49,18 @@ public:
 	~Allocator() noexcept = default;
 
 	auto allocate(Size size) -> Element * {
-#if defined(BR_SINCE_CXX17)
-		if (alignof(Element) > __STDCPP_DEFAULT_NEW_ALIGNMENT__) {
-			Alignment alignment = Alignment(alignof(Element));
+		if constexpr (alignof(Element) > __STDCPP_DEFAULT_NEW_ALIGNMENT__) {
+			auto alignment = Alignment(alignof(Element));
 			return static_cast<Element *>(::operator new(size * sizeof(Element), alignment));
 		}
-#endif
 		return static_cast<Element *>(::operator new(size * sizeof(Element)));
 	}
 
 	void deallocate(Element * pointer, Size) noexcept {
-#if defined(BR_SINCE_CXX17)
-		if (alignof(Element) > __STDCPP_DEFAULT_NEW_ALIGNMENT__) {
+		if constexpr (alignof(Element) > __STDCPP_DEFAULT_NEW_ALIGNMENT__) {
 			::operator delete(pointer, Alignment(alignof(Element)));
 			return;
 		}
-#endif
 		return ::operator delete(pointer);
 	}
 
@@ -81,14 +75,6 @@ public:
 	}
 
 }; // class BR::Allocator<TElement>
-
-#if !defined(BR_SINCE_CXX17)
-template< typename TElement >
-constexpr Boolean Allocator<TElement>::IS_ALWAYS_EQUAL;
-
-template< typename TElement >
-constexpr Boolean Allocator<TElement>::IS_PROPAGATE_ON_CONTAINER_MOVE_ASSIGNMENT;
-#endif
 
 } // namespace Memory
 

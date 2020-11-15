@@ -58,8 +58,7 @@ constexpr auto not_unsigned = boolean_constant< NotUnsigned<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 struct IsUnsignedBasic : public BooleanConstant< (static_cast<T>(-1) > static_cast<T>(0)) > {};
@@ -67,8 +66,7 @@ struct IsUnsignedBasic : public BooleanConstant< (static_cast<T>(-1) > static_ca
 template< typename T >
 struct IsUnsigned : public Conjunction< IsArithmetic<T>, IsUnsignedBasic< RemoveConstVolatile<T> > > {};
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

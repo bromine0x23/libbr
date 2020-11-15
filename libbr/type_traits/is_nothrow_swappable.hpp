@@ -60,8 +60,7 @@ constexpr auto not_nothrow_swappable = boolean_constant< NotNothrowSwappable<T> 
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 using BR::swap;
 
@@ -76,8 +75,7 @@ using IsNothrowSwappable = Conjunction<
 	BooleanConstant< IsNothrowSwappableBasic<T>::value >
 >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

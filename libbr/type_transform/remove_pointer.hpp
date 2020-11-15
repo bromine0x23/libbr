@@ -35,8 +35,7 @@ using RemovePointer = TypeUnwrap< TypeRemovePointer<T> >;
 
 
 
-namespace _ {
-namespace TypeTransform {
+namespace _::TypeTransform {
 
 template< typename T >
 struct TypeRemovePointer : public TypeWrapper<T> {};
@@ -53,8 +52,7 @@ struct TypeRemovePointer< T * volatile > : public TypeWrapper<T> {};
 template< typename T >
 struct TypeRemovePointer< T * const volatile > : public TypeWrapper<T> {};
 
-} // namespace TypeTransform
-} // namespace _
+} // namespace _::TypeTransform
 
 inline namespace TypeTransform {
 

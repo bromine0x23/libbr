@@ -61,8 +61,7 @@ constexpr auto not_assignable = boolean_constant< NotAssignable< T, TArg > >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_IS_ASSIGNABLE)
 
@@ -84,8 +83,7 @@ using IsAssignable = decltype(IsAssignableTest::test< T, TArg >(0));
 
 #endif // defined(BR_IS_ASSIGNABLE)
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

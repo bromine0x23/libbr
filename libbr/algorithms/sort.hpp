@@ -48,8 +48,7 @@ void sort(
 
 
 
-namespace _ {
-namespace Algorithms {
+namespace _::Algorithms {
 
 template< typename TForwardIterator, typename TComparator >
 inline auto sort3(TForwardIterator a, TForwardIterator b, TForwardIterator c, TComparator && comparator) -> Size {
@@ -334,8 +333,7 @@ inline void sort(TRandomAccessIterator first, TRandomAccessIterator last, TCompa
 	introsort(first, last, forward<TComparator>(comparator));
 }
 
-} // namespace Algorithms
-} // namespace _
+} // namespace _::Algorithms
 
 inline namespace Algorithms {
 

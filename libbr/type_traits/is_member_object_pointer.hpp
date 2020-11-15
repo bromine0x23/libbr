@@ -56,14 +56,12 @@ constexpr auto not_member_object_pointer = boolean_constant< NotMemberObjectPoin
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 struct IsMemberObjectPointer : public Abjunction< IsMemberPointer<T>, IsMemberFunctionPointer<T> > {};
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

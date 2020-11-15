@@ -58,14 +58,12 @@ constexpr auto no_nothrow_copy_constructor = boolean_constant< NoNothrowCopyCons
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using HasNothrowCopyConstructor = IsNothrowConstructible< T, AddLValueReference< AddConst<T> > >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

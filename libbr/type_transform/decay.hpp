@@ -45,8 +45,7 @@ using Decay = TypeUnwrap< TypeDecay<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using DecayBasic = Conditional<
@@ -62,8 +61,7 @@ using DecayBasic = Conditional<
 template< typename T >
 using Decay = DecayBasic< RemoveReference<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTransform
 
 inline namespace TypeTraits {
 

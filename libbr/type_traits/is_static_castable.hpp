@@ -59,8 +59,7 @@ constexpr auto not_static_castable = boolean_constant< NotStaticCastable< TFrom,
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 struct IsStaticCastableTest {
 	template< typename TFrom, typename TTo, typename = decltype(static_cast<TTo>(declare_value<TFrom>())) >
@@ -73,8 +72,7 @@ struct IsStaticCastableTest {
 template< typename TFrom, typename TTo >
 using IsStaticCastable = decltype(IsStaticCastableTest::test< TFrom, TTo >(0));
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

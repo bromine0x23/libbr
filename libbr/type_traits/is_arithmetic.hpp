@@ -58,14 +58,12 @@ constexpr auto not_arithmetic = boolean_constant< NotArithmetic<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using IsArithmetic = Disjunction< IsIntegral<T>, IsFloatingPoint<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

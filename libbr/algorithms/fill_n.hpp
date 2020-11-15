@@ -37,8 +37,7 @@ auto fill_n(
 
 
 
-namespace _ {
-namespace Algorithms {
+namespace _::Algorithms {
 
 template< typename TOutputIterator, typename TSize, typename TValue >
 inline auto fill_n(TOutputIterator first, TSize count, TValue const & value) -> TOutputIterator {
@@ -69,8 +68,7 @@ inline auto fill_n(TOutputValue * first, TSize count, TValue const & value) -> T
 	return first;
 }
 
-} // namespace Algorithms
-} // namespace _
+} // namespace _::Algorithms
 
 inline namespace Algorithms {
 

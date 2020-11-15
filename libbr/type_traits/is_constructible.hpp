@@ -78,8 +78,7 @@ constexpr auto not_constructible = boolean_constant< NotConstructible< T, TArgs.
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_IS_CONSTRUCTIBLE)
 
@@ -191,8 +190,7 @@ struct IsConstructible : public IsConstructibleMany< T, TArgs... > {
 
 #endif // BR_IS_CONSTRUCTIBLE
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

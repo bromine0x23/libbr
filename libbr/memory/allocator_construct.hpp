@@ -33,8 +33,7 @@ void allocator_construct(
 
 
 
-namespace _ {
-namespace Memory {
+namespace _::Memory {
 
 BR_HAS_MEMBER_FUNCTION(construct)
 
@@ -53,8 +52,7 @@ inline void allocator_construct(TAllocator & allocator, TValue * pointer, TArgum
 	allocator_construct(HasMemberFunction_construct<TAllocator, TValue *, TArguments...>{}, allocator, pointer, forward<TArguments>(arguments)...);
 }
 
-} // namespace Memory
-} // namespace _
+} // namespace _::Memory
 
 inline namespace Memory {
 

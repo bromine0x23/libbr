@@ -54,8 +54,7 @@ constexpr auto not_floating_point = boolean_constant< NotFloatingPoint<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 struct IsFloatingPointBasic : public BooleanFalse {};
@@ -67,8 +66,7 @@ template<> struct IsFloatingPointBasic<long double> : public BooleanTrue {};
 template< typename T >
 using IsFloatingPoint = IsFloatingPointBasic< RemoveConstVolatile<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

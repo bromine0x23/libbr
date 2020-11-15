@@ -55,8 +55,7 @@ constexpr auto not_final = boolean_constant< NotFinal<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_IS_FINAL)
 
@@ -70,8 +69,7 @@ using IsFinal = BooleanFalse;
 
 #endif // BR_IS_FINAL
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

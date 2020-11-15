@@ -58,14 +58,12 @@ constexpr auto no_trivial_copy_assignment = boolean_constant< NoTrivialCopyAssig
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using HasTrivialCopyAssignment = IsTriviallyAssignable< AddLValueReference<T>, AddLValueReference< AddConst<T> > >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

@@ -56,14 +56,12 @@ constexpr auto no_trivial_default_constructor = boolean_constant< NoTrivialDefau
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using HasTrivialDefaultConstructor = IsTriviallyConstructible<T>;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

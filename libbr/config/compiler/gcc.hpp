@@ -36,6 +36,12 @@
 #  define BR_UINT128 unsigned __int128
 #endif
 
+#if defined(__INTPTR_TYPE__) && defined(__UINTPTR_TYPE__)
+#  define BR_HAS_INTPTR
+#  define BR_SINTPTR  __INTPTR_TYPE__
+#  define BR_UINTPTR __UINTPTR_TYPE__
+#endif
+
 #if !defined(BR_ARCHITECTURE)
 #  if defined(__x86_64__) || defined(__x86_64) || defined(__amd64__) || defined(__amd64)
 #    define BR_ARCHITECTURE "x86_64"
@@ -67,3 +73,5 @@
 #if !defined(BR_CURRENT_FUNCTION)
 #  define BR_CURRENT_FUNCTION __PRETTY_FUNCTION__
 #endif
+
+#define BR_MAY_ALIAS __attribute__((__may_alias__))

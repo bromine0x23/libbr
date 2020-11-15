@@ -58,8 +58,7 @@ constexpr auto search_repeated(
 
 
 
-namespace _ {
-namespace Algorithms {
+namespace _::Algorithms {
 
 template< typename TForwardIterator, typename TSize, typename TValue, typename TBinaryPredicate >
 constexpr auto search_repeated(TForwardIterator first, TForwardIterator last, TSize count, TValue const & value, TBinaryPredicate && predicate, ForwardTraversalTag) -> TForwardIterator {
@@ -130,8 +129,7 @@ constexpr inline auto search_repeated(TForwardIterator first, TForwardIterator l
 	return search_repeated(first, last, count, value, forward<TBinaryPredicate>(predicate), IteratorTraits<TForwardIterator>::iterator_category());
 }
 
-} // namespace Algorithms
-} // namespace _
+} // namespace _::Algorithms
 
 inline namespace Algorithms {
 

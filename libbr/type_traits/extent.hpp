@@ -36,8 +36,7 @@ constexpr auto extent = integral_constant< Extent< T, I > >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T, Size I >
 struct Extent;
@@ -57,8 +56,7 @@ struct Extent< T [S], I > : public IntegralConstant< Size, (Extent< RemoveConstV
 template< typename T, Size S >
 struct Extent< T [S], 0 > : public IntegralConstant< Size, S > {};
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

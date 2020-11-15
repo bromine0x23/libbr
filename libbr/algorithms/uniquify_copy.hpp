@@ -50,8 +50,7 @@ auto uniquify_copy(
 
 
 
-namespace _ {
-namespace Algorithms {
+namespace _::Algorithms {
 
 template< typename TInputIterator, typename TOutputIterator, typename TBinaryPredicate >
 auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIterator output, TBinaryPredicate && predicate, SinglePassTraversalTag, IncrementableTraversalTag) -> TOutputIterator {
@@ -105,8 +104,7 @@ inline auto uniquify_copy(TInputIterator first, TInputIterator last, TOutputIter
 	return uniquify_copy(first, last, output, forward<TBinaryPredicate>(predicate), IteratorTraits<TInputIterator>::iterator_category(), IteratorTraits<TOutputIterator>::iterator_category());
 }
 
-} // namespace Algorithms
-} // namespace _
+} // namespace _::Algorithms
 
 inline namespace Algorithms {
 

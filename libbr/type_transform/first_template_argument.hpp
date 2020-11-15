@@ -32,14 +32,12 @@ using FirstTemplateArgument = TypeUnwrap< TypeFirstTemplateArgument<T> >;
 
 
 
-namespace _ {
-namespace TypeTransform {
+namespace _::TypeTransform {
 
 template< typename T >
 using TypeFirstTemplateArgument = TypeWrapper< typename TemplateArguments<T>::template Get<0> >;
 
-} // namespace TypeTransform
-} // namespace _
+} // namespace _::TypeTransform
 
 inline namespace TypeTransform {
 

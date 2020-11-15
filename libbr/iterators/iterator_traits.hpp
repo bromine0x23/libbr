@@ -31,15 +31,11 @@ struct IteratorTraits;
 
 
 
-namespace _ {
-namespace Iterators {
-namespace _ {
-namespace IteratorTraits {
+namespace _::Iterators::_::IteratorTraits {
 
-////////////////////////////////
-//
+//--------------------------------
 // IteratorTraits::Category
-//
+//--------------------------------
 BR_HAS_MEMBER_TYPE(IteratorCategory)
 
 template<typename TIterator, Boolean = has_member_type_IteratorCategory<TIterator>>
@@ -54,10 +50,9 @@ struct TypeIteratorCategory<TIterator, false> : TypeWrapper<CategoryWithTags<>> 
 template<typename TIterator>
 using IteratorCategory = TypeUnwrap<TypeIteratorCategory<TIterator>>;
 
-////////////////////////////////
-//
+//--------------------------------
 // IteratorTraits::Element
-//
+//--------------------------------
 BR_HAS_MEMBER_TYPE(Element)
 
 template<typename TIterator, Boolean = has_member_type_Element<TIterator>>
@@ -72,10 +67,9 @@ struct TypeElement<TIterator, false> : TypeFirstTemplateArgument<TIterator> {};
 template<typename TIterator>
 using Element = TypeUnwrap<TypeElement<TIterator>>;
 
-////////////////////////////////
-//
+//--------------------------------
 // IteratorTraits::Pointer
-//
+//--------------------------------
 BR_HAS_MEMBER_TYPE(Pointer)
 
 template<typename TIterator, Boolean = has_member_type_Pointer<TIterator>>
@@ -90,10 +84,9 @@ struct TypePointer<TIterator, false> : TypeAddPointer<Element<TIterator>> {};
 template<typename TIterator>
 using Pointer = TypeUnwrap<TypePointer<TIterator>>;
 
-////////////////////////////////
-//
+//--------------------------------
 // IteratorTraits::Reference
-//
+//--------------------------------
 BR_HAS_MEMBER_TYPE(Reference)
 
 template<typename TIterator, Boolean = has_member_type_Reference<TIterator>>
@@ -108,10 +101,9 @@ struct TypeReference<TIterator, false> : TypeAddLValueReference<Element<TIterato
 template<typename TIterator>
 using Reference = TypeUnwrap<TypeReference<TIterator>>;
 
-////////////////////////////////
-//
+//--------------------------------
 // IteratorTraits::Difference
-//
+//--------------------------------
 BR_HAS_MEMBER_TYPE(Difference)
 
 template<typename TIterator, Boolean = has_member_type_Difference<TIterator>>
@@ -157,10 +149,7 @@ struct Implement<TIterator, true> : Base<TIterator> {};
 template<typename TIterator>
 struct Implement<TIterator, false> {};
 
-} // namespace IteratorTraits
-} // namespace _
-} // namespace Iterators
-} // namespace _
+} // namespace _::Iterators::_::IteratorTraits
 
 inline namespace Iterators {
 

@@ -9,10 +9,7 @@
 #include <libbr/utility/swap.hpp>
 #include <libbr/utility/transfer.hpp>
 
-namespace BR {
-namespace _ {
-namespace Memory {
-namespace UniquePointer {
+namespace BR::_::Memory::UniquePointer {
 
 template< typename TPointer, typename TDeleter, Boolean = is_empty<TDeleter> && not_final<TDeleter> >
 class Storage;
@@ -133,7 +130,4 @@ public:
 	}
 }; // struct Storage< TPointer, TDeleter, false >
 
-} // namespace UniquePointer
-} // namespace Memory
-} // namespace _
-} // namespace BR
+} // namespace BR::_::Memory::UniquePointer

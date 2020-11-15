@@ -58,14 +58,12 @@ constexpr auto no_trivial_copy_constructor = boolean_constant< NoTrivialCopyCons
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using HasTrivialCopyConstructor = IsTriviallyConstructible< T, AddLValueReference< AddConst<T> > >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

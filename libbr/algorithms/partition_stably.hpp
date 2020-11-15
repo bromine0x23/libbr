@@ -38,8 +38,7 @@ auto partition_stably(
 
 
 
-namespace _ {
-namespace Algorithms {
+namespace _::Algorithms {
 
 template< typename TForwardIterator, typename TDistance, typename TUnaryPredicate >
 auto partition_stably(TForwardIterator first, TForwardIterator last, TDistance length, TUnaryPredicate && predicate, ForwardTraversalTag) -> TForwardIterator {
@@ -174,8 +173,7 @@ inline auto partition_stably(TForwardIterator first, TForwardIterator last, TUna
 	return partition_stably(first, last, forward<TUnaryPredicate>(predicate), IteratorTraits<TForwardIterator>::iterator_category());
 }
 
-} // namespace Algorithms
-} // namespace _
+} // namespace _::Algorithms
 
 inline namespace Algorithms {
 

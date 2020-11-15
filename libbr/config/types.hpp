@@ -52,16 +52,8 @@ using UInt64 = unsigned long long;
 
 #if defined(BR_HAS_INT128) || defined(BR_DOXYGEN)
 
-/**
- * @brief 有符号128位整形，可能未定义
- * @post 若有定义，类型位宽为128
- */
 using SInt128 = BR_SINT128;
 
-/**
- * @brief 无符号128位整形，可能未定义
- * @post 若有定义，类型位宽为128
- */
 using UInt128 = BR_UINT128;
 
 #endif // defined(BR_HAS_INT128) || defined(BR_DOXYGEN)
@@ -70,9 +62,33 @@ constexpr static auto BIT_PER_BYTE = CHAR_BIT;
 
 constexpr static auto BIT_PER_CHAR = CHAR_BIT;
 
-using Size = decltype(sizeof(char));
+using SSize = decltype(static_cast<char *>(nullptr) - static_cast<char *>(nullptr));
 
-using PointerDifference = decltype(static_cast<char *>(nullptr) - static_cast<char *>(nullptr));
+using USize = decltype(sizeof(char));
+
+/**
+ * @deprecated
+ */
+using Size = USize;
+
+/**
+ * @deprecated
+ */
+using PointerDifference = SSize;
+
+#if defined(BR_HAS_INTPTR)
+
+using SIntPointer = BR_SINTPTR;
+
+using UIntPointer = BR_UINTPTR;
+
+#else
+
+using SIntPointer = SSize;
+
+using UIntPointer = USize;
+
+#endif // defined(BR_HAS_INTPTR)
 
 } // namespace BR
 

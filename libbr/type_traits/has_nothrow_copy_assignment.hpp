@@ -57,14 +57,12 @@ constexpr auto no_nothrow_copy_assignment = boolean_constant< NoNothrowCopyAssig
 } // namespace TypeTraits
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using HasNothrowCopyAssignment = IsNothrowAssignable< AddLValueReference<T>, AddLValueReference< AddConst<T> > >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

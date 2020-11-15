@@ -35,8 +35,7 @@ using CopyConstVolatile = TypeUnwrap< TypeCopyConstVolatile< TTemplate, TParam >
 
 
 
-namespace _ {
-namespace TypeTransform {
+namespace _::TypeTransform {
 
 template< typename TTemplate, typename TParam >
 struct TypeCopyConstVolatile : public TypeWrapper<TParam> {};
@@ -50,8 +49,7 @@ struct TypeCopyConstVolatile< TTemplate volatile, TParam > : public TypeWrapper<
 template< typename TTemplate, typename TParam >
 struct TypeCopyConstVolatile< TTemplate const volatile, TParam > : public TypeWrapper< TParam const volatile > {};
 
-} // namespace TypeTransform
-} // namespace _
+} // namespace _::TypeTransform
 
 inline namespace TypeTransform {
 

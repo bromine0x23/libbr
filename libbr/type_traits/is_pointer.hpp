@@ -56,8 +56,7 @@ constexpr auto not_pointer = boolean_constant< NotPointer<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 struct IsPointerBasic : public BooleanFalse {};
@@ -68,8 +67,7 @@ struct IsPointerBasic< T * > : public BooleanTrue {};
 template< typename T >
 using IsPointer = Abjunction< IsPointerBasic< RemoveConstVolatile<T> >, IsMemberPointer<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

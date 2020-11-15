@@ -35,8 +35,7 @@ using RemoveReference = TypeUnwrap< TypeRemoveReference<T> >;
 
 
 
-namespace _ {
-namespace TypeTransform {
+namespace _::TypeTransform {
 
 template< typename T >
 struct TypeRemoveReference : public TypeWrapper<T> {};
@@ -47,8 +46,7 @@ struct TypeRemoveReference< T & > : public TypeWrapper<T> {};
 template< typename T >
 struct TypeRemoveReference< T && > : public TypeWrapper<T> {};
 
-} // namespace TypeTransform
-} // namespace _
+} // namespace _::TypeTransform
 
 inline namespace TypeTransform {
 

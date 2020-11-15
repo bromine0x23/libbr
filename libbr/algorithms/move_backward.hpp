@@ -38,8 +38,7 @@ auto move_backward(
 
 
 
-namespace _ {
-namespace Algorithms {
+namespace _::Algorithms {
 
 template< typename TBidirectionalIterator0, typename TBidirectionalIterator1 >
 inline auto move_backward(TBidirectionalIterator0 first, TBidirectionalIterator0 last, TBidirectionalIterator1 output) -> TBidirectionalIterator1 {
@@ -51,7 +50,7 @@ inline auto move_backward(TBidirectionalIterator0 first, TBidirectionalIterator0
 
 template< typename TInputValue, typename TOutputValue, typename = EnableIf< Conjunction< IsSame< RemoveConst<TInputValue>, TOutputValue >, HasTrivialCopyAssignment<TInputValue> > > >
 inline auto move_backward(TInputValue * first, TInputValue * last, TOutputValue * output) -> TOutputValue * {
-	auto const count = static_cast<Size>(last - first);
+	auto const count = static_cast<USize>(last - first);
 	if (count > 0) {
 		output -= count;
 		memory_copy(first, output, count * sizeof(TOutputValue));
@@ -59,8 +58,7 @@ inline auto move_backward(TInputValue * first, TInputValue * last, TOutputValue 
 	return output;
 }
 
-} // namespace Algorithms
-} // namespace _
+} // namespace _::Algorithms
 
 
 inline namespace Algorithms {

@@ -30,10 +30,5 @@ struct BasicFunctor {
 	constexpr BasicFunctor() noexcept = default;
 };
 
-#if !defined(BR_AFTER_CXX14)
-template< typename... TArguments >
-constexpr SInt BasicFunctor<TArguments...>::arity;
-#endif
-
 } // namespace Functional
 } // namespace BR

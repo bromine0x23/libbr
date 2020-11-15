@@ -34,8 +34,7 @@ inline auto copy_n(
 
 
 
-namespace _ {
-namespace Algorithms {
+namespace _::Algorithms {
 
 template< typename TSinglePassIterator, typename TSize, typename TOutputIterator >
 auto copy_n(TSinglePassIterator first, TSize count, TOutputIterator output, SinglePassTraversalTag) -> TOutputIterator {
@@ -55,8 +54,7 @@ inline auto copy_n(TRandomAccessIterator first, TSize count, TOutputIterator out
 	return copy(first, first + count, output);
 }
 
-} // namespace Algorithms
-} // namespace _
+} // namespace _::Algorithms
 
 inline namespace Algorithms {
 

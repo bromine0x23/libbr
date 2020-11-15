@@ -53,8 +53,7 @@ constexpr auto not_same = boolean_constant<NotSame<T0, T1>>;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template<typename T0, typename T1>
 struct IsSame : public BooleanFalse {};
@@ -62,8 +61,7 @@ struct IsSame : public BooleanFalse {};
 template<typename T>
 struct IsSame<T, T> : public BooleanTrue {};
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

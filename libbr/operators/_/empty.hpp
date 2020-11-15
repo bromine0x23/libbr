@@ -2,13 +2,9 @@
 
 #include <libbr/config.hpp>
 
-namespace BR {
-namespace _ {
-namespace Operators {
+namespace BR::_::Operators {
 
 template< typename... >
 struct Empty {};
 
-} // namespace Operators
-} // namespace _
-} // namespace BR
+} // namespace BR::_::Operators

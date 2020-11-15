@@ -68,8 +68,7 @@ constexpr auto not_trivially_assignable = boolean_constant< NotTriviallyAssignab
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_IS_TRIVIALLY_ASSIGNABLE)
 
@@ -92,8 +91,7 @@ using IsTriviallyAssignable = Conjunction<
 
 #endif // defined(BR_IS_TRIVIALLY_ASSIGNABLE)
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

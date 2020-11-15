@@ -56,14 +56,12 @@ constexpr auto no_move_constructor = boolean_constant< NoMoveConstructor<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using HasMoveConstructor = IsConstructible< T, AddRValueReference<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

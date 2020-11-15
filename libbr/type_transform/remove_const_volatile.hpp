@@ -35,8 +35,7 @@ using RemoveConstVolatile = TypeUnwrap< TypeRemoveConstVolatile<T> >;
 
 
 
-namespace _ {
-namespace TypeTransform {
+namespace _::TypeTransform {
 
 template< typename T >
 struct TypeRemoveConstVolatile : public TypeWrapper<T> {};
@@ -50,8 +49,7 @@ struct TypeRemoveConstVolatile< T volatile > : public TypeWrapper<T> {};
 template< typename T >
 struct TypeRemoveConstVolatile< T const volatile > : public TypeWrapper<T> {};
 
-} // namespace TypeTransform
-} // namespace _
+} // namespace _::TypeTransform
 
 inline namespace TypeTransform {
 

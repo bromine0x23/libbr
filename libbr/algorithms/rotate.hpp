@@ -44,8 +44,7 @@ auto rotate(
 
 
 
-namespace _ {
-namespace Algorithms {
+namespace _::Algorithms {
 
 template< typename TForwardIterator >
 inline auto rotate_left(TForwardIterator first, TForwardIterator last) -> TForwardIterator {
@@ -171,8 +170,7 @@ inline auto rotate(TForwardIterator first, TForwardIterator middle, TForwardIter
 	return rotate(first, middle, last, IteratorTraits<TForwardIterator>::iterator_category());
 }
 
-} // namespace Algorithms
-} // namespace _
+} // namespace _::Algorithms
 
 inline namespace Algorithms {
 

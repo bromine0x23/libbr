@@ -53,8 +53,7 @@ constexpr auto not_volatile = boolean_constant< NotVolatile<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 struct IsVolatile : public BooleanFalse {};
@@ -62,8 +61,7 @@ struct IsVolatile : public BooleanFalse {};
 template< typename T >
 struct IsVolatile< T volatile > : public BooleanTrue {};
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

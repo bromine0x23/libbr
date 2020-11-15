@@ -37,8 +37,7 @@ auto transform(
 
 
 
-namespace _ {
-namespace Algorithms {
+namespace _::Algorithms {
 
 template< typename TInputIterator, typename TOutputIterator, typename TUnaryOperation >
 inline auto transform(TInputIterator first, TInputIterator last, TOutputIterator output, TUnaryOperation && operation) -> TOutputIterator {
@@ -57,8 +56,7 @@ inline auto transform(TInputIterator first, TInputIterator last, TOutputIterator
 	return output;
 }
 
-} // namespace Algorithms
-} // namespace _
+} // namespace _::Algorithms
 
 inline namespace Algorithms {
 

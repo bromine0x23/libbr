@@ -55,14 +55,12 @@ constexpr auto no_default_constructor = boolean_constant< NoDefaultConstructor<T
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using HasDefaultConstructor = IsConstructible<T>;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

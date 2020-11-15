@@ -41,8 +41,7 @@ using MakeSigned = TypeUnwrap< TypeMakeSigned<T> >;
 
 
 
-namespace _ {
-namespace TypeTransform {
+namespace _::TypeTransform {
 
 template< typename T >
 struct TypeMakeSignedInteger : public TypeWrapper<T> {};
@@ -106,8 +105,7 @@ struct TypeMakeSignedBasic< T, false, true > : TypeMakeSignedEnum< sizeof(T) > {
 template< typename T >
 struct TypeMakeSigned : public TypeCopyConstVolatile< T, TypeUnwrap< TypeMakeSignedBasic< RemoveConstVolatile<T> > > > {};
 
-} // namespace TypeTransform
-} // namespace _
+} // namespace _::TypeTransform
 
 inline namespace TypeTransform {
 

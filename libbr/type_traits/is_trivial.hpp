@@ -60,8 +60,7 @@ constexpr auto not_trivial = boolean_constant< NotTrivial<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_IS_TRIVIAL)
 
@@ -75,8 +74,7 @@ using IsTrivial = Conjunction< HasTrivialCopyConstructor<T>, HasTrivialDefaultCo
 
 #endif // defined(BR_IS_TRIVIAL)
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

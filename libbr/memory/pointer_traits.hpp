@@ -30,14 +30,11 @@ struct PointerTraits;
 
 
 
-namespace _ {
-namespace Memory {
-namespace PointerTraits {
+namespace _::Memory::PointerTraits {
 
-////////////////////////////////
-//
+//--------------------------------
 // PointerTraits::Element
-//
+//--------------------------------
 BR_HAS_MEMBER_TYPE(Element)
 
 template< typename TPointer, Boolean = HasMemberTypeElement<TPointer>{} >
@@ -52,10 +49,9 @@ struct TypeElement< TPointer, false > : TypeFirstTemplateArgument<TPointer> {};
 template< typename TPointer >
 using Element = TypeUnwrap< TypeElement<TPointer> >;
 
-////////////////////////////////
-//
+//--------------------------------
 // PointerTraits::Difference
-//
+//--------------------------------
 BR_HAS_MEMBER_TYPE(Difference)
 
 template< typename TPointer, Boolean = HasMemberTypeDifference<TPointer>{} >
@@ -70,10 +66,9 @@ struct TypeDifference< TPointer, false > : TypeWrapper<BR::PointerDifference> {}
 template< typename TPointer >
 using Difference = TypeUnwrap< TypeDifference<TPointer> >;
 
-////////////////////////////////
-//
+//--------------------------------
 // PointerTraits::Rebind
-//
+//--------------------------------
 BR_HAS_MEMBER_TYPE(Rebind)
 
 template< typename TPointer, typename TElement, Boolean = HasMemberTypeRebind<TPointer>{} >
@@ -88,9 +83,7 @@ struct TypeRebind< TPointer, TElement, false > : TypeReplaceFirstTemplateArgumen
 template< typename TPointer, typename TElement >
 using Rebind = TypeUnwrap< TypeRebind< TPointer, TElement > >;
 
-} // namespace PointerTraits
-} // namespace Memory
-} // namespace _
+} // namespace _::Memory::PointerTraits
 
 inline namespace Memory {
 

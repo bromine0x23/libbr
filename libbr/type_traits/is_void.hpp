@@ -54,8 +54,7 @@ constexpr auto not_void = boolean_constant<NotVoid<T>>;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template<typename T>
 struct IsVoidBasic : public BooleanFalse {};
@@ -66,8 +65,7 @@ struct IsVoidBasic<void> : public BooleanTrue {};
 template<typename T>
 using IsVoid = IsVoidBasic<RemoveConstVolatile<T>>;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

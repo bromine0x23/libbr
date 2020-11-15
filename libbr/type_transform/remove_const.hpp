@@ -35,8 +35,7 @@ using RemoveConst = TypeUnwrap< TypeRemoveConst<T> >;
 
 
 
-namespace _ {
-namespace TypeTransform {
+namespace _::TypeTransform {
 
 template< typename T >
 struct TypeRemoveConst : public TypeWrapper<T> {};
@@ -44,8 +43,7 @@ struct TypeRemoveConst : public TypeWrapper<T> {};
 template< typename T >
 struct TypeRemoveConst< T const > : public TypeWrapper<T> {};
 
-} // namespace TypeTransform
-} // namespace _
+} // namespace _::TypeTransform
 
 inline namespace TypeTransform {
 

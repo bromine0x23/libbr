@@ -44,3 +44,7 @@
 #  define BR_SINT128   signed __int128
 #  define BR_UINT128 unsigned __int128
 #endif
+
+#if __has_attribute(__may_alias__)
+#  define BR_MAY_ALIAS __attribute__((__may_alias__))
+#endif

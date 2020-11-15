@@ -40,8 +40,7 @@ using MakeUnsigned = TypeUnwrap< TypeMakeUnsigned<T> >;
 
 
 
-namespace _ {
-namespace TypeTransform {
+namespace _::TypeTransform {
 
 template< typename T >
 struct TypeMakeUnsignedInteger : public TypeWrapper<T> {};
@@ -104,8 +103,7 @@ struct TypeMakeUnsignedBasic< T, false, true > : TypeMakeUnsignedEnum< sizeof(T)
 template< typename T >
 struct TypeMakeUnsigned : public TypeCopyConstVolatile< T, TypeUnwrap< TypeMakeUnsignedBasic< RemoveConstVolatile<T> > > > {};
 
-} // namespace TypeTransform
-} // namespace _
+} // namespace _::TypeTransform
 
 inline namespace TypeTransform {
 

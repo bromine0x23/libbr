@@ -67,8 +67,7 @@ constexpr auto no_destructor = boolean_constant< NoDestructor<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #ifdef BR_HAS_DESTRUCTOR
 
@@ -104,8 +103,7 @@ struct HasDestructor : public Conjunction<
 
 #endif
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

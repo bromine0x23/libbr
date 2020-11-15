@@ -37,8 +37,7 @@ auto copy(
 
 
 
-namespace _ {
-namespace Algorithms {
+namespace _::Algorithms {
 
 template< typename TSinglePassIterator, typename TOutputIterator >
 auto copy(TSinglePassIterator first, TSinglePassIterator last, TOutputIterator output, SinglePassTraversalTag) -> TOutputIterator {
@@ -65,15 +64,14 @@ inline auto copy(TInputIterator first, TInputIterator last, TOutputIterator outp
 
 template< typename TInputValue, typename TOutputValue, typename = EnableIf< Conjunction< IsSame< RemoveConst<TInputValue>, TOutputValue >, HasTrivialCopyAssignment<TInputValue> > > >
 inline auto copy(TInputValue * first, TInputValue * last, TOutputValue * output) -> TOutputValue * {
-	auto const count = static_cast<Size>(last - first);
+	auto const count = static_cast<USize>(last - first);
 	if (count > 0) {
 		memory_copy(first, output, count * sizeof(TOutputValue));
 	}
 	return output + count;
 }
 
-} // namespace Algorithms
-} // namespace _
+} // namespace _::Algorithms
 
 inline namespace Algorithms {
 

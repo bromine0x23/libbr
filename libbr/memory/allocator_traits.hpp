@@ -44,17 +44,15 @@ namespace _ {
 namespace Memory {
 namespace AllocatorTraits {
 
-////////////////////////////////
-//
+//--------------------------------
 // AllocatorTraits::Element
-//
+//--------------------------------
 template<typename TAllocator>
 using Element = typename TAllocator::Element;
 
-////////////////////////////////
-//
+//--------------------------------
 // AllocatorTraits::Pointer
-//
+//--------------------------------
 BR_HAS_MEMBER_TYPE(Pointer)
 
 template<typename TAllocator, Boolean = has_member_type_Pointer<TAllocator> >
@@ -69,10 +67,9 @@ struct TypePointer<TAllocator, false> : TypeWrapper< Element<TAllocator> * > {};
 template<typename TAllocator>
 using Pointer = TypeUnwrap<TypePointer<TAllocator>>;
 
-////////////////////////////////
-//
+//--------------------------------
 // AllocatorTraits::ConstPointer
-//
+//--------------------------------
 BR_HAS_MEMBER_TYPE(ConstPointer)
 
 template<typename TAllocator, Boolean = has_member_type_ConstPointer<TAllocator> >
@@ -87,10 +84,9 @@ struct TypeConstPointer<TAllocator, false> : TypeWrapper< typename BR::PointerTr
 template<typename TAllocator>
 using ConstPointer = TypeUnwrap< TypeConstPointer<TAllocator> >;
 
-////////////////////////////////
-//
+//--------------------------------
 // AllocatorTraits::VoidPointer
-//
+//--------------------------------
 BR_HAS_MEMBER_TYPE(VoidPointer)
 
 template< typename TAllocator, Boolean = has_member_type_VoidPointer<TAllocator> >
@@ -105,10 +101,9 @@ struct TypeVoidPointer< TAllocator, false > : TypeWrapper< typename BR::PointerT
 template< typename TAllocator >
 using VoidPointer = TypeUnwrap< TypeVoidPointer<TAllocator> >;
 
-////////////////////////////////
-//
+//--------------------------------
 // AllocatorTraits::ConstVoidPointer
-//
+//--------------------------------
 BR_HAS_MEMBER_TYPE(ConstVoidPointer)
 
 template< typename TAllocator, Boolean = has_member_type_ConstVoidPointer<TAllocator> >
@@ -123,10 +118,9 @@ struct TypeConstVoidPointer< TAllocator, false > : TypeWrapper< typename BR::Poi
 template< typename TAllocator >
 using ConstVoidPointer = TypeUnwrap< TypeConstVoidPointer<TAllocator> >;
 
-////////////////////////////////
-//
+//--------------------------------
 // AllocatorTraits::Difference
-//
+//--------------------------------
 BR_HAS_MEMBER_TYPE(Difference)
 
 template< typename TAllocator, Boolean = has_member_type_Difference<TAllocator> >
@@ -141,10 +135,9 @@ struct TypeDifference< TAllocator, false > : TypeWrapper< typename BR::PointerTr
 template< typename TAllocator >
 using Difference = TypeUnwrap< TypeDifference<TAllocator> >;
 
-////////////////////////////////
-//
+//--------------------------------
 // AllocatorTraits::Size
-//
+//--------------------------------
 BR_HAS_MEMBER_TYPE(Size)
 
 template< typename TAllocator, Boolean = has_member_type_Size<TAllocator> >
@@ -159,10 +152,9 @@ struct TypeSize< TAllocator, false > : TypeMakeUnsigned< Difference<TAllocator> 
 template< typename TAllocator >
 using Size = TypeUnwrap< TypeSize<TAllocator> >;
 
-////////////////////////////////
-//
+//--------------------------------
 // AllocatorTraits::IsPropagateOnContainerCopyAssignment
-//
+//--------------------------------
 struct HasStaticField_IS_PROPAGATE_ON_CONTAINER_COPY_ASSIGNMENT {
 	template< typename T >
 	static auto test(int) -> decltype(BooleanConstant< T::IS_PROPAGATE_ON_CONTAINER_COPY_ASSIGNMENT >{});
@@ -174,10 +166,9 @@ struct HasStaticField_IS_PROPAGATE_ON_CONTAINER_COPY_ASSIGNMENT {
 template< typename TAllocator >
 using IsPropagateOnContainerCopyAssignment = decltype(HasStaticField_IS_PROPAGATE_ON_CONTAINER_COPY_ASSIGNMENT::test<TAllocator>(0));
 
-////////////////////////////////
-//
+//--------------------------------
 // AllocatorTraits::IsPropagateOnContainerMoveAssignment
-//
+//--------------------------------
 struct HasStaticField_IS_PROPAGATE_ON_CONTAINER_MOVE_ASSIGNMENT {
 	template< typename T >
 	static auto test(int) -> decltype(BooleanConstant< T::IS_PROPAGATE_ON_CONTAINER_MOVE_ASSIGNMENT >{});
@@ -189,10 +180,9 @@ struct HasStaticField_IS_PROPAGATE_ON_CONTAINER_MOVE_ASSIGNMENT {
 template< typename TAllocator >
 using IsPropagateOnContainerMoveAssignment = decltype(HasStaticField_IS_PROPAGATE_ON_CONTAINER_MOVE_ASSIGNMENT::test<TAllocator>(0));
 
-////////////////////////////////
-//
+//--------------------------------
 // AllocatorTraits::IsPropagateOnContainerSwap
-//
+//--------------------------------
 struct HasStaticField_IS_PROPAGATE_ON_CONTAINER_SWAP {
 	template< typename T >
 	static auto test(int) -> decltype(BooleanConstant< T::IS_PROPAGATE_ON_CONTAINER_SWAP >{});
@@ -204,10 +194,9 @@ struct HasStaticField_IS_PROPAGATE_ON_CONTAINER_SWAP {
 template< typename TAllocator >
 using IsPropagateOnContainerSwap = decltype(HasStaticField_IS_PROPAGATE_ON_CONTAINER_SWAP::test<TAllocator>(0));
 
-////////////////////////////////
-//
+//--------------------------------
 // AllocatorTraits::IsAlwaysEqual
-//
+//--------------------------------
 struct HasStaticField_IS_ALWAYS_EQUAL {
 	template< typename T >
 	static auto test(int) -> decltype(BooleanConstant< T::IS_ALWAYS_EQUAL >{});
@@ -219,10 +208,9 @@ struct HasStaticField_IS_ALWAYS_EQUAL {
 template< typename TAllocator >
 using IsAlwaysEqual = decltype(HasStaticField_IS_ALWAYS_EQUAL::test<TAllocator>(0));
 
-////////////////////////////////
-//
+//--------------------------------
 // AllocatorTraits::Rebind
-//
+//--------------------------------
 struct HasMemberTemplateRebindTest {
 	template< typename T, template< typename > class TR = T::template Rebind >
 	static auto test(int) -> BooleanTrue;
@@ -246,10 +234,9 @@ struct TypeRebind< TAllocator, TElement, false > : TypeReplaceFirstTemplateArgum
 template< typename TAllocator, typename TElement >
 using Rebind = TypeUnwrap< TypeRebind< TAllocator, TElement > >;
 
-////////////////////////////////
-//
+//--------------------------------
 // AllocatorTraits::allocate()
-//
+//--------------------------------
 BR_HAS_MEMBER_FUNCTION(allocate)
 
 template< Boolean has_member_function, typename TAllocator, typename ... TArgs >
@@ -272,10 +259,9 @@ struct AllocateBasic< false, TAllocator, TSize, TConstVoidPointer > {
 	}
 };
 
-////////////////////////////////
-//
+//--------------------------------
 // AllocatorTraits::max_size()
-//
+//--------------------------------
 BR_HAS_MEMBER_FUNCTION(max_size)
 
 template< bool has_member_function, typename TAllocator, typename ... TArguments >
@@ -298,10 +284,9 @@ struct MaxSizeBasic< false, TAllocator > {
 	}
 };
 
-////////////////////////////////
-//
+//--------------------------------
 // AllocatorTraits::select_on_container_copy_construction()
-//
+//--------------------------------
 BR_HAS_MEMBER_FUNCTION(select_on_container_copy_construction)
 
 template< bool has_member_function, typename TAllocator, typename ... TArguments >
@@ -383,20 +368,6 @@ struct AllocatorTraits {
 		return _::Memory::AllocatorTraits::SelectOnContainerCopyConstruction<Allocator>::call(allocator);
 	}
 }; // AllocatorTraits<TAllocator>
-
-#if !defined(BR_AFTER_CXX14)
-template<typename TAllocator>
-constexpr Boolean BR::Memory::AllocatorTraits<TAllocator>::IS_PROPAGATE_ON_CONTAINER_COPY_ASSIGNMENT;
-
-template<typename TAllocator>
-constexpr Boolean BR::Memory::AllocatorTraits<TAllocator>::IS_PROPAGATE_ON_CONTAINER_MOVE_ASSIGNMENT;
-
-template<typename TAllocator>
-constexpr Boolean BR::Memory::AllocatorTraits<TAllocator>::IS_PROPAGATE_ON_CONTAINER_SWAP;
-
-template<typename TAllocator>
-constexpr Boolean BR::Memory::AllocatorTraits<TAllocator>::IS_ALWAYS_EQUAL;
-#endif
 
 } // namespace Memory
 

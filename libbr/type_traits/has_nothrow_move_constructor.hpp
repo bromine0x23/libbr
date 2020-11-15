@@ -57,14 +57,12 @@ constexpr auto no_nothrow_move_constructor = boolean_constant< NoNothrowMoveCons
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using HasNothrowMoveConstructor = IsNothrowConstructible< T, AddRValueReference<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

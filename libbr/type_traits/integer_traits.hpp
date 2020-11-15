@@ -26,8 +26,7 @@ struct IntegerTraits;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T, Size bits, Boolean is_sign >
 struct IntegerTraitsMin;
@@ -71,8 +70,7 @@ struct IntegerTraitsBasic< bool, true > {
 template< typename T >
 using IntegerTraits = IntegerTraitsBasic< RemoveConstVolatile<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

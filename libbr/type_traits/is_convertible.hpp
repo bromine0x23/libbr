@@ -70,8 +70,7 @@ constexpr auto not_convertible = boolean_constant< NotConvertible< TFrom, TTo > 
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_IS_CONVERTIBLE)
 
@@ -111,8 +110,7 @@ struct IsConvertible : public Conjunction<
 
 #endif // BR_IS_CONVERTIBLE
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

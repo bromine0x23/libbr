@@ -58,14 +58,12 @@ constexpr auto not_reference = boolean_constant<NotReference<T>>;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template<typename T>
-using IsReference = Disjunction<IsLValueReference<T>, IsRValueReference<T>>;
+using IsReference = Disjunction< IsLValueReference<T>, IsRValueReference<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

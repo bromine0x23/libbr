@@ -34,8 +34,7 @@ using Common = TypeUnwrap< TypeCommon< TTypes... > >;
 
 
 
-namespace _ {
-namespace TypeTransform {
+namespace _::TypeTransform {
 
 template< typename... TTypes >
 struct TypeCommon;
@@ -54,8 +53,7 @@ struct TypeCommon< T0, T1 > : public TypeDecay< decltype(declare_value<bool>() ?
 template < typename T0, typename T1, typename... Tn >
 struct TypeCommon< T0, T1, Tn... > : public TypeCommon< Common< T0, T1 >, Tn... > {};
 
-} // namespace TypeTransform
-} // namespace _
+} // namespace _::TypeTransform
 
 inline namespace TypeTransform {
 

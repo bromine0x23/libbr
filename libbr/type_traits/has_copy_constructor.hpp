@@ -57,14 +57,12 @@ constexpr auto no_copy_constructor = boolean_constant< NoCopyConstructor<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using HasCopyConstructor = IsConstructible< T, AddLValueReference< AddConst<T> > >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

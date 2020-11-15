@@ -58,8 +58,7 @@ constexpr auto not_signed = boolean_constant< NotSigned<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 struct IsSignedBasic : public BooleanConstant< (static_cast<T>(-1) < static_cast<T>(0)) > {};
@@ -67,8 +66,7 @@ struct IsSignedBasic : public BooleanConstant< (static_cast<T>(-1) < static_cast
 template< typename T >
 struct IsSigned : public Conjunction< IsArithmetic<T>, IsSignedBasic< RemoveConstVolatile<T> > > {};
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

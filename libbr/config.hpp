@@ -7,5 +7,7 @@
 
 #include <libbr/config/compiler.hpp>
 
+#include <libbr/config/arch.hpp>
+
 #include <libbr/config/macros.hpp>
 #include <libbr/config/types.hpp>

@@ -34,15 +34,13 @@ using AddVolatile = TypeUnwrap< TypeAddVolatile<T> >;
 
 
 
-namespace _ {
-namespace TypeTransform {
+namespace _::TypeTransform {
 
 template< typename T >
 struct TypeAddVolatile : public TypeWrapper< T volatile > {
 };
 
-} // namespace TypeTransform
-} // namespace _
+} // namespace _::TypeTransform
 
 inline namespace TypeTransform {
 

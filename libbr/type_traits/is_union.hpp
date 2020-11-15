@@ -55,8 +55,7 @@ constexpr auto not_union = boolean_constant< NotUnion<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_IS_UNION)
 
@@ -70,8 +69,7 @@ using IsUnion = BooleanFalse;
 
 #endif // defined(BR_IS_UNION)
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

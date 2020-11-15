@@ -60,8 +60,7 @@ constexpr auto not_class = boolean_constant< NotClass<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_IS_CLASS)
 
@@ -86,8 +85,7 @@ using IsClass = ConverseAbjunction< IsUnion<T>, IsClassBasic<T> >;
 
 #endif
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

@@ -65,8 +65,7 @@ constexpr auto not_nothrow_assignable = boolean_constant< NotNothrowAssignable< 
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_IS_NOTHROW_ASSIGNABLE)
 
@@ -86,8 +85,7 @@ using IsNothrowAssignable = Conjunction<
 
 #endif
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

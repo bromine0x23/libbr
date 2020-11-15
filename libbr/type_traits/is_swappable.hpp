@@ -57,8 +57,7 @@ constexpr auto not_swappable = boolean_constant< NotSwappable<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 using BR::swap;
 
@@ -74,8 +73,7 @@ struct IsSwappableTest {
 template< typename T >
 using IsSwappable = decltype(IsSwappableTest::test<T>(0));
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

@@ -67,8 +67,7 @@ constexpr auto not_trivially_constructible = boolean_constant< NotTriviallyConst
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_IS_TRIVIALLY_CONSTRUCTIBLE)
 
@@ -91,8 +90,7 @@ struct IsTriviallyConstructible< T, TArg > : public IsTriviallyConstructibleOne<
 
 #endif // defined(BR_IS_TRIVIALLY_CONSTRUCTIBLE)
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

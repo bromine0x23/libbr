@@ -61,8 +61,7 @@ constexpr auto no_nothrow_destructor = boolean_constant< NoNothrowDestructor<T> 
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_HAS_NOTHROW_DESTRUCTOR)
 
@@ -95,8 +94,7 @@ struct HasNothrowDestructor<T &&> : public HasNothrowDestructor<T> {};
 
 #endif // defined(BR_HAS_NOTHROW_DESTRUCTOR)
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

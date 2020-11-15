@@ -58,14 +58,12 @@ constexpr auto no_trivial_move_assignment = boolean_constant< NoTrivialMoveAssig
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using HasTrivialMoveAssignment = IsTriviallyAssignable < AddLValueReference<T>, AddRValueReference<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

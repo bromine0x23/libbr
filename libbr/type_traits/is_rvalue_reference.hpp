@@ -54,8 +54,7 @@ constexpr auto not_rvalue_reference = boolean_constant< NotRValueReference<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 struct IsRValueReference : public BooleanFalse {};
@@ -63,8 +62,7 @@ struct IsRValueReference : public BooleanFalse {};
 template< typename T >
 struct IsRValueReference< T && > : public BooleanTrue {};
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

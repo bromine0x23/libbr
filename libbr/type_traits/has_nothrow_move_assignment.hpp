@@ -58,14 +58,12 @@ constexpr auto no_nothrow_move_assignment = boolean_constant< NoNothrowMoveAssig
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using HasNothrowMoveAssignment = IsNothrowAssignable< AddLValueReference<T>, AddRValueReference<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

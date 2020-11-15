@@ -57,14 +57,12 @@ constexpr auto not_compound = boolean_constant< NotCompound<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using IsCompound = Negation< IsFundamental<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

@@ -9,15 +9,15 @@
 
 #if defined(BR_CLANG)
 #  if defined(__has_builtin) && __has_builtin(__builtin_addressof)
-#    define _HAS_BUILTIN
+#    define BR_MEMORY_HAS_BUILTIN_ADDRESS_OF
 #  endif
 #elif defined(BR_GCC)
 #  if BR_GCC_VER >= 700
-#    define _HAS_BUILTIN
+#    define BR_MEMORY_HAS_BUILTIN_ADDRESS_OF
 #  endif
 #elif defined(BR_MSVC)
 #  if BR_MSVC_VER >= 1910
-#    define _HAS_BUILTIN
+#    define BR_MEMORY_HAS_BUILTIN_ADDRESS_OF
 #  endif
 #endif
 
@@ -31,11 +31,11 @@ inline namespace Memory {
  * @return
  */
 template< typename T >
-#if defined(_HAS_BUILTIN)
+#if defined(BR_MEMORY_HAS_BUILTIN_ADDRESS_OF)
 constexpr
 #endif
 inline auto address_of(T & t) noexcept -> T * {
-#if defined(_HAS_BUILTIN)
+#if defined(BR_MEMORY_HAS_BUILTIN_ADDRESS_OF)
 	return __builtin_addressof(t);
 #else
 	return reinterpret_cast<T *>(const_cast<char &>(reinterpret_cast<char const volatile &>(t)));
@@ -48,3 +48,4 @@ auto address_of(T const &&) -> T * = delete;
 } // namespace Memory
 } // namespace BR
 
+#undef BR_MEMORY_HAS_BUILTIN_ADDRESS_OF

@@ -15,16 +15,21 @@ inline namespace Exceptions {
 /**
  * @brief Basic exception class
  */
-class Exception : STLException {
+class Exception {
 public:
-	using Message = CString<NChar>;
+	Exception() noexcept {};
 
-	Exception() noexcept {
-	};
+	Exception(Exception const&) = default;
 
-	~Exception() noexcept override;
+	Exception(Exception &&) = default;
 
-	auto what() const noexcept -> Message override;
+	virtual ~Exception() noexcept;
+
+	auto operator=(Exception const &) -> Exception & = default;
+
+	auto operator=(Exception &&) -> Exception & = default;
+
+	virtual auto what() const noexcept -> CString<NChar>;
 };
 
 } // namespace Exceptions

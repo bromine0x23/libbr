@@ -67,8 +67,7 @@ constexpr auto not_nothrow_constructible = boolean_constant< NotNothrowConstruct
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_IS_NOTHROW_CONSTRUCTIBLE)
 
@@ -106,8 +105,7 @@ struct IsNothrowConstructible : Conjunction<
 
 #endif // defined(BR_IS_NOTHROW_CONSTRUCTIBLE)
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

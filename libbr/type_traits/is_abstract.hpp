@@ -59,8 +59,7 @@ constexpr auto not_abstract = boolean_constant< NotAbstract<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_IS_ABSTRACT)
 
@@ -87,8 +86,7 @@ using IsAbstract = Conjunction< IsClass<T>, IsAbstractBasic<T> >;
 
 #endif
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

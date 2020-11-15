@@ -34,14 +34,12 @@ constexpr auto alignment_of = integral_constant< AlignmentOf<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 struct AlignmentOf : IntegralConstant< Size, alignof(T) > {};
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

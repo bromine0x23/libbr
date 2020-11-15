@@ -68,8 +68,7 @@ constexpr auto not_enum = boolean_constant< NotEnum<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_IS_ENUM)
 
@@ -103,8 +102,7 @@ using IsEnum = IsEnumBasic< RemoveConstVolatile<T> >;
 
 #endif // defined(BR_IS_ENUM)
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

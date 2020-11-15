@@ -61,14 +61,12 @@ constexpr auto not_object = boolean_constant< NotObject<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 using IsObject = NonDisjunction< IsReference<T>, IsVoid<T>, IsFunction<T> >;
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

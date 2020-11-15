@@ -62,8 +62,7 @@ constexpr auto not_polymorphic = boolean_constant< NotPolymorphic<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 #if defined(BR_IS_POLYMORPHIC)
 
@@ -106,8 +105,7 @@ using IsPolymorphic = Conjunction< IsClass<T>, BooleanConstant< IsPolymorphicBas
 
 #endif // BR_IS_POLYMORPHIC
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

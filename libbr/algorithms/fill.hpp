@@ -31,8 +31,7 @@ void fill(
 
 
 
-namespace _ {
-namespace Algorithms {
+namespace _::Algorithms {
 
 template< typename TForwardIterator, typename TValue >
 inline void fill(TForwardIterator first, TForwardIterator last, TValue const & value, ForwardTraversalTag) {
@@ -51,8 +50,7 @@ inline void fill(TForwardIterator first, TForwardIterator last, TValue const & v
 	fill(first, last, value, IteratorTraits<TForwardIterator>::iterator_category());
 }
 
-} // namespace Algorithms
-} // namespace _
+} // namespace _::Algorithms
 
 inline namespace Algorithms {
 

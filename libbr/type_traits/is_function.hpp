@@ -53,8 +53,7 @@ constexpr auto not_function = boolean_constant< NotFunction<T> >;
 
 
 
-namespace _ {
-namespace TypeTraits {
+namespace _::TypeTraits {
 
 template< typename T >
 struct IsFunction : BooleanFalse {};
@@ -89,8 +88,7 @@ template< typename TResult, typename... TArgs > struct IsFunction<auto (TArgs...
 template< typename TResult, typename... TArgs > struct IsFunction<auto (TArgs..., ...)       volatile && -> TResult > : public BooleanTrue {};
 template< typename TResult, typename... TArgs > struct IsFunction<auto (TArgs..., ...) const volatile && -> TResult > : public BooleanTrue {};
 
-} // namespace TypeTraits
-} // namespace _
+} // namespace _::TypeTraits
 
 inline namespace TypeTraits {
 

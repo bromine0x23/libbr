@@ -37,8 +37,7 @@ auto move(
 
 
 
-namespace _ {
-namespace Algorithms {
+namespace _::Algorithms {
 
 template< typename TInputIterator, typename TOutputIterator >
 auto move(TInputIterator first, TInputIterator last, TOutputIterator result) -> TOutputIterator {
@@ -50,13 +49,12 @@ auto move(TInputIterator first, TInputIterator last, TOutputIterator result) -> 
 
 template< typename TInputValue, typename TOutputValue, typename = EnableIf< Conjunction< IsSame< RemoveConst<TInputValue>, TOutputValue >, HasTrivialCopyAssignment<TInputValue> > > >
 inline auto move(TInputValue * first, TInputValue * last, TOutputValue * result) -> TOutputValue * {
-	auto n = static_cast<Size>(last - first);
+	auto n = static_cast<USize>(last - first);
 	memory_copy(first, result, n * sizeof(TOutputValue));
 	return result + n;
 }
 
-} // namespace Algorithms
-} // namespace _
+} // namespace _::Algorithms
 
 inline namespace Algorithms {
 
